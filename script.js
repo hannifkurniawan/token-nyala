@@ -14,7 +14,7 @@ const translations = {
     whyKicker:'Kenapa Token Nyala',whyTitle:'Bukan sekadar saldo.<br><span>Ini ruang untuk menyelesaikan.</span>',whyLead:'Kami membantu mengubah nominal top up menjadi keputusan proyek yang lebih pasti—tanpa membuatmu belajar billing dan model dahulu.',whyCta:'Temukan paketmu',benefit1Title:'Pilihan yang mudah dipahami',benefit1Body:'Disarankan berdasarkan tujuan proyek, bukan kumpulan nama model.',benefit2Title:'Rincian sebelum membayar',benefit2Body:'Lihat nominal, bonus, dan total. Tidak ada biaya tersembunyi dalam simulasi.',benefit3Title:'Momentum tetap jalan',benefit3Body:'Status saldo dan langkah berikutnya terlihat jelas setelah top up.',
     faqKicker:'Pertanyaan seputar top up',faqTitle:'Masih ada yang<br><span>mau ditanyakan?</span>',faqLead:'Jawaban singkat untuk membantu kamu memutuskan.',faq1Q:'Kapan saldo aktif?',faq1A:'Pada produk nyata, saldo aktif setelah pembayaran dikonfirmasi. Pada prototype ini, konfirmasi hanya menampilkan status sukses simulasi.',faq2Q:'Berapa banyak sesi yang bisa digunakan?',faq2A:'Tidak ada angka pasti karena panjang prompt, model, dan format output memengaruhi penggunaan.',faq3Q:'Metode pembayaran apa yang tersedia?',faq3A:'Konsep checkout mencakup QRIS, e-wallet, dan virtual account.',faq4Q:'Bisakah membeli untuk tim?',faq4A:'Paket individu cocok untuk pemula dan freelancer. Paket tim dapat ditambahkan dengan kontrol saldo dan invoice.',
     finalKicker:'Saatnya lanjut membangun',finalTitle:'Ide-mu sudah cukup lama menunggu.',finalCta:'Isi saldo sekarang',footerTagline:'Saldo AI untuk ide yang siap menjadi proyek.',
-    checkoutTitle:'Ringkas top up',selectedPackage:'Paket terpilih',packageAmount:'Nominal paket',bonusAmount:'Bonus saldo',feeAmount:'Biaya tambahan',freeText:'Gratis',totalAmount:'Total bayar',checkoutNotice:'Prototype ini hanya simulasi. Tidak ada transaksi atau penarikan dana nyata.',emailLabel:'Email untuk bukti pembelian',paymentLabel:'Pilih metode pembayaran',ewalletText:'E-Wallet',vaText:'Virtual Account',confirmPayment:'Konfirmasi pembayaran',successKicker:'Top up tercatat',successTitle:'Saldo nyala!',successBody:'Paketmu sudah tercatat dalam simulasi ini. Kamu bisa kembali lanjut membangun.',successCta:'Kembali ke proyek'
+    checkoutTitle:'Ringkas top up',selectedPackage:'Paket terpilih',packageAmount:'Nominal paket',bonusAmount:'Bonus saldo',feeAmount:'Biaya tambahan',freeText:'Gratis',totalAmount:'Total bayar',checkoutNotice:'Prototype ini hanya simulasi. Tidak ada transaksi atau penarikan dana nyata.',contactLabel:'Nomor telepon atau email',contactHelp:'Gunakan nomor aktif untuk menerima status top up atau isi email sebagai alternatif.',paymentLabel:'Pilih metode pembayaran',ewalletText:'E-Wallet',vaText:'Virtual Account',confirmPayment:'Konfirmasi pembayaran',successKicker:'Top up tercatat',successTitle:'Saldo nyala!',successBody:'Paketmu sudah tercatat dalam simulasi ini. Kamu bisa kembali lanjut membangun.',successCta:'Kembali ke proyek'
   },
   en:{
     navHow:'How it works',navPackages:'Packages',navFaq:'FAQ',navCta:'Top up',
@@ -25,7 +25,7 @@ const translations = {
     whyKicker:'Why Token Nyala',whyTitle:'More than a balance.<br><span>Room to finish.</span>',whyLead:'We turn top-up amounts into clearer project decisions—without making you learn billing and models first.',whyCta:'Find my package',benefit1Title:'Easy-to-understand choices',benefit1Body:'Recommended for your project goal, not a list of model names.',benefit2Title:'Review before payment',benefit2Body:'See the amount, bonus, and total. No hidden fee in this prototype.',benefit3Title:'Keep momentum',benefit3Body:'Balance and next steps remain clear after top-up.',
     faqKicker:'Top-up questions',faqTitle:'Still have<br><span>something to ask?</span>',faqLead:'Short answers to help you decide.',faq1Q:'When does the balance become active?',faq1A:'In the real product, balance activates after payment confirmation. This prototype only shows a successful simulation.',faq2Q:'How many sessions can I use?',faq2A:'There is no fixed number; prompt length, model, and output format affect usage.',faq3Q:'Which payment methods are available?',faq3A:'The concept includes QRIS, e-wallet, and virtual account.',faq4Q:'Can I purchase for a team?',faq4A:'Individual packages suit beginners and freelancers. Team packages may add balance control and invoices.',
     finalKicker:'Time to keep building',finalTitle:'Your idea has waited long enough.',finalCta:'Top up now',footerTagline:'AI balance for ideas ready to become projects.',
-    checkoutTitle:'Top-up summary',selectedPackage:'Selected package',packageAmount:'Package amount',bonusAmount:'Balance bonus',feeAmount:'Additional fee',freeText:'Free',totalAmount:'Total',checkoutNotice:'This is a prototype. No real transaction or fund withdrawal occurs.',emailLabel:'Email for purchase receipt',paymentLabel:'Choose payment method',ewalletText:'E-Wallet',vaText:'Virtual Account',confirmPayment:'Confirm payment',successKicker:'Top-up recorded',successTitle:'Balance is ready!',successBody:'Your package is recorded in this simulation. You can continue building.',successCta:'Back to project'
+    checkoutTitle:'Top-up summary',selectedPackage:'Selected package',packageAmount:'Package amount',bonusAmount:'Balance bonus',feeAmount:'Additional fee',freeText:'Free',totalAmount:'Total',checkoutNotice:'This is a prototype. No real transaction or fund withdrawal occurs.',contactLabel:'Phone number or email',contactHelp:'Use an active phone number for top-up status or enter email as an alternative.',paymentLabel:'Choose payment method',ewalletText:'E-Wallet',vaText:'Virtual Account',confirmPayment:'Confirm payment',successKicker:'Top-up recorded',successTitle:'Balance is ready!',successBody:'Your package is recorded in this simulation. You can continue building.',successCta:'Back to project'
   }
 };
 
@@ -115,14 +115,29 @@ function closeCheckout(){
 }
 
 function validateCheckout(){
-  const email=document.getElementById('checkout-email');
+  const contact=document.getElementById('checkout-contact');
   const payment=form.querySelector('input[name="payment"]:checked');
-  const emailValid=email.checkValidity()&&email.value.trim();
+  const raw=(contact?.value||'').trim();
+
+  const emailValid=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw);
+  const phoneDigits=raw.replace(/[^0-9]/g,'');
+  let normalizedPhone=phoneDigits;
+  if(phoneDigits.startsWith('62')) normalizedPhone='0'+phoneDigits.slice(2);
+  if(phoneDigits.startsWith('+62')) normalizedPhone='0'+phoneDigits.slice(3);
+  const phoneValid=/^08[0-9]{8,11}$/.test(normalizedPhone);
+  const contactValid=emailValid||phoneValid;
   const paymentValid=Boolean(payment);
-  document.getElementById('email-error').textContent=emailValid?'':(currentLanguage==='id'?'Masukkan email yang formatnya benar.':'Enter a valid email address.');
-  document.getElementById('payment-error').textContent=paymentValid?'':(currentLanguage==='id'?'Pilih satu metode pembayaran.':'Choose a payment method.');
-  document.getElementById('checkout-submit').disabled=!(emailValid&&paymentValid);
-  return emailValid&&paymentValid;
+
+  document.getElementById('contact-error').textContent=contactValid?'':(
+    currentLanguage==='id'
+      ? 'Masukkan nomor Indonesia aktif atau email yang formatnya benar.'
+      : 'Enter a valid Indonesian phone number or email address.'
+  );
+  document.getElementById('payment-error').textContent=paymentValid?'':(
+    currentLanguage==='id'?'Pilih satu metode pembayaran.':'Choose a payment method.'
+  );
+  document.getElementById('checkout-submit').disabled=!(contactValid&&paymentValid);
+  return contactValid&&paymentValid;
 }
 
 function showToast(message){

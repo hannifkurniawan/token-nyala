@@ -357,9 +357,10 @@
 
       <form class="checkout-form" id="checkout-form" novalidate>
         <div class="form-section">
-          <label for="checkout-email" data-i18n="emailLabel">Email untuk bukti pembelian</label>
-          <input id="checkout-email" name="email" type="email" autocomplete="email" placeholder="nama@email.com" required>
-          <p class="field-error" id="email-error" aria-live="polite"></p>
+          <label for="checkout-contact" data-i18n="contactLabel">Nomor telepon atau email</label>
+          <input id="checkout-contact" name="contact" type="text" inputmode="text" autocomplete="tel" placeholder="0812 1234 5678 atau nama@email.com" required>
+          <p class="field-help" data-i18n="contactHelp">Gunakan nomor aktif untuk menerima status top up atau isi email sebagai alternatif.</p>
+          <p class="field-error" id="contact-error" aria-live="polite"></p>
         </div>
 
         <fieldset class="form-section">
