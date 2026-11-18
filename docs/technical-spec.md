@@ -134,6 +134,7 @@ Urutan lengkap dan overlay global ada di `information-architecture.md`. Ringkasa
     - Bisakah refund atau batal?
     - Ke mana data prompt saya dikirim?
     - Bagaimana kalau API key saya bocor?
+    - Apakah saldo terpotong kalau permintaan gagal? *(ditambahkan; sudah ada di microcopy)*
     - Bisakah membeli untuk tim dan meminta invoice perusahaan?
 11. **Final CTA** — ulangi core promise, tombol isi saldo, trust copy.
 12. **Footer** — wordmark, bantuan, Syarat & Ketentuan (mock), Kebijakan Privasi (mock), copyright.

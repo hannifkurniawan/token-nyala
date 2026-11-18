@@ -39,7 +39,7 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 - [x] 7. Pakai di tool — 3 langkah, contoh konfigurasi + salin, CTA isi saldo; tersambung dari sukses checkout
 - [x] 8. Benefit + dashboard + contoh — 4 kartu manfaat, mock dashboard (grafik 7 hari, switch, key), contoh landing page event + CTA Mulai
 - [x] 9. Tim & bisnis + konsultasi — strip tim, dialog 5 field + 2 checkbox, sukses, reset
-- [ ] 10. FAQ + final CTA
+- [x] 10. FAQ + final CTA — 11 pertanyaan (details/summary), banner “Nyala sekarang.”
 - [ ] 11. Live chat Nala
 - [ ] 12. ID/EN lengkap
 - [ ] 13. QA penuh

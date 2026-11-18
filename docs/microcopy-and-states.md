@@ -279,8 +279,21 @@ Catatan: sebelumnya `Konfirmasi pembayaran`; diganti karena checkout sekarang pu
 ### Bagaimana kalau API key saya bocor?
 `Nonaktifkan API key itu dari halaman saldo, lalu buat yang baru. Semua pemakaian lewat API key memotong saldomu, jadi simpan seperti kata sandi.`
 
-### Apakah ada refund?
-`Prototype belum memiliki transaksi nyata. Kebijakan refund dan masa aktif perlu ditetapkan sebelum produk diluncurkan.`
+### Apakah ada refund? (v3: “Bisakah refund atau batal?”)
+`Pembayaran yang belum selesai bisa dibatalkan kapan saja. Saldo yang sudah masuk tidak bisa diuangkan. Kebijakan refund lengkap akan ditetapkan sebelum peluncuran; prototype ini tidak memproses transaksi nyata.`
+
+*(Revisi: masa aktif sudah diputuskan — saldo tidak kedaluwarsa.)*
+
+## FAQ — v3
+
+Sebelas pertanyaan, copy ID dan EN lengkap ada di `v3/script.js` (`faqQ1…faqA11`). Urutan: aktif · model · kedaluwarsa · PPN · estimasi · permintaan gagal · metode bayar · refund · data prompt · API key bocor · tim & invoice.
+
+## Final CTA
+
+**Title:** `Nyala sekarang.` / `Switch on now.` (core promise, project-brief)
+**Body:** `Isi saldo AI dalam hitungan menit, pahami apa yang bisa dikerjakan paketmu, lalu lanjut membangun.` / `Top up AI credit in minutes, see what your package can do, and keep building.`
+**Trust:** `Biaya tambahan Rp0 · Bayar lokal · Saldo tidak kedaluwarsa` / `Rp0 extra fees · Local payment · Balance never expires`
+**CTA:** `Isi saldo` (checkout) · `Lihat paket` (#paket)
 
 ## Error and Empty States
 

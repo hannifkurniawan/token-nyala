@@ -453,6 +453,17 @@ def main():
             if args.interactive and name in ("320", "375", "768", "1440") and page.locator("dialog#consult").count():
                 status += consult_flow(page, out, name)
 
+            if args.interactive and name == "375" and page.locator("#faq details").count():
+                page.locator("#faq summary").first.click()
+                page.locator("#faq summary").nth(1).focus()
+                page.keyboard.press("Enter")
+                f = page.evaluate("() => ({ count: document.querySelectorAll('#faq details').length, open: [...document.querySelectorAll('#faq details')].map(d => d.open).slice(0, 3) })")
+                if f != {"count": 11, "open": [True, True, False]}:
+                    status.append(f"FAQ {f}")
+                r2 = page.evaluate(CHECK_JS)
+                if r2["spills"] or r2["escapes"]:
+                    status.append(f"FAQ OPEN spills={r2['spills']} escapes={r2['escapes']}")
+
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()
                 lang = page.evaluate("() => document.documentElement.lang")

@@ -741,6 +741,115 @@
         </div>
       </div>
     </section>
+
+    <!-- ============ 10. FAQ ============ -->
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="shell grid grid-cols-1 gap-8 py-16 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.8fr)] lg:gap-16 lg:py-24">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-xl-blue" data-i18n="faqKicker">FAQ</p>
+          <h2 id="faq-title" class="mt-3 text-[clamp(1.75rem,6vw,2.75rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-xl-dark" data-i18n="faqTitle">Pertanyaan yang sering muncul.</h2>
+          <p class="mt-4 text-base leading-relaxed text-muted" data-i18n="faqBody">Belum menemukan jawabannya? Tim kami siap membantu.</p>
+        </div>
+        <div class="border-t border-line">
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ1">Kapan saldo aktif?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA1">Pada produk nyata, saldo aktif setelah pembayaran dikonfirmasi — biasanya dalam hitungan menit. Pada prototype ini, konfirmasi hanya menampilkan status sukses simulasi.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ2">Model AI apa saja yang bisa dipakai?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA2">Satu saldo bisa dipakai untuk semua model yang tersedia, misalnya Claude, GPT, Gemini, DeepSeek, dan Qwen. Paket apa pun, pilihan modelnya sama. Model hemat membuat saldo lebih awet; model premium lebih kuat untuk tugas rumit.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ3">Apakah saldo bisa kedaluwarsa?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA3">Tidak. Saldo dan bonus kredit tidak kedaluwarsa. Saldo tidak bisa diuangkan atau dipindahkan ke akun lain.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ4">Apakah harga sudah termasuk PPN?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA4">Ya. Harga paket sudah termasuk PPN, tanpa biaya tambahan. 1 kredit setara Rp1.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ5">Apakah estimasi jumlah sesi pasti?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA5">Tidak. Panjang prompt, model, dan format output memengaruhi pemakaian. Estimasi di halaman ini memakai satu “sesi kecil” (±40 rb token masuk, ±4 rb token keluar) sebagai patokan.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ6">Apakah saldo terpotong kalau permintaan gagal?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA6">Tidak. Permintaan yang gagal dan tidak menghasilkan jawaban tidak memotong saldo.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ7">Metode pembayaran apa saja?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA7">QRIS, e-wallet (DANA, GoPay, OVO), dan virtual account. Di prototype ini semuanya simulasi.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ8">Bisakah refund atau batal?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA8">Pembayaran yang belum selesai bisa dibatalkan kapan saja. Saldo yang sudah masuk tidak bisa diuangkan. Kebijakan refund lengkap akan ditetapkan sebelum peluncuran; prototype ini tidak memproses transaksi nyata.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ9">Ke mana data prompt saya dikirim?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA9">Prompt dikirim ke penyedia model yang kamu pilih untuk diproses, dan bisa diproses di pusat data di luar Indonesia. Kami tidak memakai prompt atau hasilnya untuk melatih model. Pada prototype ini tidak ada data yang dikirim.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ10">Bagaimana kalau API key saya bocor?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA10">Nonaktifkan API key itu dari halaman saldo, lalu buat yang baru. Semua pemakaian lewat API key memotong saldomu, jadi simpan seperti kata sandi.</p>
+            </details>
+            <details class="group/f border-b border-line">
+              <summary class="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 text-base font-extrabold text-xl-dark hover:text-xl-blue [&::-webkit-details-marker]:hidden">
+                <span data-i18n="faqQ11">Bisakah membeli untuk tim dan meminta invoice perusahaan?</span>
+                <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-xl-blue transition-transform group-open/f:rotate-180 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <p class="pb-5 pr-9 text-base leading-relaxed text-muted" data-i18n="faqA11">Bisa. Kami bantu siapkan invoice atas nama perusahaan, faktur pajak, dan pemantauan pemakaian per anggota. Klik “Konsultasi untuk tim” dan kami hubungi dalam 1 hari kerja.</p>
+            </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 11. FINAL CTA ============ -->
+    <section id="mulai" aria-labelledby="final-title" class="pb-16 sm:pb-20 lg:pb-24">
+      <div class="shell">
+        <div class="relative overflow-hidden rounded-card bg-xl-blue px-6 py-10 text-white sm:px-10 sm:py-14 lg:flex lg:items-center lg:justify-between lg:gap-12 lg:px-14">
+          <div aria-hidden="true" class="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-xl-sky/25"></div>
+          <div aria-hidden="true" class="pointer-events-none absolute -bottom-32 right-24 size-64 rounded-full bg-xl-teal/20"></div>
+          <div class="relative max-w-xl">
+            <h2 id="final-title" class="text-[clamp(2rem,7vw,3.25rem)] font-extrabold leading-[1.05] tracking-[-0.04em]" data-i18n="finalTitle">Nyala sekarang.</h2>
+            <p class="mt-4 text-base leading-relaxed text-white/85 sm:text-lg" data-i18n="finalBody">Isi saldo AI dalam hitungan menit, pahami apa yang bisa dikerjakan paketmu, lalu lanjut membangun.</p>
+            <p class="mt-5 text-sm font-bold text-white/80" data-i18n="finalTrust">Biaya tambahan Rp0 · Bayar lokal · Saldo tidak kedaluwarsa</p>
+          </div>
+          <div class="relative mt-8 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:shrink-0 lg:flex-col">
+            <button type="button" class="btn min-h-13 bg-xl-yellow px-7 text-base text-xl-dark hover:bg-white" data-open-checkout data-i18n="navCta">Isi saldo</button>
+            <a href="#paket" class="btn min-h-13 border border-white/40 px-7 text-base text-white hover:bg-white/10" data-i18n="finalSecondary">Lihat paket</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- ============ FOOTER ============ -->

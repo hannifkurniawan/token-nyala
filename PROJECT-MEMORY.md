@@ -5,8 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, Manfaat + dashboard + Contoh, dan **Tim & bisnis + konsultasi** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
-- **Berikutnya:** section 10 — FAQ (10 pertanyaan) + Final CTA.
+- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, Manfaat + dashboard + Contoh, Tim & bisnis + konsultasi, dan **FAQ + Final CTA** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
+- **Berikutnya:** langkah 11 — Live chat Nala. Sambungkan juga: tombol “Tanya Nala” di kolom kiri FAQ (“Belum menemukan jawabannya?”), link “Butuh bantuan?” di checkout, dan pill “Butuh bantuan?” (sembunyikan saat dialog modal terbuka).
 - **Utang teknis kecil:** dialog baru memakai helper `setupModal()`; checkout dan katalog masih punya logika buka/tutup sendiri — bisa dimigrasikan saat QA penuh (langkah 13). Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
@@ -121,3 +121,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Section Tim & bisnis: strip gelap dengan 4 poin + CTA; dialog konsultasi (helper `setupModal`), validasi 5 aturan, counter 500 dengan pengumuman ≥450, sukses + reset. Visual: pesan kontak salah konteks dan placeholder terpotong → pesan khusus + kontak lebar penuh; urutan validasi disamakan dengan urutan tampil. QA ditambah alur konsultasi penuh.
 - Atas permintaan user: monogram di kartu model diganti logo keluarga model (SVG lokal dari lobehub, diperiksa: tanpa script/referensi eksternal). QA ditambah cek gambar rusak di seluruh halaman + cek ikon kartu model termuat.
 - Fix dari feedback user: “Detail tarif” di kartu model tidak lagi turun saat kartu lain di baris yang sama dibuka (hapus `mt-auto`). QA ditambah uji posisi.
+- Section FAQ + Final CTA: 11 pertanyaan `<details>` (ID/EN), jawaban refund diperbarui karena saldo tidak kedaluwarsa; banner “Nyala sekarang.” dengan CTA isi saldo + lihat paket. QA ditambah uji buka FAQ dengan klik dan Enter.
