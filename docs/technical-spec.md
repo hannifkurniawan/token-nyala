@@ -51,7 +51,7 @@ Viewport uji wajib: **320, 375, 768, 1024, 1440** (portrait) dan **667×375** (m
 Prototype memakai browser build Tailwind v4. Versi **harus di-pin** (jangan `@4` atau `latest`). Play CDN v3 (`cdn.tailwindcss.com`) tidak dipakai lagi.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
 <style type="text/tailwindcss">
   @theme {
     --color-xl-blue: #002DBB;

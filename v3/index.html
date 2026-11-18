@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F7F8FC">
+  <meta name="description" content="Top up saldo AI untuk belajar, membuat prototype, dan membangun proyek vibecoding.">
+  <meta property="og:title" content="TokenNyala — Mulai vibecoding tanpa bingung top up">
+  <meta property="og:description" content="Pilih kebutuhan dan top up saldo AI dengan alur yang sederhana.">
+  <meta property="og:type" content="website">
+  <title>TokenNyala — AI Credit untuk Vibecoding</title>
+  <link rel="icon" href="assets/tokennyala-mark.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind v4 browser build — prototype only. Version pinned; see docs/technical-spec.md -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-xl-blue: #002DBB;
+      --color-xl-blue-hover: #0025A1;
+      --color-xl-dark: #00166A;
+      --color-xl-yellow: #FFC93C;
+      --color-xl-teal: #00D2A0;
+      --color-xl-sky: #5CD0F9;
+      --color-ink: #17181A;
+      --color-paper: #F7F8FC;
+      --color-muted: #69728A;
+      --color-line: #D9DEEA;
+
+      --font-sans: "Manrope", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+      --radius-card: 20px;
+      --radius-control: 12px;
+    }
+
+    @layer base {
+      html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+      body { @apply bg-paper font-sans text-ink antialiased; }
+      :focus-visible { outline: 3px solid var(--color-xl-sky); outline-offset: 3px; }
+    }
+
+    @layer components {
+      /* Page container: 16px gutter on mobile, 24px from sm, max 1184px */
+      .shell { @apply mx-auto w-full max-w-[1184px] px-4 sm:px-6; }
+
+      .btn {
+        @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-5
+               text-sm font-extrabold transition-[background-color,transform,box-shadow] duration-150
+               active:translate-y-px motion-reduce:transition-none;
+      }
+      .btn-primary { @apply bg-xl-blue text-white shadow-[0_8px_20px_rgba(0,45,187,.18)] hover:bg-xl-blue-hover; }
+      .btn-secondary { @apply border border-line bg-white text-xl-dark hover:border-xl-blue; }
+    }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="flex min-h-dvh flex-col">
+  <a href="#main-content"
+     class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-control focus:border-2 focus:border-xl-blue focus:bg-white focus:px-4 focus:py-3 focus:font-bold"
+     data-i18n="skipLink">Lewati ke konten utama</a>
+
+  <!-- ============ HEADER ============ -->
+  <header id="top" class="sticky top-0 z-50 border-b border-line/80 bg-paper/95 backdrop-blur supports-[backdrop-filter]:bg-paper/85">
+    <div class="shell flex h-16 items-center gap-3 lg:h-20">
+      <a href="#top" class="flex min-h-11 shrink-0 items-center gap-2 text-lg font-extrabold tracking-tight text-xl-dark lg:text-xl"
+         aria-label="TokenNyala — kembali ke atas" data-i18n-aria="brandAria">
+        <img src="assets/tokennyala-mark.svg" alt="" width="32" height="32" class="size-8 rounded-lg lg:size-10">
+        <span>Token<span class="text-xl-blue">Nyala</span></span>
+      </a>
+
+      <nav aria-label="Navigasi utama" data-i18n-aria="navAria" class="ml-auto hidden lg:block">
+        <ul class="flex items-center gap-6 text-sm font-bold text-muted">
+          <li><a class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-xl-blue" href="#cara-kerja" data-i18n="navHow">Cara kerja</a></li>
+          <li><a class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-xl-blue" href="#paket" data-i18n="navPackages">Paket</a></li>
+          <li><a class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-xl-blue" href="#model" data-i18n="navModels">Model AI</a></li>
+          <li><a class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-xl-blue" href="#faq" data-i18n="navFaq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class="ml-auto flex items-center gap-2 lg:ml-8">
+        <div role="group" aria-label="Pilih bahasa" data-i18n-aria="langAria"
+             class="hidden items-center overflow-hidden rounded-control border border-line bg-white lg:flex">
+          <button type="button" data-lang="id" aria-pressed="true"
+                  class="min-h-11 min-w-11 px-3 text-xs font-extrabold text-muted aria-pressed:bg-xl-blue aria-pressed:text-white">ID</button>
+          <button type="button" data-lang="en" aria-pressed="false"
+                  class="min-h-11 min-w-11 px-3 text-xs font-extrabold text-muted aria-pressed:bg-xl-blue aria-pressed:text-white">EN</button>
+        </div>
+
+        <button type="button" class="btn btn-primary hidden sm:inline-flex" data-open-checkout data-i18n="navCta">Isi saldo</button>
+
+        <button type="button" id="menu-button"
+                class="inline-flex size-11 items-center justify-center rounded-control border border-line bg-white text-ink lg:hidden"
+                aria-expanded="false" aria-controls="mobile-menu" aria-label="Buka menu">
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true">
+            <path class="menu-icon-open" d="M4 7h16M4 12h16M4 17h16"/>
+            <path class="menu-icon-close hidden" d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu: base layout; hidden from lg -->
+    <div id="mobile-menu" hidden class="border-t border-line bg-white lg:hidden">
+      <nav aria-label="Navigasi mobile" data-i18n-aria="navMobileAria" class="shell py-3">
+        <ul class="divide-y divide-line/70 text-base font-bold">
+          <li><a class="flex min-h-12 items-center" href="#cara-kerja" data-i18n="navHow">Cara kerja</a></li>
+          <li><a class="flex min-h-12 items-center" href="#paket" data-i18n="navPackages">Paket</a></li>
+          <li><a class="flex min-h-12 items-center" href="#model" data-i18n="navModels">Model AI</a></li>
+          <li><a class="flex min-h-12 items-center" href="#faq" data-i18n="navFaq">FAQ</a></li>
+        </ul>
+
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+          <span class="text-sm font-bold text-muted" data-i18n="langLabel">Bahasa</span>
+          <div role="group" aria-label="Pilih bahasa" data-i18n-aria="langAria"
+               class="flex items-center overflow-hidden rounded-control border border-line bg-paper">
+            <button type="button" data-lang="id" aria-pressed="true"
+                    class="min-h-11 min-w-11 px-3 text-xs font-extrabold text-muted aria-pressed:bg-xl-blue aria-pressed:text-white">ID</button>
+            <button type="button" data-lang="en" aria-pressed="false"
+                    class="min-h-11 min-w-11 px-3 text-xs font-extrabold text-muted aria-pressed:bg-xl-blue aria-pressed:text-white">EN</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary mt-4 w-full sm:hidden" data-open-checkout data-i18n="navCta">Isi saldo</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ============ -->
+  <main id="main-content" tabindex="-1" class="flex-1 outline-none">
+    <!-- Sections are added one at a time following docs/v3-ground-rules.md → Urutan Build v3 -->
+    <section aria-labelledby="wip-title" class="shell py-16 sm:py-24">
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-xl-blue">v3 · shell</p>
+      <h1 id="wip-title" class="mt-3 max-w-[20ch] text-[clamp(2rem,8vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight text-xl-dark">
+        Section sedang dibangun satu per satu.
+      </h1>
+      <p class="mt-4 max-w-prose text-base text-muted">
+        Placeholder ini akan diganti oleh hero pada langkah berikutnya.
+      </p>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bg-xl-dark text-white">
+    <div class="shell grid gap-10 py-12 sm:py-16 lg:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+        <a href="#top" class="inline-flex min-h-11 items-center gap-2 text-lg font-extrabold tracking-tight"
+           aria-label="TokenNyala — kembali ke atas" data-i18n-aria="brandAria">
+          <img src="assets/tokennyala-mark.svg" alt="" width="32" height="32" class="size-8 rounded-lg">
+          <span>Token<span class="text-xl-sky">Nyala</span></span>
+        </a>
+        <p class="mt-4 max-w-xs text-sm leading-relaxed text-white/75" data-i18n="footerTagline">
+          Saldo AI untuk ide yang siap menjadi proyek.
+        </p>
+      </div>
+
+      <nav aria-labelledby="footer-explore">
+        <h2 id="footer-explore" class="text-xs font-extrabold uppercase tracking-[0.12em] text-white/60" data-i18n="footerExplore">Jelajahi</h2>
+        <ul class="mt-3 grid grid-cols-2 gap-x-6 text-sm font-semibold lg:grid-cols-1">
+          <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#cara-kerja" data-i18n="navHow">Cara kerja</a></li>
+          <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#paket" data-i18n="navPackages">Paket</a></li>
+          <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#model" data-i18n="navModels">Model AI</a></li>
+          <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#faq" data-i18n="navFaq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-legal">
+        <h2 id="footer-legal" class="text-xs font-extrabold uppercase tracking-[0.12em] text-white/60" data-i18n="footerLegal">Bantuan & legal</h2>
+        <ul class="mt-3 grid grid-cols-2 gap-x-6 text-sm font-semibold lg:grid-cols-1">
+          <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#" data-mock-link data-i18n="footerTerms">Syarat & Ketentuan</a></li>
+          <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#" data-mock-link data-i18n="footerPrivacy">Kebijakan Privasi</a></li>
+          <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#" data-mock-link data-i18n="footerContact">Hubungi kami</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="border-t border-white/10">
+      <div class="shell flex flex-col gap-1 py-5 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
+        <p>© 2026 TokenNyala</p>
+        <p data-i18n="footerPrototype">Konsep interaktif — tidak ada transaksi nyata. Tautan legal adalah contoh.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

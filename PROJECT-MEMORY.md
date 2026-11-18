@@ -4,8 +4,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 ## Status Saat Ini (per 18 Nov 2026)
 
-- **Fase:** Langkah 1 v3 selesai — dokumen dirapikan dan fitur P1+P2 (G1–G8) sudah dispesifikasikan. Belum ada kode v3.
-- **Berikutnya:** langkah 2 — scaffold `v3/` (shell: head, `@theme`, header, footer), lalu ikuti *Urutan Build v3* di `docs/v3-ground-rules.md`.
+- **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
+- **Fase:** Langkah 2 selesai — shell `v3/` (head, token `@theme`, header + menu mobile, language switch ID/EN dengan `localStorage`, footer) lolos QA di 6 viewport.
+- **Berikutnya:** section 2 — Hero. Progres build dicentang di `v3/README.md`.
+- **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
 ## Peta Dokumen
@@ -40,6 +42,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Model ditampilkan dengan level biaya + “≈ N sesi / Rp10.000”, detail Kredit/1M di `<details>` | Diferensiasi: OCTA/TokenKu hanya memakai satuan teknis |
 | 18 Nov 2026 | Logo provider tidak dipakai — monogram huruf awal | Hindari masalah merek di prototype |
 | 18 Nov 2026 | Form konsultasi tim 5 field, tanpa captcha, janji balas 1 hari kerja | Lebih ringan dari OCTA Enterprise (7 field + captcha, 3 hari kerja) |
+| 18 Nov 2026 | Tailwind di-pin `@tailwindcss/browser@4.3.3` (rilis Juli 2026) | Versi stabil; 4.3.4/4.3.5 terlalu baru |
+| 18 Nov 2026 | Komponen `@layer components` hanya: `.shell`, `.btn`, `.btn-primary`, `.btn-secondary`. Markup memakai `btn btn-primary` (bukan `@apply` berantai) | Tailwind v4 tidak bisa `@apply` class custom dari `@layer components` |
+| 18 Nov 2026 | CTA header tampil mulai `sm:`; di bawah 640px CTA ada di menu mobile; language switch di header mulai `lg:` | Di 320px logo + CTA + tombol menu tidak muat dengan gutter 16px |
+| 18 Nov 2026 | Kerja di branch `v3-mobile-first` | Aturan: jangan commit langsung ke `main` |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -54,6 +60,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **QA responsif per section, bukan di akhir.** Lima commit terakhir v2 semuanya perbaikan responsif yang menumpuk.
 - **Rapikan kontradiksi dokumen sebelum coding.** Dokumen yang bertentangan menghasilkan implementasi yang tidak konsisten.
 - **Akses web:** `octa.telkomsel.com` menolak fetch otomatis (403) dan `api.tokenku.ai/pricing` dirender JavaScript. Minta screenshot ke user; jangan mencoba mengakali blokir.
+- **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -67,3 +74,5 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - PO memutuskan: P1+P2, saldo tidak kedaluwarsa, live chat mock, dan mengirim 4 screenshot (OCTA landing + katalog, OCTA Enterprise form + chat Ted, TokenKu landing, TokenKu Model Square).
 - Memperbarui `research/reference-gap-analysis.md` (temuan screenshot, koreksi klaim tarif OCTA, tabel ambil/hindari, keputusan PO).
 - Menspesifikasikan G1–G8: `information-architecture.md` (12 section + 4 overlay), `technical-spec.md` (aturan saldo, definisi sesi kecil, katalog 12 model mock, spesifikasi kartu model, katalog, API key, dashboard, form tim, live chat), `microcopy-and-states.md` (copy ID/EN semua fitur baru + 6 FAQ baru), `wireframe-notes.md` (wireframe mobile fitur baru), urutan build di `v3-ground-rules.md`.
+- Commit dokumen (`e715849`) di branch baru `v3-mobile-first`.
+- Langkah 2: membuat shell `v3/` + `tools/qa_v3.py` (QA Playwright 6 viewport). QA awal menemukan touch target < 44px (logo, nav, ID/EN) → diperbaiki → semua viewport lolos.
