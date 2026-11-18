@@ -105,7 +105,7 @@ Prioritas: **P1** = perlu masuk v3, **P2** = sebaiknya masuk, **P3** = opsional 
 
 ### G1 — Section “Model yang bisa kamu pakai” (P1)
 - Taruh **setelah** package picker, supaya alur tetap intent-first.
-- Tampilkan 4–6 keluarga model (Claude, GPT, Gemini, DeepSeek, Qwen) sebagai kartu ringkas: logo teks (bukan logo resmi), satu kalimat “cocok untuk …”, dan level biaya **Hemat / Seimbang / Premium**.
+- Tampilkan 4–6 keluarga model (Claude, GPT, Gemini, DeepSeek, Qwen) sebagai kartu ringkas: logo keluarga model (revisi: awalnya monogram teks, diganti logo atas permintaan PO), satu kalimat “cocok untuk …”, dan level biaya **Hemat / Seimbang / Premium**.
 - Data mock, dengan label “Contoh — daftar dan tarif dapat berubah”.
 - Dokumen terdampak: `information-architecture.md`, `technical-spec.md` (data model `models`), `microcopy-and-states.md`.
 

@@ -378,8 +378,8 @@ Anthropic · Coding · Analisis
     Konteks 1 jt token
 ```
 
-- Ikon = monogram **dua huruf** penyedia di lingkaran (An, Op, Go, Ds, Al — Anthropic dan Alibaba sama-sama berawalan A), **bukan logo resmi** penyedia.
-- Urutan: [monogram · nama · badge level] → baris penuh “penyedia · kegunaan” → estimasi angka besar `≈ 5` + keterangan kecil `sesi kecil / Rp10.000` → Detail tarif.
+- Ikon = **logo keluarga model** di lingkaran putih bergaris: Claude, OpenAI (GPT), Gemini, DeepSeek, Qwen — file lokal `v3/assets/models/*.svg` dari `@lobehub/icons-static-svg@1.101.0` (MIT), sumber dan catatan merek di `v3/assets/models/SOURCE.md`. Satu ikon per keluarga; `<img alt="">` karena nama model dan penyedia sudah tertulis di sebelahnya. *(Revisi 18 Nov 2026 atas permintaan user; sebelumnya monogram 2 huruf.)*
+- Urutan: [ikon · nama · badge level] → baris penuh “penyedia · kegunaan” → estimasi angka besar `≈ 5` + keterangan kecil `sesi kecil / Rp10.000` → Detail tarif.
 - Detail tarif: keterangan “Tarif per 1 jt token” di atas, nilai cukup `31.500 kredit` (satuan panjang di tiap baris patah di kartu sempit).
 - Badge level selalu berisi teks: Hemat (latar teal muda), Seimbang (sky muda), Premium (yellow muda). Warna bukan satu-satunya pembeda.
 - “Detail tarif” memakai `<details>`; tertutup secara default (pemula tidak melihat angka teknis kecuali membuka).

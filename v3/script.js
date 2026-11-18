@@ -581,12 +581,13 @@
     return { ...m, sessionCost, tier, per10k: Math.floor(10000 / sessionCost) };
   });
   const PREVIEW_MODELS = ['claude-sonnet', 'gpt', 'gemini-pro', 'deepseek-chat', 'qwen-plus', 'claude-opus'];
-  const PROVIDER_STYLE = {
-    Anthropic: ['An', 'bg-xl-yellow/30 text-xl-dark'],
-    OpenAI: ['Op', 'bg-ink/10 text-ink'],
-    Google: ['Go', 'bg-xl-sky/25 text-xl-dark'],
-    DeepSeek: ['Ds', 'bg-xl-blue/10 text-xl-blue'],
-    Alibaba: ['Al', 'bg-xl-teal/20 text-teal-ink']
+  // Model family icons (assets/models/SOURCE.md). One icon per family: Claude, GPT, Gemini, DeepSeek, Qwen.
+  const PROVIDER_ICON = {
+    Anthropic: 'assets/models/claude.svg',
+    OpenAI: 'assets/models/openai.svg',
+    Google: 'assets/models/gemini.svg',
+    DeepSeek: 'assets/models/deepseek.svg',
+    Alibaba: 'assets/models/qwen.svg'
   };
   const TIER_STYLE = {
     hemat: 'bg-xl-teal/15 text-teal-ink',
@@ -956,9 +957,7 @@
   function modelCard(m) {
     const node = modelTemplate.content.firstElementChild.cloneNode(true);
     const q = (sel) => node.querySelector(sel);
-    const [mono, monoClass] = PROVIDER_STYLE[m.provider];
-    q('[data-m-mono]').textContent = mono;
-    q('[data-m-mono]').className += ' ' + monoClass;
+    q('[data-m-icon]').src = PROVIDER_ICON[m.provider];
     q('[data-m-name]').textContent = m.name;
     q('[data-m-meta]').textContent = [m.provider, ...m.uses.map((u) => t(`use_${u}`))].join(' · ');
     q('[data-m-tier]').textContent = t(`tier_${m.tier}`);

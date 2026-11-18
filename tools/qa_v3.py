@@ -107,9 +107,10 @@ CHECK_JS = """
       if (spills.length > 6) break;
     }
   }
+  const broken = [...document.images].filter((i) => i.getAttribute('src') && i.complete && i.naturalWidth === 0).map((i) => i.getAttribute('src'));
   const header = document.querySelector('header');
   return {
-    overflow, offenders, small, escapes, spills,
+    overflow, offenders, small, escapes, spills, broken,
     headerPosition: header ? getComputedStyle(header).position : null,
   };
 }
@@ -211,6 +212,10 @@ def catalog_flow(page, out, name):
         problems.append(f"MODELS data differs from spec: per10k={got} tiers={tiers}")
 
     page.evaluate("() => document.querySelector('#model').scrollIntoView()")
+    page.wait_for_function("() => [...document.querySelectorAll('[data-model-preview] img')].every(i => i.complete && i.naturalWidth > 0)", timeout=5000)
+    icons = page.evaluate("() => [...document.querySelectorAll('[data-model-preview] img')].map(i => i.getAttribute('src').split('/').pop())")
+    if icons != ["claude.svg", "openai.svg", "gemini.svg", "deepseek.svg", "qwen.svg", "claude.svg"]:
+        problems.append(f"MODEL ICONS {icons}")
     btn = page.locator("[data-open-catalog]")
     btn.click()
     page.wait_for_timeout(300)
@@ -342,6 +347,8 @@ def main():
                 status.append(f"SMALL TARGETS: {r['small']}")
             if r["spills"]:
                 status.append(f"TEXT SPILLS: {r['spills']}")
+            if r["broken"]:
+                status.append(f"BROKEN IMAGES: {r['broken']}")
             if r["escapes"]:
                 status.append(f"ESCAPES SHELL: {r['escapes']}")
             if r["headerPosition"] != "sticky":

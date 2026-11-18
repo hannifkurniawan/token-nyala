@@ -41,7 +41,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Bantuan = **live chat mock “Nala”** (skrip lokal) + serah ke agen mock “Sari”, jam layanan & state offline | Keputusan PO; belajar dari OCTA “Ted” (tanpa jalur manusia) dan TokenKu (semua ke WhatsApp) |
 | 18 Nov 2026 | “Sesi kecil” = ±40 rb token input + ±4 rb output; estimasi paket memakai tarif level Seimbang (±Rp1.890/sesi) | Satu definisi agar semua angka estimasi konsisten dan bisa dihitung di JS |
 | 18 Nov 2026 | Model ditampilkan dengan level biaya + “≈ N sesi / Rp10.000”, detail Kredit/1M di `<details>` | Diferensiasi: OCTA/TokenKu hanya memakai satuan teknis |
-| 18 Nov 2026 | Logo provider tidak dipakai — monogram huruf awal | Hindari masalah merek di prototype |
+| 18 Nov 2026 | ~~Logo provider tidak dipakai — monogram~~ → **diganti logo keluarga model** (Claude, OpenAI, Gemini, DeepSeek, Qwen) dari `@lobehub/icons-static-svg@1.101.0` (MIT), disimpan lokal + `SOURCE.md` | Permintaan user (“jangan gunakan anagram”). Logo hanya untuk menunjukkan model yang didukung; merek milik pemiliknya |
 | 18 Nov 2026 | Form konsultasi tim 5 field, tanpa captcha, janji balas 1 hari kerja | Lebih ringan dari OCTA Enterprise (7 field + captcha, 3 hari kerja) |
 | 18 Nov 2026 | Tailwind di-pin `@tailwindcss/browser@4.3.3` (rilis Juli 2026) | Versi stabil; 4.3.4/4.3.5 terlalu baru |
 | 18 Nov 2026 | Komponen `@layer components` hanya: `.shell`, `.btn`, `.btn-primary`, `.btn-secondary`. Markup memakai `btn btn-primary` (bukan `@apply` berantai) | Tailwind v4 tidak bisa `@apply` class custom dari `@layer components` |
@@ -63,7 +63,6 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Pilihan paket di dalam checkout; harga singkat `Rp100rb`/`Rp100K` di bawah 640px | CTA umum dibuka tanpa paket; harga lengkap tidak muat di 3 kolom 320px |
 | 18 Nov 2026 | Kartu model & katalog dirender dari satu array `models` di JS; `per10k` dan level dihitung dari `SMALL_SESSION` | Satu sumber data; QA membandingkan hasil hitung dengan tabel spec |
 | 18 Nov 2026 | Filter katalog di mobile di balik tombol `Filter (n)` | 3 baris filter memakan >50% tinggi layar 640px |
-| 18 Nov 2026 | Monogram penyedia 2 huruf (An/Op/Go/Ds/Al) | Anthropic & Alibaba sama-sama “A” |
 | 18 Nov 2026 | Contoh penggunaan: landing page event = 11–18 sesi ≈ Rp21–34 rb → paket Mulai cukup, CTA langsung ke checkout Mulai | Menerjemahkan “sesi kecil” ke uang dan paket nyata |
 | 18 Nov 2026 | Grafik dashboard mengikuti skill dataviz (1 seri tanpa legenda, label di puncak saja, daftar sr-only) | Grafik kecil tetap terbaca & aksesibel |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
@@ -119,3 +118,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Fix dari feedback user: klik kartu paket memilih (garis biru pindah ke kartu itu, hero menyala) tanpa membuka checkout; tombol kartu tetap memilih + checkout. QA ditambah uji klik badan kartu.
 - Section Manfaat + Contoh: 3 kartu + kartu “Pantau & kendalikan” dengan mock dashboard (saldo, grafik 7 hari, switch pengingat, toggle API key) dan section contoh landing page event. Visual: batang terlalu lebar di 768px → maks 28px; label puncak menabrak judul grafik, baris key terpotong, ikon kartu 4 menghimpit judul di 320px → diperbaiki. QA ditambah uji switch & toggle key.
 - Section Tim & bisnis: strip gelap dengan 4 poin + CTA; dialog konsultasi (helper `setupModal`), validasi 5 aturan, counter 500 dengan pengumuman ≥450, sukses + reset. Visual: pesan kontak salah konteks dan placeholder terpotong → pesan khusus + kontak lebar penuh; urutan validasi disamakan dengan urutan tampil. QA ditambah alur konsultasi penuh.
+- Atas permintaan user: monogram di kartu model diganti logo keluarga model (SVG lokal dari lobehub, diperiksa: tanpa script/referensi eksternal). QA ditambah cek gambar rusak di seluruh halaman + cek ikon kartu model termuat.
