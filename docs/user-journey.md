@@ -17,8 +17,8 @@ remain unclear]
     G --> H[Abandoned checkout or
 low confidence]
 
-    style E fill:#FDE9E2,stroke:#FF6B35
-    style H fill:#FDE9E2,stroke:#FF6B35
+    style E fill:#F5C1C1,stroke:#002DBB
+    style H fill:#F5C1C1,stroke:#002DBB
 ```
 
 ## Diagram 2 — Ideal Journey
@@ -67,12 +67,12 @@ activation status]
     O --> P[Receive usage or balance
 reminder]
 
-    style B fill:#FFD85A,stroke:#17181A
-    style D fill:#C8DFFF,stroke:#17181A
-    style H fill:#A8E6CF,stroke:#16794C
-    style N fill:#A8E6CF,stroke:#16794C
-    style X1 fill:#F7F7F2,stroke:#74777D
-    style E fill:#FFF3D6,stroke:#FF6B35
+    style B fill:#FFC93C,stroke:#00166A
+    style D fill:#5CD0F9,stroke:#00166A
+    style H fill:#00D2A0,stroke:#00166A
+    style N fill:#00D2A0,stroke:#00166A
+    style X1 fill:#F7F8FC,stroke:#69728A
+    style E fill:#5CD0F9,stroke:#002DBB
 ```
 
 ## Persona-Specific Journey Path
@@ -100,11 +100,11 @@ invoice, and visibility]
 
     CHECKOUT --> SUCCESS[Balance ready]
 
-    style AYU fill:#C8DFFF,stroke:#17181A
-    style RAKA fill:#FFD85A,stroke:#17181A
-    style DIMAS fill:#A8E6CF,stroke:#16794C
-    style CHECKOUT fill:#F7F7F2,stroke:#74777D
-    style SUCCESS fill:#A8E6CF,stroke:#16794C
+    style AYU fill:#5CD0F9,stroke:#00166A
+    style RAKA fill:#FFC93C,stroke:#00166A
+    style DIMAS fill:#00D2A0,stroke:#00166A
+    style CHECKOUT fill:#F7F8FC,stroke:#69728A
+    style SUCCESS fill:#00D2A0,stroke:#00166A
 ```
 
 # Current and Ideal User Journeys

@@ -13,18 +13,26 @@ TokenNyala combines marketplace clarity with one memorable visual motif: a digit
 - Indonesian
 - Practical
 
-## Palette
+## Palette — XL Ecosystem
 
-- Ink: `#17181A`
-- Paper: `#F7F7F2`
+- XL Blue: `#002DBB` — warna utama XL, CTA, header, dan brand mark
+- XL Dark: `#00166A` — teks gelap, footer, dan state premium
+- XL Yellow: `#FFC93C` — highlight, badge, dan energi
+- XL Teal: `#00D2A0` — success, active state, dan saldo siap
+- XL Sky: `#5CD0F9` — guidance, estimate, dan visual pendukung
+- Paper: `#F7F8FC` — background hangat dengan bias biru-putih
 - White: `#FFFFFF`
-- Signal Orange: `#FF6B35`
-- Warm Yellow: `#FFD85A`
-- Mint: `#A8E6CF`
-- Sky: `#C8DFFF`
-- Muted Gray: `#74777D`
-- Border: `#DFE1DC`
-- Success: `#16794C`
+- Ink: `#17181A` — teks sekunder
+- Muted Gray: `#69728A`
+- Border: `#D9DEEA`
+
+## Cara Penggunaan Warna
+
+- Gunakan XL Blue sebagai warna aksen terbesar dan CTA utama.
+- Gunakan XL Yellow hanya untuk 10–15% area agar tetap premium.
+- Gunakan XL Teal untuk success dan status aktif.
+- Gunakan XL Sky untuk informasi, perkiraan, dan elemen pendukung.
+- Hindari orange dan mint generik agar identitas tidak terasa keluar dari ekosistem XL.
 
 ## Typography
 
