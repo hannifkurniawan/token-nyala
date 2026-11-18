@@ -7,6 +7,7 @@ Usage:
 Serves v3/ on a local port, opens each required viewport in headless Chromium, and checks:
   - no horizontal overflow (scrollWidth <= innerWidth)
   - no content escaping its .shell gutter (even when clipped by overflow-x-clip)
+  - no text spilling out of its own box (scrollWidth > clientWidth)
   - visible buttons/links/inputs have a tap target >= 44x44 px (inline text links in paragraphs are exempt)
   - no console errors / page errors
   - Tailwind actually applied (header is sticky)
@@ -95,9 +96,20 @@ CHECK_JS = """
       }
     }
   }
+  // Text spilling out of its own box (box fits, glyphs don't) — e.g. a big price in a narrow card
+  const spills = [];
+  for (const el of document.body.querySelectorAll('h1, h2, h3, h4, p, span, a, button, li, dt, dd, strong')) {
+    if (el.closest('[aria-hidden="true"], .sr-only, [hidden]') || el.matches('[data-decor-overflow]')) continue;
+    const s = getComputedStyle(el);
+    if (s.display === 'none' || s.display === 'inline' || s.overflowX !== 'visible' || s.textOverflow === 'ellipsis') continue;
+    if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) {
+      spills.push(`${el.tagName.toLowerCase()} "${el.textContent.trim().slice(0, 24)}" ${el.scrollWidth}>${el.clientWidth}`);
+      if (spills.length > 6) break;
+    }
+  }
   const header = document.querySelector('header');
   return {
-    overflow, offenders, small, escapes,
+    overflow, offenders, small, escapes, spills,
     headerPosition: header ? getComputedStyle(header).position : null,
   };
 }
@@ -146,6 +158,8 @@ def main():
                 status.append(f"OVERFLOW {r['overflow']}px: {r['offenders']}")
             if r["small"]:
                 status.append(f"SMALL TARGETS: {r['small']}")
+            if r["spills"]:
+                status.append(f"TEXT SPILLS: {r['spills']}")
             if r["escapes"]:
                 status.append(f"ESCAPES SHELL: {r['escapes']}")
             if r["headerPosition"] != "sticky":
@@ -177,6 +191,26 @@ def main():
                 focused = page.evaluate("() => document.activeElement?.id")
                 if not (opened and expanded == "true" and closed and focused == "menu-button"):
                     status.append(f"MENU BEHAVIOUR opened={opened} expanded={expanded} closedOnEsc={closed} focus={focused}")
+
+            if args.interactive and name in ("375", "1440") and page.locator('[role="tab"][data-intent]').count():
+                page.locator('[role="tab"][data-intent]').first.focus()
+                page.keyboard.press("ArrowRight")
+                page.keyboard.press("ArrowRight")
+                checks = page.evaluate("""() => ({
+                  tab: document.querySelector('[role=tab][aria-selected=true]')?.dataset.intent,
+                  focused: document.activeElement?.dataset.intent,
+                  reco: document.querySelector('[data-package][data-recommended=true]')?.dataset.package,
+                  recoCount: document.querySelectorAll('[data-package][data-recommended=true]').length,
+                })""")
+                page.locator("[data-choose-recommended]").click()
+                checks.update(page.evaluate("""() => ({
+                  selected: document.querySelector('[data-package][data-selected=true]')?.dataset.package,
+                  hero: document.querySelector('[data-hero-balance]')?.dataset.state,
+                })"""))
+                page.locator("#paket").screenshot(path=str(out / f"{name}-paket.png"))
+                expected = {"tab": "work", "focused": "work", "reco": "work", "recoCount": 1, "selected": "work", "hero": "on"}
+                if checks != expected:
+                    status.append(f"PACKAGES {checks} != {expected}")
 
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()

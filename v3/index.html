@@ -266,7 +266,7 @@
         </div>
 
         <ol class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3" aria-label="Tiga langkah" data-i18n-aria="howStepsAria">
-          <li class="relative flex flex-col rounded-card border border-line bg-white p-5 sm:p-6 md:grid md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-x-8 lg:flex after:absolute after:left-[2.375rem] after:top-full after:h-4 after:w-0.5 after:bg-line lg:after:left-full lg:after:top-[2.375rem] lg:after:h-0.5 lg:after:w-4">
+          <li data-decor-overflow class="relative flex flex-col rounded-card border border-line bg-white p-5 sm:p-6 md:grid md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-x-8 lg:flex after:absolute after:left-[2.375rem] after:top-full after:h-4 after:w-0.5 after:bg-line lg:after:left-full lg:after:top-[2.375rem] lg:after:h-0.5 lg:after:w-4">
             <div class="flex items-center gap-3">
               <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm font-semibold bg-xl-blue/10 text-xl-blue">01</span>
               <h3 class="text-lg font-extrabold leading-snug text-xl-dark" data-i18n="step1Title">Pilih tujuanmu</h3>
@@ -280,7 +280,7 @@
               </ul>
             </div>
           </li>
-          <li class="relative flex flex-col rounded-card border border-line bg-white p-5 sm:p-6 md:grid md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-x-8 lg:flex after:absolute after:left-[2.375rem] after:top-full after:h-4 after:w-0.5 after:bg-line lg:after:left-full lg:after:top-[2.375rem] lg:after:h-0.5 lg:after:w-4">
+          <li data-decor-overflow class="relative flex flex-col rounded-card border border-line bg-white p-5 sm:p-6 md:grid md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-x-8 lg:flex after:absolute after:left-[2.375rem] after:top-full after:h-4 after:w-0.5 after:bg-line lg:after:left-full lg:after:top-[2.375rem] lg:after:h-0.5 lg:after:w-4">
             <div class="flex items-center gap-3">
               <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm font-semibold bg-xl-blue/10 text-xl-blue">02</span>
               <h3 class="text-lg font-extrabold leading-snug text-xl-dark" data-i18n="step2Title">Bayar dengan mudah</h3>
@@ -309,6 +309,196 @@
             </div>
           </li>
         </ol>
+      </div>
+    </section>
+
+    <!-- ============ 4. PAKET ============ -->
+    <section id="paket" aria-labelledby="pkg-title">
+      <div class="shell py-16 sm:py-20 lg:py-24">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div class="max-w-2xl">
+            <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-xl-blue" data-i18n="pkgKicker">Paket</p>
+            <h2 id="pkg-title" class="mt-3 text-[clamp(1.75rem,6vw,2.75rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-xl-dark" data-i18n="pkgTitle">Berapa yang ingin kamu nyalakan?</h2>
+            <p class="mt-4 text-base leading-relaxed text-muted sm:text-lg" data-i18n="pkgLead">Pilih tujuanmu, kami tunjukkan paket yang paling pas. Semua paket bisa dipakai untuk semua model AI.</p>
+          </div>
+
+          <div role="tablist" aria-label="Pilih tujuan" data-i18n-aria="intentTabsAria"
+               class="flex w-full gap-1 rounded-control border border-line bg-white p-1 sm:w-auto sm:self-start lg:self-end">
+            <button type="button" role="tab" id="tab-learn" aria-controls="paket-panel" aria-selected="true" tabindex="0"
+                    class="min-h-11 flex-1 rounded-lg px-4 text-sm font-extrabold text-muted transition-colors hover:text-xl-dark aria-selected:bg-ink aria-selected:text-white sm:flex-none"
+                    data-intent="learn" data-i18n="intentLearn">Belajar</button>
+            <button type="button" role="tab" id="tab-prototype" aria-controls="paket-panel" aria-selected="false" tabindex="-1"
+                    class="min-h-11 flex-1 rounded-lg px-4 text-sm font-extrabold text-muted transition-colors hover:text-xl-dark aria-selected:bg-ink aria-selected:text-white sm:flex-none"
+                    data-intent="prototype" data-i18n="intentPrototype">Prototype</button>
+            <button type="button" role="tab" id="tab-work" aria-controls="paket-panel" aria-selected="false" tabindex="-1"
+                    class="min-h-11 flex-1 rounded-lg px-4 text-sm font-extrabold text-muted transition-colors hover:text-xl-dark aria-selected:bg-ink aria-selected:text-white sm:flex-none"
+                    data-intent="work" data-i18n="intentWork">Kerja</button>
+          </div>
+        </div>
+
+        <div id="paket-panel" role="tabpanel" aria-labelledby="tab-learn" class="mt-8">
+          <!-- Recommendation bar: lets mobile users act without scrolling to the recommended card -->
+          <div class="flex flex-col gap-3 rounded-card bg-xl-dark p-4 text-white sm:flex-row sm:items-center sm:justify-between sm:p-5" aria-live="polite">
+            <p class="flex items-start gap-3">
+              <span aria-hidden="true" class="grid size-8 shrink-0 place-items-center rounded-lg bg-xl-yellow text-sm text-xl-dark">✦</span>
+              <span>
+                <span class="block text-sm font-extrabold" data-reco-title>Paling pas untuk belajar: Mulai · Rp50.000</span>
+                <span class="block text-sm text-white/75" data-reco-body>Titik awal yang ringan untuk belajar dan proyek pertama.</span>
+              </span>
+            </p>
+            <button type="button" class="btn shrink-0 bg-xl-yellow text-xl-dark hover:bg-white" data-choose-recommended>
+              <span data-reco-cta>Pilih Rp50.000</span>
+            </button>
+          </div>
+
+          <ul class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3" aria-label="Pilihan paket" data-i18n-aria="pkgListAria">
+            <li>
+              <article class="group/card relative flex h-full flex-col rounded-card border-2 border-line bg-white p-5 transition-[transform,border-color,box-shadow] duration-200 motion-safe:hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,22,106,.10)] sm:p-6
+                              md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-x-8 lg:flex
+                              data-[recommended=true]:border-xl-blue data-[selected=true]:border-xl-teal! data-[selected=true]:ring-4 data-[selected=true]:ring-xl-teal/20"
+                       data-package="learn" data-recommended="true" data-selected="false" aria-labelledby="pkg-learn-name">
+                <!-- Identity + price -->
+                <div>
+                  <!-- Badge row: collapses when empty on small screens, reserved on lg so prices line up -->
+                  <div class="hidden min-h-7 flex-wrap items-center gap-2 group-data-[recommended=true]/card:flex group-data-[selected=true]/card:flex lg:flex">
+                    <span class="hidden items-center gap-1 rounded-full bg-xl-yellow px-2.5 py-1 text-xs font-extrabold text-xl-dark group-data-[recommended=true]/card:inline-flex">
+                      <span aria-hidden="true">★</span><span data-i18n="badgeRecommended">Paling pas</span>
+                    </span>
+                    <span class="hidden items-center gap-1 rounded-full bg-xl-teal/15 px-2.5 py-1 text-xs font-extrabold text-teal-ink group-data-[selected=true]/card:inline-flex">
+                      <span aria-hidden="true">✓</span><span data-i18n="badgeSelected">Dipilih</span>
+                    </span>
+                  </div>
+
+                  <h3 id="pkg-learn-name" class="text-sm font-extrabold uppercase tracking-[0.1em] text-xl-blue group-data-[recommended=true]/card:mt-3 group-data-[selected=true]/card:mt-3 lg:mt-3">Mulai</h3>
+                  <p class="mt-1 text-sm font-semibold text-muted" data-i18n="pkgFor_learn">Belajar dan mencoba pertama kali</p>
+
+                  <p class="mt-4 text-[clamp(2.25rem,3.4vw+1rem,2.75rem)] font-extrabold leading-none tracking-[-0.04em] text-xl-dark lg:text-[clamp(2rem,2.6vw,2.75rem)]" data-price="50000">Rp50.000</p>
+                  <p class="mt-3 flex flex-col items-start gap-1 text-sm">
+                    <span class="rounded-full bg-xl-yellow/25 px-2.5 py-0.5 font-bold text-xl-dark">+ <span data-i18n="pkgBonus">Bonus</span> <span data-price="5000">Rp5.000</span></span>
+                    <span class="font-semibold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="55000">55.000</span> <span data-i18n="pkgCredits">kredit</span></span>
+                  </p>
+                </div>
+
+                <!-- Fit + action -->
+                <div class="mt-5 flex flex-1 flex-col md:mt-0 lg:mt-5">
+                  <div class="rounded-control bg-paper px-4 py-3">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="estimateLabel">Estimasi</p>
+                    <p class="mt-0.5 font-mono text-base font-semibold text-xl-dark" data-i18n="pkgSessions_learn">20–30 sesi kecil</p>
+                  </div>
+                  <p class="mt-4 text-sm leading-relaxed text-muted" data-i18n="pkgHelper_learn">Cocok untuk memahami alur atau menyelesaikan satu mini-task.</p>
+
+                  <div class="mt-auto pt-6">
+                    <button type="button" class="btn w-full border border-line bg-white text-xl-dark hover:border-xl-blue
+                                                 group-data-[recommended=true]/card:border-transparent group-data-[recommended=true]/card:bg-xl-blue group-data-[recommended=true]/card:text-white group-data-[recommended=true]/card:hover:bg-xl-blue-hover"
+                            data-choose-package="learn">
+                      <span data-pkg-cta="learn">Pilih Rp50.000</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="group/card relative flex h-full flex-col rounded-card border-2 border-line bg-white p-5 transition-[transform,border-color,box-shadow] duration-200 motion-safe:hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,22,106,.10)] sm:p-6
+                              md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-x-8 lg:flex
+                              data-[recommended=true]:border-xl-blue data-[selected=true]:border-xl-teal! data-[selected=true]:ring-4 data-[selected=true]:ring-xl-teal/20"
+                       data-package="prototype" data-recommended="false" data-selected="false" aria-labelledby="pkg-prototype-name">
+                <!-- Identity + price -->
+                <div>
+                  <!-- Badge row: collapses when empty on small screens, reserved on lg so prices line up -->
+                  <div class="hidden min-h-7 flex-wrap items-center gap-2 group-data-[recommended=true]/card:flex group-data-[selected=true]/card:flex lg:flex">
+                    <span class="hidden items-center gap-1 rounded-full bg-xl-yellow px-2.5 py-1 text-xs font-extrabold text-xl-dark group-data-[recommended=true]/card:inline-flex">
+                      <span aria-hidden="true">★</span><span data-i18n="badgeRecommended">Paling pas</span>
+                    </span>
+                    <span class="hidden items-center gap-1 rounded-full bg-xl-teal/15 px-2.5 py-1 text-xs font-extrabold text-teal-ink group-data-[selected=true]/card:inline-flex">
+                      <span aria-hidden="true">✓</span><span data-i18n="badgeSelected">Dipilih</span>
+                    </span>
+                  </div>
+
+                  <h3 id="pkg-prototype-name" class="text-sm font-extrabold uppercase tracking-[0.1em] text-xl-blue group-data-[recommended=true]/card:mt-3 group-data-[selected=true]/card:mt-3 lg:mt-3">Bangun</h3>
+                  <p class="mt-1 text-sm font-semibold text-muted" data-i18n="pkgFor_prototype">Membuat satu prototype aktif</p>
+
+                  <p class="mt-4 text-[clamp(2.25rem,3.4vw+1rem,2.75rem)] font-extrabold leading-none tracking-[-0.04em] text-xl-dark lg:text-[clamp(2rem,2.6vw,2.75rem)]" data-price="100000">Rp100.000</p>
+                  <p class="mt-3 flex flex-col items-start gap-1 text-sm">
+                    <span class="rounded-full bg-xl-yellow/25 px-2.5 py-0.5 font-bold text-xl-dark">+ <span data-i18n="pkgBonus">Bonus</span> <span data-price="15000">Rp15.000</span></span>
+                    <span class="font-semibold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="115000">115.000</span> <span data-i18n="pkgCredits">kredit</span></span>
+                  </p>
+                </div>
+
+                <!-- Fit + action -->
+                <div class="mt-5 flex flex-1 flex-col md:mt-0 lg:mt-5">
+                  <div class="rounded-control bg-paper px-4 py-3">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="estimateLabel">Estimasi</p>
+                    <p class="mt-0.5 font-mono text-base font-semibold text-xl-dark" data-i18n="pkgSessions_prototype">40–60 sesi kecil</p>
+                  </div>
+                  <p class="mt-4 text-sm leading-relaxed text-muted" data-i18n="pkgHelper_prototype">Cocok untuk iterasi tampilan, prompt, dan perbaikan singkat.</p>
+
+                  <div class="mt-auto pt-6">
+                    <button type="button" class="btn w-full border border-line bg-white text-xl-dark hover:border-xl-blue
+                                                 group-data-[recommended=true]/card:border-transparent group-data-[recommended=true]/card:bg-xl-blue group-data-[recommended=true]/card:text-white group-data-[recommended=true]/card:hover:bg-xl-blue-hover"
+                            data-choose-package="prototype">
+                      <span data-pkg-cta="prototype">Pilih Rp100.000</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="group/card relative flex h-full flex-col rounded-card border-2 border-line bg-white p-5 transition-[transform,border-color,box-shadow] duration-200 motion-safe:hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,22,106,.10)] sm:p-6
+                              md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-x-8 lg:flex
+                              data-[recommended=true]:border-xl-blue data-[selected=true]:border-xl-teal! data-[selected=true]:ring-4 data-[selected=true]:ring-xl-teal/20"
+                       data-package="work" data-recommended="false" data-selected="false" aria-labelledby="pkg-work-name">
+                <!-- Identity + price -->
+                <div>
+                  <!-- Badge row: collapses when empty on small screens, reserved on lg so prices line up -->
+                  <div class="hidden min-h-7 flex-wrap items-center gap-2 group-data-[recommended=true]/card:flex group-data-[selected=true]/card:flex lg:flex">
+                    <span class="hidden items-center gap-1 rounded-full bg-xl-yellow px-2.5 py-1 text-xs font-extrabold text-xl-dark group-data-[recommended=true]/card:inline-flex">
+                      <span aria-hidden="true">★</span><span data-i18n="badgeRecommended">Paling pas</span>
+                    </span>
+                    <span class="hidden items-center gap-1 rounded-full bg-xl-teal/15 px-2.5 py-1 text-xs font-extrabold text-teal-ink group-data-[selected=true]/card:inline-flex">
+                      <span aria-hidden="true">✓</span><span data-i18n="badgeSelected">Dipilih</span>
+                    </span>
+                  </div>
+
+                  <h3 id="pkg-work-name" class="text-sm font-extrabold uppercase tracking-[0.1em] text-xl-blue group-data-[recommended=true]/card:mt-3 group-data-[selected=true]/card:mt-3 lg:mt-3">Scale</h3>
+                  <p class="mt-1 text-sm font-semibold text-muted" data-i18n="pkgFor_work">Freelancer atau proyek berkelanjutan</p>
+
+                  <p class="mt-4 text-[clamp(2.25rem,3.4vw+1rem,2.75rem)] font-extrabold leading-none tracking-[-0.04em] text-xl-dark lg:text-[clamp(2rem,2.6vw,2.75rem)]" data-price="250000">Rp250.000</p>
+                  <p class="mt-3 flex flex-col items-start gap-1 text-sm">
+                    <span class="rounded-full bg-xl-yellow/25 px-2.5 py-0.5 font-bold text-xl-dark">+ <span data-i18n="pkgBonus">Bonus</span> <span data-price="50000">Rp50.000</span></span>
+                    <span class="font-semibold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="300000">300.000</span> <span data-i18n="pkgCredits">kredit</span></span>
+                  </p>
+                </div>
+
+                <!-- Fit + action -->
+                <div class="mt-5 flex flex-1 flex-col md:mt-0 lg:mt-5">
+                  <div class="rounded-control bg-paper px-4 py-3">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="estimateLabel">Estimasi</p>
+                    <p class="mt-0.5 font-mono text-base font-semibold text-xl-dark" data-i18n="pkgSessions_work">100+ sesi kecil</p>
+                  </div>
+                  <p class="mt-4 text-sm leading-relaxed text-muted" data-i18n="pkgHelper_work">Cocok saat kamu mulai mengerjakan kebutuhan klien atau banyak iterasi.</p>
+
+                  <div class="mt-auto pt-6">
+                    <button type="button" class="btn w-full border border-line bg-white text-xl-dark hover:border-xl-blue
+                                                 group-data-[recommended=true]/card:border-transparent group-data-[recommended=true]/card:bg-xl-blue group-data-[recommended=true]/card:text-white group-data-[recommended=true]/card:hover:bg-xl-blue-hover"
+                            data-choose-package="work">
+                      <span data-pkg-cta="work">Pilih Rp250.000</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </li>
+          </ul>
+
+          <div class="mt-6 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <p class="font-bold text-xl-dark" data-i18n="creditRules">1 kredit = Rp1 · Sudah termasuk PPN · Tidak kedaluwarsa</p>
+            <a href="#model" class="inline-flex min-h-11 items-center gap-1 font-extrabold text-xl-blue underline-offset-4 hover:underline">
+              <span data-i18n="seeModels">Lihat model yang bisa dipakai</span><span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <p class="mt-1 text-xs leading-relaxed text-muted" data-i18n="estimateDisclaimer">Estimasi bergantung pada model, panjang prompt, tipe tugas, dan format output.</p>
+        </div>
+
+        <p class="sr-only" aria-live="polite" data-pkg-announce></p>
       </div>
     </section>
   </main>

@@ -72,6 +72,40 @@
       step3Chip2: 'Riwayat pembelian',
       step3Chip3: 'Kembali ke proyek',
 
+      pkgKicker: 'Paket',
+      pkgTitle: 'Berapa yang ingin kamu nyalakan?',
+      pkgLead: 'Pilih tujuanmu, kami tunjukkan paket yang paling pas. Semua paket bisa dipakai untuk semua model AI.',
+      intentTabsAria: 'Pilih tujuan',
+      pkgListAria: 'Pilihan paket',
+      recoTitle: 'Paling pas untuk {intent}: {name} · {price}',
+      recoIntent_learn: 'belajar',
+      recoIntent_prototype: 'prototype',
+      recoIntent_work: 'kerja',
+      reco_learn: 'Titik awal yang ringan untuk belajar dan proyek pertama.',
+      reco_prototype: 'Cukup untuk iterasi satu prototype aktif.',
+      reco_work: 'Untuk proyek berkelanjutan dan kebutuhan klien.',
+      pkgChoose: 'Pilih {price}',
+      pkgChosen: 'Paket {price} dipilih',
+      badgeRecommended: 'Paling pas',
+      badgeSelected: 'Dipilih',
+      pkgFor_learn: 'Belajar dan mencoba pertama kali',
+      pkgFor_prototype: 'Membuat satu prototype aktif',
+      pkgFor_work: 'Freelancer atau proyek berkelanjutan',
+      pkgHelper_learn: 'Cocok untuk memahami alur atau menyelesaikan satu mini-task.',
+      pkgHelper_prototype: 'Cocok untuk iterasi tampilan, prompt, dan perbaikan singkat.',
+      pkgHelper_work: 'Cocok saat kamu mulai mengerjakan kebutuhan klien atau banyak iterasi.',
+      pkgBonus: 'Bonus',
+      pkgTotal: 'Total saldo',
+      pkgCredits: 'kredit',
+      estimateLabel: 'Estimasi',
+      pkgSessions_learn: '20–30 sesi kecil',
+      pkgSessions_prototype: '40–60 sesi kecil',
+      pkgSessions_work: '100+ sesi kecil',
+      creditRules: '1 kredit = Rp1 · Sudah termasuk PPN · Tidak kedaluwarsa',
+      seeModels: 'Lihat model yang bisa dipakai',
+      estimateDisclaimer: 'Estimasi bergantung pada model, panjang prompt, tipe tugas, dan format output.',
+      pkgAnnounce: 'Paket {name} dipilih. Saldo {credit} kredit.',
+
       pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
       pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
       pkgEstimate_work: '100+ sesi kecil'
@@ -142,6 +176,40 @@
       step3Chip2: 'Purchase history',
       step3Chip3: 'Back to your project',
 
+      pkgKicker: 'Packages',
+      pkgTitle: 'How much do you want to switch on?',
+      pkgLead: "Pick your goal and we'll show the package that fits. Every package works with every AI model.",
+      intentTabsAria: 'Choose your goal',
+      pkgListAria: 'Package options',
+      recoTitle: 'Best fit for {intent}: {name} · {price}',
+      recoIntent_learn: 'learning',
+      recoIntent_prototype: 'prototyping',
+      recoIntent_work: 'work',
+      reco_learn: 'A light start for learning and your first project.',
+      reco_prototype: 'Enough to iterate on one active prototype.',
+      reco_work: 'For ongoing projects and client work.',
+      pkgChoose: 'Choose {price}',
+      pkgChosen: '{price} package selected',
+      badgeRecommended: 'Best fit',
+      badgeSelected: 'Selected',
+      pkgFor_learn: 'Learning and first tries',
+      pkgFor_prototype: 'Building one active prototype',
+      pkgFor_work: 'Freelancers and ongoing projects',
+      pkgHelper_learn: 'Good for understanding the flow or finishing one mini-task.',
+      pkgHelper_prototype: 'Good for iterating on UI, prompts, and quick fixes.',
+      pkgHelper_work: 'Good when you start client work or need many iterations.',
+      pkgBonus: 'Bonus',
+      pkgTotal: 'Total balance',
+      pkgCredits: 'credits',
+      estimateLabel: 'Estimate',
+      pkgSessions_learn: '20–30 small sessions',
+      pkgSessions_prototype: '40–60 small sessions',
+      pkgSessions_work: '100+ small sessions',
+      creditRules: '1 credit = Rp1 · Tax included · Never expires',
+      seeModels: 'See available models',
+      estimateDisclaimer: 'Estimates depend on the model, prompt length, task type, and output format.',
+      pkgAnnounce: '{name} package selected. Balance {credit} credits.',
+
       pkgEstimate_learn: 'about 20–30 small sessions',
       pkgEstimate_prototype: 'about 40–60 small sessions',
       pkgEstimate_work: '100+ small sessions'
@@ -156,7 +224,7 @@
   };
   const METER_MAX_CREDIT = 300000; // largest package incl. bonus → 100%
 
-  const state = { lang: 'id', menuOpen: false, selectedPackage: null };
+  const state = { lang: 'id', menuOpen: false, intent: 'learn', selectedPackage: null };
   const t = (key) => copy[state.lang][key] ?? copy.id[key] ?? key;
 
   /* ---------- Storage (wrapped: may be unavailable) ---------- */
@@ -182,12 +250,20 @@
     });
 
     syncMenuLabel();
+    renderPrices();
+    renderPackages();
     renderHeroBalance();
     storage.set(LANG_KEY, lang);
   }
 
   /* ---------- Formatting ---------- */
-  const rupiah = (n) => 'Rp' + new Intl.NumberFormat('id-ID').format(n);
+  const number = (n) => new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'id-ID').format(n);
+  const rupiah = (n) => 'Rp' + number(n);
+
+  function renderPrices() {
+    document.querySelectorAll('[data-price]').forEach((el) => { el.textContent = rupiah(Number(el.dataset.price)); });
+    document.querySelectorAll('[data-credit]').forEach((el) => { el.textContent = number(Number(el.dataset.credit)); });
+  }
   const fill = (template, values) => template.replace(/\{(\w+)\}/g, (_, k) => values[k] ?? '');
 
   /* ---------- Hero balance board ----------
@@ -208,14 +284,72 @@
       : t('boardEstimateOff');
   }
 
+  /* ---------- Package picker ---------- */
+  const tabs = [...document.querySelectorAll('[role="tab"][data-intent]')];
+  const panel = document.getElementById('paket-panel');
+  const announcer = document.querySelector('[data-pkg-announce]');
+
+  function renderPackages() {
+    const reco = packages[state.intent];
+
+    tabs.forEach((tab) => {
+      const active = tab.dataset.intent === state.intent;
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+      if (active) panel?.setAttribute('aria-labelledby', tab.id);
+    });
+
+    document.querySelectorAll('[data-package]').forEach((card) => {
+      const id = card.dataset.package;
+      card.dataset.recommended = String(id === reco.id);
+      card.dataset.selected = String(id === state.selectedPackage);
+      const cta = card.querySelector('[data-pkg-cta]');
+      if (cta) {
+        cta.textContent = fill(t(id === state.selectedPackage ? 'pkgChosen' : 'pkgChoose'), { price: rupiah(packages[id].amount) });
+      }
+    });
+
+    const set = (sel, text) => { const el = document.querySelector(sel); if (el) el.textContent = text; };
+    set('[data-reco-title]', fill(t('recoTitle'), { intent: t(`recoIntent_${reco.id}`), name: reco.name, price: rupiah(reco.amount) }));
+    set('[data-reco-body]', t(`reco_${reco.id}`));
+    set('[data-reco-cta]', fill(t(reco.id === state.selectedPackage ? 'pkgChosen' : 'pkgChoose'), { price: rupiah(reco.amount) }));
+  }
+
+  function setIntent(id, { focus = false } = {}) {
+    if (!packages[id]) return;
+    state.intent = id;
+    renderPackages();
+    if (focus) tabs.find((tab) => tab.dataset.intent === id)?.focus();
+  }
+
   function selectPackage(id) {
     if (!packages[id]) return;
     state.selectedPackage = id;
+    renderPackages();
     renderHeroBalance();
+    const pkg = packages[id];
+    if (announcer) announcer.textContent = fill(t('pkgAnnounce'), { name: pkg.name, credit: number(pkg.amount + pkg.bonus) });
+    // Step 5 (checkout) will open the checkout dialog here.
   }
 
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => setIntent(tab.dataset.intent));
+    tab.addEventListener('keydown', (event) => {
+      const last = tabs.length - 1;
+      const target = { ArrowRight: index === last ? 0 : index + 1, ArrowLeft: index === 0 ? last : index - 1, Home: 0, End: last }[event.key];
+      if (target === undefined) return;
+      event.preventDefault();
+      setIntent(tabs[target].dataset.intent, { focus: true });
+    });
+  });
+
+  document.querySelectorAll('[data-choose-package]').forEach((btn) => {
+    btn.addEventListener('click', () => selectPackage(btn.dataset.choosePackage));
+  });
+  document.querySelector('[data-choose-recommended]')?.addEventListener('click', () => selectPackage(state.intent));
+
   // Exposed for upcoming sections and manual testing in the console.
-  window.TokenNyala = { selectPackage, packages };
+  window.TokenNyala = { selectPackage, setIntent, packages };
 
   /* ---------- Mobile menu ---------- */
   const menuButton = document.getElementById('menu-button');
