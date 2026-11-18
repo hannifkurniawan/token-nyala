@@ -33,7 +33,7 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 - [x] 1. Shell — head, token, header + menu mobile, language switch, footer
 - [x] 2. Hero — copy ID/EN, board ilustrasi, status saldo menyala lewat `TokenNyala.selectPackage(id)`
 - [x] 3. Cara kerja — 1 kolom (mobile), kartu baris (md), 3 kolom (lg)
-- [ ] 4. Package picker
+- [x] 4. Package picker — tab intent (keyboard), baris rekomendasi, 3 kartu, `selectPackage` menyalakan hero
 - [ ] 5. Checkout
 - [ ] 6. Model AI + katalog
 - [ ] 7. Pakai di tool

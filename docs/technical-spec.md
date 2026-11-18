@@ -174,6 +174,9 @@ CTA
 - Content panel memiliki `role="tabpanel"`
 - Mendukung keyboard Arrow Left dan Arrow Right
 - State aktif memiliki latar Ink dan teks putih
+- Default tab: Belajar (persona utama Ayu)
+- Di atas kartu ada **baris rekomendasi** (`aria-live="polite"`): nama paket, harga, alasan singkat, dan tombol pilih. Urutan kartu tetap berdasarkan harga di semua ukuran layar
+- Layout kartu: 1 kolom (base), kartu baris 2 kolom isi (`md:`), 3 kartu (`lg:`)
 
 ### Language Switch
 

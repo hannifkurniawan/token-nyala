@@ -5,8 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell, Hero, dan **Cara kerja** selesai, lolos QA di 6 viewport (ID dan EN).
-- **Berikutnya:** section 4 — Package picker yang memanggil `TokenNyala.selectPackage(id)` untuk menyalakan board hero. Progres build dicentang di `v3/README.md`.
+- **Fase:** Build v3 — shell, Hero, Cara kerja, dan **Package picker** selesai, lolos QA di 6 viewport (ID dan EN).
+- **Berikutnya:** section 5 — Checkout dialog. `selectPackage(id)` di `script.js` sudah punya titik sambung (“Step 5 (checkout) will open the checkout dialog here”). Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
@@ -50,6 +50,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Catatan “Estimasi” melayang di hero dihapus | Menutupi isi kartu di desktop; dekorasi tanpa informasi baru (aturan 8) |
 | 18 Nov 2026 | Kata “mock” dihapus dari copy langkah 2 Cara kerja | Label prototype sudah ada di footer/checkout; “mock” di landing merusak kredibilitas |
 | 18 Nov 2026 | Cara kerja: 3 kolom baru mulai `lg:`; di `md:` tiap kartu jadi baris (judul kiri, isi kanan) | 3 kolom di 768px membuat judul dan chip patah |
+| 18 Nov 2026 | Paket: urutan kartu tetap berdasarkan harga + baris rekomendasi di atas kartu (bukan memindah kartu rekomendasi ke atas di mobile) | Memindah urutan visual lewat CSS membuat urutan fokus keyboard berbeda dari tampilan |
+| 18 Nov 2026 | Tab intent default: Belajar | Tab pertama + persona utama Ayu |
+| 18 Nov 2026 | Kartu paket: 1 kolom → kartu baris di `md:` → 3 kolom di `lg:` | 3 kolom di 768px membuat harga meluap keluar kartu |
+| 18 Nov 2026 | Format angka mengikuti bahasa: ID `Rp50.000`, EN `Rp50,000` | Sesuai microcopy EN |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
 
 ## Pertanyaan Terbuka untuk PO
@@ -66,6 +70,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Rapikan kontradiksi dokumen sebelum coding.** Dokumen yang bertentangan menghasilkan implementasi yang tidak konsisten.
 - **Akses web:** `octa.telkomsel.com` menolak fetch otomatis (403) dan `api.tokenku.ai/pricing` dirender JavaScript. Minta screenshot ke user; jangan mencoba mengakali blokir.
 - **Grid tanpa kolom eksplisit menembus gutter.** Hero di 320px melebar ke 311px (batas 304) karena track `auto` mengikuti min-content kartu ilustrasi; `overflow-x-clip` menyembunyikannya sehingga cek overflow biasa lolos. Solusi: selalu `grid-cols-1` / `minmax(0,…)`. QA sekarang mengecek konten keluar dari `.shell`.
+- **QA otomatis tidak cukup — lihat screenshot.** Di 768px harga “Rp250.000” meluap keluar kartu padahal semua cek lolos (kotak elemen tetap di dalam gutter, hanya teksnya meluap). Sekarang QA juga mengecek `scrollWidth > clientWidth`; dekorasi `::after` yang sengaja keluar ditandai `data-decor-overflow`.
+- **Rangkai perintah commit dengan `&&` setelah script edit dokumen.** Script edit gagal tetapi commit tetap jalan → commit `25b8975` tanpa dokumen; diperbaiki dengan commit lanjutan.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
@@ -85,3 +91,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Langkah 2: membuat shell `v3/` + `tools/qa_v3.py` (QA Playwright 6 viewport). QA awal menemukan touch target < 44px (logo, nav, ID/EN) → diperbaiki → semua viewport lolos.
 - Section Hero: copy ID/EN, board ilustrasi dengan status saldo (`renderHeroBalance`), animasi masuk 450ms dengan reduced-motion. QA menemukan konten menembus gutter di 320px (grid tanpa `grid-cols-1`, tersembunyi oleh `overflow-x-clip`) → diperbaiki, dan `tools/qa_v3.py` ditambah cek “escape .shell” + cek above-the-fold.
 - Section Cara kerja: 3 langkah dengan chip dan garis penghubung; teks ID juga ditulis di HTML (fallback tanpa JS). QA visual menemukan 3 kolom terlalu sempit di 768px → layout baris di `md:`.
+- Section Package picker (`25b8975`): tablist dengan panah/Home/End, baris rekomendasi, 3 kartu dengan state Paling pas/Dipilih, `selectPackage` menyalakan board hero, pengumuman `aria-live`. QA visual menemukan harga meluap di 768px dan ruang kosong di kartu mobile → layout baris `md:`, baris badge kolaps; QA ditambah cek teks meluap + uji interaksi paket.

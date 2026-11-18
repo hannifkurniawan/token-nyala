@@ -44,6 +44,7 @@ v1 dan v2 dibangun desktop-first lalu dikecilkan dengan `@media (max-width: …)
 Setelah setiap section selesai, cek di: **320, 375, 768, 1024, 1440** dan **667×375 landscape**. Kriteria:
 - Tidak ada scroll horizontal (`document.documentElement.scrollWidth === innerWidth`).
 - Tidak ada konten yang keluar dari gutter `.shell` (cek ini menangkap luapan yang tersembunyi oleh `overflow-x-clip`).
+- Tidak ada teks yang meluap dari kotaknya sendiri (`scrollWidth > clientWidth`), misalnya harga besar di kartu sempit. Elemen yang sengaja punya dekorasi keluar kotak (garis penghubung `::after`) diberi `data-decor-overflow`.
 - H1 dan CTA utama hero terlihat tanpa scroll di 320×640 dan 375×667.
 - Tidak ada teks terpotong atau tumpang tindih.
 - Touch target ≥ 44px.

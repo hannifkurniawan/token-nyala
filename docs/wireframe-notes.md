@@ -36,6 +36,10 @@ Berapa yang ingin kamu nyalakan?
 
 [ Belajar | Prototype | Kerja ]     tablist, full width, 3 tombol sama lebar
 
+┌ ✦ Paling pas untuk belajar: Mulai · Rp50.000 ┐   baris rekomendasi (aria-live)
+│ Titik awal yang ringan…      [ Pilih Rp50.000 ] │   aksi tanpa perlu scroll ke kartu
+└─────────────────────────────────────────────┘
+
 ┌─────────────────────────────┐
 │ ★ Paling pas                 │  hanya pada kartu rekomendasi
 │ Bangun                       │
@@ -45,8 +49,8 @@ Berapa yang ingin kamu nyalakan?
 │ Cocok untuk prototype aktif  │
 │ [ Pilih Rp100.000         ]  │
 └─────────────────────────────┘
-[ kartu Mulai ]                  kartu stacked, urutan: rekomendasi dulu
-[ kartu Scale ]
+[ kartu Mulai ]                  kartu stacked, urutan tetap berdasarkan harga
+[ kartu Scale ]                  (bukan rekomendasi dulu: urutan visual = urutan fokus keyboard)
 
 Estimasi bergantung pada model, panjang prompt…   disclaimer kecil
 ```
