@@ -51,17 +51,10 @@ function setLanguage(lang){
 }
 
 function setIntent(intent){
-  document.querySelectorAll('[data-intent]').forEach(tab=>{
-    const active=tab.dataset.intent===intent;
-    tab.classList.toggle('is-active',active);
-    tab.setAttribute('aria-selected',active?'true':'false');
-  });
+  updateIntentTabs(intent);
 
-  document.querySelectorAll('.package-card').forEach(card=>card.classList.remove('is-recommended'));
-  const recommendations={learn:'learn',prototype:'prototype',work:'work'};
-  const packageId=recommendations[intent];
-  const recommended=document.querySelector(`[data-package="${packageId}"]`);
-  recommended?.classList.add('is-recommended');
+  const packageByIntent={learn:'learn',prototype:'prototype',work:'work'};
+  const packageId=packageByIntent[intent];
 
   const copy={
     id:{learn:['Paket paling pas untuk mulai belajar','Coba AI dan selesaikan satu mini-project ringan.'],prototype:['Paket paling pas untuk prototype aktif','Bangun satu ide dengan ruang iterasi yang cukup.'],work:['Paket paling pas untuk pekerjaan berkelanjutan','Siapkan saldo untuk proyek klien dan iterasi lebih banyak.']},
@@ -70,11 +63,25 @@ function setIntent(intent){
   document.getElementById('recommendation-title').textContent=copy[currentLanguage][intent][0];
   document.getElementById('recommendation-copy').textContent=copy[currentLanguage][intent][1];
 
-  selectPackage(packageId,false);
+  selectPackage(packageId,false,false);
 }
 
-function selectPackage(packageId,openModal=false){
+function updateIntentTabs(intent){
+  document.querySelectorAll('[data-intent]').forEach(tab=>{
+    const active=tab.dataset.intent===intent;
+    tab.classList.toggle('is-active',active);
+    tab.setAttribute('aria-selected',active?'true':'false');
+  });
+}
+
+function selectPackage(packageId,openModal=false,syncIntent=true){
   selectedPackage=packageId;
+
+  if(syncIntent){
+    const intentByPackage={learn:'learn',prototype:'prototype',work:'work'};
+    updateIntentTabs(intentByPackage[packageId]);
+  }
+
   document.querySelectorAll('.package-card').forEach(card=>{
     const selected=card.dataset.package===packageId;
     card.classList.toggle('is-selected',selected);
