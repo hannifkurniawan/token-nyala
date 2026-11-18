@@ -56,13 +56,6 @@ function setIntent(intent){
   const packageByIntent={learn:'learn',prototype:'prototype',work:'work'};
   const packageId=packageByIntent[intent];
 
-  const copy={
-    id:{learn:['Paket paling pas untuk mulai belajar','Coba AI dan selesaikan satu mini-project ringan.'],prototype:['Paket paling pas untuk prototype aktif','Bangun satu ide dengan ruang iterasi yang cukup.'],work:['Paket paling pas untuk pekerjaan berkelanjutan','Siapkan saldo untuk proyek klien dan iterasi lebih banyak.']},
-    en:{learn:['Best fit for learning','Try AI and finish a small mini-project.'],prototype:['Best fit for an active prototype','Build one idea with enough room to iterate.'],work:['Best fit for ongoing work','Prepare a balance for client projects and more iterations.']}
-  };
-  document.getElementById('recommendation-title').textContent=copy[currentLanguage][intent][0];
-  document.getElementById('recommendation-copy').textContent=copy[currentLanguage][intent][1];
-
   selectPackage(packageId,false,false);
 }
 
