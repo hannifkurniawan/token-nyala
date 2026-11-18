@@ -424,6 +424,9 @@ Kompatibel dengan tool yang mendukung OpenAI API, contoh: Cursor, Cline, Continu
 - Domain memakai `.example` (RFC 2606) agar jelas bukan endpoint nyata.
 - Tombol Salin memakai `navigator.clipboard.writeText`; umumkan “Tersalin” lewat `aria-live`; fallback: pilih teks.
 - Nama tool ditulis sebagai teks biasa, tanpa logo, diberi label “contoh”.
+- Di bawah 640px nilai (URL/key) ditumpuk di atas tombol Salin; URL diberi titik patah `<wbr>` setelah `https://` dan sebelum `.example` agar tidak terpotong di tengah kata.
+- Di bawah kartu ada CTA “Belum punya API key? Isi saldo dulu…” → membuka checkout.
+- “Lihat panduan pasang” di sukses checkout: tutup dialog dulu, lalu scroll ke `#pakai` dan fokus ke judulnya (menutup modal mengembalikan fokus ke elemen sebelumnya, yang bisa membatalkan lompatan anchor biasa).
 
 Checkout success state (menggantikan “Kembali ke proyek”):
 - Judul “Saldo nyala!”, ringkasan paket dan kontak tujuan bukti.

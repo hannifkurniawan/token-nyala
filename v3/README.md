@@ -36,7 +36,7 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 - [x] 4. Package picker — tab intent (keyboard), baris rekomendasi, 3 kartu, `selectPackage` menyalakan hero
 - [x] 5. Checkout — bottom sheet/dialog, email atau HP, QRIS/E-Wallet/VA mock, sukses dengan API key contoh, state gagal
 - [x] 6. Model AI + katalog — 6 kartu, dialog katalog (search, filter, tampilkan lebih banyak, empty state)
-- [ ] 7. Pakai di tool
+- [x] 7. Pakai di tool — 3 langkah, contoh konfigurasi + salin, CTA isi saldo; tersambung dari sukses checkout
 - [ ] 8. Benefit + dashboard + contoh
 - [ ] 9. Tim & bisnis + konsultasi
 - [ ] 10. FAQ + final CTA

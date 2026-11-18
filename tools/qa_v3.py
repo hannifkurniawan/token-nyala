@@ -173,6 +173,23 @@ def checkout_flow(page, out, name):
                                       unlocked: !document.documentElement.classList.contains('overflow-hidden') })""")
     if after != {"open": False, "focusOk": True, "unlocked": True}:
         problems.append(f"CHECKOUT close {after}")
+
+    # success → "Lihat panduan pasang" closes the dialog and lands on #pakai
+    if page.locator("#pakai").count():
+        page.evaluate("() => TokenNyala.openCheckout('learn')")
+        page.wait_for_timeout(250)
+        page.locator("label:has(input[name=co-method][value=va])").click()
+        page.locator("[data-co-submit]").click()
+        page.locator("[data-pay-footer] [data-co-paid]").click()
+        page.wait_for_timeout(800)
+        page.locator("[data-co-guide]").click()
+        # smooth scroll over a long mobile page can take >1.5s: wait until scrollY is stable
+        page.wait_for_function("""() => { const y = scrollY; const prev = window.__qaLastY; window.__qaLastY = y; return prev === y; }""", polling=250, timeout=5000)
+        guide = page.evaluate("""() => ({ open: document.getElementById('checkout').open,
+            top: Math.round(document.getElementById('pakai').getBoundingClientRect().top),
+            header: Math.round(document.querySelector('header').getBoundingClientRect().bottom) })""")
+        if guide["open"] or not (guide["header"] - 2 <= guide["top"] <= guide["header"] + 40):
+            problems.append(f"CHECKOUT guide link {guide}")
     return problems
 
 
@@ -347,6 +364,13 @@ def main():
 
             if args.interactive and name in ("320", "375", "768", "1440") and page.locator("dialog#catalog").count():
                 status += catalog_flow(page, out, name)
+
+            if args.interactive and name == "375" and page.locator("#pakai [data-copy-value]").count():
+                b = page.locator("#pakai [data-copy-value]")
+                b.click()
+                page.wait_for_timeout(100)
+                if b.text_content().strip() not in ("Tersalin", "Copied"):
+                    status.append(f"COPY button text {b.text_content()!r}")
 
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()

@@ -528,6 +528,81 @@
         </div>
       </div>
     </section>
+
+    <!-- ============ 7. PAKAI DI TOOL ============ -->
+    <section id="pakai" aria-labelledby="use-title">
+      <div class="shell grid grid-cols-1 gap-10 py-16 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-16 lg:py-24">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-xl-blue" data-i18n="useKicker">Panduan pasang</p>
+          <h2 id="use-title" class="mt-3 outline-none text-[clamp(1.75rem,6vw,2.75rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-xl-dark" data-i18n="useTitle">Pakai di tool favoritmu.</h2>
+          <p class="mt-4 text-base leading-relaxed text-muted sm:text-lg" data-i18n="useBody">API key adalah kunci yang menghubungkan tool-mu ke saldo TokenNyala.</p>
+
+          <ol class="mt-8" aria-label="Langkah pemasangan" data-i18n-aria="useStepsAria">
+            <li data-decor-overflow class="relative flex gap-4 pb-8 last:pb-0 after:absolute after:left-[1.3125rem] after:top-12 after:-bottom-2 after:w-0.5 after:bg-line">
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm font-semibold text-white">1</span>
+              <div class="min-w-0 pt-1.5">
+                <h3 class="text-lg font-extrabold text-xl-dark" data-i18n="use1Title">Salin API key</h3>
+                <p class="mt-1 text-base leading-relaxed text-muted" data-i18n="use1Body">Ada di halaman saldo setelah top up.</p>
+              </div>
+            </li>
+            <li data-decor-overflow class="relative flex gap-4 pb-8 last:pb-0 after:absolute after:left-[1.3125rem] after:top-12 after:-bottom-2 after:w-0.5 after:bg-line">
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm font-semibold text-white">2</span>
+              <div class="min-w-0 pt-1.5">
+                <h3 class="text-lg font-extrabold text-xl-dark" data-i18n="use2Title">Tempel di tool</h3>
+                <p class="mt-1 text-base leading-relaxed text-muted" data-i18n="use2Body">Isi Base URL dan API key di pengaturan tool.</p>
+              </div>
+            </li>
+            <li data-decor-overflow class="relative flex gap-4 pb-8 last:pb-0">
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm font-semibold text-white">3</span>
+              <div class="min-w-0 pt-1.5">
+                <h3 class="text-lg font-extrabold text-xl-dark" data-i18n="use3Title">Pilih model & mulai</h3>
+                <p class="mt-1 text-base leading-relaxed text-muted" data-i18n="use3Body">Semua model memakai saldo yang sama.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="lg:pt-2">
+          <figure class="rounded-card bg-xl-dark p-5 text-white shadow-[0_24px_60px_rgba(0,22,106,.18)] sm:p-6">
+            <figcaption class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-sm font-extrabold" data-i18n="useConfigTitle">Contoh konfigurasi</span>
+              <span class="rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[11px] text-white/75" data-i18n="useConfigTag">contoh</span>
+            </figcaption>
+
+            <dl class="mt-5 space-y-4">
+              <div>
+                <dt class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/60">Base URL</dt>
+                <dd class="mt-1.5 flex flex-col items-start gap-2 rounded-control bg-white/5 p-3 sm:flex-row sm:items-center sm:gap-3 sm:py-1.5 sm:pl-3 sm:pr-1.5">
+                  <code class="min-w-0 flex-1 font-mono text-sm text-xl-sky [overflow-wrap:anywhere]" data-use-url>https://<wbr>api.tokennyala<wbr>.example/v1</code>
+                  <button type="button" class="btn shrink-0 border border-white/25 bg-white/10 px-4 text-white hover:bg-white/20" data-copy-target="[data-use-url]" data-i18n="coCopy">Salin</button>
+                </dd>
+              </div>
+              <div>
+                <dt class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/60">API key</dt>
+                <dd class="mt-1.5 flex flex-col items-start gap-2 rounded-control bg-white/5 p-3 sm:flex-row sm:items-center sm:gap-3 sm:py-1.5 sm:pl-3 sm:pr-1.5">
+                  <code class="min-w-0 flex-1 font-mono text-sm text-xl-yellow [overflow-wrap:anywhere]">tn-demo-••••••••3f9a</code>
+                  <button type="button" class="btn shrink-0 border border-white/25 bg-white/10 px-4 text-white hover:bg-white/20" data-copy-value="tn-demo-7c41e09b5d2a8f6c13e43f9a" data-i18n="coCopy">Salin</button>
+                </dd>
+              </div>
+            </dl>
+
+            <p class="mt-5 text-sm leading-relaxed text-white/75" data-i18n="useCompat">Bisa dipakai di tool yang mendukung OpenAI API, contoh:</p>
+            <ul class="mt-2 flex flex-wrap gap-2" aria-label="Contoh tool" data-i18n-aria="useToolsAria">
+              <li class="rounded-full border border-white/20 px-3 py-1 text-sm font-bold">Cursor</li>
+              <li class="rounded-full border border-white/20 px-3 py-1 text-sm font-bold">Cline</li>
+              <li class="rounded-full border border-white/20 px-3 py-1 text-sm font-bold">Continue</li>
+            </ul>
+            <p class="mt-5 border-t border-white/10 pt-4 text-xs text-white/60" data-i18n="useConfigNote">Contoh — bukan endpoint atau kunci asli.</p>
+          </figure>
+
+          <div class="mt-5 flex flex-col gap-2 rounded-card border border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <p class="text-sm font-bold text-xl-dark" data-i18n="useNoKey">Belum punya API key? Isi saldo dulu, kuncinya langsung muncul.</p>
+            <button type="button" class="btn btn-primary shrink-0" data-open-checkout data-i18n="navCta">Isi saldo</button>
+          </div>
+        </div>
+      </div>
+      <p class="sr-only" aria-live="polite" data-page-live></p>
+    </section>
   </main>
 
   <!-- ============ FOOTER ============ -->

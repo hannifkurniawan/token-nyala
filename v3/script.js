@@ -189,6 +189,23 @@
       catEmpty: 'Model tidak ditemukan. Coba kata kunci atau filter lain.',
       catClear: 'Hapus filter',
 
+      useKicker: 'Panduan pasang',
+      useTitle: 'Pakai di tool favoritmu.',
+      useBody: 'API key adalah kunci yang menghubungkan tool-mu ke saldo TokenNyala.',
+      useStepsAria: 'Langkah pemasangan',
+      use1Title: 'Salin API key',
+      use1Body: 'Ada di halaman saldo setelah top up.',
+      use2Title: 'Tempel di tool',
+      use2Body: 'Isi Base URL dan API key di pengaturan tool.',
+      use3Title: 'Pilih model & mulai',
+      use3Body: 'Semua model memakai saldo yang sama.',
+      useConfigTitle: 'Contoh konfigurasi',
+      useConfigTag: 'contoh',
+      useCompat: 'Bisa dipakai di tool yang mendukung OpenAI API, contoh:',
+      useToolsAria: 'Contoh tool',
+      useConfigNote: 'Contoh — bukan endpoint atau kunci asli.',
+      useNoKey: 'Belum punya API key? Isi saldo dulu, kuncinya langsung muncul.',
+
       pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
       pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
       pkgEstimate_work: '100+ sesi kecil'
@@ -375,6 +392,23 @@
       catMore: 'Show more',
       catEmpty: 'No models found. Try another keyword or filter.',
       catClear: 'Clear filters',
+
+      useKicker: 'Setup guide',
+      useTitle: 'Use it in your favorite tools.',
+      useBody: 'An API key connects your tools to your TokenNyala balance.',
+      useStepsAria: 'Setup steps',
+      use1Title: 'Copy your API key',
+      use1Body: 'Find it on your balance page after topping up.',
+      use2Title: 'Paste it into your tool',
+      use2Body: 'Fill in the Base URL and API key in settings.',
+      use3Title: 'Pick a model & build',
+      use3Body: 'Every model uses the same balance.',
+      useConfigTitle: 'Sample configuration',
+      useConfigTag: 'example',
+      useCompat: 'Works with tools that support the OpenAI API, for example:',
+      useToolsAria: 'Example tools',
+      useConfigNote: 'Example only — not a real endpoint or key.',
+      useNoKey: 'No API key yet? Top up first and your key appears right away.',
 
       pkgEstimate_learn: 'about 20–30 small sessions',
       pkgEstimate_prototype: 'about 40–60 small sessions',
@@ -722,19 +756,40 @@
   });
   dialog?.querySelector('[data-co-fail]')?.addEventListener('click', () => showStep('failed'));
   dialog?.querySelectorAll('[data-co-back]').forEach((btn) => btn.addEventListener('click', () => showStep('form')));
-  dialog?.querySelector('[data-co-guide]')?.addEventListener('click', () => { checkout.opener = null; closeCheckout(); });
+  // "Lihat panduan pasang": close first, then scroll + focus. Closing a modal restores focus to the
+  // previously focused element, which would cancel a normal anchor jump.
+  dialog?.querySelector('[data-co-guide]')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    const id = event.currentTarget.getAttribute('href').slice(1);
+    checkout.opener = null;
+    closeCheckout();
+    setTimeout(() => goToSection(id), 0);
+  });
+
+  function goToSection(id) {
+    const section = document.getElementById(id);
+    if (!section) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    section.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    const heading = section.querySelector('h2');
+    if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
+    history.replaceState(null, '', '#' + id);
+  }
 
   /* ---------- Copy to clipboard ---------- */
   async function copyText(text, button) {
     try { await navigator.clipboard.writeText(text); } catch { /* clipboard unavailable: text stays selectable */ }
     const original = button.textContent;
     button.textContent = t('coCopied');
-    const live = dialog?.querySelector('[data-co-live]');
-    if (live) live.textContent = t('coCopied');
+    const live = button.closest('dialog')?.querySelector('[aria-live]') ?? document.querySelector('[data-page-live]');
+    if (live) { live.textContent = ''; requestAnimationFrame(() => { live.textContent = t('coCopied'); }); }
     setTimeout(() => { button.textContent = original; }, 1500);
   }
-  document.querySelectorAll('[data-copy-target]').forEach((btn) => {
-    btn.addEventListener('click', () => copyText(document.querySelector(btn.dataset.copyTarget)?.textContent.replace(/\s/g, '') || '', btn));
+  document.querySelectorAll('[data-copy-target], [data-copy-value]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copyValue ?? document.querySelector(btn.dataset.copyTarget)?.textContent.replace(/\s/g, '') ?? '';
+      copyText(text, btn);
+    });
   });
   dialog?.querySelector('[data-copy-key]')?.addEventListener('click', (event) => copyText(checkout.apiKey, event.currentTarget));
 

@@ -5,8 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, dan **Model AI + katalog** selesai, lolos QA di 6 viewport (ID dan EN). Branch sudah di-push ke `origin` sampai commit Checkout.
-- **Berikutnya:** section 7 — Pakai di tool favoritmu (`#pakai`). Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
+- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, dan **Pakai di tool** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
+- **Berikutnya:** section 8 — Benefit + mock dashboard “Pantau & kendalikan” + contoh penggunaan. Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
@@ -46,6 +46,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Komponen `@layer components` hanya: `.shell`, `.btn`, `.btn-primary`, `.btn-secondary`. Markup memakai `btn btn-primary` (bukan `@apply` berantai) | Tailwind v4 tidak bisa `@apply` class custom dari `@layer components` |
 | 18 Nov 2026 | CTA header tampil mulai `sm:`; di bawah 640px CTA ada di menu mobile; language switch di header mulai `lg:` | Di 320px logo + CTA + tombol menu tidak muat dengan gutter 16px |
 | 18 Nov 2026 | Kerja di branch `v3-mobile-first` | Aturan: jangan commit langsung ke `main` |
+| 18 Nov 2026 | **Setiap langkah selesai: commit lalu langsung push** `v3-mobile-first` ke `origin` tanpa bertanya | Permintaan user agar bisa cek di GitHub. Merge ke `main` / PR tetap perlu persetujuan |
 | 18 Nov 2026 | Board hero mulai “Belum nyala” (Rp0, meter kosong) dan menyala saat paket dipilih (`selectPackage`) | hero-and-journey-spec: meter terisi hanya setelah pemilihan paket |
 | 18 Nov 2026 | Catatan “Estimasi” melayang di hero dihapus | Menutupi isi kartu di desktop; dekorasi tanpa informasi baru (aturan 8) |
 | 18 Nov 2026 | Kata “mock” dihapus dari copy langkah 2 Cara kerja | Label prototype sudah ada di footer/checkout; “mock” di landing merusak kredibilitas |
@@ -82,6 +83,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **`sr-only` di dalam area scroll butuh ancestor `relative`.** Radio tersembunyi di checkout posisinya absolut terhadap dialog → dialog sendiri ter-scroll 155–179px saat radio difokus (header hilang). Ditemukan dari screenshot, sekarang dicek QA (`dialog.scrollTop` harus 0).
 - **Cek teks meluap harus mencakup `label`/`div`.** Kotak flex `items-start` membuat anak selebar teksnya, jadi yang meluap adalah label-nya, bukan span-nya.
 - **Satuan panjang di kartu sempit → pindahkan ke keterangan.** “31,500 credits / 1M tokens” patah jadi 3 baris; sekarang “Tarif per 1 jt token” di atas dan nilai “31.500 kredit”. Begitu juga estimasi: angka besar + keterangan kecil.
+- **Smooth scroll di halaman mobile yang panjang bisa >1,5 detik.** QA “panduan pasang” sempat gagal karena menunggu 0,9 detik; sekarang QA menunggu sampai `scrollY` stabil. Cek timing dulu sebelum mengubah kode.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
@@ -105,3 +107,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Section Checkout: `<dialog>` bottom sheet/tengah, pilihan paket, rincian biaya, email/HP dengan normalisasi `+628…`, QRIS (QR SVG contoh), VA (nomor lokal), e-wallet, sukses dengan API key `tn-demo-…` + salin, state gagal; fokus kembali ke pembuka (fallback ke tombol menu). QA ditambah uji alur checkout penuh; ditemukan & diperbaiki: dialog ikut ter-scroll (sr-only tanpa ancestor relative) dan harga meluap di 320px EN.
 - Push pertama `v3-mobile-first` ke `origin` (atas permintaan user) sampai `41c9ca3`.
 - Section Model AI: 6 kartu dari data, dialog katalog (full screen mobile, filter toggle, search, filter OR/AND, tampilkan lebih banyak + fokus, empty state, hapus filter). QA ditambah uji katalog + validasi angka vs spec. Visual: badge level menghimpit meta → meta baris penuh; estimasi & tarif patah → angka besar + keterangan; filter 3 kolom tidak muat di 768px → 2 baris.
+- Section Pakai di tool: timeline 3 langkah, kartu konfigurasi (Base URL `.example`, key contoh, salin dengan pengumuman `aria-live` yang benar di dalam/luar modal), CTA isi saldo; “Lihat panduan pasang” tersambung (tutup → scroll → fokus judul). Visual: URL/key patah di tengah kata di 320px → ditumpuk + `<wbr>`.
