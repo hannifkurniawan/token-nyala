@@ -37,6 +37,7 @@ v1 dan v2 dibangun desktop-first lalu dikecilkan dengan `@media (max-width: …)
 
 ### 6. Overlay memakai elemen bawaan
 - Checkout memakai `<dialog>` + `showModal()` (focus trap, Escape, dan `inert` background sudah ditangani browser).
+- Di dalam area scroll, elemen `sr-only` (radio/checkbox tersembunyi) **harus punya ancestor `relative`** (label atau body scroll). Tanpa itu posisinya absolut terhadap dialog, membuat dialog sendiri bisa ter-scroll saat elemen difokus — header hilang, muncul ruang kosong.
 - Mobile: bottom sheet (`mt-auto`, `rounded-t-3xl`, `max-h-[90dvh]`, isi scroll internal, tombol konfirmasi sticky dengan `pb-[env(safe-area-inset-bottom)]`).
 - `md:` ke atas: dialog di tengah.
 

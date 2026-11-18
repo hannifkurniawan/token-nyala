@@ -106,6 +106,54 @@
       estimateDisclaimer: 'Estimasi bergantung pada model, panjang prompt, tipe tugas, dan format output.',
       pkgAnnounce: 'Paket {name} dipilih. Saldo {credit} kredit.',
 
+      coTitle: 'Ringkas top up',
+      coClose: 'Tutup checkout',
+      coNotice: 'Ini adalah checkout simulasi. Tidak ada transaksi atau penarikan dana nyata.',
+      coPackageLegend: 'Paket',
+      coBreakdownAria: 'Rincian biaya',
+      coNominal: 'Nominal paket',
+      coBonus: 'Bonus kredit',
+      coFee: 'Biaya tambahan',
+      coTotal: 'Total bayar',
+      coCreditNote: 'Saldo masuk {credit} kredit · 1 kredit = Rp1 · Sudah termasuk PPN',
+      coContactLabel: 'Email atau nomor HP',
+      coContactHelp: 'Bukti pembelian dikirim ke sini.',
+      coContactPlaceholder: 'nama@email.com atau 0812xxxxxxxx',
+      errContactEmpty: 'Masukkan email atau nomor HP agar bukti pembelian bisa dikirim.',
+      errEmailInvalid: 'Format email belum sesuai. Coba cek lagi alamatnya.',
+      errPhoneInvalid: 'Nomor HP belum sesuai. Gunakan format 08xx atau +628xx.',
+      coMethodLegend: 'Pilih metode pembayaran',
+      methodQrisHint: 'Pindai dari aplikasi bank atau e-wallet',
+      methodEwalletHint: 'DANA, GoPay, OVO',
+      methodVaHint: 'Transfer dari bank mana pun',
+      errMethod: 'Pilih satu metode pembayaran untuk melanjutkan.',
+      coSubmit: 'Lanjut bayar {total}',
+      coPayTitle_qris: 'Pindai QRIS',
+      coPayBody_qris: 'Pindai kode contoh ini untuk melihat alurnya. Kode ini tidak bisa dipakai membayar.',
+      coPayTitle_va: 'Transfer ke virtual account',
+      coPayBody_va: 'Nomor contoh dibuat di perangkatmu dan tidak terhubung ke bank.',
+      coPayTitle_ewallet: 'Bayar dengan e-wallet',
+      coPayBody_ewallet: 'Pilih aplikasi untuk menyetujui pembayaran (simulasi).',
+      coWaiting: 'Menunggu pembayaran {total}',
+      coQrAria: 'Kode QR contoh, tidak bisa dipindai',
+      coVaLabel: 'Nomor virtual account',
+      coPaid: 'Saya sudah bayar',
+      coChecking: 'Memeriksa pembayaran…',
+      coSimFail: 'Simulasikan pembayaran gagal',
+      coBack: 'Ubah data',
+      coCopy: 'Salin',
+      coCopied: 'Tersalin',
+      successTitle: 'Saldo nyala!',
+      successBody: 'Paket {name} ({price}) sudah tercatat di simulasi ini. Bukti pembelian dikirim ke {contact}.',
+      successKeyLabel: 'API key kamu',
+      successCopyKey: 'Salin API key',
+      successGuide: 'Lihat panduan pasang',
+      successWarning: 'Simpan API key seperti kata sandi. Jangan dibagikan.',
+      successNotice: 'Prototype — tidak ada transaksi nyata.',
+      failTitle: 'Pembayaran belum berhasil',
+      failBody: 'Tidak ada saldo yang terpotong pada prototipe ini. Pilih metode lain atau coba lagi.',
+      failRetry: 'Coba lagi',
+
       pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
       pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
       pkgEstimate_work: '100+ sesi kecil'
@@ -210,6 +258,54 @@
       estimateDisclaimer: 'Estimates depend on the model, prompt length, task type, and output format.',
       pkgAnnounce: '{name} package selected. Balance {credit} credits.',
 
+      coTitle: 'Top-up summary',
+      coClose: 'Close checkout',
+      coNotice: 'This is a simulated checkout. No real transaction or charge happens.',
+      coPackageLegend: 'Package',
+      coBreakdownAria: 'Price breakdown',
+      coNominal: 'Package price',
+      coBonus: 'Bonus credit',
+      coFee: 'Extra fees',
+      coTotal: 'Total to pay',
+      coCreditNote: 'You receive {credit} credits · 1 credit = Rp1 · Tax included',
+      coContactLabel: 'Email or phone number',
+      coContactHelp: "We'll send your receipt here.",
+      coContactPlaceholder: 'name@email.com or 0812xxxxxxxx',
+      errContactEmpty: 'Enter your email or phone number so we can send your receipt.',
+      errEmailInvalid: "That email doesn't look right. Please check it again.",
+      errPhoneInvalid: "That phone number doesn't look right. Use 08xx or +628xx.",
+      coMethodLegend: 'Choose a payment method',
+      methodQrisHint: 'Scan from any bank or e-wallet app',
+      methodEwalletHint: 'DANA, GoPay, OVO',
+      methodVaHint: 'Transfer from any bank',
+      errMethod: 'Choose a payment method to continue.',
+      coSubmit: 'Continue to pay {total}',
+      coPayTitle_qris: 'Scan the QRIS code',
+      coPayBody_qris: "Scan this sample code to see the flow. It can't be used to pay.",
+      coPayTitle_va: 'Transfer to the virtual account',
+      coPayBody_va: "This sample number is generated on your device and isn't linked to a bank.",
+      coPayTitle_ewallet: 'Pay with an e-wallet',
+      coPayBody_ewallet: 'Choose an app to approve the payment (simulation).',
+      coWaiting: 'Waiting for a payment of {total}',
+      coQrAria: 'Sample QR code, cannot be scanned',
+      coVaLabel: 'Virtual account number',
+      coPaid: "I've paid",
+      coChecking: 'Checking payment…',
+      coSimFail: 'Simulate a failed payment',
+      coBack: 'Edit details',
+      coCopy: 'Copy',
+      coCopied: 'Copied',
+      successTitle: 'Your balance is on!',
+      successBody: '{name} package ({price}) is recorded in this simulation. Receipt sent to {contact}.',
+      successKeyLabel: 'Your API key',
+      successCopyKey: 'Copy API key',
+      successGuide: 'See setup guide',
+      successWarning: "Keep your API key like a password. Don't share it.",
+      successNotice: 'Prototype — no real transaction.',
+      failTitle: "Payment didn't go through",
+      failBody: 'Nothing was charged in this prototype. Choose another method or try again.',
+      failRetry: 'Try again',
+
       pkgEstimate_learn: 'about 20–30 small sessions',
       pkgEstimate_prototype: 'about 40–60 small sessions',
       pkgEstimate_work: '100+ small sessions'
@@ -245,6 +341,9 @@
     document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
       el.setAttribute('aria-label', t(el.dataset.i18nAria));
     });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+      el.setAttribute('placeholder', t(el.dataset.i18nPlaceholder));
+    });
     document.querySelectorAll('[data-lang]').forEach((btn) => {
       btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang));
     });
@@ -253,6 +352,7 @@
     renderPrices();
     renderPackages();
     renderHeroBalance();
+    renderCheckout();
     storage.set(LANG_KEY, lang);
   }
 
@@ -263,6 +363,10 @@
   function renderPrices() {
     document.querySelectorAll('[data-price]').forEach((el) => { el.textContent = rupiah(Number(el.dataset.price)); });
     document.querySelectorAll('[data-credit]').forEach((el) => { el.textContent = number(Number(el.dataset.credit)); });
+    // Compact form for tight spaces (<640px): Rp100rb / Rp100K
+    document.querySelectorAll('[data-price-short]').forEach((el) => {
+      el.textContent = 'Rp' + number(Number(el.dataset.priceShort) / 1000) + (state.lang === 'en' ? 'K' : 'rb');
+    });
   }
   const fill = (template, values) => template.replace(/\{(\w+)\}/g, (_, k) => values[k] ?? '');
 
@@ -322,14 +426,14 @@
     if (focus) tabs.find((tab) => tab.dataset.intent === id)?.focus();
   }
 
-  function selectPackage(id) {
+  function selectPackage(id, { announce = true } = {}) {
     if (!packages[id]) return;
     state.selectedPackage = id;
     renderPackages();
     renderHeroBalance();
+    renderCheckout();
     const pkg = packages[id];
-    if (announcer) announcer.textContent = fill(t('pkgAnnounce'), { name: pkg.name, credit: number(pkg.amount + pkg.bonus) });
-    // Step 5 (checkout) will open the checkout dialog here.
+    if (announce && announcer) announcer.textContent = fill(t('pkgAnnounce'), { name: pkg.name, credit: number(pkg.amount + pkg.bonus) });
   }
 
   tabs.forEach((tab, index) => {
@@ -344,12 +448,197 @@
   });
 
   document.querySelectorAll('[data-choose-package]').forEach((btn) => {
-    btn.addEventListener('click', () => selectPackage(btn.dataset.choosePackage));
+    btn.addEventListener('click', () => openCheckout(btn.dataset.choosePackage, btn));
   });
-  document.querySelector('[data-choose-recommended]')?.addEventListener('click', () => selectPackage(state.intent));
+  document.querySelector('[data-choose-recommended]')?.addEventListener('click', (event) => openCheckout(state.intent, event.currentTarget));
+
+  /* ---------- Checkout (docs/technical-spec.md → Checkout Modal, Form Validation) ---------- */
+  const dialog = document.getElementById('checkout');
+  const form = dialog?.querySelector('form');
+  const contactInput = document.getElementById('co-contact');
+  const PAY_DELAY = 600; // spec: no simulated delay above 600ms
+  const checkout = { step: 'form', method: null, contact: '', opener: null, apiKey: '', va: '' };
+
+  const randomDigits = (n) => Array.from({ length: n }, () => Math.floor(Math.random() * 10)).join('');
+  const randomHex = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => (b % 16).toString(16)).join('');
+
+  /** Email or Indonesian mobile number. Returns { ok, type, value, error }. */
+  function parseContact(raw) {
+    const value = raw.trim();
+    if (!value) return { ok: false, error: 'errContactEmpty' };
+    if (value.includes('@')) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+        ? { ok: true, type: 'email', value }
+        : { ok: false, error: 'errEmailInvalid' };
+    }
+    const digits = value.replace(/[\s.-]/g, '');
+    if (!/^(\+62|62|0)8[1-9][0-9]{7,10}$/.test(digits)) return { ok: false, error: 'errPhoneInvalid' };
+    return { ok: true, type: 'phone', value: '+62' + digits.replace(/^(\+62|62|0)/, '') };
+  }
+
+  function setFieldError(name, key) {
+    const message = dialog.querySelector(`[data-error-for="${name}"]`);
+    if (message) {
+      message.textContent = key ? t(key) : '';
+      message.dataset.key = key || '';
+      message.classList.toggle('hidden', !key);
+    }
+    if (name === 'contact') contactInput?.setAttribute('aria-invalid', String(Boolean(key)));
+    if (name === 'method') dialog.querySelectorAll('[name="co-method"]').forEach((r) => r.setAttribute('aria-invalid', String(Boolean(key))));
+  }
+
+  function renderQr() {
+    const svg = dialog.querySelector('[data-co-qr]');
+    if (!svg || svg.childElementCount) return;
+    const size = 25; let seed = 7; const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+    const finder = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7" fill="currentColor"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" fill="currentColor"/>`;
+    const inFinder = (x, y) => (x < 8 && y < 8) || (x > 16 && y < 8) || (x < 8 && y > 16);
+    let cells = '';
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!inFinder(x, y) && rnd() > 0.52) cells += `<rect x="${x}" y="${y}" width="1" height="1" fill="currentColor"/>`;
+    svg.classList.add('text-xl-dark');
+    svg.innerHTML = cells + finder(0, 0) + finder(18, 0) + finder(0, 18);
+  }
+
+  function renderCheckout() {
+    if (!dialog) return;
+    const pkg = packages[state.selectedPackage] || packages[state.intent];
+    const total = rupiah(pkg.amount);
+    const set = (sel, text) => { const el = dialog.querySelector(sel); if (el) el.textContent = text; };
+
+    dialog.querySelectorAll('[name="co-package"]').forEach((r) => { r.checked = r.value === pkg.id; });
+    set('[data-co-nominal]', total);
+    set('[data-co-bonus]', '+' + rupiah(pkg.bonus));
+    set('[data-co-total]', total);
+    set('[data-co-credit-note]', fill(t('coCreditNote'), { credit: number(pkg.amount + pkg.bonus) }));
+    set('[data-co-submit]', fill(t('coSubmit'), { total }));
+    set('[data-co-title]', t('coTitle'));
+
+    const m = checkout.method;
+    if (m) {
+      set('[data-co-pay-title]', t(`coPayTitle_${m}`));
+      set('[data-co-pay-body]', t(`coPayBody_${m}`));
+    }
+    set('[data-co-waiting]', fill(t('coWaiting'), { total }));
+    set('[data-co-va]', checkout.va.replace(/(\d{4})(?=\d)/g, '$1 '));
+    set('[data-co-key]', checkout.apiKey ? checkout.apiKey.slice(0, 8) + '••••••••••••' + checkout.apiKey.slice(-4) : '');
+    set('[data-co-success-body]', fill(t('successBody'), { name: pkg.name, price: total, contact: checkout.contact }));
+    // re-translate visible error messages
+    dialog.querySelectorAll('[data-error-for]').forEach((el) => { if (el.dataset.key) el.textContent = t(el.dataset.key); });
+  }
+
+  function showStep(step) {
+    checkout.step = step;
+    dialog.dataset.step = step;
+    dialog.querySelectorAll('[data-step-panel]').forEach((panel) => { panel.hidden = panel.dataset.stepPanel !== step; });
+    if (step === 'pay') {
+      dialog.querySelectorAll('[data-pay-method]').forEach((el) => { el.hidden = el.dataset.payMethod !== checkout.method; });
+      dialog.querySelector('[data-pay-footer]').hidden = checkout.method === 'ewallet';
+      if (checkout.method === 'qris') renderQr();
+    }
+    renderCheckout();
+    const focusTarget = { form: '#co-title', pay: '#co-pay-title', success: '#co-success-title', failed: '#co-failed-title' }[step];
+    const el = dialog.querySelector(focusTarget);
+    if (el) { if (!el.hasAttribute('tabindex')) el.tabIndex = -1; el.focus(); }
+  }
+
+  function openCheckout(packageId, opener = document.activeElement) {
+    if (!dialog) return;
+    if (state.menuOpen) setMenu(false);
+    selectPackage(packageId || state.selectedPackage || state.intent, { announce: false });
+    checkout.opener = opener;
+    showStep('form');
+    if (!dialog.open) dialog.showModal();
+    document.documentElement.classList.add('overflow-hidden');
+    dialog.querySelector('#co-title')?.focus();
+  }
+
+  function closeCheckout() { if (dialog?.open) dialog.close(); }
+
+  dialog?.addEventListener('close', () => {
+    document.documentElement.classList.remove('overflow-hidden');
+    if (checkout.step !== 'form') { // fresh form next time; keep contact
+      checkout.method = null;
+      dialog.querySelectorAll('[name="co-method"]').forEach((r) => { r.checked = false; });
+    }
+    // Return focus to the opener; if it is no longer visible (e.g. inside the closed mobile menu), use the menu button.
+    const opener = checkout.opener;
+    const visible = (el) => el && document.contains(el) && el.getClientRects().length > 0;
+    if (visible(opener)) opener.focus();
+    else if (opener && visible(menuButton)) menuButton.focus();
+  });
+
+  // Close on backdrop click — only when the press both started and ended on the backdrop.
+  let pressedBackdrop = false;
+  dialog?.addEventListener('pointerdown', (event) => { pressedBackdrop = event.target === dialog; });
+  dialog?.addEventListener('click', (event) => { if (pressedBackdrop && event.target === dialog) closeCheckout(); pressedBackdrop = false; });
+  dialog?.querySelector('[data-co-close]')?.addEventListener('click', closeCheckout);
+
+  dialog?.querySelectorAll('[name="co-package"]').forEach((radio) => {
+    radio.addEventListener('change', () => selectPackage(radio.value, { announce: false }));
+  });
+  dialog?.querySelectorAll('[name="co-method"]').forEach((radio) => {
+    radio.addEventListener('change', () => { checkout.method = radio.value; setFieldError('method', null); });
+  });
+  contactInput?.addEventListener('blur', () => {
+    if (!contactInput.value.trim()) return; // don't scold an untouched field
+    const result = parseContact(contactInput.value);
+    setFieldError('contact', result.ok ? null : result.error);
+  });
+  contactInput?.addEventListener('input', () => {
+    if (contactInput.getAttribute('aria-invalid') === 'true' && parseContact(contactInput.value).ok) setFieldError('contact', null);
+  });
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const contact = parseContact(contactInput.value);
+    setFieldError('contact', contact.ok ? null : contact.error);
+    setFieldError('method', checkout.method ? null : 'errMethod');
+    if (!contact.ok) { contactInput.focus(); return; }
+    if (!checkout.method) { dialog.querySelector('[name="co-method"]')?.focus(); return; }
+    checkout.contact = contact.value;
+    checkout.va = '8808' + randomDigits(12);
+    showStep('pay');
+  });
+
+  dialog?.querySelectorAll('[data-co-paid]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      dialog.querySelectorAll('[data-co-paid]').forEach((b) => { b.disabled = true; });
+      dialog.querySelector('[data-co-live]').textContent = t('coChecking');
+      const label = dialog.querySelector('[data-pay-footer] [data-co-paid]');
+      if (label && btn === label) label.textContent = t('coChecking');
+      setTimeout(() => {
+        dialog.querySelectorAll('[data-co-paid]').forEach((b) => { b.disabled = false; });
+        if (label) label.textContent = t('coPaid');
+        checkout.apiKey = 'tn-demo-' + randomHex(24);
+        showStep('success');
+        dialog.querySelector('[data-co-live]').textContent = t('successTitle');
+      }, PAY_DELAY);
+    });
+  });
+  dialog?.querySelector('[data-co-fail]')?.addEventListener('click', () => showStep('failed'));
+  dialog?.querySelectorAll('[data-co-back]').forEach((btn) => btn.addEventListener('click', () => showStep('form')));
+  dialog?.querySelector('[data-co-guide]')?.addEventListener('click', () => { checkout.opener = null; closeCheckout(); });
+
+  /* ---------- Copy to clipboard ---------- */
+  async function copyText(text, button) {
+    try { await navigator.clipboard.writeText(text); } catch { /* clipboard unavailable: text stays selectable */ }
+    const original = button.textContent;
+    button.textContent = t('coCopied');
+    const live = dialog?.querySelector('[data-co-live]');
+    if (live) live.textContent = t('coCopied');
+    setTimeout(() => { button.textContent = original; }, 1500);
+  }
+  document.querySelectorAll('[data-copy-target]').forEach((btn) => {
+    btn.addEventListener('click', () => copyText(document.querySelector(btn.dataset.copyTarget)?.textContent.replace(/\s/g, '') || '', btn));
+  });
+  dialog?.querySelector('[data-copy-key]')?.addEventListener('click', (event) => copyText(checkout.apiKey, event.currentTarget));
+
+  document.querySelectorAll('[data-open-checkout]').forEach((btn) => {
+    btn.addEventListener('click', () => openCheckout(null, btn));
+  });
 
   // Exposed for upcoming sections and manual testing in the console.
-  window.TokenNyala = { selectPackage, setIntent, packages };
+  window.TokenNyala = { selectPackage, setIntent, openCheckout, packages };
 
   /* ---------- Mobile menu ---------- */
   const menuButton = document.getElementById('menu-button');

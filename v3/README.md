@@ -34,7 +34,7 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 - [x] 2. Hero — copy ID/EN, board ilustrasi, status saldo menyala lewat `TokenNyala.selectPackage(id)`
 - [x] 3. Cara kerja — 1 kolom (mobile), kartu baris (md), 3 kolom (lg)
 - [x] 4. Package picker — tab intent (keyboard), baris rekomendasi, 3 kartu, `selectPackage` menyalakan hero
-- [ ] 5. Checkout
+- [x] 5. Checkout — bottom sheet/dialog, email atau HP, QRIS/E-Wallet/VA mock, sukses dengan API key contoh, state gagal
 - [ ] 6. Model AI + katalog
 - [ ] 7. Pakai di tool
 - [ ] 8. Benefit + dashboard + contoh

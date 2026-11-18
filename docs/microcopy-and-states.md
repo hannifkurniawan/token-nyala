@@ -142,7 +142,9 @@ Tambahkan label `Contoh tampilan` pada bukti atau klaim operasional jika belum t
 - `Virtual Account`
 
 ### CTA
-`Konfirmasi pembayaran`
+`Lanjut bayar {total}` / `Continue to pay {total}` (form) → `Saya sudah bayar` / `I've paid` (langkah bayar)
+
+Catatan: sebelumnya `Konfirmasi pembayaran`; diganti karena checkout sekarang punya langkah instruksi bayar, dan menyebut total membuat aksi lebih jelas.
 
 ### Prototype Notice
 `Ini adalah checkout simulasi. Tidak ada transaksi atau penarikan dana nyata.`

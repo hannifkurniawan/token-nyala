@@ -98,7 +98,7 @@ CHECK_JS = """
   }
   // Text spilling out of its own box (box fits, glyphs don't) — e.g. a big price in a narrow card
   const spills = [];
-  for (const el of document.body.querySelectorAll('h1, h2, h3, h4, p, span, a, button, li, dt, dd, strong')) {
+  for (const el of document.body.querySelectorAll('h1, h2, h3, h4, p, span, a, button, li, dt, dd, strong, label, legend, div')) {
     if (el.closest('[aria-hidden="true"], .sr-only, [hidden]') || el.matches('[data-decor-overflow]')) continue;
     const s = getComputedStyle(el);
     if (s.display === 'none' || s.display === 'inline' || s.overflowX !== 'visible' || s.textOverflow === 'ellipsis') continue;
@@ -114,6 +114,66 @@ CHECK_JS = """
   };
 }
 """
+
+
+def checkout_flow(page, out, name):
+    """Open checkout from the hero CTA, validate, pay with QRIS, reach success, close with Escape."""
+    problems = []
+    page.evaluate("() => window.scrollTo(0, 0)")
+    opener = page.locator("#hero-title ~ div > [data-open-checkout]")
+    opener.click()
+    page.wait_for_timeout(350)
+    box = page.evaluate("""() => { const d = document.getElementById('checkout'); const r = d.getBoundingClientRect();
+        return { open: d.open, top: r.top, bottom: r.bottom, left: r.left, right: r.right, vh: innerHeight, vw: innerWidth,
+                 focus: document.activeElement?.id, scrollLocked: document.documentElement.classList.contains('overflow-hidden') }; }""")
+    if not box["open"]:
+        return ["CHECKOUT did not open"]
+    if box["top"] < -1 or box["bottom"] > box["vh"] + 1 or box["left"] < -1 or box["right"] > box["vw"] + 1:
+        problems.append(f"CHECKOUT outside viewport {box}")
+    if box["focus"] != "co-title" or not box["scrollLocked"]:
+        problems.append(f"CHECKOUT focus={box['focus']} scrollLocked={box['scrollLocked']}")
+    r = page.evaluate(CHECK_JS)
+    if r["small"]:
+        problems.append(f"CHECKOUT SMALL TARGETS: {r['small']}")
+    if r["spills"]:
+        problems.append(f"CHECKOUT TEXT SPILLS: {r['spills']}")
+    page.screenshot(path=str(out / f"{name}-checkout.png"))
+
+    # empty submit → both errors, focus on contact
+    page.locator("[data-co-submit]").click()
+    err = page.evaluate("""() => ({ contact: !document.querySelector('[data-error-for=contact]').classList.contains('hidden'),
+                                    method: !document.querySelector('[data-error-for=method]').classList.contains('hidden'),
+                                    focus: document.activeElement?.id })""")
+    if err != {"contact": True, "method": True, "focus": "co-contact"}:
+        problems.append(f"CHECKOUT validation {err}")
+    page.fill("#co-contact", "0812-3456-7890")
+    page.locator("label:has(input[name=co-method][value=qris])").click()
+    page.wait_for_timeout(250)  # let the checked-state transition finish
+    page.screenshot(path=str(out / f"{name}-checkout-errors.png"))
+    scrolled = page.evaluate("() => { const d = document.getElementById('checkout'); return d.scrollTop + ' / overflow ' + (d.scrollHeight - d.clientHeight); }")
+    if not scrolled.startswith("0 / overflow 0"):
+        problems.append(f"CHECKOUT dialog itself scrolled: scrollTop {scrolled} (content leaking out of the scroll body)")
+    page.locator("[data-co-submit]").click()
+    page.wait_for_timeout(100)
+    if page.evaluate("() => document.getElementById('checkout').dataset.step") != "pay":
+        problems.append("CHECKOUT did not reach pay step")
+    page.screenshot(path=str(out / f"{name}-checkout-pay.png"))
+    page.locator("[data-pay-footer] [data-co-paid]").click()
+    page.wait_for_timeout(800)
+    done = page.evaluate("""() => ({ step: document.getElementById('checkout').dataset.step,
+                                     body: document.querySelector('[data-co-success-body]').textContent,
+                                     key: document.querySelector('[data-co-key]').textContent })""")
+    if done["step"] != "success" or "+6281234567890" not in done["body"] or not done["key"].startswith("tn-demo-"):
+        problems.append(f"CHECKOUT success {done}")
+    page.screenshot(path=str(out / f"{name}-checkout-success.png"))
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(100)
+    after = page.evaluate("""() => ({ open: document.getElementById('checkout').open,
+                                      focusOk: document.activeElement === document.querySelector('#hero-title ~ div > [data-open-checkout]'),
+                                      unlocked: !document.documentElement.classList.contains('overflow-hidden') })""")
+    if after != {"open": False, "focusOk": True, "unlocked": True}:
+        problems.append(f"CHECKOUT close {after}")
+    return problems
 
 
 def serve(directory):
@@ -203,14 +263,24 @@ def main():
                   recoCount: document.querySelectorAll('[data-package][data-recommended=true]').length,
                 })""")
                 page.locator("[data-choose-recommended]").click()
+                page.wait_for_timeout(300)
                 checks.update(page.evaluate("""() => ({
                   selected: document.querySelector('[data-package][data-selected=true]')?.dataset.package,
                   hero: document.querySelector('[data-hero-balance]')?.dataset.state,
+                  checkoutOpen: !!document.getElementById('checkout')?.open,
+                  checkoutPkg: document.querySelector('[name=co-package]:checked')?.value,
                 })"""))
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(100)
+                checks["focusBack"] = page.evaluate("() => document.activeElement?.hasAttribute('data-choose-recommended')")
                 page.locator("#paket").screenshot(path=str(out / f"{name}-paket.png"))
-                expected = {"tab": "work", "focused": "work", "reco": "work", "recoCount": 1, "selected": "work", "hero": "on"}
+                expected = {"tab": "work", "focused": "work", "reco": "work", "recoCount": 1, "selected": "work", "hero": "on",
+                            "checkoutOpen": True, "checkoutPkg": "work", "focusBack": True}
                 if checks != expected:
                     status.append(f"PACKAGES {checks} != {expected}")
+
+            if args.interactive and name in ("320", "375", "768", "1440", "667x375-landscape") and page.locator("dialog#checkout").count():
+                status += checkout_flow(page, out, name)
 
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()

@@ -310,7 +310,9 @@ Preview di landing (6 kartu, urutan): Claude Sonnet, GPT, Gemini Pro, DeepSeek C
 
 - Gunakan `<dialog>` bila memungkinkan
 - Fallback: overlay div dengan `role="dialog"`
-- Opening: set selected package dan total
+- Opening: set selected package dan total. Jika dibuka dari CTA umum (header/hero), paket = paket terpilih atau rekomendasi tab aktif
+- Pilihan paket (3 radio) ada di atas ringkasan; di bawah 640px harga ditulis singkat (`Rp100rb` / `Rp100K`), ringkasan biaya tetap format lengkap
+- Alur 3 langkah: **form** → **instruksi bayar** sesuai metode (QR contoh / nomor VA lokal / tombol DANA·GoPay·OVO) → **sukses** (atau **gagal** lewat tombol “Simulasikan pembayaran gagal”)
 - Display fields:
   - Email atau nomor HP (satu field)
   - Payment method
@@ -320,8 +322,9 @@ Preview di landing (6 kartu, urutan): Claude Sonnet, GPT, Gemini Pro, DeepSeek C
   - Total
 - Payment options mock: QRIS, E-Wallet, Virtual Account
 - Field kontak menggunakan `type="text"`, `inputmode="email"`, `autocomplete="email"`, dan `required` (lihat Form Validation)
-- Confirm disabled sampai kontak valid dan metode dipilih
-- Submit menampilkan success state
+- Tombol submit **tidak di-disable**: validasi saat submit, pesan error inline, fokus ke field pertama yang salah (tombol nonaktif tanpa penjelasan menyulitkan pengguna)
+- Label submit menyebut total: `Lanjut bayar Rp100.000`
+- Langkah bayar → “Saya sudah bayar” → ≤600ms “Memeriksa pembayaran…” → success state
 - Tidak membuat transaksi nyata
 - Success state harus mencantumkan teks `Prototype — tidak ada transaksi nyata`
 
