@@ -154,6 +154,41 @@
       failBody: 'Tidak ada saldo yang terpotong pada prototipe ini. Pilih metode lain atau coba lagi.',
       failRetry: 'Coba lagi',
 
+      modelsKicker: 'Model AI',
+      modelsTitle: 'Satu saldo untuk semua model.',
+      modelsBody: 'Paket apa pun, pilihan modelnya sama. Pilih model hemat untuk tugas ringan, model premium untuk pekerjaan rumit.',
+      modelsCta: 'Lihat semua model & tarif',
+      modelsNote: '1 sesi kecil ≈ satu permintaan perbaikan komponen di tool coding (±40 rb token masuk, ±4 rb token keluar). Contoh — daftar dan tarif dapat berubah.',
+      modelListAria: 'Model pilihan',
+      tier_hemat: 'Hemat',
+      tier_seimbang: 'Seimbang',
+      tier_premium: 'Premium',
+      modelSessions: '≈ {n}',
+      modelSessionsUnit: 'sesi kecil / {price}',
+      modelRates: 'Detail tarif',
+      rateInput: 'Input',
+      rateOutput: 'Output',
+      rateContext: 'Konteks',
+      rateUnit: '{n} kredit',
+      rateCaption: 'Tarif per 1 jt token',
+      contextUnit: '{n} token',
+      use_coding: 'Coding',
+      use_chat: 'Chat & menulis',
+      use_analysis: 'Analisis dokumen',
+      catTitle: 'Model AI yang tersedia',
+      catSubtitle: 'Satu saldo untuk semua model. Paket apa pun, pilihan modelnya sama.',
+      catClose: 'Tutup katalog model',
+      catSearchLabel: 'Cari model',
+      catSearchPlaceholder: 'Cari model, misalnya Claude',
+      catFilterToggle: 'Filter',
+      filterUse: 'Kegunaan',
+      filterTier: 'Level biaya',
+      filterProvider: 'Penyedia',
+      catCount: 'Menampilkan {a} dari {b} model',
+      catMore: 'Tampilkan lebih banyak',
+      catEmpty: 'Model tidak ditemukan. Coba kata kunci atau filter lain.',
+      catClear: 'Hapus filter',
+
       pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
       pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
       pkgEstimate_work: '100+ sesi kecil'
@@ -306,6 +341,41 @@
       failBody: 'Nothing was charged in this prototype. Choose another method or try again.',
       failRetry: 'Try again',
 
+      modelsKicker: 'AI models',
+      modelsTitle: 'One balance for every model.',
+      modelsBody: 'Every package unlocks the same models. Pick a budget model for light tasks and a premium one for hard problems.',
+      modelsCta: 'See all models & rates',
+      modelsNote: '1 small session ≈ one component fix request in a coding tool (~40K tokens in, ~4K out). Example only — models and rates may change.',
+      modelListAria: 'Featured models',
+      tier_hemat: 'Budget',
+      tier_seimbang: 'Balanced',
+      tier_premium: 'Premium',
+      modelSessions: '≈ {n}',
+      modelSessionsUnit: 'small sessions / {price}',
+      modelRates: 'Rate details',
+      rateInput: 'Input',
+      rateOutput: 'Output',
+      rateContext: 'Context',
+      rateUnit: '{n} credits',
+      rateCaption: 'Rates per 1M tokens',
+      contextUnit: '{n} tokens',
+      use_coding: 'Coding',
+      use_chat: 'Chat & writing',
+      use_analysis: 'Document analysis',
+      catTitle: 'Available AI models',
+      catSubtitle: 'One balance for every model, whichever package you choose.',
+      catClose: 'Close model catalog',
+      catSearchLabel: 'Search models',
+      catSearchPlaceholder: 'Search models, e.g. Claude',
+      catFilterToggle: 'Filters',
+      filterUse: 'Use',
+      filterTier: 'Cost level',
+      filterProvider: 'Provider',
+      catCount: 'Showing {a} of {b} models',
+      catMore: 'Show more',
+      catEmpty: 'No models found. Try another keyword or filter.',
+      catClear: 'Clear filters',
+
       pkgEstimate_learn: 'about 20–30 small sessions',
       pkgEstimate_prototype: 'about 40–60 small sessions',
       pkgEstimate_work: '100+ small sessions'
@@ -319,6 +389,40 @@
     work: { id: 'work', name: 'Scale', amount: 250000, bonus: 50000 }
   };
   const METER_MAX_CREDIT = 300000; // largest package incl. bonus → 100%
+
+  /* Model catalog mock (docs/technical-spec.md → Katalog Model Mock). Rates: credits per 1M tokens, 1 credit = Rp1. */
+  const SMALL_SESSION = { inputTokens: 40000, outputTokens: 4000 };
+  const models = [
+    { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'DeepSeek', uses: ['coding', 'chat'], in: 4500, out: 18000, ctx: 128000 },
+    { id: 'gemini-flash', name: 'Gemini Flash', provider: 'Google', uses: ['chat', 'analysis'], in: 5000, out: 20000, ctx: 1000000 },
+    { id: 'qwen-plus', name: 'Qwen Plus', provider: 'Alibaba', uses: ['chat'], in: 6000, out: 24000, ctx: 128000 },
+    { id: 'gpt-mini', name: 'GPT Mini', provider: 'OpenAI', uses: ['chat'], in: 6500, out: 26000, ctx: 400000 },
+    { id: 'deepseek-reasoner', name: 'DeepSeek Reasoner', provider: 'DeepSeek', uses: ['analysis', 'coding'], in: 9000, out: 36000, ctx: 128000 },
+    { id: 'claude-haiku', name: 'Claude Haiku', provider: 'Anthropic', uses: ['chat', 'coding'], in: 15000, out: 75000, ctx: 200000 },
+    { id: 'qwen-max', name: 'Qwen Max', provider: 'Alibaba', uses: ['coding', 'chat'], in: 20000, out: 80000, ctx: 256000 },
+    { id: 'gpt', name: 'GPT', provider: 'OpenAI', uses: ['coding', 'chat'], in: 25000, out: 150000, ctx: 400000 },
+    { id: 'claude-sonnet', name: 'Claude Sonnet', provider: 'Anthropic', uses: ['coding', 'analysis'], in: 31500, out: 157500, ctx: 1000000 },
+    { id: 'gemini-pro', name: 'Gemini Pro', provider: 'Google', uses: ['coding', 'analysis'], in: 31500, out: 189000, ctx: 1000000 },
+    { id: 'claude-opus', name: 'Claude Opus', provider: 'Anthropic', uses: ['coding'], in: 78750, out: 393750, ctx: 1000000 },
+    { id: 'gpt-pro', name: 'GPT Pro', provider: 'OpenAI', uses: ['analysis'], in: 150000, out: 600000, ctx: 400000 }
+  ].map((m) => {
+    const sessionCost = (SMALL_SESSION.inputTokens / 1e6) * m.in + (SMALL_SESSION.outputTokens / 1e6) * m.out;
+    const tier = sessionCost < 1000 ? 'hemat' : sessionCost <= 3000 ? 'seimbang' : 'premium';
+    return { ...m, sessionCost, tier, per10k: Math.floor(10000 / sessionCost) };
+  });
+  const PREVIEW_MODELS = ['claude-sonnet', 'gpt', 'gemini-pro', 'deepseek-chat', 'qwen-plus', 'claude-opus'];
+  const PROVIDER_STYLE = {
+    Anthropic: ['An', 'bg-xl-yellow/30 text-xl-dark'],
+    OpenAI: ['Op', 'bg-ink/10 text-ink'],
+    Google: ['Go', 'bg-xl-sky/25 text-xl-dark'],
+    DeepSeek: ['Ds', 'bg-xl-blue/10 text-xl-blue'],
+    Alibaba: ['Al', 'bg-xl-teal/20 text-teal-ink']
+  };
+  const TIER_STYLE = {
+    hemat: 'bg-xl-teal/15 text-teal-ink',
+    seimbang: 'bg-xl-sky/20 text-xl-dark',
+    premium: 'bg-xl-yellow/35 text-xl-dark'
+  };
 
   const state = { lang: 'id', menuOpen: false, intent: 'learn', selectedPackage: null };
   const t = (key) => copy[state.lang][key] ?? copy.id[key] ?? key;
@@ -353,6 +457,7 @@
     renderPackages();
     renderHeroBalance();
     renderCheckout();
+    renderModels();
     storage.set(LANG_KEY, lang);
   }
 
@@ -633,12 +738,137 @@
   });
   dialog?.querySelector('[data-copy-key]')?.addEventListener('click', (event) => copyText(checkout.apiKey, event.currentTarget));
 
+  /* ---------- Models: preview cards + catalog ---------- */
+  const modelTemplate = document.getElementById('model-card');
+  const catalogDialog = document.getElementById('catalog');
+  const catalog = { query: '', filters: { use: new Set(), tier: new Set(), provider: new Set() }, visible: 6, opener: null };
+  const CATALOG_STEP = 6;
+
+  function compact(n) { // 128000 → "128 rb" / "128K", 1000000 → "1 jt" / "1M"
+    const en = state.lang === 'en';
+    if (n >= 1e6) return number(n / 1e6) + (en ? 'M' : ' jt');
+    return number(n / 1e3) + (en ? 'K' : ' rb');
+  }
+
+  function modelCard(m) {
+    const node = modelTemplate.content.firstElementChild.cloneNode(true);
+    const q = (sel) => node.querySelector(sel);
+    const [mono, monoClass] = PROVIDER_STYLE[m.provider];
+    q('[data-m-mono]').textContent = mono;
+    q('[data-m-mono]').className += ' ' + monoClass;
+    q('[data-m-name]').textContent = m.name;
+    q('[data-m-meta]').textContent = [m.provider, ...m.uses.map((u) => t(`use_${u}`))].join(' · ');
+    q('[data-m-tier]').textContent = t(`tier_${m.tier}`);
+    q('[data-m-tier]').className += ' ' + TIER_STYLE[m.tier];
+    q('[data-m-sessions]').textContent = fill(t('modelSessions'), { n: m.per10k });
+    q('[data-m-sessions-unit]').textContent = fill(t('modelSessionsUnit'), { price: rupiah(10000) });
+    q('[data-m-rates-label]').textContent = t('modelRates');
+    q('[data-m-rate-caption]').textContent = t('rateCaption');
+    node.querySelectorAll('[data-m-k]').forEach((el) => { el.textContent = t(el.dataset.mK); });
+    q('[data-m-in]').textContent = fill(t('rateUnit'), { n: number(m.in) });
+    q('[data-m-out]').textContent = fill(t('rateUnit'), { n: number(m.out) });
+    q('[data-m-ctx]').textContent = fill(t('contextUnit'), { n: compact(m.ctx) });
+    return node;
+  }
+
+  function filteredModels() {
+    const q = catalog.query.trim().toLowerCase();
+    const { use, tier, provider } = catalog.filters;
+    return models.filter((m) =>
+      (!q || `${m.name} ${m.provider}`.toLowerCase().includes(q)) &&
+      (!use.size || m.uses.some((u) => use.has(u))) &&
+      (!tier.size || tier.has(m.tier)) &&
+      (!provider.size || provider.has(m.provider)));
+  }
+
+  function renderModels() {
+    const preview = document.querySelector('[data-model-preview]');
+    if (preview && modelTemplate) {
+      preview.replaceChildren(...PREVIEW_MODELS.map((id) => modelCard(models.find((m) => m.id === id))));
+    }
+    renderCatalog();
+  }
+
+  function renderCatalog() {
+    if (!catalogDialog || !modelTemplate) return;
+    const list = catalogDialog.querySelector('[data-cat-list]');
+    const results = filteredModels();
+    const shown = results.slice(0, catalog.visible);
+    list.replaceChildren(...shown.map(modelCard));
+    catalogDialog.querySelector('[data-cat-count]').textContent = fill(t('catCount'), { a: shown.length, b: results.length });
+    catalogDialog.querySelector('[data-cat-empty]').dataset.show = String(results.length === 0);
+    catalogDialog.querySelector('[data-cat-more]').dataset.show = String(results.length > shown.length);
+
+    const active = Object.values(catalog.filters).reduce((n, set) => n + set.size, 0);
+    const toggleLabel = catalogDialog.querySelector('[data-filter-toggle-label]');
+    if (toggleLabel) toggleLabel.textContent = t('catFilterToggle') + (active ? ` (${active})` : '');
+    catalogDialog.querySelectorAll('[data-filter]').forEach((chip) => {
+      chip.setAttribute('aria-pressed', String(catalog.filters[chip.dataset.filter].has(chip.dataset.value)));
+    });
+  }
+
+  function openCatalog(opener = document.activeElement) {
+    if (!catalogDialog) return;
+    if (state.menuOpen) setMenu(false);
+    catalog.opener = opener;
+    catalog.visible = CATALOG_STEP;
+    renderCatalog();
+    catalogDialog.showModal();
+    document.documentElement.classList.add('overflow-hidden');
+    catalogDialog.querySelector('#cat-title')?.focus();
+  }
+
+  catalogDialog?.addEventListener('close', () => {
+    document.documentElement.classList.remove('overflow-hidden');
+    if (catalog.opener && document.contains(catalog.opener) && catalog.opener.getClientRects().length) catalog.opener.focus();
+  });
+  let catalogPressedBackdrop = false;
+  catalogDialog?.addEventListener('pointerdown', (e) => { catalogPressedBackdrop = e.target === catalogDialog; });
+  catalogDialog?.addEventListener('click', (e) => { if (catalogPressedBackdrop && e.target === catalogDialog) catalogDialog.close(); catalogPressedBackdrop = false; });
+  catalogDialog?.querySelector('[data-cat-close]')?.addEventListener('click', () => catalogDialog.close());
+
+  catalogDialog?.querySelector('#cat-search')?.addEventListener('input', (e) => {
+    catalog.query = e.target.value;
+    catalog.visible = CATALOG_STEP;
+    renderCatalog();
+  });
+  catalogDialog?.querySelectorAll('[data-filter]').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const set = catalog.filters[chip.dataset.filter];
+      set.has(chip.dataset.value) ? set.delete(chip.dataset.value) : set.add(chip.dataset.value);
+      catalog.visible = CATALOG_STEP;
+      renderCatalog();
+    });
+  });
+  catalogDialog?.querySelector('[data-cat-more]')?.addEventListener('click', () => {
+    const firstNew = catalog.visible;
+    catalog.visible += CATALOG_STEP;
+    renderCatalog();
+    // Move focus to the first newly shown card so keyboard users continue from there.
+    catalogDialog.querySelectorAll('[data-cat-list] summary')[firstNew]?.focus();
+  });
+  catalogDialog?.querySelector('[data-cat-clear]')?.addEventListener('click', () => {
+    Object.values(catalog.filters).forEach((set) => set.clear());
+    catalog.query = '';
+    const search = catalogDialog.querySelector('#cat-search');
+    if (search) { search.value = ''; search.focus(); }
+    renderCatalog();
+  });
+  const filterToggle = catalogDialog?.querySelector('[data-filter-toggle]');
+  filterToggle?.addEventListener('click', () => {
+    const panel = document.getElementById('cat-filters');
+    const open = panel.dataset.open !== 'true';
+    panel.dataset.open = String(open);
+    filterToggle.setAttribute('aria-expanded', String(open));
+  });
+  document.querySelectorAll('[data-open-catalog]').forEach((btn) => btn.addEventListener('click', () => openCatalog(btn)));
+
   document.querySelectorAll('[data-open-checkout]').forEach((btn) => {
     btn.addEventListener('click', () => openCheckout(null, btn));
   });
 
   // Exposed for upcoming sections and manual testing in the console.
-  window.TokenNyala = { selectPackage, setIntent, openCheckout, packages };
+  window.TokenNyala = { selectPackage, setIntent, openCheckout, openCatalog, packages, models };
 
   /* ---------- Mobile menu ---------- */
   const menuButton = document.getElementById('menu-button');

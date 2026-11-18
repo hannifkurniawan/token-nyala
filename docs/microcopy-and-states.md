@@ -288,9 +288,10 @@ Link di bawahnya: `Lihat model yang bisa dipakai →` / `See available models �
 | Elemen | ID | EN |
 |---|---|---|
 | Level | `Hemat` · `Seimbang` · `Premium` | `Budget` · `Balanced` · `Premium` |
-| Estimasi | `≈ {n} sesi kecil / Rp10.000` | `≈ {n} small sessions / Rp10,000` |
+| Estimasi | `≈ {n}` (besar) + `sesi kecil / Rp10.000` | `≈ {n}` + `small sessions / Rp10,000` |
 | Detail | `Detail tarif` | `Rate details` |
-| Baris tarif | `Input {x} kredit / 1 jt token` · `Output …` · `Konteks {y} token` | `Input {x} credits / 1M tokens` · `Output …` · `Context {y} tokens` |
+| Keterangan tarif | `Tarif per 1 jt token` | `Rates per 1M tokens` |
+| Baris tarif | `Input {x} kredit` · `Output …` · `Konteks {y} token` | `Input {x} credits` · `Output …` · `Context {y} tokens` |
 | Kegunaan | `Coding` · `Chat & menulis` · `Analisis dokumen` | `Coding` · `Chat & writing` · `Document analysis` |
 
 ### Dialog Katalog

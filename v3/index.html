@@ -508,6 +508,26 @@
         <p class="sr-only" aria-live="polite" data-pkg-announce></p>
       </div>
     </section>
+
+    <!-- ============ 6. MODEL AI ============ -->
+    <section id="model" aria-labelledby="models-title" class="border-y border-line bg-white">
+      <div class="shell py-16 sm:py-20 lg:py-24">
+        <div class="max-w-2xl">
+          <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-xl-blue" data-i18n="modelsKicker">Model AI</p>
+          <h2 id="models-title" class="mt-3 text-[clamp(1.75rem,6vw,2.75rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-xl-dark" data-i18n="modelsTitle">Satu saldo untuk semua model.</h2>
+          <p class="mt-4 text-base leading-relaxed text-muted sm:text-lg" data-i18n="modelsBody">Paket apa pun, pilihan modelnya sama. Pilih model hemat untuk tugas ringan, model premium untuk pekerjaan rumit.</p>
+        </div>
+
+        <ul class="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" aria-label="Model pilihan" data-i18n-aria="modelListAria" data-model-preview></ul>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+          <button type="button" class="btn btn-secondary min-h-12 w-full sm:w-auto" data-open-catalog>
+            <span data-i18n="modelsCta">Lihat semua model & tarif</span><span aria-hidden="true">→</span>
+          </button>
+          <p class="max-w-xl text-xs leading-relaxed text-muted sm:text-right" data-i18n="modelsNote">1 sesi kecil ≈ satu permintaan perbaikan komponen di tool coding (±40 rb token masuk, ±4 rb token keluar). Contoh — daftar dan tarif dapat berubah.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- ============ FOOTER ============ -->
@@ -551,6 +571,117 @@
       </div>
     </div>
   </footer>
+
+  <!-- Model card template (rendered by script.js → renderModels) -->
+  <template id="model-card">
+    <li>
+      <article class="flex h-full flex-col rounded-card border border-line bg-white p-5">
+        <div class="flex items-center gap-3">
+          <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-full text-sm font-extrabold" data-m-mono></span>
+          <h3 class="min-w-0 flex-1 text-base font-extrabold leading-snug text-xl-dark" data-m-name></h3>
+          <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-extrabold" data-m-tier></span>
+        </div>
+        <p class="mt-3 text-sm text-muted" data-m-meta></p>
+        <p class="mt-4 flex flex-wrap items-baseline gap-x-2">
+          <span class="font-mono text-2xl font-semibold text-xl-dark" data-m-sessions></span>
+          <span class="text-sm font-semibold text-muted" data-m-sessions-unit></span>
+        </p>
+        <details class="group/d mt-auto pt-3">
+          <summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 text-sm font-extrabold text-xl-blue [&::-webkit-details-marker]:hidden">
+            <svg aria-hidden="true" class="size-4 transition-transform group-open/d:rotate-90 motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            <span data-m-rates-label></span>
+          </summary>
+          <div class="mt-1 rounded-control bg-paper px-3 py-2.5 text-sm">
+            <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-m-rate-caption></p>
+          <dl class="mt-1.5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1">
+            <dt class="text-muted" data-m-k="rateInput"></dt><dd class="text-right font-mono text-xl-dark" data-m-in></dd>
+            <dt class="text-muted" data-m-k="rateOutput"></dt><dd class="text-right font-mono text-xl-dark" data-m-out></dd>
+            <dt class="text-muted" data-m-k="rateContext"></dt><dd class="text-right font-mono text-xl-dark" data-m-ctx></dd>
+          </dl>
+          </div>
+        </details>
+      </article>
+    </li>
+  </template>
+
+  <!-- ============ 6b. KATALOG MODEL (dialog) ============
+       Mobile: full screen, filters behind a toggle. md+: centered, filters always visible. -->
+  <dialog id="catalog" aria-labelledby="cat-title"
+          class="m-0 h-dvh max-h-none w-full max-w-none flex-col overflow-hidden bg-paper p-0 text-ink
+                 backdrop:bg-xl-dark/55 open:flex open:animate-dialog-in motion-reduce:open:animate-none
+                 md:m-auto md:h-auto md:max-h-[85dvh] md:max-w-4xl md:rounded-card md:shadow-2xl">
+    <header class="relative shrink-0 border-b border-line bg-white px-4 pb-3 pt-3 sm:px-6 md:pt-5">
+      <div class="flex items-start gap-3">
+        <div class="min-w-0 flex-1">
+          <h2 id="cat-title" tabindex="-1" class="text-lg font-extrabold text-xl-dark outline-none sm:text-xl" data-i18n="catTitle">Model AI yang tersedia</h2>
+          <p class="mt-0.5 text-sm text-muted" data-i18n="catSubtitle">Satu saldo untuk semua model. Paket apa pun, pilihan modelnya sama.</p>
+        </div>
+        <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-muted hover:bg-paper hover:text-ink"
+                aria-label="Tutup katalog model" data-i18n-aria="catClose" data-cat-close>
+          <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <div class="mt-3 flex gap-2">
+        <label for="cat-search" class="sr-only" data-i18n="catSearchLabel">Cari model</label>
+        <div class="relative min-w-0 flex-1">
+          <svg aria-hidden="true" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="cat-search" type="search" autocomplete="off" enterkeyhint="search"
+                 class="block min-h-12 w-full rounded-control border-2 border-line bg-white pl-10 pr-3 text-base placeholder:text-muted/70 focus:border-xl-blue focus:outline-none"
+                 placeholder="Cari model, misalnya Claude" data-i18n-placeholder="catSearchPlaceholder">
+        </div>
+        <button type="button" class="btn btn-secondary min-h-12 shrink-0 px-4 md:hidden" aria-expanded="false" aria-controls="cat-filters" data-filter-toggle>
+          <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          <span data-filter-toggle-label>Filter</span>
+        </button>
+      </div>
+
+      <div id="cat-filters" class="mt-3 hidden gap-3 md:grid md:grid-cols-[auto_minmax(0,1fr)] md:gap-x-6 md:gap-y-3 data-[open=true]:grid" data-open="false">
+          <div role="group" aria-labelledby="flt-use" class="min-w-0">
+            <p id="flt-use" class="text-[11px] font-extrabold uppercase tracking-[0.08em] text-muted" data-i18n="filterUse">Kegunaan</p>
+            <div class="-mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="use" data-value="coding" data-i18n="use_coding">Coding</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="use" data-value="chat" data-i18n="use_chat">Chat & menulis</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="use" data-value="analysis" data-i18n="use_analysis">Analisis dokumen</button>
+            </div>
+          </div>
+          <div role="group" aria-labelledby="flt-tier" class="min-w-0">
+            <p id="flt-tier" class="text-[11px] font-extrabold uppercase tracking-[0.08em] text-muted" data-i18n="filterTier">Level biaya</p>
+            <div class="-mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="tier" data-value="hemat" data-i18n="tier_hemat">Hemat</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="tier" data-value="seimbang" data-i18n="tier_seimbang">Seimbang</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="tier" data-value="premium" data-i18n="tier_premium">Premium</button>
+            </div>
+          </div>
+          <div role="group" aria-labelledby="flt-provider" class="min-w-0 md:col-span-2">
+            <p id="flt-provider" class="text-[11px] font-extrabold uppercase tracking-[0.08em] text-muted" data-i18n="filterProvider">Penyedia</p>
+            <div class="-mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="provider" data-value="Anthropic">Anthropic</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="provider" data-value="OpenAI">OpenAI</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="provider" data-value="Google">Google</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="provider" data-value="DeepSeek">DeepSeek</button>
+              <button type="button" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-bold text-muted transition-colors hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white" aria-pressed="false" data-filter="provider" data-value="Alibaba">Alibaba</button>
+            </div>
+          </div>
+      </div>
+    </header>
+
+    <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
+      <p class="text-sm font-bold text-muted" aria-live="polite" data-cat-count></p>
+      <ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3" aria-labelledby="cat-title" data-cat-list></ul>
+
+      <div class="mt-6 hidden flex-col items-center gap-3 rounded-card border border-dashed border-line bg-white px-4 py-8 text-center data-[show=true]:flex" data-cat-empty data-show="false">
+        <p class="text-sm font-semibold text-muted" data-i18n="catEmpty">Model tidak ditemukan. Coba kata kunci atau filter lain.</p>
+        <button type="button" class="btn btn-secondary" data-cat-clear data-i18n="catClear">Hapus filter</button>
+      </div>
+
+      <div class="mt-4 flex justify-center">
+        <button type="button" class="btn btn-secondary hidden data-[show=true]:inline-flex" data-cat-more data-show="false" data-i18n="catMore">Tampilkan lebih banyak</button>
+      </div>
+
+      <p class="mt-6 pb-[env(safe-area-inset-bottom)] text-xs leading-relaxed text-muted" data-i18n="modelsNote">1 sesi kecil ≈ satu permintaan perbaikan komponen di tool coding (±40 rb token masuk, ±4 rb token keluar). Contoh — daftar dan tarif dapat berubah.</p>
+    </div>
+  </dialog>
 
   <!-- ============ 5. CHECKOUT (dialog) ============
        Mobile: bottom sheet. md+: centered dialog. Steps: form → pay → success | failed. -->

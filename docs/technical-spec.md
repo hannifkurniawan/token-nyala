@@ -376,7 +376,9 @@ Anthropic · Coding · Analisis
     Konteks 1 jt token
 ```
 
-- Ikon = monogram huruf awal penyedia di lingkaran, **bukan logo resmi** penyedia.
+- Ikon = monogram **dua huruf** penyedia di lingkaran (An, Op, Go, Ds, Al — Anthropic dan Alibaba sama-sama berawalan A), **bukan logo resmi** penyedia.
+- Urutan: [monogram · nama · badge level] → baris penuh “penyedia · kegunaan” → estimasi angka besar `≈ 5` + keterangan kecil `sesi kecil / Rp10.000` → Detail tarif.
+- Detail tarif: keterangan “Tarif per 1 jt token” di atas, nilai cukup `31.500 kredit` (satuan panjang di tiap baris patah di kartu sempit).
 - Badge level selalu berisi teks: Hemat (latar teal muda), Seimbang (sky muda), Premium (yellow muda). Warna bukan satu-satunya pembeda.
 - “Detail tarif” memakai `<details>`; tertutup secara default (pemula tidak melihat angka teknis kecuali membuka).
 - Angka diformat `Intl.NumberFormat('id-ID')`; EN memakai “1M tokens”.
@@ -394,6 +396,9 @@ Anthropic · Coding · Analisis
   - Level biaya: Hemat · Seimbang · Premium
   - Penyedia: Anthropic · OpenAI · Google · DeepSeek · Alibaba
   - Di mobile, baris chip boleh scroll horizontal **di dalam** kontainernya (`overflow-x-auto`), tidak boleh membuat halaman overflow.
+  - Di bawah `md:`, panel filter disembunyikan di balik tombol `Filter (n)` (`aria-expanded`) di samping search, agar daftar hasil tetap punya ruang. Mulai `md:` filter selalu terlihat: Kegunaan + Level biaya sebaris, Penyedia di baris sendiri.
+  - Setelah “Tampilkan lebih banyak”, fokus pindah ke kartu pertama yang baru muncul.
+  - Data model dan estimasi dirender dari satu array di `script.js`; `per10k` dan level biaya **dihitung** dari `SMALL_SESSION`, QA membandingkannya dengan tabel di atas.
 - Logika filter: OR di dalam satu grup, AND antar grup.
 - Hasil: grid 1 kolom base, 2 kolom `md:`, 3 kolom `lg:`. Tampilkan 6, lalu tombol “Tampilkan lebih banyak” (+6). Tidak ada pagination bernomor.
 - Jumlah hasil diumumkan di elemen `aria-live="polite"`: “Menampilkan 6 dari 12 model”.

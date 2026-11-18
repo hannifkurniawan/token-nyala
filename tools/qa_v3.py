@@ -176,6 +176,69 @@ def checkout_flow(page, out, name):
     return problems
 
 
+# Expected "≈ N sesi / Rp10.000" per model — docs/technical-spec.md → Katalog Model Mock
+SPEC_PER10K = {"deepseek-chat": 39, "gemini-flash": 35, "qwen-plus": 29, "gpt-mini": 27, "deepseek-reasoner": 19,
+               "claude-haiku": 11, "qwen-max": 8, "gpt": 6, "claude-sonnet": 5, "gemini-pro": 4, "claude-opus": 2, "gpt-pro": 1}
+SPEC_TIER = {"deepseek-chat": "hemat", "gemini-flash": "hemat", "qwen-plus": "hemat", "gpt-mini": "hemat",
+             "deepseek-reasoner": "hemat", "claude-haiku": "hemat", "qwen-max": "seimbang", "gpt": "seimbang",
+             "claude-sonnet": "seimbang", "gemini-pro": "seimbang", "claude-opus": "premium", "gpt-pro": "premium"}
+
+
+def catalog_flow(page, out, name):
+    """Open the model catalog, page through, search, filter, empty state, close."""
+    problems = []
+    data = page.evaluate("() => TokenNyala.models.map(m => [m.id, m.per10k, m.tier])")
+    got = {i: n for i, n, _ in data}
+    tiers = {i: tr for i, _, tr in data}
+    if got != SPEC_PER10K or tiers != SPEC_TIER:
+        problems.append(f"MODELS data differs from spec: per10k={got} tiers={tiers}")
+
+    page.evaluate("() => document.querySelector('#model').scrollIntoView()")
+    btn = page.locator("[data-open-catalog]")
+    btn.click()
+    page.wait_for_timeout(300)
+    cat = lambda js: page.evaluate(f"() => {{ const d = document.getElementById('catalog'); {js} }}")
+    box = cat("const r = d.getBoundingClientRect(); return { open: d.open, ok: r.top >= -1 && r.bottom <= innerHeight + 1 && r.left >= -1 && r.right <= innerWidth + 1, focus: document.activeElement?.id };")
+    if box != {"open": True, "ok": True, "focus": "cat-title"}:
+        problems.append(f"CATALOG open {box}")
+    r = page.evaluate(CHECK_JS)
+    if r["small"]:
+        problems.append(f"CATALOG SMALL TARGETS: {r['small']}")
+    if r["spills"]:
+        problems.append(f"CATALOG TEXT SPILLS: {r['spills']}")
+    page.screenshot(path=str(out / f"{name}-catalog.png"))
+
+    count = lambda: cat("return [d.querySelectorAll('[data-cat-list] > li').length, d.querySelector('[data-cat-count]').textContent];")
+    first = count()
+    page.locator("[data-cat-more]").click()
+    second = count()
+    page.fill("#cat-search", "claude")
+    third = count()
+    if page.locator("[data-filter-toggle]").is_visible():
+        page.locator("[data-filter-toggle]").click()
+    page.locator('[data-filter="tier"][data-value="premium"]').click()
+    page.wait_for_timeout(200)
+    page.screenshot(path=str(out / f"{name}-catalog-filtered.png"))
+    fourth = cat("return [...d.querySelectorAll('[data-cat-list] [data-m-name]')].map(e => e.textContent);")
+    page.fill("#cat-search", "zzz")
+    empty = cat("return d.querySelector('[data-cat-empty]').dataset.show;")
+    page.locator("[data-cat-clear]").click()
+    cleared = count()
+    scroll = cat("return d.scrollTop;")
+    expected = ([6], [12], [3], ["Claude Opus"], "true", [6])
+    actual = ([first[0]], [second[0]], [third[0]], fourth, empty, [cleared[0]])
+    if actual != expected or "dari 12" not in first[1] and "of 12" not in first[1]:
+        problems.append(f"CATALOG flow {actual} != {expected} ({first[1]!r})")
+    if scroll:
+        problems.append(f"CATALOG dialog itself scrolled {scroll}")
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(100)
+    back = page.evaluate("() => ({ open: document.getElementById('catalog').open, focus: document.activeElement?.hasAttribute('data-open-catalog') })")
+    if back != {"open": False, "focus": True}:
+        problems.append(f"CATALOG close {back}")
+    return problems
+
+
 def serve(directory):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -281,6 +344,9 @@ def main():
 
             if args.interactive and name in ("320", "375", "768", "1440", "667x375-landscape") and page.locator("dialog#checkout").count():
                 status += checkout_flow(page, out, name)
+
+            if args.interactive and name in ("320", "375", "768", "1440") and page.locator("dialog#catalog").count():
+                status += catalog_flow(page, out, name)
 
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()
