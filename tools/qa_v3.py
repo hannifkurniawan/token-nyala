@@ -329,7 +329,7 @@ def chat_flow(page, out, name, base_url):
     st = js("""() => { const d = document.getElementById('chat'); const r = d.getBoundingClientRect();
         return { open: d.open, modal: d.matches(':modal'), w: Math.round(r.width), h: Math.round(r.height), focus: document.activeElement?.id,
                  launcherHidden: document.getElementById('chat-launcher').getClientRects().length === 0,
-                 chips: d.querySelectorAll('[data-chat-chips] button').length, msgs: d.querySelectorAll('[data-chat-log] > li').length,
+                 chips: d.querySelectorAll('[data-chat-chips] button').length, msgs: d.querySelectorAll('[data-chat-log] > *').length,
                  inView: r.top >= -1 && r.bottom <= innerHeight + 1 && r.left >= -1 && r.right <= innerWidth + 1 }; }""")
     desktop = page.viewport_size["width"] >= 768
     exp = {"open": True, "modal": not desktop, "focus": "chat-input", "launcherHidden": True, "chips": 5, "msgs": 1, "inView": True}
@@ -361,13 +361,13 @@ def chat_flow(page, out, name, base_url):
     # "Butuh bantuan?" inside checkout reopens the chat (and closes checkout); history kept
     page.locator("#checkout [data-open-chat]").click()
     W(300)
-    back = js("() => ({ chat: document.getElementById('chat').open, checkout: document.getElementById('checkout').open, msgs: document.querySelectorAll('#chat [data-chat-log] > li').length })")
+    back = js("() => ({ chat: document.getElementById('chat').open, checkout: document.getElementById('checkout').open, msgs: document.querySelectorAll('#chat [data-chat-log] > *').length })")
     if not back["chat"] or back["checkout"] or back["msgs"] < 7:
         problems.append(f"CHECKOUT help → chat {back}")
     if page.viewport_size["width"] >= 1024:  # header language switch is visible from lg; the non-modal chat re-translates its log
         page.locator('header [data-lang="en"]').first.click()
         W(100)
-        first = js("() => document.querySelector('#chat [data-chat-log] > li').textContent")
+        first = js("() => document.querySelector('#chat [data-chat-log] > *').textContent")
         page.locator('header [data-lang="id"]').first.click()
         page.locator("#chat-input").focus()
         if "Hi, I'm Nala" not in first:

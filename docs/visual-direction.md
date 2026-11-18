@@ -23,7 +23,7 @@ TokenNyala combines marketplace clarity with one memorable visual motif: a digit
 - Paper: `#F7F8FC` — background hangat dengan bias biru-putih
 - White: `#FFFFFF`
 - Ink: `#17181A` — teks sekunder
-- Muted Gray: `#69728A`
+- Muted Gray: `#626B82` (revisi dari `#69728A` agar lolos kontras AA di semua latar)
 - Border: `#D9DEEA`
 
 ## Cara Penggunaan Warna

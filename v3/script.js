@@ -896,12 +896,46 @@
     return !a || a === document.body || dlg.contains(a);
   }
 
+  /* ---------- Shared modal behaviour (checkout, catalog, consultation) ----------
+     showModal + focus heading, scroll lock, backdrop click (press must start and end on the backdrop),
+     focus back to the opener when focus is free (menu button if the opener is hidden). */
+  function setupModal(dlg, { focus, onClose } = {}) {
+    let opener = null;
+    let skipFocus = false;
+    let pressedBackdrop = false;
+    const visible = (el) => el && document.contains(el) && el.getClientRects().length > 0;
+    dlg.addEventListener('pointerdown', (e) => { pressedBackdrop = e.target === dlg; });
+    dlg.addEventListener('click', (e) => { if (pressedBackdrop && e.target === dlg) dlg.close(); pressedBackdrop = false; });
+    dlg.addEventListener('close', () => {
+      document.documentElement.classList.remove('overflow-hidden');
+      onClose?.();
+      const target = skipFocus ? null : opener;
+      skipFocus = false;
+      if (!target || !focusIsFree(dlg)) return;
+      if (visible(target)) target.focus();
+      else if (visible(menuButton)) menuButton.focus();
+    });
+    return {
+      open(from = document.activeElement) {
+        if (state.menuOpen) setMenu(false);
+        opener = from;
+        if (!dlg.open) dlg.showModal();
+        document.documentElement.classList.add('overflow-hidden');
+        dlg.querySelector(focus)?.focus();
+      },
+      close({ returnFocus = true } = {}) {
+        skipFocus = !returnFocus;
+        if (dlg.open) dlg.close();
+      }
+    };
+  }
+
   /* ---------- Checkout (docs/technical-spec.md → Checkout Modal, Form Validation) ---------- */
   const dialog = document.getElementById('checkout');
   const form = dialog?.querySelector('form');
   const contactInput = document.getElementById('co-contact');
   const PAY_DELAY = 600; // spec: no simulated delay above 600ms
-  const checkout = { step: 'form', method: null, contact: '', opener: null, apiKey: '', va: '' };
+  const checkout = { step: 'form', method: null, contact: '', apiKey: '', va: '' };
 
   const randomDigits = (n) => Array.from({ length: n }, () => Math.floor(Math.random() * 10)).join('');
   const randomHex = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => (b % 16).toString(16)).join('');
@@ -985,38 +1019,25 @@
     if (el) { if (!el.hasAttribute('tabindex')) el.tabIndex = -1; el.focus(); }
   }
 
-  function openCheckout(packageId, opener = document.activeElement) {
-    if (!dialog) return;
-    if (state.menuOpen) setMenu(false);
-    selectPackage(packageId || state.selectedPackage || state.intent, { announce: false });
-    checkout.opener = opener;
-    showStep('form');
-    if (!dialog.open) dialog.showModal();
-    document.documentElement.classList.add('overflow-hidden');
-    dialog.querySelector('#co-title')?.focus();
-  }
-
-  function closeCheckout() { if (dialog?.open) dialog.close(); }
-
-  dialog?.addEventListener('close', () => {
-    document.documentElement.classList.remove('overflow-hidden');
-    if (checkout.step !== 'form') { // fresh form next time; keep contact
-      checkout.method = null;
-      dialog.querySelectorAll('[name="co-method"]').forEach((r) => { r.checked = false; });
+  const checkoutModal = dialog && setupModal(dialog, {
+    focus: '#co-title',
+    onClose: () => {
+      if (checkout.step !== 'form') { // fresh form next time; keep contact
+        checkout.method = null;
+        dialog.querySelectorAll('[name="co-method"]').forEach((r) => { r.checked = false; });
+      }
     }
-    // Return focus to the opener; if it is no longer visible (e.g. inside the closed mobile menu), use the menu button.
-    const opener = checkout.opener;
-    const visible = (el) => el && document.contains(el) && el.getClientRects().length > 0;
-    if (!focusIsFree(dialog)) return;
-    if (visible(opener)) opener.focus();
-    else if (opener && visible(menuButton)) menuButton.focus();
   });
 
-  // Close on backdrop click — only when the press both started and ended on the backdrop.
-  let pressedBackdrop = false;
-  dialog?.addEventListener('pointerdown', (event) => { pressedBackdrop = event.target === dialog; });
-  dialog?.addEventListener('click', (event) => { if (pressedBackdrop && event.target === dialog) closeCheckout(); pressedBackdrop = false; });
-  dialog?.querySelector('[data-co-close]')?.addEventListener('click', closeCheckout);
+  function openCheckout(packageId, opener = document.activeElement) {
+    if (!dialog) return;
+    selectPackage(packageId || state.selectedPackage || state.intent, { announce: false });
+    showStep('form');
+    checkoutModal.open(opener);
+  }
+
+  const closeCheckout = (opts) => checkoutModal?.close(opts);
+  dialog?.querySelector('[data-co-close]')?.addEventListener('click', () => closeCheckout());
 
   dialog?.querySelectorAll('[name="co-package"]').forEach((radio) => {
     radio.addEventListener('change', () => selectPackage(radio.value, { announce: false }));
@@ -1067,8 +1088,7 @@
   dialog?.querySelector('[data-co-guide]')?.addEventListener('click', (event) => {
     event.preventDefault();
     const id = event.currentTarget.getAttribute('href').slice(1);
-    checkout.opener = null;
-    closeCheckout();
+    closeCheckout({ returnFocus: false });
     setTimeout(() => goToSection(id), 0);
   });
 
@@ -1102,7 +1122,7 @@
   /* ---------- Models: preview cards + catalog ---------- */
   const modelTemplate = document.getElementById('model-card');
   const catalogDialog = document.getElementById('catalog');
-  const catalog = { query: '', filters: { use: new Set(), tier: new Set(), provider: new Set() }, visible: 6, opener: null };
+  const catalog = { query: '', filters: { use: new Set(), tier: new Set(), provider: new Set() }, visible: 6 };
   const CATALOG_STEP = 6;
 
   function compact(n) { // 128000 → "128 rb" / "128K", 1000000 → "1 jt" / "1M"
@@ -1166,25 +1186,15 @@
     });
   }
 
+  const catalogModal = catalogDialog && setupModal(catalogDialog, { focus: '#cat-title' });
+
   function openCatalog(opener = document.activeElement) {
     if (!catalogDialog) return;
-    if (state.menuOpen) setMenu(false);
-    catalog.opener = opener;
     catalog.visible = CATALOG_STEP;
     renderCatalog();
-    catalogDialog.showModal();
-    document.documentElement.classList.add('overflow-hidden');
-    catalogDialog.querySelector('#cat-title')?.focus();
+    catalogModal.open(opener);
   }
-
-  catalogDialog?.addEventListener('close', () => {
-    document.documentElement.classList.remove('overflow-hidden');
-    if (focusIsFree(catalogDialog) && catalog.opener && document.contains(catalog.opener) && catalog.opener.getClientRects().length) catalog.opener.focus();
-  });
-  let catalogPressedBackdrop = false;
-  catalogDialog?.addEventListener('pointerdown', (e) => { catalogPressedBackdrop = e.target === catalogDialog; });
-  catalogDialog?.addEventListener('click', (e) => { if (catalogPressedBackdrop && e.target === catalogDialog) catalogDialog.close(); catalogPressedBackdrop = false; });
-  catalogDialog?.querySelector('[data-cat-close]')?.addEventListener('click', () => catalogDialog.close());
+  catalogDialog?.querySelector('[data-cat-close]')?.addEventListener('click', () => catalogModal.close());
 
   catalogDialog?.querySelector('#cat-search')?.addEventListener('input', (e) => {
     catalog.query = e.target.value;
@@ -1276,33 +1286,6 @@
     renderDashboard();
     dashLive(fill(t('dashKeyAnnounce'), { status: t(dash.keyActive ? 'dashKeyActive' : 'dashKeyInactive').toLowerCase() }));
   });
-
-  /* ---------- Shared modal behaviour (used by new dialogs) ----------
-     showModal + focus heading, scroll lock, backdrop click (press must start and end on the backdrop),
-     focus back to the opener when it is still visible. */
-  function setupModal(dlg, { focus, onClose } = {}) {
-    let opener = null;
-    let pressedBackdrop = false;
-    dlg.addEventListener('pointerdown', (e) => { pressedBackdrop = e.target === dlg; });
-    dlg.addEventListener('click', (e) => { if (pressedBackdrop && e.target === dlg) dlg.close(); pressedBackdrop = false; });
-    dlg.addEventListener('close', () => {
-      document.documentElement.classList.remove('overflow-hidden');
-      onClose?.();
-      if (!focusIsFree(dlg)) return;
-      if (opener && document.contains(opener) && opener.getClientRects().length) opener.focus();
-      else if (opener && menuButton?.getClientRects().length) menuButton.focus();
-    });
-    return {
-      open(from = document.activeElement) {
-        if (state.menuOpen) setMenu(false);
-        opener = from;
-        dlg.showModal();
-        document.documentElement.classList.add('overflow-hidden');
-        dlg.querySelector(focus)?.focus();
-      },
-      close() { if (dlg.open) dlg.close(); }
-    };
-  }
 
   /* ---------- Team consultation (G7) ---------- */
   const consultDialog = document.getElementById('consult');
@@ -1421,7 +1404,7 @@
   }
 
   function bubble(msg) {
-    const li = document.createElement('li');
+    const li = document.createElement('div');
     const text = msg.text ?? fill(t(msg.key), Object.fromEntries(Object.entries(msg.params || {}).map(([k, v]) => [k, typeof v === 'function' ? v() : v])));
     if (msg.from === 'system') {
       li.className = 'text-center text-xs font-semibold text-muted';
@@ -1465,7 +1448,7 @@
     if (!chatDialog) return;
     const items = chat.messages.map(bubble);
     if (chat.typing) {
-      const li = document.createElement('li');
+      const li = document.createElement('div');
       li.className = 'text-xs font-semibold text-muted';
       li.textContent = t(chat.typing);
       items.push(li);

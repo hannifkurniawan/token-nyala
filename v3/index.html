@@ -28,7 +28,7 @@
       --color-teal-ink: #007A5E; /* teal for text/icons on light bg (AA) */
       --color-ink: #17181A;
       --color-paper: #F7F8FC;
-      --color-muted: #69728A;
+      --color-muted: #626B82; /* was #69728A — 4.47:1 on the sticky header, below AA */
       --color-line: #D9DEEA;
 
       --font-sans: "Manrope", system-ui, sans-serif;
@@ -933,7 +933,7 @@
           class="m-0 h-dvh max-h-none w-full max-w-none flex-col overflow-hidden bg-paper p-0 text-ink
                  backdrop:bg-xl-dark/55 open:flex open:animate-dialog-in motion-reduce:open:animate-none
                  md:m-auto md:h-auto md:max-h-[85dvh] md:max-w-4xl md:rounded-card md:shadow-2xl">
-    <header class="relative shrink-0 border-b border-line bg-white px-4 pb-3 pt-3 sm:px-6 md:pt-5">
+    <div class="relative shrink-0 border-b border-line bg-white px-4 pb-3 pt-3 sm:px-6 md:pt-5">
       <div class="flex items-start gap-3">
         <div class="min-w-0 flex-1">
           <h2 id="cat-title" tabindex="-1" class="text-lg font-extrabold text-xl-dark outline-none sm:text-xl" data-i18n="catTitle">Model AI yang tersedia</h2>
@@ -987,7 +987,7 @@
             </div>
           </div>
       </div>
-    </header>
+    </div>
 
     <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
       <p class="text-sm font-bold text-muted" aria-live="polite" data-cat-count></p>
@@ -1013,7 +1013,7 @@
                  backdrop:bg-xl-dark/55 open:flex open:animate-sheet-in motion-reduce:open:animate-none
                  md:m-auto md:max-h-[85dvh] md:max-w-[40rem] md:rounded-card md:open:animate-dialog-in"
           data-step="form">
-    <header class="relative shrink-0 border-b border-line px-4 pb-3 pt-2 sm:px-6 md:pt-4">
+    <div class="relative shrink-0 border-b border-line px-4 pb-3 pt-2 sm:px-6 md:pt-4">
       <div aria-hidden="true" class="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line md:hidden"></div>
       <div class="flex items-start gap-3">
         <div class="min-w-0 flex-1">
@@ -1025,7 +1025,7 @@
           <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </div>
-    </header>
+    </div>
 
     <form data-cs-panel="form" class="flex min-h-0 flex-1 flex-col" novalidate>
       <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6">
@@ -1105,7 +1105,7 @@
                  open:flex open:animate-dialog-in motion-reduce:open:animate-none
                  md:inset-auto md:bottom-[calc(1rem+env(safe-area-inset-bottom))] md:right-4 md:z-40 md:h-[560px] md:max-h-[calc(100dvh-2rem)] md:w-[380px]
                  md:rounded-card md:border md:border-line md:shadow-[0_24px_60px_rgba(0,22,106,.22)]">
-    <header class="flex shrink-0 items-center gap-3 border-b border-line bg-xl-dark px-4 py-3 text-white">
+    <div class="flex shrink-0 items-center gap-3 border-b border-line bg-xl-dark px-4 py-3 text-white">
       <img src="assets/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10 rounded-full" data-chat-avatar>
       <div class="min-w-0 flex-1">
         <h2 id="chat-title" class="text-base font-extrabold" data-chat-title>Nala</h2>
@@ -1119,11 +1119,11 @@
               aria-label="Tutup chat" data-i18n-aria="chatClose" data-chat-close>
         <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
-    </header>
+    </div>
     <p class="hidden shrink-0 bg-xl-yellow/25 px-4 py-1.5 text-center text-xs font-bold text-xl-dark data-[show=true]:block" data-chat-mode-label data-show="false"></p>
 
-    <ol class="relative min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-paper px-4 py-4" role="log" aria-live="polite"
-        aria-label="Percakapan" data-i18n-aria="chatLogAria" data-chat-log></ol>
+    <div class="relative min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-paper px-4 py-4" role="log" aria-live="polite"
+         aria-label="Percakapan" data-i18n-aria="chatLogAria" data-chat-log></div>
 
     <div class="shrink-0 border-t border-line bg-white px-3 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div class="-mx-3 flex gap-2 overflow-x-auto px-3 pb-2.5 empty:hidden md:flex-wrap md:overflow-visible" data-chat-chips></div>
@@ -1148,7 +1148,7 @@
                  backdrop:bg-xl-dark/55 open:flex open:animate-sheet-in motion-reduce:open:animate-none
                  md:m-auto md:max-h-[85dvh] md:max-w-[34rem] md:rounded-card md:open:animate-dialog-in"
           data-step="form">
-    <header class="relative shrink-0 border-b border-line px-4 pb-3 pt-2 sm:px-6 md:pt-4">
+    <div class="relative shrink-0 border-b border-line px-4 pb-3 pt-2 sm:px-6 md:pt-4">
       <div aria-hidden="true" class="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line md:hidden"></div>
       <div class="flex items-center gap-3">
         <h2 id="co-title" tabindex="-1" class="text-lg font-extrabold text-xl-dark outline-none" data-co-title>Ringkas top up</h2>
@@ -1157,7 +1157,7 @@
           <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </div>
-    </header>
+    </div>
 
     <!-- Step 1: form -->
     <form data-step-panel="form" class="flex min-h-0 flex-1 flex-col" novalidate>

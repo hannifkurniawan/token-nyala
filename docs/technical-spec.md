@@ -61,7 +61,7 @@ Prototype memakai browser build Tailwind v4. Versi **harus di-pin** (jangan `@4`
     --color-xl-sky: #5CD0F9;
     --color-ink: #17181A;
     --color-paper: #F7F8FC;
-    --color-muted: #69728A;
+    --color-muted: #626B82;
     --color-line: #D9DEEA;
 
     --font-sans: "Manrope", system-ui, sans-serif;
@@ -91,7 +91,7 @@ Catatan: browser build hanya untuk prototype. Untuk produksi, gunakan Tailwind C
 | `teal-ink` | `#007A5E` | Teks/ikon teal di atas latar terang (XL Teal terlalu terang untuk teks, kontras < 3:1) |
 | `ink` | `#17181A` | Teks utama |
 | `paper` | `#F7F8FC` | Background halaman |
-| `muted` | `#69728A` | Teks sekunder |
+| `muted` | `#626B82` | Teks sekunder (revisi dari `#69728A`: hanya 4,47:1 di header sticky; `#626B82` ≥ 4,84:1 di paper, header, dan putih) |
 | `line` | `#D9DEEA` | Border |
 | `radius-card` | 20px | Kartu |
 | `radius-control` | 12px | Tombol, input |
@@ -605,23 +605,31 @@ TokenNyala — AI Credit untuk Vibecoding
 
 ## Definition of Done
 
-- Landing page dapat dibuka langsung dari browser
-- Tidak ada overflow horizontal di 320, 375, 768, 1024, 1440, dan 667×375 landscape
-- CTA utama berfungsi
-- Intent picker berfungsi
-- Package selection dan checkout berfungsi
-- Language switch berfungsi
-- Success state dapat dibuka
-- Modal dapat ditutup dan keyboard dapat digunakan
-- Visual sesuai direction TokenNyala
-- Estimasi penggunaan memiliki disclaimer
-- Tidak ada claim payment atau activation nyata
-- Tidak ada console error pada browser
-- Katalog model: search, filter, “Tampilkan lebih banyak”, dan empty state berfungsi
-- Live chat: alur “Bantu pilih paket” berakhir di checkout dengan paket yang benar; serah ke tim dan state offline dapat ditampilkan
-- Form konsultasi tim: validasi dan success state berfungsi
-- Tombol salin API key dan base URL berfungsi
-- Pill bantuan tidak pernah menutupi CTA utama atau tombol konfirmasi checkout
+Status v3 per 18 Nov 2026 — **semua butir terpenuhi**. Kolom “Bukti” menunjuk alat yang memverifikasinya; jalankan ulang setelah perubahan apa pun.
+
+| # | Butir | Status | Bukti |
+|---|---|---|---|
+| 1 | Landing page dapat dibuka langsung dari browser (`file://`) | ✅ | `audit_v3.py` — tanpa console error, Tailwind & JS aktif |
+| 2 | Tidak ada overflow horizontal di 320, 375, 768, 1024, 1440, 667×375 | ✅ | `qa_v3.py` — overflow, konten keluar gutter, teks meluap |
+| 3 | CTA utama berfungsi | ✅ | `qa_v3.py` — hero CTA membuka checkout |
+| 4 | Intent picker berfungsi (termasuk keyboard) | ✅ | `qa_v3.py` — panah/Home/End, rekomendasi berubah |
+| 5 | Package selection dan checkout berfungsi | ✅ | `qa_v3.py` — klik kartu, tombol kartu, alur checkout penuh |
+| 6 | Language switch berfungsi dan tersimpan | ✅ | `qa_v3.py` + `i18n_check.py` — 333 kunci, 0 belum diterjemahkan |
+| 7 | Success state dapat dibuka | ✅ | `qa_v3.py` — sukses + API key + panduan pasang |
+| 8 | Modal dapat ditutup dan keyboard dapat digunakan | ✅ | `qa_v3.py` — Escape, backdrop, fokus kembali ke pembuka |
+| 9 | Visual sesuai direction TokenNyala | ✅ | Review screenshot tiap section (ID & EN, 320–1440) |
+| 10 | Estimasi penggunaan memiliki disclaimer | ✅ | Paket, model, contoh penggunaan, FAQ |
+| 11 | Tidak ada klaim payment atau activation nyata | ✅ | Label simulasi di checkout, sukses, konsultasi, chat, footer |
+| 12 | Tidak ada console error | ✅ | `qa_v3.py` di 6 viewport + `audit_v3.py` |
+| 13 | Katalog: search, filter, tampilkan lebih banyak, empty state | ✅ | `qa_v3.py` — termasuk angka vs tabel spec |
+| 14 | Live chat: pilih paket → checkout; tim online & offline | ✅ | `qa_v3.py` — `?chat=online|offline` |
+| 15 | Form konsultasi: validasi dan success state | ✅ | `qa_v3.py` |
+| 16 | Tombol salin API key dan base URL | ✅ | `qa_v3.py` |
+| 17 | Pill bantuan tidak menutupi CTA hero / tombol checkout | ✅ | `qa_v3.py` (posisi) + CSS `body:has(dialog:modal)` |
+| 18 | Aksesibilitas WCAG 2.1 AA (kontras, ARIA, landmark, list, label) | ✅ | `audit_v3.py` — axe-core 4.14.0, 0 pelanggaran di halaman ID/EN mobile/desktop, menu, checkout tiap langkah, katalog, konsultasi, chat |
+| 19 | `prefers-reduced-motion` dihormati | ✅ | `audit_v3.py` — tidak ada animasi/transisi > 0.01ms, scroll `auto` |
+| 20 | Email/HP tidak disimpan di browser | ✅ | `audit_v3.py` — setelah checkout + konsultasi: `localStorage = { tn-lang }`, session & cookie kosong |
+| 21 | HTML + CSS + JS < 300 KB | ✅ | `audit_v3.py` — ±198 KB |
 
 ## Open Items
 
@@ -632,4 +640,8 @@ TokenNyala — AI Credit untuk Vibecoding
 - Aturan saldo (tidak kedaluwarsa, termasuk PPN, tidak bisa diuangkan) perlu validasi legal/finance
 - Tarif model mock perlu diganti tarif nyata dan disinkronkan dengan definisi sesi kecil
 - Jam layanan dan SLA balasan tim nyata belum ditentukan
+- `og:image` (`assets/og-token-nyala.png`) belum dibuat — meta `og:image` sengaja belum dipasang
+- Halaman Syarat & Ketentuan / Kebijakan Privasi masih tautan contoh
+- Tailwind browser build hanya untuk prototype; produksi memakai Tailwind CLI
+- Logo model: tinjauan legal pemakaian merek sebelum produksi
 - Domain dan deployment target belum ditentukan

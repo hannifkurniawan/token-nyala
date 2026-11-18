@@ -5,9 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, Manfaat + dashboard + Contoh, Tim & bisnis + konsultasi, FAQ + Final CTA, dan **Live chat Nala** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
-- **Berikutnya:** langkah 12 — audit kelengkapan ID/EN di seluruh halaman (teks statis, aria-label, placeholder, pesan dinamis), lalu langkah 13 — QA penuh + migrasi checkout & katalog ke `setupModal()`.
-- **Utang teknis kecil:** dialog baru memakai helper `setupModal()`; checkout dan katalog masih punya logika buka/tutup sendiri — bisa dimigrasikan saat QA penuh (langkah 13). Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
+- **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
+- **Berikutnya (perlu keputusan PO):** merge `v3-mobile-first` ke `main` (lewat PR), lalu open item di technical-spec (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
@@ -69,6 +68,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Chat: `<dialog>` modal di mobile (layar penuh), non-modal di `md:` (panel 380×560) | Fokus terkunci di mobile; halaman tetap bisa dipakai di desktop (spec: `aria-modal=false`) |
 | 18 Nov 2026 | Riwayat chat disimpan sebagai kunci copy, bukan teks | Ganti bahasa menerjemahkan seluruh percakapan |
 | 18 Nov 2026 | Dialog hanya mengembalikan fokus bila fokus “bebas” (`focusIsFree`) | Menutup checkout untuk membuka chat sempat merebut fokus dari input chat |
+| 18 Nov 2026 | Token `muted` → `#626B82` (dari `#69728A`) | axe: 4,47:1 di header sticky (< AA); nilai baru ≥ 4,84:1 di semua latar |
+| 18 Nov 2026 | Semua modal (checkout, katalog, konsultasi) memakai `setupModal()`; chat tetap sendiri (modal di mobile, non-modal di desktop) | Satu perilaku buka/tutup/fokus; utang teknis lunas |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
 
 ## Pertanyaan Terbuka untuk PO
@@ -98,6 +99,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Jangan pakai `mt-auto` untuk kontrol yang bisa membuka konten (details) di kartu grid sejajar.** Membuka satu kartu memanjangkan baris dan mendorong kontrol di kartu lain ke bawah (feedback user). `mt-auto` hanya untuk tombol aksi yang memang harus sejajar di dasar.
 - **Event `close` dialog datang asinkron.** Kalau satu overlay ditutup untuk membuka overlay lain, handler `close` yang mengembalikan fokus bisa merebut fokus dari overlay baru. Selalu cek `focusIsFree` sebelum memindah fokus.
 - **Scroll log chat setelah semua bagian dirender** (chip mengubah tinggi log) — kalau tidak, tombol di pesan terakhir terpotong.
+- **Jalankan axe di setiap state dialog, bukan hanya halaman awal.** Masalah `role=log` pada `<ol>` dan `<header>` di dialog non-modal baru muncul saat chat terbuka. Kontras 4,47:1 hanya gagal di latar header (paper/95), tidak di paper biasa.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
@@ -130,3 +132,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Section FAQ + Final CTA: 11 pertanyaan `<details>` (ID/EN), jawaban refund diperbarui karena saldo tidak kedaluwarsa; banner “Nyala sekarang.” dengan CTA isi saldo + lihat paket. QA ditambah uji buka FAQ dengan klik dan Enter.
 - Langkah 11 Live chat Nala: pill + panel, skrip & kata kunci ID/EN, alur pilih paket (matriks spec) → checkout, tim online (Sari) / offline (kumpulkan kontak), riwayat ikut terjemah, titik masuk FAQ & checkout. QA: alur chat penuh (pill tidak menutupi CTA hero, hasil rekomendasi, ke checkout dan kembali, ganti bahasa, Escape, online/offline). Ditemukan & diperbaiki: fokus direbut event close checkout, tombol hasil terpotong (urutan scroll), chip menumpuk di 320px, header offline salah.
 - Langkah 12 audit ID/EN: `tools/i18n_check.py` (kunci di kedua kamus, kunci HTML ada di kamus, kunci mati, dan perbandingan 576 teks/aria/placeholder/alt ID vs EN termasuk dialog tertutup & template). Hasil: bersih; detektor kunci mati diverifikasi dengan kunci palsu.
+- Langkah 13 QA penuh: checkout & katalog dipindah ke `setupModal()` (QA penuh sebagai jaring pengaman); `tools/audit_v3.py` (axe-core 4.14.0 + DoD file://, reduced motion, storage, ukuran). Ditemukan & diperbaiki: `role=log` pada `<ol>` + `<li>` tidak valid → `div`; `<header>` di dialog terbaca banner kedua → `div`; kontras `muted` 4,47:1 di header → `#626B82`. DoD 21/21 dicatat di technical-spec.
