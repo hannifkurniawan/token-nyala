@@ -216,6 +216,14 @@ def catalog_flow(page, out, name):
     icons = page.evaluate("() => [...document.querySelectorAll('[data-model-preview] img')].map(i => i.getAttribute('src').split('/').pop())")
     if icons != ["claude.svg", "openai.svg", "gemini.svg", "deepseek.svg", "qwen.svg", "claude.svg"]:
         problems.append(f"MODEL ICONS {icons}")
+    # Opening one card's rate details must not move "Detail tarif" in the other cards of the row
+    offs = "() => [...document.querySelectorAll('[data-model-preview] summary')].map(s => Math.round(s.getBoundingClientRect().top - s.closest('article').getBoundingClientRect().top))"
+    before = page.evaluate(offs)
+    page.locator("[data-model-preview] summary").first.click()
+    after = page.evaluate(offs)
+    page.locator("[data-model-preview] summary").first.click()
+    if before != after:
+        problems.append(f"MODEL details toggle moves other cards: {before} -> {after}")
     btn = page.locator("[data-open-catalog]")
     btn.click()
     page.wait_for_timeout(300)

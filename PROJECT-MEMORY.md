@@ -91,6 +91,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **`form.name` di DOM = atribut name milik form, bukan input bernama “name”.** Pakai `form.elements.namedItem()`.
 - **Pesan error yang dipakai ulang harus dicek konteksnya.** Pesan kontak checkout (“…bukti pembelian…”) salah di form konsultasi.
 - **Validasi sesuai urutan visual**, supaya fokus pindah ke field salah paling atas.
+- **Jangan pakai `mt-auto` untuk kontrol yang bisa membuka konten (details) di kartu grid sejajar.** Membuka satu kartu memanjangkan baris dan mendorong kontrol di kartu lain ke bawah (feedback user). `mt-auto` hanya untuk tombol aksi yang memang harus sejajar di dasar.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
@@ -119,3 +120,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Section Manfaat + Contoh: 3 kartu + kartu “Pantau & kendalikan” dengan mock dashboard (saldo, grafik 7 hari, switch pengingat, toggle API key) dan section contoh landing page event. Visual: batang terlalu lebar di 768px → maks 28px; label puncak menabrak judul grafik, baris key terpotong, ikon kartu 4 menghimpit judul di 320px → diperbaiki. QA ditambah uji switch & toggle key.
 - Section Tim & bisnis: strip gelap dengan 4 poin + CTA; dialog konsultasi (helper `setupModal`), validasi 5 aturan, counter 500 dengan pengumuman ≥450, sukses + reset. Visual: pesan kontak salah konteks dan placeholder terpotong → pesan khusus + kontak lebar penuh; urutan validasi disamakan dengan urutan tampil. QA ditambah alur konsultasi penuh.
 - Atas permintaan user: monogram di kartu model diganti logo keluarga model (SVG lokal dari lobehub, diperiksa: tanpa script/referensi eksternal). QA ditambah cek gambar rusak di seluruh halaman + cek ikon kartu model termuat.
+- Fix dari feedback user: “Detail tarif” di kartu model tidak lagi turun saat kartu lain di baris yang sama dibuka (hapus `mt-auto`). QA ditambah uji posisi.
