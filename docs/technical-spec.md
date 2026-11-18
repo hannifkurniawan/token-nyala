@@ -451,6 +451,10 @@ API key  Laptop kerja · Aktif     [Nonaktifkan]
 - Toggle pengingat dan tombol Nonaktifkan **berfungsi lokal** (mengubah label/status) agar terasa hidup; tidak menyimpan apa pun.
 - Bar grafik memiliki teks alternatif: “Pemakaian 7 hari terakhir, tertinggi hari Jumat”.
 - Label “Contoh tampilan”.
+- Data mock konsisten: paket Bangun 115.000 kredit, pemakaian 7 hari `[2.600, 3.900, 5.400, 3.300, 7.200, 4.700, 5.500]` = 32.600 → sisa **Rp82.400**.
+- Grafik (sesuai skill dataviz): satu seri → tanpa legenda, judul menamai seri; batang tipis (maks 28px) ujung membulat 4px di garis dasar, jarak 2px; label langsung hanya di nilai tertinggi (Jumat), nilai lain tampil saat hover; daftar `sr-only` “Senin: Rp2.600 …” sebagai pengganti tabel untuk screen reader.
+- Switch pengingat: `button[role=switch][aria-checked]`, area sentuh 44px.
+- Baris API key: nama + badge status di baris pertama, key tersamar di baris kedua, tombol Nonaktifkan/Aktifkan; perubahan diumumkan lewat `aria-live`.
 
 ### Form Konsultasi Tim (G7)
 

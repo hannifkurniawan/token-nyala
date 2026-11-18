@@ -206,6 +206,45 @@
       useConfigNote: 'Contoh — bukan endpoint atau kunci asli.',
       useNoKey: 'Belum punya API key? Isi saldo dulu, kuncinya langsung muncul.',
 
+      benefitKicker: 'Kenapa TokenNyala',
+      benefitTitle: 'Jangan hanya beli saldo. Pastikan proyekmu punya waktu untuk jadi.',
+      ben1Title: 'Pilihan yang bisa kamu pahami',
+      ben1Body: 'Nominal dan estimasi dijelaskan dari kebutuhan proyek, bukan dari nama model dan istilah teknis.',
+      ben2Title: 'Satu saldo untuk lanjut',
+      ben2Body: 'Isi sekali, lalu pakai untuk semua model AI yang tersedia.',
+      ben3Title: 'Bayar dengan cara yang familiar',
+      ben3Body: 'QRIS, e-wallet, dan virtual account — metode yang sehari-hari dipakai di Indonesia.',
+      ben4Title: 'Pantau dan kendalikan',
+      ben4Body: 'Lihat sisa saldo, pemakaian harian, dan matikan API key kapan saja.',
+      sampleView: 'Contoh tampilan',
+      dashBalance: 'Saldo tersisa',
+      dashOf: 'dari',
+      dashUsage: 'Pemakaian 7 hari',
+      dashUsageAria: 'Pemakaian 7 hari terakhir, tertinggi hari Jumat',
+      dashDays: 'Sen,Sel,Rab,Kam,Jum,Sab,Min',
+      dashDaysLong: 'Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+      dashRemind: 'Ingatkan saat saldo < Rp20.000',
+      dashRemindOn: 'Pengingat saldo aktif',
+      dashRemindOff: 'Pengingat saldo mati',
+      dashKeyName: 'Laptop kerja',
+      dashKeyActive: 'Aktif',
+      dashKeyInactive: 'Nonaktif',
+      dashKeyDisable: 'Nonaktifkan',
+      dashKeyEnable: 'Aktifkan',
+      dashKeyAnnounce: 'API key Laptop kerja {status}',
+      exKicker: 'Contoh penggunaan',
+      exTitle: 'Satu landing page event, kira-kira butuh berapa?',
+      exBody: 'Begini perkiraan pemakaian saat kamu membangun satu halaman dengan bantuan AI, memakai model level Seimbang.',
+      exProject: 'Proyek: Event Landing Page',
+      exTask1: 'Buat layout awal halaman',
+      exTask2: 'Rapikan tampilan mobile',
+      exTask3: 'Tambah form pendaftaran',
+      exTask4: 'Perbaiki copy dan warna',
+      exTotal: 'Total sesi kecil',
+      exCostLabel: 'Perkiraan biaya:',
+      exFit: 'Paket Mulai (55.000 kredit) cukup, masih ada sisa untuk iterasi.',
+      exCta: 'Pilih paket Mulai',
+
       pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
       pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
       pkgEstimate_work: '100+ sesi kecil'
@@ -410,6 +449,45 @@
       useConfigNote: 'Example only — not a real endpoint or key.',
       useNoKey: 'No API key yet? Top up first and your key appears right away.',
 
+      benefitKicker: 'Why TokenNyala',
+      benefitTitle: "Don't just buy credit. Give your project the time it needs to ship.",
+      ben1Title: 'Choices you can understand',
+      ben1Body: 'Amounts and estimates are explained by what your project needs, not by model names and jargon.',
+      ben2Title: 'One balance to keep going',
+      ben2Body: 'Top up once, then use it with every available AI model.',
+      ben3Title: 'Pay the way you already do',
+      ben3Body: 'QRIS, e-wallets, and virtual accounts — the methods people in Indonesia use every day.',
+      ben4Title: 'Track and stay in control',
+      ben4Body: 'See your balance, daily usage, and switch off any API key anytime.',
+      sampleView: 'Sample view',
+      dashBalance: 'Balance left',
+      dashOf: 'of',
+      dashUsage: 'Last 7 days',
+      dashUsageAria: 'Usage over the last 7 days, highest on Friday',
+      dashDays: 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
+      dashDaysLong: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+      dashRemind: 'Remind me when balance < Rp20,000',
+      dashRemindOn: 'Balance reminder on',
+      dashRemindOff: 'Balance reminder off',
+      dashKeyName: 'Work laptop',
+      dashKeyActive: 'Active',
+      dashKeyInactive: 'Disabled',
+      dashKeyDisable: 'Disable',
+      dashKeyEnable: 'Enable',
+      dashKeyAnnounce: 'Work laptop API key {status}',
+      exKicker: 'Example',
+      exTitle: 'One event landing page — how much does it take?',
+      exBody: 'Here is a rough estimate for building one page with AI help, using a Balanced-level model.',
+      exProject: 'Project: Event Landing Page',
+      exTask1: 'Build the first page layout',
+      exTask2: 'Polish the mobile view',
+      exTask3: 'Add a sign-up form',
+      exTask4: 'Fix copy and colours',
+      exTotal: 'Total small sessions',
+      exCostLabel: 'Estimated cost:',
+      exFit: 'The Mulai package (55,000 credits) is enough, with room left to iterate.',
+      exCta: 'Choose the Mulai package',
+
       pkgEstimate_learn: 'about 20–30 small sessions',
       pkgEstimate_prototype: 'about 40–60 small sessions',
       pkgEstimate_work: '100+ small sessions'
@@ -492,6 +570,7 @@
     renderHeroBalance();
     renderCheckout();
     renderModels();
+    renderDashboard();
     storage.set(LANG_KEY, lang);
   }
 
@@ -927,6 +1006,61 @@
     filterToggle.setAttribute('aria-expanded', String(open));
   });
   document.querySelectorAll('[data-open-catalog]').forEach((btn) => btn.addEventListener('click', () => openCatalog(btn)));
+
+  /* ---------- Mock dashboard (benefit 4) ----------
+     Daily usage in credits; sums to 32.600 so 115.000 − 32.600 = 82.400 left (Bangun package). */
+  const USAGE_7D = [2600, 3900, 5400, 3300, 7200, 4700, 5500];
+  const dash = { remind: true, keyActive: true };
+
+  function renderDashboard() {
+    const chart = document.querySelector('[data-usage-chart]');
+    const daysRow = document.querySelector('[data-usage-days]');
+    if (chart && daysRow) {
+      const short = t('dashDays').split(',');
+      const long = t('dashDaysLong').split(',');
+      const max = Math.max(...USAGE_7D);
+      chart.replaceChildren(...USAGE_7D.map((v, i) => {
+        const li = document.createElement('li');
+        li.className = 'group/bar relative flex h-full flex-1 items-end';
+        li.dataset.decorOverflow = ''; // value tooltip is intentionally wider than a thin bar
+        const peak = v === max;
+        // Bar: single hue, 4px rounded data-end anchored to the baseline; peak gets the full tone + a direct label.
+        li.innerHTML = `<span class="sr-only">${long[i]}: ${rupiah(v)}</span>
+          <span aria-hidden="true" class="mx-auto block w-full max-w-7 rounded-t-[4px] ${peak ? 'bg-xl-blue' : 'bg-xl-blue/55 group-hover/bar:bg-xl-blue/80'}" style="height:${Math.round((v / max) * 100)}%"></span>
+          <span aria-hidden="true" class="pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink px-1.5 py-0.5 font-mono text-[11px] text-white
+                ${peak ? '' : 'opacity-0 transition-opacity group-hover/bar:opacity-100'}" style="bottom:calc(${Math.round((v / max) * 100)}% + 4px)">${rupiah(v)}</span>`;
+        return li;
+      }));
+      daysRow.replaceChildren(...short.map((d) => {
+        const li = document.createElement('li');
+        li.className = 'flex-1 text-center text-[11px] font-semibold text-muted';
+        li.textContent = d;
+        return li;
+      }));
+    }
+    const sw = document.querySelector('[data-switch]');
+    if (sw) sw.setAttribute('aria-checked', String(dash.remind));
+    const row = document.querySelector('[data-key-row]');
+    if (row) {
+      row.dataset.active = String(dash.keyActive);
+      const status = row.querySelector('[data-key-status]');
+      status.textContent = t(dash.keyActive ? 'dashKeyActive' : 'dashKeyInactive');
+      status.className = 'rounded-full px-2 py-0.5 text-xs font-extrabold ' + (dash.keyActive ? 'bg-xl-teal/15 text-teal-ink' : 'bg-line text-muted');
+      row.querySelector('[data-key-toggle]').textContent = t(dash.keyActive ? 'dashKeyDisable' : 'dashKeyEnable');
+    }
+  }
+
+  const dashLive = (text) => { const el = document.querySelector('[data-dash-live]'); if (el) el.textContent = text; };
+  document.querySelector('[data-switch]')?.addEventListener('click', () => {
+    dash.remind = !dash.remind;
+    renderDashboard();
+    dashLive(t(dash.remind ? 'dashRemindOn' : 'dashRemindOff'));
+  });
+  document.querySelector('[data-key-toggle]')?.addEventListener('click', () => {
+    dash.keyActive = !dash.keyActive;
+    renderDashboard();
+    dashLive(fill(t('dashKeyAnnounce'), { status: t(dash.keyActive ? 'dashKeyActive' : 'dashKeyInactive').toLowerCase() }));
+  });
 
   document.querySelectorAll('[data-open-checkout]').forEach((btn) => {
     btn.addEventListener('click', () => openCheckout(null, btn));

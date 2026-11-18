@@ -37,7 +37,7 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 - [x] 5. Checkout — bottom sheet/dialog, email atau HP, QRIS/E-Wallet/VA mock, sukses dengan API key contoh, state gagal
 - [x] 6. Model AI + katalog — 6 kartu, dialog katalog (search, filter, tampilkan lebih banyak, empty state)
 - [x] 7. Pakai di tool — 3 langkah, contoh konfigurasi + salin, CTA isi saldo; tersambung dari sukses checkout
-- [ ] 8. Benefit + dashboard + contoh
+- [x] 8. Benefit + dashboard + contoh — 4 kartu manfaat, mock dashboard (grafik 7 hari, switch, key), contoh landing page event + CTA Mulai
 - [ ] 9. Tim & bisnis + konsultasi
 - [ ] 10. FAQ + final CTA
 - [ ] 11. Live chat Nala

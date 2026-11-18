@@ -383,6 +383,16 @@ def main():
                 if b.text_content().strip() not in ("Tersalin", "Copied"):
                     status.append(f"COPY button text {b.text_content()!r}")
 
+            if args.interactive and name == "375" and page.locator("[data-switch]").count():
+                page.locator("[data-switch]").click()
+                page.locator("[data-key-toggle]").click()
+                d = page.evaluate("""() => ({ sw: document.querySelector('[data-switch]').getAttribute('aria-checked'),
+                    status: document.querySelector('[data-key-status]').textContent,
+                    btn: document.querySelector('[data-key-toggle]').textContent,
+                    live: document.querySelector('[data-dash-live]').textContent })""")
+                if d != {"sw": "false", "status": "Nonaktif", "btn": "Aktifkan", "live": "API key Laptop kerja nonaktif"}:
+                    status.append(f"DASHBOARD {d}")
+
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()
                 lang = page.evaluate("() => document.documentElement.lang")

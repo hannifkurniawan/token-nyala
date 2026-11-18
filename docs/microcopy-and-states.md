@@ -105,6 +105,37 @@ Saldo siap dipakai dan momentum proyek tidak terputus.
 **Title:** Ada bukti, ada jejak  
 **Body:** Ringkasan pembayaran dan riwayat pembelian mudah ditemukan.
 
+## Section Manfaat — v3 (menggantikan Why / Benefit Copy di atas)
+
+**Kicker:** `Kenapa TokenNyala` / `Why TokenNyala`
+**Title:** `Jangan hanya beli saldo. Pastikan proyekmu punya waktu untuk jadi.` / `Don't just buy credit. Give your project the time it needs to ship.` (dari hero-and-journey-spec → Product Outcome)
+
+| # | ID | EN |
+|---|---|---|
+| 1 | `Pilihan yang bisa kamu pahami` — `Nominal dan estimasi dijelaskan dari kebutuhan proyek, bukan dari nama model dan istilah teknis.` | `Choices you can understand` — `Amounts and estimates are explained by what your project needs, not by model names and jargon.` |
+| 2 | `Satu saldo untuk lanjut` — `Isi sekali, lalu pakai untuk semua model AI yang tersedia.` | `One balance to keep going` — `Top up once, then use it with every available AI model.` |
+| 3 | `Bayar dengan cara yang familiar` — `QRIS, e-wallet, dan virtual account — metode yang sehari-hari dipakai di Indonesia.` | `Pay the way you already do` — `QRIS, e-wallets, and virtual accounts — the methods people in Indonesia use every day.` |
+| 4 | `Pantau dan kendalikan` + mock dashboard (lihat di bawah) | `Track and stay in control` |
+
+Kartu “Ada bukti, ada jejak” tidak dipakai di v3 (bukti transaksi sudah ada di trust row hero dan checkout).
+
+## Section Contoh Penggunaan
+
+**Kicker:** `Contoh penggunaan` / `Example`
+**Title:** `Satu landing page event, kira-kira butuh berapa?` / `One event landing page — how much does it take?`
+**Body:** `Begini perkiraan pemakaian saat kamu membangun satu halaman dengan bantuan AI, memakai model level Seimbang.`
+
+| Tugas | Sesi kecil |
+|---|---:|
+| `Buat layout awal halaman` / `Build the first page layout` | 3–5 |
+| `Rapikan tampilan mobile` / `Polish the mobile view` | 2–4 |
+| `Tambah form pendaftaran` / `Add a sign-up form` | 4–6 |
+| `Perbaiki copy dan warna` / `Fix copy and colours` | 2–3 |
+| **Total** | **11–18** |
+
+**Biaya:** `Perkiraan biaya: Rp21.000–Rp34.000.` (11–18 × ±Rp1.890 per sesi Seimbang) `Paket Mulai (55.000 kredit) cukup, masih ada sisa untuk iterasi.`
+**CTA:** `Pilih paket Mulai` → buka checkout dengan paket Mulai.
+
 ## Trust Copy
 
 Gunakan hanya sebagai copy prototype bila belum ada bukti layanan nyata:

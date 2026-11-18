@@ -5,8 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, dan **Pakai di tool** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
-- **Berikutnya:** section 8 — Benefit + mock dashboard “Pantau & kendalikan” + contoh penggunaan. Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
+- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, dan **Manfaat + dashboard + Contoh penggunaan** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
+- **Berikutnya:** section 9 — Untuk tim & bisnis + dialog konsultasi tim. Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
@@ -63,6 +63,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Kartu model & katalog dirender dari satu array `models` di JS; `per10k` dan level dihitung dari `SMALL_SESSION` | Satu sumber data; QA membandingkan hasil hitung dengan tabel spec |
 | 18 Nov 2026 | Filter katalog di mobile di balik tombol `Filter (n)` | 3 baris filter memakan >50% tinggi layar 640px |
 | 18 Nov 2026 | Monogram penyedia 2 huruf (An/Op/Go/Ds/Al) | Anthropic & Alibaba sama-sama “A” |
+| 18 Nov 2026 | Contoh penggunaan: landing page event = 11–18 sesi ≈ Rp21–34 rb → paket Mulai cukup, CTA langsung ke checkout Mulai | Menerjemahkan “sesi kecil” ke uang dan paket nyata |
+| 18 Nov 2026 | Grafik dashboard mengikuti skill dataviz (1 seri tanpa legenda, label di puncak saja, daftar sr-only) | Grafik kecil tetap terbaca & aksesibel |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
 
 ## Pertanyaan Terbuka untuk PO
@@ -111,3 +113,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Section Model AI: 6 kartu dari data, dialog katalog (full screen mobile, filter toggle, search, filter OR/AND, tampilkan lebih banyak + fokus, empty state, hapus filter). QA ditambah uji katalog + validasi angka vs spec. Visual: badge level menghimpit meta → meta baris penuh; estimasi & tarif patah → angka besar + keterangan; filter 3 kolom tidak muat di 768px → 2 baris.
 - Section Pakai di tool: timeline 3 langkah, kartu konfigurasi (Base URL `.example`, key contoh, salin dengan pengumuman `aria-live` yang benar di dalam/luar modal), CTA isi saldo; “Lihat panduan pasang” tersambung (tutup → scroll → fokus judul). Visual: URL/key patah di tengah kata di 320px → ditumpuk + `<wbr>`.
 - Fix dari feedback user: klik kartu paket memilih (garis biru pindah ke kartu itu, hero menyala) tanpa membuka checkout; tombol kartu tetap memilih + checkout. QA ditambah uji klik badan kartu.
+- Section Manfaat + Contoh: 3 kartu + kartu “Pantau & kendalikan” dengan mock dashboard (saldo, grafik 7 hari, switch pengingat, toggle API key) dan section contoh landing page event. Visual: batang terlalu lebar di 768px → maks 28px; label puncak menabrak judul grafik, baris key terpotong, ikon kartu 4 menghimpit judul di 320px → diperbaiki. QA ditambah uji switch & toggle key.
