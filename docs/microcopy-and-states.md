@@ -81,7 +81,7 @@ Belajar, bikin prototype, atau kerjakan proyek.
 
 ### Step 2
 **Bayar dengan mudah**  
-Gunakan QRIS, e-wallet, atau virtual account mock.
+Gunakan QRIS, e-wallet, atau virtual account. Rincian biaya terlihat sebelum bayar.
 
 ### Step 3
 **Lanjutkan membangun**  

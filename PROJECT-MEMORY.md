@@ -5,8 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell dan **Hero** selesai, lolos QA di 6 viewport (ID dan EN).
-- **Berikutnya:** section 3 — Cara kerja (`#cara-kerja`), lalu Package picker yang memanggil `TokenNyala.selectPackage(id)` untuk menyalakan board hero. Progres build dicentang di `v3/README.md`.
+- **Fase:** Build v3 — shell, Hero, dan **Cara kerja** selesai, lolos QA di 6 viewport (ID dan EN).
+- **Berikutnya:** section 4 — Package picker yang memanggil `TokenNyala.selectPackage(id)` untuk menyalakan board hero. Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
@@ -48,6 +48,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Kerja di branch `v3-mobile-first` | Aturan: jangan commit langsung ke `main` |
 | 18 Nov 2026 | Board hero mulai “Belum nyala” (Rp0, meter kosong) dan menyala saat paket dipilih (`selectPackage`) | hero-and-journey-spec: meter terisi hanya setelah pemilihan paket |
 | 18 Nov 2026 | Catatan “Estimasi” melayang di hero dihapus | Menutupi isi kartu di desktop; dekorasi tanpa informasi baru (aturan 8) |
+| 18 Nov 2026 | Kata “mock” dihapus dari copy langkah 2 Cara kerja | Label prototype sudah ada di footer/checkout; “mock” di landing merusak kredibilitas |
+| 18 Nov 2026 | Cara kerja: 3 kolom baru mulai `lg:`; di `md:` tiap kartu jadi baris (judul kiri, isi kanan) | 3 kolom di 768px membuat judul dan chip patah |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
 
 ## Pertanyaan Terbuka untuk PO
@@ -82,3 +84,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Commit dokumen (`e715849`) di branch baru `v3-mobile-first`.
 - Langkah 2: membuat shell `v3/` + `tools/qa_v3.py` (QA Playwright 6 viewport). QA awal menemukan touch target < 44px (logo, nav, ID/EN) → diperbaiki → semua viewport lolos.
 - Section Hero: copy ID/EN, board ilustrasi dengan status saldo (`renderHeroBalance`), animasi masuk 450ms dengan reduced-motion. QA menemukan konten menembus gutter di 320px (grid tanpa `grid-cols-1`, tersembunyi oleh `overflow-x-clip`) → diperbaiki, dan `tools/qa_v3.py` ditambah cek “escape .shell” + cek above-the-fold.
+- Section Cara kerja: 3 langkah dengan chip dan garis penghubung; teks ID juga ditulis di HTML (fallback tanpa JS). QA visual menemukan 3 kolom terlalu sempit di 768px → layout baris di `md:`.
