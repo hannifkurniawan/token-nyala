@@ -4,9 +4,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 ## Status Saat Ini (per 18 Nov 2026)
 
-- **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
+- **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Berikutnya (perlu keputusan PO):** merge `v3-mobile-first` ke `main` (lewat PR), lalu open item di technical-spec (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Berikutnya (perlu keputusan PO):** open item di technical-spec (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
@@ -133,3 +133,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Langkah 11 Live chat Nala: pill + panel, skrip & kata kunci ID/EN, alur pilih paket (matriks spec) → checkout, tim online (Sari) / offline (kumpulkan kontak), riwayat ikut terjemah, titik masuk FAQ & checkout. QA: alur chat penuh (pill tidak menutupi CTA hero, hasil rekomendasi, ke checkout dan kembali, ganti bahasa, Escape, online/offline). Ditemukan & diperbaiki: fokus direbut event close checkout, tombol hasil terpotong (urutan scroll), chip menumpuk di 320px, header offline salah.
 - Langkah 12 audit ID/EN: `tools/i18n_check.py` (kunci di kedua kamus, kunci HTML ada di kamus, kunci mati, dan perbandingan 576 teks/aria/placeholder/alt ID vs EN termasuk dialog tertutup & template). Hasil: bersih; detektor kunci mati diverifikasi dengan kunci palsu.
 - Langkah 13 QA penuh: checkout & katalog dipindah ke `setupModal()` (QA penuh sebagai jaring pengaman); `tools/audit_v3.py` (axe-core 4.14.0 + DoD file://, reduced motion, storage, ukuran). Ditemukan & diperbaiki: `role=log` pada `<ol>` + `<li>` tidak valid → `div`; `<header>` di dialog terbaca banner kedua → `div`; kontras `muted` 4,47:1 di header → `#626B82`. DoD 21/21 dicatat di technical-spec.
+- Merge: PR #1 `v3-mobile-first` → `main` dibuat & di-merge dengan akun workspace `.github-cli` (hannifkurniawan, pemilik repo) — `GH_CONFIG_DIR=.github-cli gh …`. Akun gh global di mesin ini berbeda (Fajar-DS-XQ).
