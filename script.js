@@ -148,11 +148,33 @@ document.querySelectorAll('[data-language]').forEach(button=>button.addEventList
 
 // Intent tabs
 setIntent('prototype');
-document.querySelectorAll('[data-intent]').forEach(tab=>tab.addEventListener('click',()=>setIntent(tab.dataset.intent)));
 
-// Package selection
-selectPackage('prototype');
-document.querySelectorAll('[data-select-package]').forEach(button=>button.addEventListener('click',()=>selectPackage(button.dataset.selectPackage,true)));
+// Intent tabs: selecting an intent chooses its matching package
+const intentPicker=document.querySelector('.intent-picker');
+intentPicker?.addEventListener('click',(event)=>{
+  const tab=event.target.closest('[data-intent]');
+  if(!tab) return;
+  setIntent(tab.dataset.intent);
+});
+
+// Package grid: card and CTA both select the same package and sync the intent tab
+const packageGrid=document.getElementById('package-grid');
+packageGrid?.addEventListener('click',(event)=>{
+  const card=event.target.closest('[data-package]');
+  if(!card) return;
+
+  const openCheckoutFromCta=Boolean(event.target.closest('[data-select-package]'));
+  selectPackage(card.dataset.package,openCheckoutFromCta,true);
+});
+
+packageGrid?.addEventListener('keydown',(event)=>{
+  const card=event.target.closest('[data-package]');
+  if(!card || (event.key!=='Enter'&&event.key!==' ')) return;
+  event.preventDefault();
+  selectPackage(card.dataset.package,false,true);
+});
+
+// Open checkout from primary page CTAs only; package CTAs are handled by packageGrid.
 document.querySelectorAll('[data-open-checkout]').forEach(button=>button.addEventListener('click',openCheckout));
 document.querySelectorAll('[data-close-checkout]').forEach(button=>button.addEventListener('click',closeCheckout));
 
@@ -190,18 +212,9 @@ document.addEventListener('keydown',(event)=>{
 });
 
 // Make package cards clickable and keep the CTA behavior for opening checkout.
+// Package cards expose keyboard semantics through the package grid listener.
 document.querySelectorAll('.package-card').forEach(card=>{
-  card.addEventListener('click',(event)=>{
-    if(event.target.closest('[data-select-package]')) return;
-    selectPackage(card.dataset.package,false);
-  });
   card.setAttribute('tabindex','0');
   card.setAttribute('role','radio');
-  card.setAttribute('aria-checked','false');
-  card.addEventListener('keydown',(event)=>{
-    if(event.key==='Enter'||event.key===' '){
-      event.preventDefault();
-      selectPackage(card.dataset.package,false);
-    }
-  });
+  card.setAttribute('aria-checked',card.classList.contains('is-selected')?'true':'false');
 });
