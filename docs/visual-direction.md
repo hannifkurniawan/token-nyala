@@ -23,7 +23,7 @@ TokenNyala combines marketplace clarity with one memorable visual motif: a digit
 - Paper: `#F7F8FC` — background hangat dengan bias biru-putih
 - White: `#FFFFFF`
 - Ink: `#17181A` — teks sekunder
-- Muted Gray: `#69728A`
+- Muted Gray: `#626B82` (revisi dari `#69728A` agar lolos kontras AA di semua latar)
 - Border: `#D9DEEA`
 
 ## Cara Penggunaan Warna
@@ -32,7 +32,7 @@ TokenNyala combines marketplace clarity with one memorable visual motif: a digit
 - Gunakan XL Yellow hanya untuk 10–15% area agar tetap premium.
 - Gunakan XL Teal untuk success dan status aktif.
 - Gunakan XL Sky untuk informasi, perkiraan, dan elemen pendukung.
-- Hindari orange dan mint generik agar identitas tidak terasa keluar dari ekosistem XL.
+- Hindari orange dan mint generik agar identitas tidak terasa keluar dari ekosistem XL. Semua penyebutan “orange”, “Signal” atau “mint” di dokumen lama dibaca sebagai XL Yellow (energi/on-state) dan XL Teal (success/selected).
 
 ## Typography
 
@@ -45,14 +45,14 @@ TokenNyala combines marketplace clarity with one memorable visual motif: a digit
 - Warm off-white page with strong dark text.
 - Maximum width: 1184px.
 - 12-column desktop grid.
-- 24px mobile gutters.
+- Gutter: 16px di bawah 640px, 24px mulai `sm:` (640px), container `max-w-[1184px]` mulai `xl:`.
 - 16px / 24px / 48px / 80px section spacing.
 - Rounded cards, 16–24px radius.
 - No heavy glassmorphism or excessive gradients.
 
 ## Signature UI
 
-- Orange “on” state indicator.
+- XL Yellow “on” state indicator.
 - Flame/spark symbol used as a small brand device, not a mascot.
 - Battery/credit meter for the checkout summary.
 - Segmented intent picker with clear selected state.
@@ -65,9 +65,9 @@ TokenNyala combines marketplace clarity with one memorable visual motif: a digit
 - Selected card
 - Disabled/low-contrast card avoided; if unavailable, clearly state “Habis”
 - Hover: slight vertical lift and stronger border
-- Focus: 3px orange/blue keyboard ring
+- Focus: 3px XL Sky ring (`#5CD0F9`) dengan offset 3px
 - Loading: short pulse, no fake delay in prototype
-- Success: mint confirmation panel
+- Success: XL Teal confirmation panel
 
 ## Imagery
 

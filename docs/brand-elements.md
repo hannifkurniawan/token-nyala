@@ -70,7 +70,7 @@ TokenNyala
 Hanya satu huruuf kapital pada awal produk. Nama tidak dipisahkan menjadi Token + Nyala pada wordmark utama.
 
 ### Brand Mark
-Gunakan tanda berbentuk **on core**: lingkaran solid dengan celah/switch putih dan satu percikan orange.
+Gunakan tanda berbentuk **on core**: lingkaran solid dengan celah/switch putih dan satu percikan XL Yellow (sesuai `assets/tokennyala-mark.svg`).
 
 Konsep mark:
 - Lingkaran mewakili koneksi dan sumber energi.
@@ -101,7 +101,7 @@ Clear space minimum setara tinggi huruf kecil pada wordmark atau setara 2/3 diam
 ## Visual Motifs
 
 ### 1. On-State Line
-Garis oranye padat dengan ujung bulat digunakan untuk menunjukkan status aktif, kemajuan, atau rekomendasi.
+Garis XL Yellow padat dengan ujung bulat digunakan untuk menunjukkan status aktif, kemajuan, atau rekomendasi.
 
 ### 2. Momentum Markers
 Titik-titik kecil, panah pendek, dan garis putus-putus digunakan sebagai petunjuk alur:
@@ -152,7 +152,7 @@ Visual produk harus menampilkan proyek nyata dalam bentuk abstrak: prompt, panel
 **The Switch Turns On**
 
 Ketika user memilih paket:
-1. Marker oranye berpindah ke package.
+1. Marker XL Yellow berpindah ke package.
 2. Meter saldo bergerak.
 3. Teks recommendation berubah dengan perpindahan singkat.
 4. CTA berubah menjadi “Lanjutkan Rp100.000”.
