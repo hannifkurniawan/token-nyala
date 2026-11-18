@@ -1,0 +1,6 @@
+# Workspace-local GitHub CLI credentials
+.github-cli/
+
+# Local preview and editor artifacts
+.vscode/
+.DS_Store
