@@ -138,79 +138,44 @@ html, body {
 }
 
 @media (max-width: 767px) {
-  .container,
-  .nav-shell,
-  .hero-grid,
-  .ecosystem-inner,
-  .steps-grid,
-  .package-heading,
-  .recommendation-bar,
-  .package-grid,
-  .benefits-grid,
-  .faq-grid,
-  .final-card,
-  .footer-grid {
-    width: 100%;
-  }
-
-  main,
-  .hero,
-  .ecosystem-strip,
-  .how-section,
-  .packages-section,
-  .benefits-section,
-  .faq-section,
-  .final-cta,
-  .site-footer {
-    width: 100%;
-  }
-
-  .container,
-  .nav-shell {
-    margin-inline: 0;
-  }
-
-  .hero-grid,
-  .ecosystem-inner,
-  .steps-grid,
-  .package-heading,
-  .recommendation-bar,
-  .package-grid,
-  .benefits-grid,
-  .faq-grid,
-  .final-card,
-  .footer-grid {
-    padding-inline: 20px;
-  }
-
-  .nav-shell {
-    padding-inline: 16px;
-  }
-
-  .package-grid {
-    box-sizing: border-box;
-  }
-
-  .package-card {
-    width: 100%;
+  .checkout-dialog {
+    inset: auto 0 0;
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
   }
 }
 
-@media (max-width: 390px) {
-  .hero-grid,
-  .ecosystem-inner,
-  .steps-grid,
-  .package-heading,
-  .recommendation-bar,
-  .package-grid,
-  .benefits-grid,
-  .faq-grid,
-  .final-card,
-  .footer-grid {
-    padding-inline: 16px;
+@media (max-width: 767px) and (orientation: landscape) {
+  .checkout-dialog {
+    height: calc(100dvh - 16px);
   }
 
-  .nav-shell {
-    padding-inline: 16px;
+  .checkout-summary {
+    padding: 12px 14px 8px;
+  }
+
+  .checkout-summary h2 {
+    font-size: 20px;
+  }
+
+  .summary-product {
+    height: 44px;
+  }
+
+  .price-breakdown div {
+    min-height: 24px;
+  }
+
+  .checkout-form {
+    padding: 12px 14px;
+  }
+
+  .form-section {
+    margin-bottom: 8px;
+  }
+
+  .payment-option {
+    height: 54px !important;
   }
 }
