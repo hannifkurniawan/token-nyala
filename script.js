@@ -69,12 +69,16 @@ function setIntent(intent){
   };
   document.getElementById('recommendation-title').textContent=copy[currentLanguage][intent][0];
   document.getElementById('recommendation-copy').textContent=copy[currentLanguage][intent][1];
+
+  selectPackage(packageId,false);
 }
 
 function selectPackage(packageId,openModal=false){
   selectedPackage=packageId;
   document.querySelectorAll('.package-card').forEach(card=>{
-    card.classList.toggle('is-selected',card.dataset.package===packageId);
+    const selected=card.dataset.package===packageId;
+    card.classList.toggle('is-selected',selected);
+    card.setAttribute('aria-checked',selected?'true':'false');
   });
   updateCheckout();
   if(openModal) openCheckout();
@@ -176,4 +180,21 @@ dialog.addEventListener('click',(event)=>{if(event.target===dialog) closeCheckou
 
 document.addEventListener('keydown',(event)=>{
   if(event.key==='Escape'&&dialog.open) closeCheckout();
+});
+
+// Make package cards clickable and keep the CTA behavior for opening checkout.
+document.querySelectorAll('.package-card').forEach(card=>{
+  card.addEventListener('click',(event)=>{
+    if(event.target.closest('[data-select-package]')) return;
+    selectPackage(card.dataset.package,false);
+  });
+  card.setAttribute('tabindex','0');
+  card.setAttribute('role','radio');
+  card.setAttribute('aria-checked','false');
+  card.addEventListener('keydown',(event)=>{
+    if(event.key==='Enter'||event.key===' '){
+      event.preventDefault();
+      selectPackage(card.dataset.package,false);
+    }
+  });
 });
