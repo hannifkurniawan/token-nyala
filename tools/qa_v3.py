@@ -333,6 +333,17 @@ def main():
                     status.append(f"MENU BEHAVIOUR opened={opened} expanded={expanded} closedOnEsc={closed} focus={focused}")
 
             if args.interactive and name in ("375", "1440") and page.locator('[role="tab"][data-intent]').count():
+                # clicking the card body selects it (blue border moves there) without opening checkout
+                page.locator('article[data-package="prototype"] h3').click()
+                body_click = page.evaluate("""() => ({
+                  selected: document.querySelector('[data-package][data-selected=true]')?.dataset.package,
+                  highlighted: [...document.querySelectorAll('[data-package][data-highlight=true]')].map(c => c.dataset.package),
+                  border: getComputedStyle(document.querySelector('article[data-package=prototype]')).borderColor,
+                  checkoutOpen: !!document.getElementById('checkout')?.open,
+                  hero: document.querySelector('[data-hero-balance]')?.dataset.state,
+                })""")
+                if body_click != {"selected": "prototype", "highlighted": ["prototype"], "border": "rgb(0, 45, 187)", "checkoutOpen": False, "hero": "on"}:
+                    status.append(f"CARD CLICK {body_click}")
                 page.locator('[role="tab"][data-intent]').first.focus()
                 page.keyboard.press("ArrowRight")
                 page.keyboard.press("ArrowRight")

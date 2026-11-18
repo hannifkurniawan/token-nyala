@@ -546,6 +546,8 @@
       const id = card.dataset.package;
       card.dataset.recommended = String(id === reco.id);
       card.dataset.selected = String(id === state.selectedPackage);
+      // Blue border = the chosen card; before any choice, the recommended one.
+      card.dataset.highlight = String(id === (state.selectedPackage ?? reco.id));
       const cta = card.querySelector('[data-pkg-cta]');
       if (cta) {
         cta.textContent = fill(t(id === state.selectedPackage ? 'pkgChosen' : 'pkgChoose'), { price: rupiah(packages[id].amount) });
@@ -583,6 +585,14 @@
       if (target === undefined) return;
       event.preventDefault();
       setIntent(tabs[target].dataset.intent, { focus: true });
+    });
+  });
+
+  // Clicking anywhere on a card selects it (without opening checkout); its button selects + opens checkout.
+  document.querySelectorAll('article[data-package]').forEach((card) => {
+    card.addEventListener('click', (event) => {
+      if (event.target.closest('button, a')) return;
+      selectPackage(card.dataset.package);
     });
   });
 

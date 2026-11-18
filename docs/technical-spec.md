@@ -162,8 +162,10 @@ CTA
 ```
 
 - Card default: border abu terang
-- Recommended: border XL Blue dan badge “Paling pas” (latar XL Yellow, teks XL Dark)
-- Selected: border XL Teal 2px + ikon centang + label teks “Dipilih” (state tidak boleh hanya warna)
+- **Garis biru (border XL Blue 2px + tombol primary) selalu menandai kartu yang dipilih.** Sebelum ada pilihan, garis biru ada di kartu rekomendasi.
+- Recommended: badge “Paling pas” (latar XL Yellow, teks XL Dark) — tetap di kartu rekomendasi walau kartu lain dipilih
+- Selected: border XL Blue + ring biru tipis + badge “✓ Dipilih” (latar teal muda) + label tombol “Paket RpX dipilih” (state tidak boleh hanya warna)
+- *(Revisi 18 Nov 2026: sebelumnya rekomendasi = biru dan terpilih = teal; user mengharapkan kartu yang diklik bergaris biru.)*
 - Hover: transform translateY(-4px)
 - Pada mobile, card stacked dan CTA tetap terlihat
 
@@ -295,7 +297,7 @@ Preview di landing (6 kartu, urutan): Claude Sonnet, GPT, Gemini Pro, DeepSeek C
 ### Package Selection
 
 - Klik intent mengubah package recommendation
-- Klik package card mengubah state selected
+- Klik di mana saja pada package card memilih paket itu (tanpa membuka checkout); tombol “Pilih RpX” di kartu memilih + membuka checkout
 - Membuka checkout jika CTA “Isi paket ini” diklik
 - Tidak perlu hard reload atau navigasi halaman
 

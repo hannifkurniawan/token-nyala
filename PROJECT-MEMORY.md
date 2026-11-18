@@ -52,6 +52,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Kata “mock” dihapus dari copy langkah 2 Cara kerja | Label prototype sudah ada di footer/checkout; “mock” di landing merusak kredibilitas |
 | 18 Nov 2026 | Cara kerja: 3 kolom baru mulai `lg:`; di `md:` tiap kartu jadi baris (judul kiri, isi kanan) | 3 kolom di 768px membuat judul dan chip patah |
 | 18 Nov 2026 | Paket: urutan kartu tetap berdasarkan harga + baris rekomendasi di atas kartu (bukan memindah kartu rekomendasi ke atas di mobile) | Memindah urutan visual lewat CSS membuat urutan fokus keyboard berbeda dari tampilan |
+| 18 Nov 2026 | **Garis biru = kartu paket yang dipilih** (sebelum ada pilihan: kartu rekomendasi). Klik badan kartu memilih tanpa membuka checkout | Feedback user: kartu yang diklik tidak bergaris biru. Sebelumnya badan kartu tidak bisa diklik dan state terpilih berwarna teal |
 | 18 Nov 2026 | Tab intent default: Belajar | Tab pertama + persona utama Ayu |
 | 18 Nov 2026 | Kartu paket: 1 kolom → kartu baris di `md:` → 3 kolom di `lg:` | 3 kolom di 768px membuat harga meluap keluar kartu |
 | 18 Nov 2026 | Format angka mengikuti bahasa: ID `Rp50.000`, EN `Rp50,000` | Sesuai microcopy EN |
@@ -84,6 +85,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Cek teks meluap harus mencakup `label`/`div`.** Kotak flex `items-start` membuat anak selebar teksnya, jadi yang meluap adalah label-nya, bukan span-nya.
 - **Satuan panjang di kartu sempit → pindahkan ke keterangan.** “31,500 credits / 1M tokens” patah jadi 3 baris; sekarang “Tarif per 1 jt token” di atas dan nilai “31.500 kredit”. Begitu juga estimasi: angka besar + keterangan kecil.
 - **Smooth scroll di halaman mobile yang panjang bisa >1,5 detik.** QA “panduan pasang” sempat gagal karena menunggu 0,9 detik; sekarang QA menunggu sampai `scrollY` stabil. Cek timing dulu sebelum mengubah kode.
+- **Baca ulang spec interaksi, bukan hanya layout.** Spec sudah menyebut “klik package card mengubah state selected”, tetapi terlewat dan baru ketahuan dari user. Dua warna highlight (biru rekomendasi vs teal terpilih) juga membingungkan — satu warna untuk “yang aktif”.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
@@ -108,3 +110,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Push pertama `v3-mobile-first` ke `origin` (atas permintaan user) sampai `41c9ca3`.
 - Section Model AI: 6 kartu dari data, dialog katalog (full screen mobile, filter toggle, search, filter OR/AND, tampilkan lebih banyak + fokus, empty state, hapus filter). QA ditambah uji katalog + validasi angka vs spec. Visual: badge level menghimpit meta → meta baris penuh; estimasi & tarif patah → angka besar + keterangan; filter 3 kolom tidak muat di 768px → 2 baris.
 - Section Pakai di tool: timeline 3 langkah, kartu konfigurasi (Base URL `.example`, key contoh, salin dengan pengumuman `aria-live` yang benar di dalam/luar modal), CTA isi saldo; “Lihat panduan pasang” tersambung (tutup → scroll → fokus judul). Visual: URL/key patah di tengah kata di 320px → ditumpuk + `<wbr>`.
+- Fix dari feedback user: klik kartu paket memilih (garis biru pindah ke kartu itu, hero menyala) tanpa membuka checkout; tombol kartu tetap memilih + checkout. QA ditambah uji klik badan kartu.
