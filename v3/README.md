@@ -41,5 +41,5 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 - [x] 9. Tim & bisnis + konsultasi — strip tim, dialog 5 field + 2 checkbox, sukses, reset
 - [x] 10. FAQ + final CTA — 11 pertanyaan (details/summary), banner “Nyala sekarang.”
 - [x] 11. Live chat Nala — pill, skrip + kata kunci, pilih paket → checkout, tim online/offline, ganti bahasa, titik masuk dari FAQ & checkout
-- [ ] 12. ID/EN lengkap
+- [x] 12. ID/EN lengkap — `tools/i18n_check.py`: 333 kunci ID = EN, 0 hilang, 0 kunci mati, 576 string dibandingkan, 0 belum diterjemahkan
 - [ ] 13. QA penuh
