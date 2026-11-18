@@ -256,6 +256,48 @@ def catalog_flow(page, out, name):
     return problems
 
 
+def consult_flow(page, out, name):
+    """Open team consultation, submit empty (5 errors, focus on name), fill, succeed, close."""
+    problems = []
+    page.evaluate("() => document.getElementById('tim').scrollIntoView()")
+    page.locator("[data-open-consult]").click()
+    page.wait_for_timeout(300)
+    d = lambda js: page.evaluate(f"() => {{ const d = document.getElementById('consult'); {js} }}")
+    box = d("const r = d.getBoundingClientRect(); return { open: d.open, ok: r.top >= -1 && r.bottom <= innerHeight + 1, focus: document.activeElement?.id };")
+    if box != {"open": True, "ok": True, "focus": "cs-title"}:
+        problems.append(f"CONSULT open {box}")
+    r = page.evaluate(CHECK_JS)
+    if r["small"] or r["spills"]:
+        problems.append(f"CONSULT small={r['small']} spills={r['spills']}")
+    page.screenshot(path=str(out / f"{name}-consult.png"))
+    page.locator("#consult [type=submit]").click()
+    errs = d("return { shown: [...d.querySelectorAll('[data-cerr]')].filter(e => !e.classList.contains('hidden')).map(e => e.dataset.cerr), focus: document.activeElement?.id };")
+    if errs != {"shown": ["name", "org", "contact", "teamSize", "consent"], "focus": "cs-name"}:
+        problems.append(f"CONSULT validation {errs}")
+    page.wait_for_timeout(200)
+    page.screenshot(path=str(out / f"{name}-consult-errors.png"))
+    page.fill("#cs-name", "Dimas")
+    page.fill("#cs-contact", "dimas@studio.id")
+    page.fill("#cs-org", "Studio Dimas")
+    page.locator("#consult label:has(input[name=teamSize][value='6–20'])").click()
+    page.fill("#cs-need", "x" * 460)
+    live = d("return [d.querySelector('[data-cs-count]').textContent, d.querySelector('[data-cs-count-live]').textContent];")
+    page.locator("#consult input[name=consent]").check()
+    scroll = d("return d.scrollTop;")
+    page.locator("#consult [type=submit]").click()
+    page.wait_for_timeout(200)
+    ok = d("return { success: !d.querySelector('[data-cs-panel=success]').hidden, body: d.querySelector('[data-cs-success-body]').textContent, focus: document.activeElement?.id };")
+    page.screenshot(path=str(out / f"{name}-consult-success.png"))
+    if not ok["success"] or "dimas@studio.id" not in ok["body"] or ok["focus"] != "cs-success-title" or live[0] != "460/500" or "460" not in live[1] or scroll:
+        problems.append(f"CONSULT submit {ok} count={live} dialogScroll={scroll}")
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(100)
+    back = page.evaluate("() => ({ open: document.getElementById('consult').open, focus: document.activeElement?.hasAttribute('data-open-consult'), reset: document.getElementById('cs-name').value })")
+    if back != {"open": False, "focus": True, "reset": ""}:
+        problems.append(f"CONSULT close {back}")
+    return problems
+
+
 def serve(directory):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -392,6 +434,9 @@ def main():
                     live: document.querySelector('[data-dash-live]').textContent })""")
                 if d != {"sw": "false", "status": "Nonaktif", "btn": "Aktifkan", "live": "API key Laptop kerja nonaktif"}:
                     status.append(f"DASHBOARD {d}")
+
+            if args.interactive and name in ("320", "375", "768", "1440") and page.locator("dialog#consult").count():
+                status += consult_flow(page, out, name)
 
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()

@@ -245,6 +245,35 @@
       exFit: 'Paket Mulai (55.000 kredit) cukup, masih ada sisa untuk iterasi.',
       exCta: 'Pilih paket Mulai',
 
+      teamKicker: 'Untuk tim & bisnis',
+      teamTitle: 'Butuh untuk tim atau perusahaan?',
+      teamPt1: 'Invoice atas nama perusahaan',
+      teamPt2: 'Faktur pajak',
+      teamPt3: 'Bayar lewat transfer bank',
+      teamPt4: 'Pantau pemakaian tiap anggota',
+      teamCta: 'Konsultasi untuk tim',
+      teamReply: 'Kami balas dalam 1 hari kerja.',
+      csTitle: 'Konsultasi untuk tim',
+      csIntro: 'Ceritakan kebutuhan timmu. Kami hubungi dalam 1 hari kerja.',
+      csClose: 'Tutup konsultasi',
+      csName: 'Nama',
+      csOrg: 'Nama tim atau perusahaan',
+      csSize: 'Ukuran tim',
+      csNeed: 'Ceritakan kebutuhanmu (opsional)',
+      csCountLive: '{n} dari 500 karakter',
+      csInvoice: 'Butuh invoice perusahaan / faktur pajak',
+      csConsent: 'Saya setuju dengan Syarat & Ketentuan dan Kebijakan Privasi',
+      csSubmit: 'Kirim',
+      errName: 'Nama wajib diisi.',
+      errOrg: 'Nama tim atau perusahaan wajib diisi.',
+      errTeamSize: 'Pilih ukuran tim.',
+      errConsent: 'Centang persetujuan untuk melanjutkan.',
+      errCsContactEmpty: 'Masukkan email atau nomor HP agar kami bisa menghubungimu.',
+      csSuccessTitle: 'Terima kasih!',
+      csSuccessBody: 'Tim kami menghubungi kamu di {contact} dalam 1 hari kerja.',
+      csSuccessNotice: 'Simulasi — tidak ada data yang dikirim.',
+      csDone: 'Selesai',
+
       pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
       pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
       pkgEstimate_work: '100+ sesi kecil'
@@ -488,6 +517,35 @@
       exFit: 'The Mulai package (55,000 credits) is enough, with room left to iterate.',
       exCta: 'Choose the Mulai package',
 
+      teamKicker: 'For teams & business',
+      teamTitle: 'Buying for a team or company?',
+      teamPt1: "Invoices in your company's name",
+      teamPt2: 'Tax invoices',
+      teamPt3: 'Pay by bank transfer',
+      teamPt4: "Track each member's usage",
+      teamCta: 'Talk to us about your team',
+      teamReply: 'We reply within 1 business day.',
+      csTitle: 'Team consultation',
+      csIntro: "Tell us what your team needs. We'll reply within 1 business day.",
+      csClose: 'Close consultation',
+      csName: 'Name',
+      csOrg: 'Team or company name',
+      csSize: 'Team size',
+      csNeed: 'Tell us what you need (optional)',
+      csCountLive: '{n} of 500 characters',
+      csInvoice: 'I need a company invoice / tax invoice',
+      csConsent: 'I agree to the Terms and Privacy Policy',
+      csSubmit: 'Send',
+      errName: 'Please enter your name.',
+      errOrg: 'Please enter your team or company name.',
+      errTeamSize: 'Choose a team size.',
+      errConsent: 'Tick the agreement to continue.',
+      errCsContactEmpty: 'Enter your email or phone number so we can reach you.',
+      csSuccessTitle: 'Thank you!',
+      csSuccessBody: 'Our team will contact you at {contact} within 1 business day.',
+      csSuccessNotice: 'Simulation — no data is sent.',
+      csDone: 'Done',
+
       pkgEstimate_learn: 'about 20–30 small sessions',
       pkgEstimate_prototype: 'about 40–60 small sessions',
       pkgEstimate_work: '100+ small sessions'
@@ -571,6 +629,7 @@
     renderCheckout();
     renderModels();
     renderDashboard();
+    renderConsult();
     storage.set(LANG_KEY, lang);
   }
 
@@ -1062,12 +1121,112 @@
     dashLive(fill(t('dashKeyAnnounce'), { status: t(dash.keyActive ? 'dashKeyActive' : 'dashKeyInactive').toLowerCase() }));
   });
 
+  /* ---------- Shared modal behaviour (used by new dialogs) ----------
+     showModal + focus heading, scroll lock, backdrop click (press must start and end on the backdrop),
+     focus back to the opener when it is still visible. */
+  function setupModal(dlg, { focus, onClose } = {}) {
+    let opener = null;
+    let pressedBackdrop = false;
+    dlg.addEventListener('pointerdown', (e) => { pressedBackdrop = e.target === dlg; });
+    dlg.addEventListener('click', (e) => { if (pressedBackdrop && e.target === dlg) dlg.close(); pressedBackdrop = false; });
+    dlg.addEventListener('close', () => {
+      document.documentElement.classList.remove('overflow-hidden');
+      onClose?.();
+      if (opener && document.contains(opener) && opener.getClientRects().length) opener.focus();
+      else if (opener && menuButton?.getClientRects().length) menuButton.focus();
+    });
+    return {
+      open(from = document.activeElement) {
+        if (state.menuOpen) setMenu(false);
+        opener = from;
+        dlg.showModal();
+        document.documentElement.classList.add('overflow-hidden');
+        dlg.querySelector(focus)?.focus();
+      },
+      close() { if (dlg.open) dlg.close(); }
+    };
+  }
+
+  /* ---------- Team consultation (G7) ---------- */
+  const consultDialog = document.getElementById('consult');
+  const consultForm = consultDialog?.querySelector('form');
+  const consult = { contact: '' };
+  // Use elements.namedItem: `form.name` would return the form's own name attribute, not the input.
+  const csField = (n) => consultForm?.elements.namedItem(n);
+
+  function setConsultError(name, key) {
+    const msg = consultDialog.querySelector(`[data-cerr="${name}"]`);
+    if (msg) { msg.textContent = key ? t(key) : ''; msg.dataset.key = key || ''; msg.classList.toggle('hidden', !key); }
+    consultForm.querySelectorAll(`[name="${name}"]`).forEach((el) => el.setAttribute('aria-invalid', String(Boolean(key))));
+  }
+
+  function renderConsult() {
+    if (!consultDialog) return;
+    consultDialog.querySelectorAll('[data-cerr]').forEach((el) => { if (el.dataset.key) el.textContent = t(el.dataset.key); });
+    const body = consultDialog.querySelector('[data-cs-success-body]');
+    if (body) body.textContent = fill(t('csSuccessBody'), { contact: consult.contact });
+  }
+
+  function showConsultPanel(name) {
+    consultDialog.querySelectorAll('[data-cs-panel]').forEach((el) => { el.hidden = el.dataset.csPanel !== name; });
+    renderConsult();
+  }
+
+  const consultModal = consultDialog && setupModal(consultDialog, {
+    focus: '#cs-title',
+    onClose: () => { if (!consultDialog.querySelector('[data-cs-panel="success"]').hidden) { consultForm.reset(); updateCount(); showConsultPanel('form'); } }
+  });
+
+  function updateCount() {
+    const n = csField('need').value.length;
+    consultDialog.querySelector('[data-cs-count]').textContent = `${n}/500`;
+    const live = consultDialog.querySelector('[data-cs-count-live]');
+    // Announce only near the limit, not on every keystroke.
+    live.textContent = n >= 450 ? fill(t('csCountLive'), { n }) : '';
+  }
+
+  csField('need')?.addEventListener('input', updateCount);
+  csField('contact')?.addEventListener('blur', () => {
+    if (!csField('contact').value.trim()) return;
+    const r = parseContact(csField('contact').value);
+    setConsultError('contact', r.ok ? null : r.error);
+  });
+  consultForm?.addEventListener('change', (e) => {
+    if (e.target.name === 'teamSize') setConsultError('teamSize', null);
+    if (e.target.name === 'consent' && e.target.checked) setConsultError('consent', null);
+  });
+  consultForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const f = consultForm;
+    const contact = parseContact(csField('contact').value);
+    const checks = [
+      // Same order as on screen, so focus lands on the topmost invalid field.
+      ['name', csField('name').value.trim() ? null : 'errName'],
+      ['org', csField('org').value.trim() ? null : 'errOrg'],
+      ['contact', contact.ok ? null : (contact.error === 'errContactEmpty' ? 'errCsContactEmpty' : contact.error)],
+      ['teamSize', csField('teamSize').value ? null : 'errTeamSize'],
+      ['consent', csField('consent').checked ? null : 'errConsent']
+    ];
+    checks.forEach(([name, key]) => setConsultError(name, key));
+    const firstBad = checks.find(([, key]) => key);
+    if (firstBad) {
+      const el = f.querySelector(`[name="${firstBad[0]}"]`);
+      el?.focus();
+      return;
+    }
+    consult.contact = contact.value;
+    showConsultPanel('success');
+    consultDialog.querySelector('#cs-success-title')?.focus();
+  });
+  consultDialog?.querySelectorAll('[data-cs-close]').forEach((b) => b.addEventListener('click', () => consultModal.close()));
+  document.querySelectorAll('[data-open-consult]').forEach((b) => b.addEventListener('click', () => consultModal.open(b)));
+
   document.querySelectorAll('[data-open-checkout]').forEach((btn) => {
     btn.addEventListener('click', () => openCheckout(null, btn));
   });
 
   // Exposed for upcoming sections and manual testing in the console.
-  window.TokenNyala = { selectPackage, setIntent, openCheckout, openCatalog, packages, models };
+  window.TokenNyala = { selectPackage, setIntent, openCheckout, openCatalog, openConsult: (from) => consultModal?.open(from), packages, models };
 
   /* ---------- Mobile menu ---------- */
   const menuButton = document.getElementById('menu-button');

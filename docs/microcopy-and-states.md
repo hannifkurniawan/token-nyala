@@ -378,7 +378,8 @@ Mock dashboard:
 - **Labels:** `Nama` · `Email atau nomor HP` · `Nama tim atau perusahaan` · `Ukuran tim` (`1–5` · `6–20` · `21–50` · `50+`) · `Ceritakan kebutuhanmu (opsional)` · `Butuh invoice perusahaan / faktur pajak` · `Saya setuju dengan Syarat & Ketentuan dan Kebijakan Privasi`
 - **EN labels:** `Name` · `Email or phone number` · `Team or company name` · `Team size` · `Tell us what you need (optional)` · `I need a company invoice / tax invoice` · `I agree to the Terms and Privacy Policy`
 - **Submit:** `Kirim` / `Send`
-- **Errors:** `Nama wajib diisi.` · `Nama tim atau perusahaan wajib diisi.` · `Pilih ukuran tim.` · `Centang persetujuan untuk melanjutkan.` (kontak memakai pesan checkout)
+- **Errors:** `Nama wajib diisi.` · `Nama tim atau perusahaan wajib diisi.` · `Masukkan email atau nomor HP agar kami bisa menghubungimu.` · `Pilih ukuran tim.` · `Centang persetujuan untuk melanjutkan.` (format email/HP salah memakai pesan checkout)
+- **Success body:** `Tim kami menghubungi kamu di {kontak} dalam 1 hari kerja.`
 - **Success:** `Terima kasih! Tim kami menghubungi kamu dalam 1 hari kerja.` + `Simulasi — tidak ada data yang dikirim.` / `Thank you! Our team will contact you within 1 business day.` + `Simulation — no data is sent.`
 
 ## Live Chat — Nala

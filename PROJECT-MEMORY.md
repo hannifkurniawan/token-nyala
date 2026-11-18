@@ -5,8 +5,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, dan **Manfaat + dashboard + Contoh penggunaan** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
-- **Berikutnya:** section 9 — Untuk tim & bisnis + dialog konsultasi tim. Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
+- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, Manfaat + dashboard + Contoh, dan **Tim & bisnis + konsultasi** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
+- **Berikutnya:** section 10 — FAQ (10 pertanyaan) + Final CTA.
+- **Utang teknis kecil:** dialog baru memakai helper `setupModal()`; checkout dan katalog masih punya logika buka/tutup sendiri — bisa dimigrasikan saat QA penuh (langkah 13). Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
@@ -88,6 +89,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Satuan panjang di kartu sempit → pindahkan ke keterangan.** “31,500 credits / 1M tokens” patah jadi 3 baris; sekarang “Tarif per 1 jt token” di atas dan nilai “31.500 kredit”. Begitu juga estimasi: angka besar + keterangan kecil.
 - **Smooth scroll di halaman mobile yang panjang bisa >1,5 detik.** QA “panduan pasang” sempat gagal karena menunggu 0,9 detik; sekarang QA menunggu sampai `scrollY` stabil. Cek timing dulu sebelum mengubah kode.
 - **Baca ulang spec interaksi, bukan hanya layout.** Spec sudah menyebut “klik package card mengubah state selected”, tetapi terlewat dan baru ketahuan dari user. Dua warna highlight (biru rekomendasi vs teal terpilih) juga membingungkan — satu warna untuk “yang aktif”.
+- **`form.name` di DOM = atribut name milik form, bukan input bernama “name”.** Pakai `form.elements.namedItem()`.
+- **Pesan error yang dipakai ulang harus dicek konteksnya.** Pesan kontak checkout (“…bukti pembelian…”) salah di form konsultasi.
+- **Validasi sesuai urutan visual**, supaya fokus pindah ke field salah paling atas.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
@@ -114,3 +118,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Section Pakai di tool: timeline 3 langkah, kartu konfigurasi (Base URL `.example`, key contoh, salin dengan pengumuman `aria-live` yang benar di dalam/luar modal), CTA isi saldo; “Lihat panduan pasang” tersambung (tutup → scroll → fokus judul). Visual: URL/key patah di tengah kata di 320px → ditumpuk + `<wbr>`.
 - Fix dari feedback user: klik kartu paket memilih (garis biru pindah ke kartu itu, hero menyala) tanpa membuka checkout; tombol kartu tetap memilih + checkout. QA ditambah uji klik badan kartu.
 - Section Manfaat + Contoh: 3 kartu + kartu “Pantau & kendalikan” dengan mock dashboard (saldo, grafik 7 hari, switch pengingat, toggle API key) dan section contoh landing page event. Visual: batang terlalu lebar di 768px → maks 28px; label puncak menabrak judul grafik, baris key terpotong, ikon kartu 4 menghimpit judul di 320px → diperbaiki. QA ditambah uji switch & toggle key.
+- Section Tim & bisnis: strip gelap dengan 4 poin + CTA; dialog konsultasi (helper `setupModal`), validasi 5 aturan, counter 500 dengan pengumuman ≥450, sukses + reset. Visual: pesan kontak salah konteks dan placeholder terpotong → pesan khusus + kontak lebar penuh; urutan validasi disamakan dengan urutan tampil. QA ditambah alur konsultasi penuh.

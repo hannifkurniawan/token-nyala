@@ -470,7 +470,11 @@ Lebih ringan dari OCTA Enterprise (5 field vs 7 + captcha):
 | Butuh invoice perusahaan / faktur pajak | checkbox | Tidak |
 | Setuju Syarat & Ketentuan dan Kebijakan Privasi | checkbox | Ya |
 
-- Tombol Kirim aktif, validasi saat submit (jangan disable tanpa penjelasan); error inline per field.
+- Urutan tampil: Nama · Nama tim (berdampingan di `md:`) → Email/HP (lebar penuh) → Ukuran tim → Kebutuhan → checkbox.
+- Tombol Kirim aktif, validasi saat submit (jangan disable tanpa penjelasan); error inline per field, dicek **sesuai urutan tampil** sehingga fokus pindah ke field salah paling atas.
+- Pesan kontak kosong khusus konsultasi: “Masukkan email atau nomor HP agar kami bisa menghubungimu.” (bukan pesan “bukti pembelian” milik checkout).
+- Counter `0/500` visual (`aria-hidden`); region `aria-live` terpisah hanya mengumumkan saat ≥ 450 karakter.
+- Setelah sukses lalu ditutup, form di-reset.
 - Success state: “Terima kasih! Tim kami menghubungi kamu dalam 1 hari kerja.” + label simulasi.
 - Tidak ada captcha di prototype.
 

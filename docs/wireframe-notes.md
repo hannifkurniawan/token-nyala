@@ -154,7 +154,7 @@ Contoh: Cursor, Cline, Continue
 └─────────────────────────────────┘
 ```
 
-Form konsultasi = bottom sheet seperti checkout, satu kolom; `md:` dialog 2 kolom untuk Nama/Kontak.
+Form konsultasi = bottom sheet seperti checkout, satu kolom; `md:` dialog dengan Nama + Nama tim berdampingan, Email/HP selebar penuh (placeholder kontak terpotong kalau dibuat 2 kolom).
 
 ## Mobile — Live Chat Nala (G4)
 
