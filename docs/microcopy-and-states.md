@@ -430,6 +430,12 @@ EN: `What will you use AI for?` → `Learn` · `Prototype` · `Work` / `How ofte
 - **Offline:** `Tim sedang offline. Tinggalkan email atau nomor HP, kami balas di jam kerja.` → field kontak + `Kirim` → `Terima kasih! Kami balas ke {kontak} di jam kerja.`
 - **EN offline:** `The team is offline. Leave your email or phone number and we'll reply during business hours.` → `Thanks! We'll reply to {contact} during business hours.`
 
+### Tambahan v3
+- **Balasan otomatis mode tim:** `Pesanmu sudah kami terima. Di produk nyata, tim akan membalas di sini dalam beberapa menit.` / `We've got your message. In the real product, the team replies here within a few minutes.`
+- **Mengetik:** `Nala sedang mengetik…` · `Sari sedang mengetik…` / `Nala is typing…` · `Sari is typing…`
+- **Tombol di FAQ:** `Tanya Nala` / `Ask Nala`
+- **Header mode tim:** `Sari · Tim TokenNyala` / `Sari · TokenNyala team`
+
 ### Checkout Help Link
 `Butuh bantuan?` / `Need help?` — kecil, di atas tombol konfirmasi; membuka chat setelah checkout ditutup sementara (pilihan paket tetap diingat).
 

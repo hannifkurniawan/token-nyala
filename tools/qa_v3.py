@@ -311,6 +311,98 @@ def consult_flow(page, out, name):
     return problems
 
 
+def chat_flow(page, out, name, base_url):
+    """Launcher → pick-package flow → checkout; team online/offline; language switch; Escape."""
+    problems = []
+    W = lambda ms=750: page.wait_for_timeout(ms)
+    js = lambda code: page.evaluate(code)
+    page.evaluate("() => window.scrollTo(0, 0)")
+    W(150)
+    # The pill must not cover the hero CTA on first view
+    overlap = js("""() => { const a = document.getElementById('chat-launcher').getBoundingClientRect();
+        const b = document.querySelector('#hero-title ~ div > [data-open-checkout]').getBoundingClientRect();
+        return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom); }""")
+    if overlap:
+        problems.append("CHAT pill overlaps hero CTA")
+    page.locator("#chat-launcher").click()
+    W(300)
+    st = js("""() => { const d = document.getElementById('chat'); const r = d.getBoundingClientRect();
+        return { open: d.open, modal: d.matches(':modal'), w: Math.round(r.width), h: Math.round(r.height), focus: document.activeElement?.id,
+                 launcherHidden: document.getElementById('chat-launcher').getClientRects().length === 0,
+                 chips: d.querySelectorAll('[data-chat-chips] button').length, msgs: d.querySelectorAll('[data-chat-log] > li').length,
+                 inView: r.top >= -1 && r.bottom <= innerHeight + 1 && r.left >= -1 && r.right <= innerWidth + 1 }; }""")
+    desktop = page.viewport_size["width"] >= 768
+    exp = {"open": True, "modal": not desktop, "focus": "chat-input", "launcherHidden": True, "chips": 5, "msgs": 1, "inView": True}
+    got = {k: st[k] for k in exp}
+    if got != exp or (desktop and (st["w"] != 380 or st["h"] > 560)):
+        problems.append(f"CHAT open {st}")
+    r = page.evaluate(CHECK_JS)
+    if r["small"] or r["spills"]:
+        problems.append(f"CHAT small={r['small']} spills={r['spills']}")
+    page.screenshot(path=str(out / f"{name}-chat.png"))
+
+    chip = lambda text: page.locator("#chat [data-chat-chips] button", has_text=text).click()
+    chip("Bantu pilih paket"); W()
+    chip("Prototype"); W()
+    chip("Tiap hari"); W()
+    page.screenshot(path=str(out / f"{name}-chat-result.png"))
+    res = js("() => document.querySelector('#chat [data-chat-log]').lastElementChild.textContent")
+    btn_visible = js("""() => { const log = document.querySelector('#chat [data-chat-log]'); const b = log.lastElementChild.querySelector('button');
+        const r = b.getBoundingClientRect(), lr = log.getBoundingClientRect(); return r.bottom <= lr.bottom + 1 && r.top >= lr.top - 1; }""")
+    if not btn_visible:
+        problems.append("CHAT 'Pilih paket ini' not fully visible in the log")
+    if "Scale" not in res or "Rp250.000" not in res:
+        problems.append(f"CHAT pick result {res!r}")
+    page.locator("#chat [data-chat-log] button", has_text="Pilih paket ini").last.click()
+    W(400)
+    co = js("() => ({ chat: document.getElementById('chat').open, checkout: document.getElementById('checkout').open, pkg: document.querySelector('[name=co-package]:checked')?.value })")
+    if co != {"chat": False, "checkout": True, "pkg": "work"}:
+        problems.append(f"CHAT → checkout {co}")
+    # "Butuh bantuan?" inside checkout reopens the chat (and closes checkout); history kept
+    page.locator("#checkout [data-open-chat]").click()
+    W(300)
+    back = js("() => ({ chat: document.getElementById('chat').open, checkout: document.getElementById('checkout').open, msgs: document.querySelectorAll('#chat [data-chat-log] > li').length })")
+    if not back["chat"] or back["checkout"] or back["msgs"] < 7:
+        problems.append(f"CHECKOUT help → chat {back}")
+    if page.viewport_size["width"] >= 1024:  # header language switch is visible from lg; the non-modal chat re-translates its log
+        page.locator('header [data-lang="en"]').first.click()
+        W(100)
+        first = js("() => document.querySelector('#chat [data-chat-log] > li').textContent")
+        page.locator('header [data-lang="id"]').first.click()
+        page.locator("#chat-input").focus()
+        if "Hi, I'm Nala" not in first:
+            problems.append(f"CHAT not re-translated: {first!r}")
+    page.keyboard.press("Escape")
+    W(150)
+    esc = js("() => ({ open: document.getElementById('chat').open, focus: document.activeElement?.id })")
+    if esc != {"open": False, "focus": "chat-launcher"}:
+        problems.append(f"CHAT escape {esc}")
+
+    for mode in ("online", "offline"):
+        page.goto(base_url + f"?chat={mode}", wait_until="networkidle")
+        page.locator("#chat-launcher").click(); W(300)
+        page.fill("#chat-input", "mau bicara dengan tim"); page.keyboard.press("Enter"); W()
+        if mode == "online":
+            o = js("() => ({ label: document.querySelector('[data-chat-mode-label]').dataset.show, last: document.querySelector('#chat [data-chat-log]').lastElementChild.textContent })")
+            if o["label"] != "true" or "Sari" not in o["last"]:
+                problems.append(f"CHAT team online {o}")
+            page.screenshot(path=str(out / f"{name}-chat-team.png"))
+        else:
+            page.fill("#chat-input", "0812"); page.keyboard.press("Enter"); W()
+            bad = js("() => document.querySelector('#chat [data-chat-log]').lastElementChild.textContent")
+            page.fill("#chat-input", "ayu@mail.com"); page.keyboard.press("Enter"); W()
+            ok = js("() => document.querySelector('#chat [data-chat-log]').lastElementChild.textContent")
+            hdr = js("() => document.querySelector('[data-chat-status]').textContent")
+            if hdr != "Asisten otomatis":
+                problems.append(f"CHAT offline header shows {hdr!r}")
+            if "Nomor HP belum sesuai" not in bad or "ayu@mail.com" not in ok:
+                problems.append(f"CHAT offline bad={bad!r} ok={ok!r}")
+            page.screenshot(path=str(out / f"{name}-chat-offline.png"))
+        page.keyboard.press("Escape"); W(100)
+    page.goto(base_url, wait_until="networkidle")
+    return problems
+
+
 def serve(directory):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -463,6 +555,9 @@ def main():
                 r2 = page.evaluate(CHECK_JS)
                 if r2["spills"] or r2["escapes"]:
                     status.append(f"FAQ OPEN spills={r2['spills']} escapes={r2['escapes']}")
+
+            if args.interactive and name in ("320", "375", "768", "1440") and page.locator("dialog#chat").count():
+                status += chat_flow(page, out, name, url)
 
             if args.interactive and name == "1440":
                 page.locator('header [data-lang="en"]').first.click()

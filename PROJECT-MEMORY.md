@@ -5,8 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, Manfaat + dashboard + Contoh, Tim & bisnis + konsultasi, dan **FAQ + Final CTA** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
-- **Berikutnya:** langkah 11 — Live chat Nala. Sambungkan juga: tombol “Tanya Nala” di kolom kiri FAQ (“Belum menemukan jawabannya?”), link “Butuh bantuan?” di checkout, dan pill “Butuh bantuan?” (sembunyikan saat dialog modal terbuka).
+- **Fase:** Build v3 — shell, Hero, Cara kerja, Package picker, Checkout, Model AI + katalog, Pakai di tool, Manfaat + dashboard + Contoh, Tim & bisnis + konsultasi, FAQ + Final CTA, dan **Live chat Nala** selesai, lolos QA di 6 viewport (ID dan EN). Branch di-push ke `origin` setiap langkah selesai.
+- **Berikutnya:** langkah 12 — audit kelengkapan ID/EN di seluruh halaman (teks statis, aria-label, placeholder, pesan dinamis), lalu langkah 13 — QA penuh + migrasi checkout & katalog ke `setupModal()`.
 - **Utang teknis kecil:** dialog baru memakai helper `setupModal()`; checkout dan katalog masih punya logika buka/tutup sendiri — bisa dimigrasikan saat QA penuh (langkah 13). Tombol “Lihat panduan pasang” di sukses checkout mengarah ke `#pakai` (section 7, belum dibuat). Link “Butuh bantuan?” di checkout ditambahkan bersama live chat (langkah 11). Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
@@ -65,6 +65,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Filter katalog di mobile di balik tombol `Filter (n)` | 3 baris filter memakan >50% tinggi layar 640px |
 | 18 Nov 2026 | Contoh penggunaan: landing page event = 11–18 sesi ≈ Rp21–34 rb → paket Mulai cukup, CTA langsung ke checkout Mulai | Menerjemahkan “sesi kecil” ke uang dan paket nyata |
 | 18 Nov 2026 | Grafik dashboard mengikuti skill dataviz (1 seri tanpa legenda, label di puncak saja, daftar sr-only) | Grafik kecil tetap terbaca & aksesibel |
+| 18 Nov 2026 | Chat: `<dialog>` modal di mobile (layar penuh), non-modal di `md:` (panel 380×560) | Fokus terkunci di mobile; halaman tetap bisa dipakai di desktop (spec: `aria-modal=false`) |
+| 18 Nov 2026 | Riwayat chat disimpan sebagai kunci copy, bukan teks | Ganti bahasa menerjemahkan seluruh percakapan |
+| 18 Nov 2026 | Dialog hanya mengembalikan fokus bila fokus “bebas” (`focusIsFree`) | Menutup checkout untuk membuka chat sempat merebut fokus dari input chat |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
 
 ## Pertanyaan Terbuka untuk PO
@@ -92,6 +95,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Pesan error yang dipakai ulang harus dicek konteksnya.** Pesan kontak checkout (“…bukti pembelian…”) salah di form konsultasi.
 - **Validasi sesuai urutan visual**, supaya fokus pindah ke field salah paling atas.
 - **Jangan pakai `mt-auto` untuk kontrol yang bisa membuka konten (details) di kartu grid sejajar.** Membuka satu kartu memanjangkan baris dan mendorong kontrol di kartu lain ke bawah (feedback user). `mt-auto` hanya untuk tombol aksi yang memang harus sejajar di dasar.
+- **Event `close` dialog datang asinkron.** Kalau satu overlay ditutup untuk membuka overlay lain, handler `close` yang mengembalikan fokus bisa merebut fokus dari overlay baru. Selalu cek `focusIsFree` sebelum memindah fokus.
+- **Scroll log chat setelah semua bagian dirender** (chip mengubah tinggi log) — kalau tidak, tombol di pesan terakhir terpotong.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
@@ -122,3 +127,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Atas permintaan user: monogram di kartu model diganti logo keluarga model (SVG lokal dari lobehub, diperiksa: tanpa script/referensi eksternal). QA ditambah cek gambar rusak di seluruh halaman + cek ikon kartu model termuat.
 - Fix dari feedback user: “Detail tarif” di kartu model tidak lagi turun saat kartu lain di baris yang sama dibuka (hapus `mt-auto`). QA ditambah uji posisi.
 - Section FAQ + Final CTA: 11 pertanyaan `<details>` (ID/EN), jawaban refund diperbarui karena saldo tidak kedaluwarsa; banner “Nyala sekarang.” dengan CTA isi saldo + lihat paket. QA ditambah uji buka FAQ dengan klik dan Enter.
+- Langkah 11 Live chat Nala: pill + panel, skrip & kata kunci ID/EN, alur pilih paket (matriks spec) → checkout, tim online (Sari) / offline (kumpulkan kontak), riwayat ikut terjemah, titik masuk FAQ & checkout. QA: alur chat penuh (pill tidak menutupi CTA hero, hasil rekomendasi, ke checkout dan kembali, ganti bahasa, Escape, online/offline). Ditemukan & diperbaiki: fokus direbut event close checkout, tombol hasil terpotong (urutan scroll), chip menumpuk di 320px, header offline salah.

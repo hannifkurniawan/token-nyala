@@ -749,6 +749,7 @@
           <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-xl-blue" data-i18n="faqKicker">FAQ</p>
           <h2 id="faq-title" class="mt-3 text-[clamp(1.75rem,6vw,2.75rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-xl-dark" data-i18n="faqTitle">Pertanyaan yang sering muncul.</h2>
           <p class="mt-4 text-base leading-relaxed text-muted" data-i18n="faqBody">Belum menemukan jawabannya? Tim kami siap membantu.</p>
+          <button type="button" class="btn btn-secondary mt-5" data-open-chat data-i18n="faqAsk">Tanya Nala</button>
         </div>
         <div class="border-t border-line">
             <details class="group/f border-b border-line">
@@ -1096,6 +1097,50 @@
     </section>
   </dialog>
 
+  <!-- ============ 11. LIVE CHAT NALA ============
+       Scripted, local only — no AI, no server. Mobile: full screen + modal (showModal). md+: 380×560 panel, non-modal (show).
+       Messages are stored as copy keys so the whole log re-translates on language change. -->
+  <dialog id="chat" aria-labelledby="chat-title"
+          class="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none flex-col overflow-hidden bg-white p-0 text-ink
+                 open:flex open:animate-dialog-in motion-reduce:open:animate-none
+                 md:inset-auto md:bottom-[calc(1rem+env(safe-area-inset-bottom))] md:right-4 md:z-40 md:h-[560px] md:max-h-[calc(100dvh-2rem)] md:w-[380px]
+                 md:rounded-card md:border md:border-line md:shadow-[0_24px_60px_rgba(0,22,106,.22)]">
+    <header class="flex shrink-0 items-center gap-3 border-b border-line bg-xl-dark px-4 py-3 text-white">
+      <img src="assets/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10 rounded-full" data-chat-avatar>
+      <div class="min-w-0 flex-1">
+        <h2 id="chat-title" class="text-base font-extrabold" data-chat-title>Nala</h2>
+        <p class="truncate text-xs text-white/75" data-chat-status>Asisten otomatis</p>
+      </div>
+      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-white/80 hover:bg-white/10 hover:text-white"
+              aria-label="Mulai ulang percakapan" data-i18n-aria="chatRestart" data-chat-restart>
+        <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/></svg>
+      </button>
+      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-white/80 hover:bg-white/10 hover:text-white"
+              aria-label="Tutup chat" data-i18n-aria="chatClose" data-chat-close>
+        <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <p class="hidden shrink-0 bg-xl-yellow/25 px-4 py-1.5 text-center text-xs font-bold text-xl-dark data-[show=true]:block" data-chat-mode-label data-show="false"></p>
+
+    <ol class="relative min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-paper px-4 py-4" role="log" aria-live="polite"
+        aria-label="Percakapan" data-i18n-aria="chatLogAria" data-chat-log></ol>
+
+    <div class="shrink-0 border-t border-line bg-white px-3 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <div class="-mx-3 flex gap-2 overflow-x-auto px-3 pb-2.5 empty:hidden md:flex-wrap md:overflow-visible" data-chat-chips></div>
+      <form class="flex items-center gap-2" data-chat-form novalidate>
+        <label for="chat-input" class="sr-only" data-chat-input-label>Pesan</label>
+        <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send"
+               class="block min-h-11 min-w-0 flex-1 rounded-control border-2 border-line bg-white px-3 text-base placeholder:text-muted/70 focus:border-xl-blue focus:outline-none"
+               placeholder="Tulis pertanyaanmu…">
+        <button type="submit" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue text-white hover:bg-xl-blue-hover"
+                aria-label="Kirim pesan" data-i18n-aria="chatSend">
+          <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+      <p class="mt-2 text-[11px] leading-snug text-muted" data-i18n="chatDisclaimer">Nala adalah asisten otomatis (simulasi). Jawaban bisa kurang tepat.</p>
+    </div>
+  </dialog>
+
   <!-- ============ 5. CHECKOUT (dialog) ============
        Mobile: bottom sheet. md+: centered dialog. Steps: form → pay → success | failed. -->
   <dialog id="checkout" aria-labelledby="co-title"
@@ -1200,7 +1245,11 @@
           <p id="co-method-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-error-for="method"></p>
         </fieldset>
 
-        <p class="mt-6 rounded-control border border-dashed border-line px-3 py-2 text-xs leading-relaxed text-muted" data-i18n="coNotice">
+        <button type="button" class="mt-5 inline-flex min-h-11 items-center gap-1.5 text-sm font-extrabold text-xl-blue hover:underline" data-open-chat>
+          <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H8l-4 4z"/></svg>
+          <span data-i18n="chatLauncher">Butuh bantuan?</span>
+        </button>
+        <p class="mt-3 rounded-control border border-dashed border-line px-3 py-2 text-xs leading-relaxed text-muted" data-i18n="coNotice">
           Ini adalah checkout simulasi. Tidak ada transaksi atau penarikan dana nyata.
         </p>
       </div>
@@ -1285,6 +1334,17 @@
 
     <p class="sr-only" aria-live="polite" data-co-live></p>
   </dialog>
+
+  <button type="button" id="chat-launcher" aria-expanded="false" aria-controls="chat" data-open-chat
+          class="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-40 inline-flex min-h-13 items-center gap-2 rounded-full bg-xl-dark py-1.5 pl-1.5 pr-1.5 text-sm font-extrabold text-white shadow-[0_12px_32px_rgba(0,22,106,.35)]
+                 transition-transform hover:-translate-y-0.5 motion-reduce:transition-none sm:pr-5
+                 aria-expanded:hidden [body:has(dialog:modal)_&]:hidden">
+    <span class="relative shrink-0" data-decor-overflow>
+      <img src="assets/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10 rounded-full">
+      <span aria-hidden="true" class="absolute -right-0.5 -top-0.5 size-3.5 rounded-full bg-xl-teal ring-2 ring-xl-dark"></span>
+    </span>
+    <span class="sr-only sm:not-sr-only" data-i18n="chatLauncher">Butuh bantuan?</span>
+  </button>
 
   <script src="script.js"></script>
 </body>

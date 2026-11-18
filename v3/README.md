@@ -40,6 +40,6 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 - [x] 8. Benefit + dashboard + contoh — 4 kartu manfaat, mock dashboard (grafik 7 hari, switch, key), contoh landing page event + CTA Mulai
 - [x] 9. Tim & bisnis + konsultasi — strip tim, dialog 5 field + 2 checkbox, sukses, reset
 - [x] 10. FAQ + final CTA — 11 pertanyaan (details/summary), banner “Nyala sekarang.”
-- [ ] 11. Live chat Nala
+- [x] 11. Live chat Nala — pill, skrip + kata kunci, pilih paket → checkout, tim online/offline, ganti bahasa, titik masuk dari FAQ & checkout
 - [ ] 12. ID/EN lengkap
 - [ ] 13. QA penuh

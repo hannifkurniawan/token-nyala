@@ -304,6 +304,50 @@
       finalTrust: "Biaya tambahan Rp0 · Bayar lokal · Saldo tidak kedaluwarsa",
       finalSecondary: "Lihat paket",
 
+      chatLauncher: "Butuh bantuan?",
+      faqAsk: "Tanya Nala",
+      chatName: "Nala",
+      chatStatus: "Asisten otomatis",
+      chatRestart: "Mulai ulang percakapan",
+      chatClose: "Tutup chat",
+      chatLogAria: "Percakapan",
+      chatInputLabel: "Pesan",
+      chatPlaceholder: "Tulis pertanyaanmu…",
+      chatPlaceholderContact: "Email atau nomor HP",
+      chatSend: "Kirim pesan",
+      chatDisclaimer: "Nala adalah asisten otomatis (simulasi). Jawaban bisa kurang tepat.",
+      chatGreeting: "Hai, aku Nala! Mau dibantu pilih paket, atau ada pertanyaan lain?",
+      chipPick: "Bantu pilih paket",
+      chipHowto: "Cara pakai saldo di tool",
+      chipModels: "Model apa saja?",
+      chipPay: "Metode pembayaran",
+      chipTeam: "Bicara dengan tim",
+      freqOnce: "Sesekali",
+      freqWeekly: "Tiap minggu",
+      freqDaily: "Tiap hari",
+      chipRestartFlow: "Ulangi",
+      pickQ1: "Kamu mau pakai AI untuk apa?",
+      pickQ2: "Seberapa sering kamu akan memakainya?",
+      pickResult: "Paket {name} ({price}) paling pas buatmu — {estimate}.",
+      pickChoose: "Pilih paket ini",
+      ansHowto: "Setelah top up, salin API key, lalu tempel bersama Base URL di pengaturan tool-mu. Mau lihat panduannya?",
+      ansModels: "Satu saldo bisa dipakai di semua model. Model hemat bikin saldo awet, model premium untuk tugas rumit.",
+      ansModelsBtn: "Buka katalog model",
+      ansPay: "Kamu bisa bayar pakai QRIS, e-wallet, atau virtual account. Di prototype ini semuanya simulasi.",
+      ansFallback: "Maaf, aku belum paham. Coba pilih salah satu topik ini, atau bicara dengan tim.",
+      teamConnecting: "Menghubungkan ke tim…",
+      agentName: "Sari",
+      agentBadge: "Tim",
+      agentStatus: "Sari · Tim TokenNyala",
+      agentGreeting: "Halo, aku Sari dari tim TokenNyala. Ada yang bisa kubantu soal top up?",
+      agentReply: "Pesanmu sudah kami terima. Di produk nyata, tim akan membalas di sini dalam beberapa menit.",
+      teamModeLabel: "Simulasi — tidak ada agen nyata",
+      teamHours: "Tim online Senin–Jumat, 09.00–18.00 WIB",
+      teamOffline: "Tim sedang offline. Tinggalkan email atau nomor HP, kami balas di jam kerja.",
+      teamOfflineThanks: "Terima kasih! Kami balas ke {contact} di jam kerja.",
+      typingNala: "Nala sedang mengetik…",
+      typingSari: "Sari sedang mengetik…",
+
       pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
       pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
       pkgEstimate_work: '100+ sesi kecil'
@@ -606,6 +650,50 @@
       finalTrust: "Rp0 extra fees · Local payment · Balance never expires",
       finalSecondary: "See packages",
 
+      chatLauncher: "Need help?",
+      faqAsk: "Ask Nala",
+      chatName: "Nala",
+      chatStatus: "Automated assistant",
+      chatRestart: "Restart conversation",
+      chatClose: "Close chat",
+      chatLogAria: "Conversation",
+      chatInputLabel: "Message",
+      chatPlaceholder: "Type your question…",
+      chatPlaceholderContact: "Email or phone number",
+      chatSend: "Send message",
+      chatDisclaimer: "Nala is an automated assistant (simulation). Answers may be inaccurate.",
+      chatGreeting: "Hi, I'm Nala! Want help choosing a package, or got another question?",
+      chipPick: "Help me choose",
+      chipHowto: "Using my balance in tools",
+      chipModels: "Which models?",
+      chipPay: "Payment methods",
+      chipTeam: "Talk to the team",
+      freqOnce: "Occasionally",
+      freqWeekly: "Weekly",
+      freqDaily: "Daily",
+      chipRestartFlow: "Start over",
+      pickQ1: "What will you use AI for?",
+      pickQ2: "How often will you use it?",
+      pickResult: "{name} ({price}) fits you best — {estimate}.",
+      pickChoose: "Choose this package",
+      ansHowto: "After topping up, copy your API key and paste it with the Base URL into your tool's settings. Want to see the guide?",
+      ansModels: "One balance works with every model. Budget models make it last; premium models handle hard tasks.",
+      ansModelsBtn: "Open model catalog",
+      ansPay: "You can pay with QRIS, e-wallets, or virtual accounts. In this prototype they're all simulated.",
+      ansFallback: "Sorry, I didn't get that. Pick one of these topics, or talk to the team.",
+      teamConnecting: "Connecting you to the team…",
+      agentName: "Sari",
+      agentBadge: "Team",
+      agentStatus: "Sari · TokenNyala team",
+      agentGreeting: "Hi, I'm Sari from the TokenNyala team. How can I help with your top-up?",
+      agentReply: "We've got your message. In the real product, the team replies here within a few minutes.",
+      teamModeLabel: "Simulation — no real agent",
+      teamHours: "Team online Mon–Fri, 09:00–18:00 WIB",
+      teamOffline: "The team is offline. Leave your email or phone number and we'll reply during business hours.",
+      teamOfflineThanks: "Thanks! We'll reply to {contact} during business hours.",
+      typingNala: "Nala is typing…",
+      typingSari: "Sari is typing…",
+
       pkgEstimate_learn: 'about 20–30 small sessions',
       pkgEstimate_prototype: 'about 40–60 small sessions',
       pkgEstimate_work: '100+ small sessions'
@@ -691,6 +779,7 @@
     renderModels();
     renderDashboard();
     renderConsult();
+    renderChat();
     storage.set(LANG_KEY, lang);
   }
 
@@ -799,6 +888,13 @@
     btn.addEventListener('click', () => openCheckout(btn.dataset.choosePackage, btn));
   });
   document.querySelector('[data-choose-recommended]')?.addEventListener('click', (event) => openCheckout(state.intent, event.currentTarget));
+
+  /** Return focus to an opener only if focus is not already somewhere meaningful
+      (e.g. another overlay such as the chat took it on purpose). */
+  function focusIsFree(dlg) {
+    const a = document.activeElement;
+    return !a || a === document.body || dlg.contains(a);
+  }
 
   /* ---------- Checkout (docs/technical-spec.md → Checkout Modal, Form Validation) ---------- */
   const dialog = document.getElementById('checkout');
@@ -911,6 +1007,7 @@
     // Return focus to the opener; if it is no longer visible (e.g. inside the closed mobile menu), use the menu button.
     const opener = checkout.opener;
     const visible = (el) => el && document.contains(el) && el.getClientRects().length > 0;
+    if (!focusIsFree(dialog)) return;
     if (visible(opener)) opener.focus();
     else if (opener && visible(menuButton)) menuButton.focus();
   });
@@ -1082,7 +1179,7 @@
 
   catalogDialog?.addEventListener('close', () => {
     document.documentElement.classList.remove('overflow-hidden');
-    if (catalog.opener && document.contains(catalog.opener) && catalog.opener.getClientRects().length) catalog.opener.focus();
+    if (focusIsFree(catalogDialog) && catalog.opener && document.contains(catalog.opener) && catalog.opener.getClientRects().length) catalog.opener.focus();
   });
   let catalogPressedBackdrop = false;
   catalogDialog?.addEventListener('pointerdown', (e) => { catalogPressedBackdrop = e.target === catalogDialog; });
@@ -1191,6 +1288,7 @@
     dlg.addEventListener('close', () => {
       document.documentElement.classList.remove('overflow-hidden');
       onClose?.();
+      if (!focusIsFree(dlg)) return;
       if (opener && document.contains(opener) && opener.getClientRects().length) opener.focus();
       else if (opener && menuButton?.getClientRects().length) menuButton.focus();
     });
@@ -1280,12 +1378,259 @@
   consultDialog?.querySelectorAll('[data-cs-close]').forEach((b) => b.addEventListener('click', () => consultModal.close()));
   document.querySelectorAll('[data-open-consult]').forEach((b) => b.addEventListener('click', () => consultModal.open(b)));
 
+  /* ---------- Live chat Nala (G4) — scripted, local only ---------- */
+  const chatDialog = document.getElementById('chat');
+  const chatLauncher = document.getElementById('chat-launcher');
+  const chatLog = chatDialog?.querySelector('[data-chat-log]');
+  const chatInput = document.getElementById('chat-input');
+  const chatDesktop = window.matchMedia('(min-width: 48rem)'); // Tailwind md
+  const TYPING_DELAY = 500; // spec: ≤ 600ms
+  // Messages: { from: 'nala'|'sari'|'user'|'system', key?, params?, text?, actions?: [{ key, run }] }
+  const chat = { messages: [], chips: 'main', mode: 'bot', flow: null, typing: null, opener: null };
+
+  // Recommendation matrix (docs/technical-spec.md → Live Chat Mock)
+  const PICK_MATRIX = {
+    learn: { once: 'learn', weekly: 'learn', daily: 'prototype' },
+    prototype: { once: 'learn', weekly: 'prototype', daily: 'work' },
+    work: { once: 'prototype', weekly: 'work', daily: 'work' }
+  };
+  const CHIP_SETS = {
+    main: ['chipPick', 'chipHowto', 'chipModels', 'chipPay', 'chipTeam'],
+    goal: ['intentLearn', 'intentPrototype', 'intentWork'],
+    freq: ['freqOnce', 'freqWeekly', 'freqDaily'],
+    result: ['chipRestartFlow', 'chipTeam'],
+    none: []
+  };
+  const KEYWORDS = [ // free text → intent (ID + EN)
+    ['team', /\b(tim|team|manusia|human|agen|agent|cs|admin|orang)\b/i],
+    ['pick', /\b(paket|package|pilih|choose|berapa|how much|rekomendasi|recommend)\b/i],
+    ['howto', /\b(api|key|tool|pasang|setup|cursor|cline|continue|cara pakai)\b/i],
+    ['models', /\b(model|claude|gpt|gemini|deepseek|qwen)\b/i],
+    ['pay', /\b(bayar|pay|payment|qris|e-?wallet|virtual account|va|dana|gopay|ovo)\b/i]
+  ];
+
+  function teamOnline() {
+    const forced = new URLSearchParams(location.search).get('chat'); // QA override: ?chat=online|offline
+    if (forced === 'online') return true;
+    if (forced === 'offline') return false;
+    const now = new Date();
+    const wib = new Date(now.getTime() + (now.getTimezoneOffset() + 7 * 60) * 60000); // UTC+7
+    const day = wib.getDay();
+    const hour = wib.getHours();
+    return day >= 1 && day <= 5 && hour >= 9 && hour < 18;
+  }
+
+  function bubble(msg) {
+    const li = document.createElement('li');
+    const text = msg.text ?? fill(t(msg.key), Object.fromEntries(Object.entries(msg.params || {}).map(([k, v]) => [k, typeof v === 'function' ? v() : v])));
+    if (msg.from === 'system') {
+      li.className = 'text-center text-xs font-semibold text-muted';
+      li.textContent = text;
+      return li;
+    }
+    const mine = msg.from === 'user';
+    li.className = `flex ${mine ? 'justify-end' : 'items-end gap-2'}`;
+    if (!mine) {
+      const av = msg.from === 'sari'
+        ? '<span aria-hidden="true" class="grid size-7 shrink-0 place-items-center rounded-full bg-xl-teal text-xs font-extrabold text-xl-dark">S</span>'
+        : '<img src="assets/tokennyala-mark.svg" alt="" width="28" height="28" class="size-7 shrink-0 rounded-full">';
+      li.insertAdjacentHTML('beforeend', av);
+    }
+    const box = document.createElement('div');
+    box.className = `max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${mine ? 'rounded-br-md bg-xl-blue text-white' : 'rounded-bl-md border border-line bg-white text-ink'}`;
+    if (msg.from === 'sari') {
+      box.insertAdjacentHTML('beforeend', `<span class="mb-1 flex items-center gap-1.5 text-xs font-extrabold text-xl-dark">${t('agentName')}<span class="rounded-full bg-xl-teal/15 px-1.5 py-px text-[10px] text-teal-ink">${t('agentBadge')}</span></span>`);
+    }
+    const p = document.createElement('p');
+    p.textContent = text;
+    // Screen readers: say who is speaking
+    const who = document.createElement('span');
+    who.className = 'sr-only';
+    who.textContent = mine ? '' : (msg.from === 'sari' ? `${t('agentName')}: ` : `${t('chatName')}: `);
+    p.prepend(who);
+    box.append(p);
+    (msg.actions || []).forEach((a) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-primary mt-2.5 min-h-11 w-full text-sm';
+      b.textContent = t(a.key);
+      b.addEventListener('click', a.run);
+      box.append(b);
+    });
+    li.append(box);
+    return li;
+  }
+
+  function renderChat() {
+    if (!chatDialog) return;
+    const items = chat.messages.map(bubble);
+    if (chat.typing) {
+      const li = document.createElement('li');
+      li.className = 'text-xs font-semibold text-muted';
+      li.textContent = t(chat.typing);
+      items.push(li);
+    }
+    chatLog.replaceChildren(...items);
+
+    const chips = chatDialog.querySelector('[data-chat-chips]');
+    chips.replaceChildren(...CHIP_SETS[chat.chips].map((key) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full border border-xl-blue/40 bg-white px-3.5 text-sm font-bold text-xl-blue hover:bg-xl-blue hover:text-white';
+      b.textContent = t(key);
+      b.addEventListener('click', () => handleUser(t(key), key));
+      return b;
+    }));
+
+    const team = chat.mode === 'team';               // a (simulated) human is in the chat
+    const offline = chat.mode.startsWith('offline'); // team unavailable; Nala collects a contact
+    chatDialog.querySelector('[data-chat-title]').textContent = t('chatName');
+    chatDialog.querySelector('[data-chat-status]').textContent = team ? t('agentStatus') : t('chatStatus');
+    const label = chatDialog.querySelector('[data-chat-mode-label]');
+    label.dataset.show = String(team || offline);
+    label.textContent = team ? `${t('teamModeLabel')} · ${t('teamHours')}` : t('teamHours');
+    chatDialog.querySelector('[data-chat-input-label]').textContent = chat.mode === 'offline' ? t('chatPlaceholderContact') : t('chatInputLabel');
+    chatInput.placeholder = chat.mode === 'offline' ? t('chatPlaceholderContact') : t('chatPlaceholder');
+    chatInput.setAttribute('inputmode', chat.mode === 'offline' ? 'email' : 'text');
+    // Scroll last: the chip row above the input changes height, which changes the log's height.
+    requestAnimationFrame(() => { chatLog.scrollTop = chatLog.scrollHeight; });
+  }
+
+  /** Show a typing line, then append the reply. */
+  function reply(msgs, { chips = 'main', typing = 'typingNala' } = {}) {
+    chat.chips = 'none';
+    chat.typing = typing;
+    renderChat();
+    setTimeout(() => {
+      chat.typing = null;
+      chat.messages.push(...[].concat(msgs));
+      chat.chips = chips;
+      renderChat();
+    }, TYPING_DELAY);
+  }
+
+  function startPick() { chat.flow = { name: 'pick' }; reply({ from: 'nala', key: 'pickQ1' }, { chips: 'goal' }); }
+
+  function goTeam() {
+    chat.flow = null;
+    chat.messages.push({ from: 'system', key: 'teamConnecting' });
+    if (teamOnline()) {
+      chat.mode = 'team';
+      reply({ from: 'sari', key: 'agentGreeting' }, { chips: 'none', typing: 'typingSari' });
+    } else {
+      chat.mode = 'offline';
+      reply({ from: 'nala', key: 'teamOffline' }, { chips: 'none' });
+    }
+  }
+
+  const leaveChatThen = (fn) => () => { closeChat({ returnFocus: false }); setTimeout(fn, 0); };
+
+  function handleUser(text, chipKey = null) {
+    const value = text.trim();
+    if (!value) return;
+    chat.messages.push({ from: 'user', text: value });
+
+    // Offline: the input collects a contact
+    if (chat.mode === 'offline') {
+      const c = parseContact(value);
+      if (!c.ok) { reply({ from: 'nala', key: c.error === 'errContactEmpty' ? 'errCsContactEmpty' : c.error }, { chips: 'none' }); return; }
+      chat.mode = 'offline-done';
+      reply({ from: 'nala', key: 'teamOfflineThanks', params: { contact: c.value } }, { chips: 'main' });
+      return;
+    }
+    if (chat.mode === 'team') { reply({ from: 'sari', key: 'agentReply' }, { chips: 'none', typing: 'typingSari' }); return; }
+
+    const has = (re) => re.test(value);
+    // Inside the "Bantu pilih paket" flow
+    if (chat.flow?.name === 'pick' && !chat.flow.goal) {
+      const goal = chipKey === 'intentLearn' || has(/belajar|learn/i) ? 'learn'
+        : chipKey === 'intentPrototype' || has(/proto/i) ? 'prototype'
+        : chipKey === 'intentWork' || has(/kerja|work|klien|client/i) ? 'work' : null;
+      if (goal) { chat.flow.goal = goal; reply({ from: 'nala', key: 'pickQ2' }, { chips: 'freq' }); return; }
+    } else if (chat.flow?.name === 'pick' && chat.flow.goal) {
+      const freq = chipKey === 'freqOnce' || has(/sesekali|jarang|occasion|once/i) ? 'once'
+        : chipKey === 'freqWeekly' || has(/minggu|week/i) ? 'weekly'
+        : chipKey === 'freqDaily' || has(/hari|daily|day/i) ? 'daily' : null;
+      if (freq) {
+        const pkg = packages[PICK_MATRIX[chat.flow.goal][freq]];
+        chat.flow = null;
+        reply({
+          from: 'nala', key: 'pickResult',
+          params: { name: pkg.name, price: () => rupiah(pkg.amount), estimate: () => t(`pkgEstimate_${pkg.id}`) },
+          actions: [{ key: 'pickChoose', run: leaveChatThen(() => openCheckout(pkg.id, chatLauncher)) }]
+        }, { chips: 'result' });
+        return;
+      }
+    }
+
+    const intent = { chipPick: 'pick', chipRestartFlow: 'pick', chipHowto: 'howto', chipModels: 'models', chipPay: 'pay', chipTeam: 'team' }[chipKey]
+      ?? KEYWORDS.find(([, re]) => has(re))?.[0];
+    chat.flow = null;
+    if (intent === 'pick') return startPick();
+    if (intent === 'team') return goTeam();
+    if (intent === 'howto') return reply({ from: 'nala', key: 'ansHowto', actions: [{ key: 'successGuide', run: leaveChatThen(() => goToSection('pakai')) }] });
+    if (intent === 'models') return reply({ from: 'nala', key: 'ansModels', actions: [{ key: 'ansModelsBtn', run: leaveChatThen(() => openCatalog(chatLauncher)) }] });
+    if (intent === 'pay') return reply({ from: 'nala', key: 'ansPay' });
+    reply({ from: 'nala', key: 'ansFallback' });
+  }
+
+  function resetChat() {
+    chat.messages = [{ from: 'nala', key: 'chatGreeting' }];
+    chat.chips = 'main'; chat.mode = 'bot'; chat.flow = null; chat.typing = null;
+    renderChat();
+  }
+
+  function openChat(opener = document.activeElement) {
+    if (!chatDialog) return;
+    // Only one overlay at a time: close any open modal first (checkout keeps its package choice).
+    document.querySelectorAll('dialog[open]').forEach((d) => { if (d !== chatDialog) d.close(); });
+    if (state.menuOpen) setMenu(false);
+    chat.opener = opener;
+    if (!chat.messages.length) resetChat();
+    if (chatDesktop.matches) chatDialog.show(); // non-modal panel: page stays usable
+    else { chatDialog.showModal(); document.documentElement.classList.add('overflow-hidden'); }
+    chatLauncher?.setAttribute('aria-expanded', 'true');
+    renderChat();
+    chatInput?.focus();
+  }
+
+  function closeChat({ returnFocus = true } = {}) {
+    if (!chatDialog?.open) return;
+    chat.skipFocusReturn = !returnFocus;
+    chatDialog.close();
+  }
+
+  chatDialog?.addEventListener('close', () => {
+    document.documentElement.classList.remove('overflow-hidden');
+    chatLauncher?.setAttribute('aria-expanded', 'false');
+    if (!chat.skipFocusReturn && focusIsFree(chatDialog)) chatLauncher?.focus();
+    chat.skipFocusReturn = false;
+  });
+  // Escape: native for the modal (mobile); handle it for the non-modal panel (desktop).
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || !chatDialog?.open || chatDialog.matches(':modal')) return;
+    if (document.querySelector('dialog:modal') || state.menuOpen) return; // let the topmost layer handle it
+    e.preventDefault();
+    closeChat();
+  });
+  chatDialog?.querySelector('[data-chat-close]')?.addEventListener('click', () => closeChat());
+  chatDialog?.querySelector('[data-chat-restart]')?.addEventListener('click', () => { resetChat(); chatInput.focus(); });
+  chatDialog?.querySelector('[data-chat-form]')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = chatInput.value;
+    chatInput.value = '';
+    handleUser(v);
+  });
+  // Switching between phone and desktop layouts while open: reopen in the right mode.
+  chatDesktop.addEventListener('change', () => { if (chatDialog?.open) { chat.skipFocusReturn = true; chatDialog.close(); openChat(chat.opener); } });
+  document.querySelectorAll('[data-open-chat]').forEach((b) => b.addEventListener('click', () => openChat(b)));
+
   document.querySelectorAll('[data-open-checkout]').forEach((btn) => {
     btn.addEventListener('click', () => openCheckout(null, btn));
   });
 
   // Exposed for upcoming sections and manual testing in the console.
-  window.TokenNyala = { selectPackage, setIntent, openCheckout, openCatalog, openConsult: (from) => consultModal?.open(from), packages, models };
+  window.TokenNyala = { selectPackage, setIntent, openCheckout, openCatalog, openConsult: (from) => consultModal?.open(from), openChat, packages, models };
 
   /* ---------- Mobile menu ---------- */
   const menuButton = document.getElementById('menu-button');

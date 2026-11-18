@@ -523,6 +523,17 @@ Matriks rekomendasi “Bantu pilih paket”:
 - Label “Simulasi — tidak ada agen nyata” di header saat mode tim.
 - Percakapan hanya di memori; hilang saat halaman dimuat ulang. Tidak disimpan ke `localStorage`.
 
+**Implementasi v3 (18 Nov 2026)**
+- Satu `<dialog id="chat">`: di bawah `md:` dibuka dengan `showModal()` (layar penuh, fokus terkunci, Escape bawaan); mulai `md:` dengan `show()` (panel 380×560 non-modal, halaman tetap bisa dipakai). Escape menutup panel non-modal dari mana pun selama tidak ada modal/menu lain yang terbuka.
+- Pill: logo + titik hijau “online”; teks “Butuh bantuan?” tampil mulai `sm:` (di bawahnya hanya `sr-only`). Disembunyikan otomatis lewat CSS `body:has(dialog:modal)` dan saat chat terbuka (`aria-expanded`).
+- Titik masuk lain: tombol “Tanya Nala” di kolom kiri FAQ, link “Butuh bantuan?” di checkout (menutup checkout, pilihan paket tetap).
+- Pesan disimpan sebagai `{from, key, params}` sehingga seluruh riwayat ikut diterjemahkan saat ganti bahasa.
+- Kata kunci teks bebas (ID+EN): tim/team/manusia/agen → tim; paket/pilih/berapa → pilih paket; api/key/tool/pasang/cursor → panduan; model/claude/gpt/gemini/deepseek/qwen → model; bayar/qris/e-wallet/va → pembayaran.
+- Mode tim online: header “Sari · Tim TokenNyala” + pita “Simulasi — tidak ada agen nyata · jam layanan”; pesan berikutnya dibalas otomatis “Pesanmu sudah kami terima…”. Mode offline: header tetap Nala, pita hanya jam layanan, input meminta email/HP (validasi sama dengan checkout, pesan kosong memakai versi “agar kami bisa menghubungimu”).
+- Chip: satu baris yang bisa digeser horizontal di mobile, dibungkus mulai `md:`.
+- QA override jam layanan: `?chat=online` / `?chat=offline`.
+- Semua dialog hanya mengembalikan fokus ke pembuka bila fokus sedang “bebas” (`body` atau di dalam dialog yang ditutup) — agar menutup checkout untuk membuka chat tidak merebut fokus dari input chat.
+
 ## Animations
 
 - Hero fade-in: 450ms
