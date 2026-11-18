@@ -34,21 +34,23 @@ Build a polished, static HTML/CSS/JavaScript landing page for a desktop and mobi
 - Indonesian is default.
 - English switch updates visible copy using a JavaScript translation object.
 - Dynamic package and checkout copy update too.
-- Persist selection in memory only, unless localStorage is desired.
+- Persist selection in `localStorage` (key `tn-lang`). Only the language preference is stored.
 
 ### Checkout Modal
 - Opens from primary CTAs and package cards.
 - Displays selected nominal, bonus, fee, and total.
 - Uses static mock payment methods.
-- Email is label-present and validated by browser constraints.
+- One contact field accepts **email or Indonesian phone number**, with a persistent label and inline validation (see technical-spec → Form Validation).
 - Confirm button shows success state.
 - Modal closes with Escape or close button and traps keyboard focus.
 
-## Responsive Behavior
+## Responsive Behavior (Mobile First)
 
-- Desktop: full navigation, 2-column hero, multi-card package grid.
-- Tablet: 2-column hero and 2-column package grid.
-- Mobile: menu collapse, stacked hero, horizontally contained intent tabs, stacked cards, bottom-sheet modal.
+Build every section at 320–375px first, then add `md:` and `lg:` enhancements. See `docs/v3-ground-rules.md`.
+
+- Base/mobile: menu collapse, stacked hero, full-width intent tabs, stacked cards, bottom-sheet checkout.
+- `md:` (768px): 2-column package grid, centered checkout dialog.
+- `lg:` (1024px): full navigation, 2-column hero, 3-card package grid.
 
 ## Data Model
 
@@ -77,7 +79,7 @@ Use estimates as illustrative and clearly state that actual usage varies.
 - Form labels and status announcements.
 - Color contrast passes for primary text and CTA.
 - Reduced-motion CSS.
-- No horizontal overflow at 320px, 375px, 768px, and 1440px.
+- No horizontal overflow at 320px, 375px, 768px, 1024px, 1440px, and 667×375 landscape — checked after **each** section, not only at the end.
 - CTA and package copy remain understandable without technical context.
 - Prototype labels clarify no real transaction occurs.
 

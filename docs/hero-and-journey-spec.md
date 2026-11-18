@@ -65,7 +65,7 @@ Avoid neural-network backgrounds and generic AI head illustrations.
 
 - Board cards enter from the right over 450ms.
 - Balance meter fills only after package selection.
-- Status dot changes from gray to mint when package selected.
+- Status dot changes from gray to XL Teal when package selected.
 - No continuous blinking or heavy parallax.
 
 ## Journey Section
@@ -144,7 +144,7 @@ Place local trust cues near checkout and package selection, not only in the foot
 
 - QRIS / E-Wallet / Virtual Account
 - Rincian biaya sebelum bayar
-- Email for purchase evidence
+- Email or phone number for purchase evidence
 - Support link
 - Estimated usage disclaimer
 
@@ -160,12 +160,14 @@ Do not imply real regulatory, tax, or payment certification unless content is ve
 - Form is single-column.
 - Payment method is two-column only at 640px and wider.
 
-## Responsive Rules
+## Responsive Rules (Mobile First)
 
-- Mobile 320–639px: hero, trust, package, checkout.
-- Tablet 640–1023px: two-column hero and two-column package cards.
-- Desktop 1024px+: original 12-column composition.
-- Wide 1440px+: fixed 1184px/1280px content width.
+Desain dimulai dari mobile; layar lebih lebar hanya menambah kolom. Breakpoint mengikuti `docs/technical-spec.md` (default Tailwind).
+
+- Base (320px+): satu kolom — hero, trust, package, checkout bottom sheet.
+- `md:` 768px+: package cards 2 kolom, checkout menjadi dialog di tengah.
+- `lg:` 1024px+: hero 2 kolom, 3 package cards, navigasi desktop.
+- `xl:` 1280px+: konten dibatasi 1184px.
 
 ## Prototype Labels
 

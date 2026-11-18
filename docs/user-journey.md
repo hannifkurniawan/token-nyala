@@ -50,7 +50,7 @@ price, bonus, estimate, validity]
     G -->|No| D
     G -->|Yes| H[Open checkout]
 
-    H --> I[Enter email and
+    H --> I[Enter email or phone and
 choose payment method]
     I --> J[Review transparent
 price breakdown]
@@ -145,7 +145,7 @@ User views nominal options and compares value.
 **Visible information:** Price, bonus credit, estimated use range, validity.
 
 ### 5. Purchase
-User enters name/email, chooses a mock payment method, and confirms.
+User enters email or phone number, chooses a mock payment method, and confirms.
 
 **Trust cues:** Price breakdown, no hidden fees, secure-payment label, support link.
 
