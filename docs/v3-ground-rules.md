@@ -19,6 +19,8 @@ v1 dan v2 dibangun desktop-first lalu dikecilkan dengan `@media (max-width: …)
 - `min-h-11` (44px) hanya untuk touch target.
 - Ilustrasi memakai `aspect-ratio` (`aspect-[4/3]`), bukan tinggi fixed.
 - Tinggi viewport memakai `dvh`, bukan `vh` (address bar mobile).
+- **Setiap `grid` wajib punya kolom eksplisit** — `grid-cols-1` di mobile, dan kolom custom memakai `minmax(0, …)` (contoh `lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]`). Track implisit `auto` melebar mengikuti min-content isinya dan menembus gutter.
+- `overflow-x-clip` / `overflow-hidden` hanya untuk dekorasi yang memang keluar bingkai, **bukan** untuk menyembunyikan konten yang meluap. Dekorasi yang sengaja keluar diberi `aria-hidden="true"` atau `data-allow-bleed`.
 
 ### 3. Token di satu tempat
 - Semua warna, font, dan radius hanya di blok `@theme` (lihat `technical-spec.md`).
@@ -41,11 +43,13 @@ v1 dan v2 dibangun desktop-first lalu dikecilkan dengan `@media (max-width: …)
 ### 7. Cek per section, bukan di akhir
 Setelah setiap section selesai, cek di: **320, 375, 768, 1024, 1440** dan **667×375 landscape**. Kriteria:
 - Tidak ada scroll horizontal (`document.documentElement.scrollWidth === innerWidth`).
+- Tidak ada konten yang keluar dari gutter `.shell` (cek ini menangkap luapan yang tersembunyi oleh `overflow-x-clip`).
+- H1 dan CTA utama hero terlihat tanpa scroll di 320×640 dan 375×667.
 - Tidak ada teks terpotong atau tumpang tindih.
 - Touch target ≥ 44px.
 - Fokus keyboard terlihat.
 
-Section belum boleh di-commit sebelum lolos keenam viewport.
+Section belum boleh di-commit sebelum lolos keenam viewport. Jalankan `python3 tools/qa_v3.py --interactive --out <dir>`, lalu **lihat screenshot-nya** — termasuk versi EN di 320px, karena copy EN lebih panjang.
 
 ### 8. Konten dulu, dekorasi belakangan
 - Bangun markup semantik + copy final terlebih dahulu, lalu layout, lalu dekorasi/animasi.

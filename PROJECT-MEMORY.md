@@ -5,8 +5,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 18 Nov 2026)
 
 - **Branch:** `v3-mobile-first` (belum di-merge ke `main`).
-- **Fase:** Langkah 2 selesai — shell `v3/` (head, token `@theme`, header + menu mobile, language switch ID/EN dengan `localStorage`, footer) lolos QA di 6 viewport.
-- **Berikutnya:** section 2 — Hero. Progres build dicentang di `v3/README.md`.
+- **Fase:** Build v3 — shell dan **Hero** selesai, lolos QA di 6 viewport (ID dan EN).
+- **Berikutnya:** section 3 — Cara kerja (`#cara-kerja`), lalu Package picker yang memanggil `TokenNyala.selectPackage(id)` untuk menyalakan board hero. Progres build dicentang di `v3/README.md`.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
@@ -46,6 +46,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Komponen `@layer components` hanya: `.shell`, `.btn`, `.btn-primary`, `.btn-secondary`. Markup memakai `btn btn-primary` (bukan `@apply` berantai) | Tailwind v4 tidak bisa `@apply` class custom dari `@layer components` |
 | 18 Nov 2026 | CTA header tampil mulai `sm:`; di bawah 640px CTA ada di menu mobile; language switch di header mulai `lg:` | Di 320px logo + CTA + tombol menu tidak muat dengan gutter 16px |
 | 18 Nov 2026 | Kerja di branch `v3-mobile-first` | Aturan: jangan commit langsung ke `main` |
+| 18 Nov 2026 | Board hero mulai “Belum nyala” (Rp0, meter kosong) dan menyala saat paket dipilih (`selectPackage`) | hero-and-journey-spec: meter terisi hanya setelah pemilihan paket |
+| 18 Nov 2026 | Catatan “Estimasi” melayang di hero dihapus | Menutupi isi kartu di desktop; dekorasi tanpa informasi baru (aturan 8) |
+| 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -60,6 +63,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **QA responsif per section, bukan di akhir.** Lima commit terakhir v2 semuanya perbaikan responsif yang menumpuk.
 - **Rapikan kontradiksi dokumen sebelum coding.** Dokumen yang bertentangan menghasilkan implementasi yang tidak konsisten.
 - **Akses web:** `octa.telkomsel.com` menolak fetch otomatis (403) dan `api.tokenku.ai/pricing` dirender JavaScript. Minta screenshot ke user; jangan mencoba mengakali blokir.
+- **Grid tanpa kolom eksplisit menembus gutter.** Hero di 320px melebar ke 311px (batas 304) karena track `auto` mengikuti min-content kartu ilustrasi; `overflow-x-clip` menyembunyikannya sehingga cek overflow biasa lolos. Solusi: selalu `grid-cols-1` / `minmax(0,…)`. QA sekarang mengecek konten keluar dari `.shell`.
+- **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
@@ -76,3 +81,4 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Menspesifikasikan G1–G8: `information-architecture.md` (12 section + 4 overlay), `technical-spec.md` (aturan saldo, definisi sesi kecil, katalog 12 model mock, spesifikasi kartu model, katalog, API key, dashboard, form tim, live chat), `microcopy-and-states.md` (copy ID/EN semua fitur baru + 6 FAQ baru), `wireframe-notes.md` (wireframe mobile fitur baru), urutan build di `v3-ground-rules.md`.
 - Commit dokumen (`e715849`) di branch baru `v3-mobile-first`.
 - Langkah 2: membuat shell `v3/` + `tools/qa_v3.py` (QA Playwright 6 viewport). QA awal menemukan touch target < 44px (logo, nav, ID/EN) → diperbaiki → semua viewport lolos.
+- Section Hero: copy ID/EN, board ilustrasi dengan status saldo (`renderHeroBalance`), animasi masuk 450ms dengan reduced-motion. QA menemukan konten menembus gutter di 320px (grid tanpa `grid-cols-1`, tersembunyi oleh `overflow-x-clip`) → diperbaiki, dan `tools/qa_v3.py` ditambah cek “escape .shell” + cek above-the-fold.

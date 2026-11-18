@@ -6,6 +6,7 @@ Usage:
 
 Serves v3/ on a local port, opens each required viewport in headless Chromium, and checks:
   - no horizontal overflow (scrollWidth <= innerWidth)
+  - no content escaping its .shell gutter (even when clipped by overflow-x-clip)
   - visible buttons/links/inputs have a tap target >= 44x44 px (inline text links in paragraphs are exempt)
   - no console errors / page errors
   - Tailwind actually applied (header is sticky)
@@ -32,6 +33,19 @@ VIEWPORTS = [
     ("1440", 1440, 900),
     ("667x375-landscape", 667, 375),
 ]
+
+# Must be fully visible without scrolling on small portrait phones (docs/wireframe-notes.md)
+ABOVE_FOLD = ["#hero-title", "#hero-title ~ div > [data-open-checkout]"]
+ABOVE_FOLD_VIEWPORTS = {"320", "375"}
+
+FOLD_JS = """
+(selectors) => selectors.map((sel) => {
+  const el = document.querySelector(sel);
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  return r.bottom <= window.innerHeight ? null : `${sel} bottom=${Math.round(r.bottom)} > ${window.innerHeight}`;
+}).filter(Boolean)
+"""
 
 CHECK_JS = """
 () => {
@@ -61,9 +75,29 @@ CHECK_JS = """
       small.push(`${el.tagName.toLowerCase()} "${(el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 24)}" ${Math.round(r.width)}x${Math.round(r.height)}`);
     }
   }
+  // Content escaping its .shell content box (catches overflow hidden by overflow-x-clip on a section)
+  const escapes = [];
+  for (const shell of document.querySelectorAll('.shell')) {
+    if (shell.closest('[hidden]')) continue;
+    const sr = shell.getBoundingClientRect();
+    const cs = getComputedStyle(shell);
+    const left = sr.left + parseFloat(cs.paddingLeft) - 1;
+    const right = sr.right - parseFloat(cs.paddingRight) + 1;
+    for (const el of shell.querySelectorAll('*')) {
+      if (el.closest('[aria-hidden="true"], .sr-only, [hidden], [data-allow-bleed]')) continue;
+      const s = getComputedStyle(el);
+      if (s.position === 'absolute' || s.position === 'fixed' || s.display === 'none') continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width) continue;
+      if (r.right > right || r.left < left) {
+        escapes.push(`${el.tagName.toLowerCase()}.${[...el.classList].slice(0, 3).join('.')} [${Math.round(r.left)}–${Math.round(r.right)}] vs [${Math.round(left)}–${Math.round(right)}]`);
+        if (escapes.length > 6) break;
+      }
+    }
+  }
   const header = document.querySelector('header');
   return {
-    overflow, offenders, small,
+    overflow, offenders, small, escapes,
     headerPosition: header ? getComputedStyle(header).position : null,
   };
 }
@@ -112,10 +146,20 @@ def main():
                 status.append(f"OVERFLOW {r['overflow']}px: {r['offenders']}")
             if r["small"]:
                 status.append(f"SMALL TARGETS: {r['small']}")
+            if r["escapes"]:
+                status.append(f"ESCAPES SHELL: {r['escapes']}")
             if r["headerPosition"] != "sticky":
                 status.append(f"Tailwind not applied? header position={r['headerPosition']}")
             if errors:
                 status.append(f"CONSOLE: {errors}")
+            if name in ABOVE_FOLD_VIEWPORTS:
+                below = page.evaluate(FOLD_JS, ABOVE_FOLD)
+                if below:
+                    status.append(f"BELOW FOLD: {below}")
+            if page.evaluate("() => !!window.TokenNyala?.selectPackage"):
+                page.evaluate("() => window.TokenNyala.selectPackage('prototype')")
+                page.wait_for_timeout(800)
+                page.screenshot(path=str(out / f"{name}-selected.png"))
 
             if args.interactive and w < 1024:
                 btn = page.locator("#menu-button")

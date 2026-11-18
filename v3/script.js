@@ -26,7 +26,33 @@
       footerTerms: 'Syarat & Ketentuan',
       footerPrivacy: 'Kebijakan Privasi',
       footerContact: 'Hubungi kami',
-      footerPrototype: 'Konsep interaktif — tidak ada transaksi nyata. Tautan legal adalah contoh.'
+      footerPrototype: 'Konsep interaktif — tidak ada transaksi nyata. Tautan legal adalah contoh.',
+
+      heroEyebrow: 'Untuk ide, prototype, dan proyekmu',
+      heroTitleA: 'Mulai vibecoding.',
+      heroTitleB: 'Jangan berhenti di tengah jalan.',
+      heroLead: 'Isi saldo AI dengan mudah, pilih nominal sesuai proyek, dan lanjutkan membangun—tanpa harus memahami istilah teknis dulu.',
+      heroCta: 'Isi saldo',
+      heroSecondary: 'Lihat cara kerjanya',
+      heroTrustAria: 'Keunggulan',
+      trustLocal: 'Bayar lokal',
+      trustFast: 'Saldo aktif cepat',
+      trustReceipt: 'Lihat bukti transaksi',
+      boardCaption: 'Ilustrasi: proyek sedang dibangun dengan bantuan AI, saldo menunjukkan status.',
+      boardProject: 'Event Landing Page',
+      boardTag: 'Proyek',
+      boardPrompt: 'Buat hero lebih hangat dan sederhana',
+      boardCoding: 'Menulis komponen…',
+      boardPreview: 'Halaman event siap',
+      boardBalance: 'Saldo aktif',
+      boardStatusOff: 'Belum nyala',
+      boardStatusOn: 'Nyala',
+      boardEstimateOff: 'Pilih paket untuk menyalakan saldo',
+      boardEstimateOn: 'Estimasi: {estimate}',
+
+      pkgEstimate_learn: 'sekitar 20–30 sesi kecil',
+      pkgEstimate_prototype: 'sekitar 40–60 sesi kecil',
+      pkgEstimate_work: '100+ sesi kecil'
     },
     en: {
       skipLink: 'Skip to main content',
@@ -48,11 +74,45 @@
       footerTerms: 'Terms',
       footerPrivacy: 'Privacy Policy',
       footerContact: 'Contact us',
-      footerPrototype: 'Interactive concept — no real transactions. Legal links are placeholders.'
+      footerPrototype: 'Interactive concept — no real transactions. Legal links are placeholders.',
+
+      heroEyebrow: 'For ideas, prototypes, and projects',
+      heroTitleA: 'Start vibe\u2011coding.', // non-breaking hyphen
+      heroTitleB: 'Keep building without interruptions.',
+      heroLead: 'Top up AI credit in a simple flow, choose an amount that fits your project, and keep moving—without learning technical terms first.',
+      heroCta: 'Top up balance',
+      heroSecondary: 'How it works',
+      heroTrustAria: 'Highlights',
+      trustLocal: 'Local payment',
+      trustFast: 'Fast activation',
+      trustReceipt: 'Clear receipts',
+      boardCaption: 'Illustration: a project being built with AI, with the balance showing its status.',
+      boardProject: 'Event Landing Page',
+      boardTag: 'Project',
+      boardPrompt: 'Make the hero warmer and simpler',
+      boardCoding: 'Writing component…',
+      boardPreview: 'Event page ready',
+      boardBalance: 'Active balance',
+      boardStatusOff: 'Not on yet',
+      boardStatusOn: 'On',
+      boardEstimateOff: 'Choose a package to switch your balance on',
+      boardEstimateOn: 'Estimate: {estimate}',
+
+      pkgEstimate_learn: 'about 20–30 small sessions',
+      pkgEstimate_prototype: 'about 40–60 small sessions',
+      pkgEstimate_work: '100+ small sessions'
     }
   };
 
-  const state = { lang: 'id', menuOpen: false };
+  /* ---------- Data (docs/technical-spec.md → Interactive Data Model) ---------- */
+  const packages = {
+    learn: { id: 'learn', name: 'Mulai', amount: 50000, bonus: 5000 },
+    prototype: { id: 'prototype', name: 'Bangun', amount: 100000, bonus: 15000 },
+    work: { id: 'work', name: 'Scale', amount: 250000, bonus: 50000 }
+  };
+  const METER_MAX_CREDIT = 300000; // largest package incl. bonus → 100%
+
+  const state = { lang: 'id', menuOpen: false, selectedPackage: null };
   const t = (key) => copy[state.lang][key] ?? copy.id[key] ?? key;
 
   /* ---------- Storage (wrapped: may be unavailable) ---------- */
@@ -78,8 +138,40 @@
     });
 
     syncMenuLabel();
+    renderHeroBalance();
     storage.set(LANG_KEY, lang);
   }
+
+  /* ---------- Formatting ---------- */
+  const rupiah = (n) => 'Rp' + new Intl.NumberFormat('id-ID').format(n);
+  const fill = (template, values) => template.replace(/\{(\w+)\}/g, (_, k) => values[k] ?? '');
+
+  /* ---------- Hero balance board ----------
+     Off until a package is chosen (docs/hero-and-journey-spec.md → Visual Animation).
+     Call selectPackage(id) from the package picker / checkout. */
+  function renderHeroBalance() {
+    const root = document.querySelector('[data-hero-balance]');
+    if (!root) return;
+    const pkg = packages[state.selectedPackage];
+    const credit = pkg ? pkg.amount + pkg.bonus : 0;
+
+    root.dataset.state = pkg ? 'on' : 'off';
+    root.querySelector('[data-hero-amount]').textContent = rupiah(credit);
+    root.querySelector('[data-hero-status]').textContent = t(pkg ? 'boardStatusOn' : 'boardStatusOff');
+    root.querySelector('[data-hero-meter]').style.width = pkg ? `${Math.round((credit / METER_MAX_CREDIT) * 100)}%` : '0%';
+    root.querySelector('[data-hero-estimate]').textContent = pkg
+      ? fill(t('boardEstimateOn'), { estimate: t(`pkgEstimate_${pkg.id}`) })
+      : t('boardEstimateOff');
+  }
+
+  function selectPackage(id) {
+    if (!packages[id]) return;
+    state.selectedPackage = id;
+    renderHeroBalance();
+  }
+
+  // Exposed for upcoming sections and manual testing in the console.
+  window.TokenNyala = { selectPackage, packages };
 
   /* ---------- Mobile menu ---------- */
   const menuButton = document.getElementById('menu-button');

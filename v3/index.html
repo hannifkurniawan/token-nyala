@@ -25,6 +25,7 @@
       --color-xl-yellow: #FFC93C;
       --color-xl-teal: #00D2A0;
       --color-xl-sky: #5CD0F9;
+      --color-teal-ink: #007A5E; /* teal for text/icons on light bg (AA) */
       --color-ink: #17181A;
       --color-paper: #F7F8FC;
       --color-muted: #69728A;
@@ -35,6 +36,19 @@
 
       --radius-card: 20px;
       --radius-control: 12px;
+
+      /* Motion — durations from docs/technical-spec.md → Animations */
+      --animate-fade-up: fade-up 450ms cubic-bezier(.2,.7,.2,1) both;
+      --animate-enter-right: enter-right 450ms cubic-bezier(.2,.7,.2,1) 120ms both;
+
+      @keyframes fade-up {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: none; }
+      }
+      @keyframes enter-right {
+        from { opacity: 0; transform: translateX(24px); }
+        to { opacity: 1; transform: none; }
+      }
     }
 
     @layer base {
@@ -132,14 +146,113 @@
   <!-- ============ MAIN ============ -->
   <main id="main-content" tabindex="-1" class="flex-1 outline-none">
     <!-- Sections are added one at a time following docs/v3-ground-rules.md → Urutan Build v3 -->
-    <section aria-labelledby="wip-title" class="shell py-16 sm:py-24">
-      <p class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-xl-blue">v3 · shell</p>
-      <h1 id="wip-title" class="mt-3 max-w-[20ch] text-[clamp(2rem,8vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight text-xl-dark">
-        Section sedang dibangun satu per satu.
-      </h1>
-      <p class="mt-4 max-w-prose text-base text-muted">
-        Placeholder ini akan diganti oleh hero pada langkah berikutnya.
-      </p>
+
+    <!-- ============ 2. HERO ============ -->
+    <section aria-labelledby="hero-title" class="relative overflow-x-clip">
+      <div aria-hidden="true" class="pointer-events-none absolute -right-40 -top-56 size-[28rem] rounded-full bg-xl-sky/10 lg:-right-24 lg:-top-64 lg:size-[36rem]"></div>
+
+      <div class="shell relative grid grid-cols-1 gap-10 pb-16 pt-8 sm:pt-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:pb-24 lg:pt-16">
+        <!-- Copy -->
+        <div class="animate-fade-up motion-reduce:animate-none">
+          <p class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.12em] text-xl-blue">
+            <span aria-hidden="true" class="size-2 shrink-0 rounded-full bg-xl-teal ring-4 ring-xl-teal/15"></span>
+            <span data-i18n="heroEyebrow">Untuk ide, prototype, dan proyekmu</span>
+          </p>
+
+          <h1 id="hero-title" class="mt-4 max-w-[16ch] text-[clamp(2.25rem,10.5vw,4rem)] font-extrabold leading-[1.04] tracking-[-0.04em] text-xl-dark sm:max-w-[14ch] lg:max-w-none lg:text-[clamp(2.75rem,4.2vw,3.75rem)]">
+            <span class="block" data-i18n="heroTitleA">Mulai vibecoding.</span>
+            <span class="block text-xl-blue" data-i18n="heroTitleB">Jangan berhenti di tengah jalan.</span>
+          </h1>
+
+          <p class="mt-5 max-w-[34rem] text-base leading-relaxed text-muted sm:text-lg" data-i18n="heroLead">
+            Isi saldo AI dengan mudah, pilih nominal sesuai proyek, dan lanjutkan membangun—tanpa harus memahami istilah teknis dulu.
+          </p>
+
+          <div class="mt-7 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+            <button type="button" class="btn btn-primary min-h-13 w-full px-6 text-base sm:w-auto" data-open-checkout>
+              <span data-i18n="heroCta">Isi saldo</span>
+              <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <a href="#cara-kerja" class="inline-flex min-h-11 items-center justify-center gap-1 px-2 text-sm font-extrabold text-xl-blue underline-offset-4 hover:underline sm:justify-start">
+              <span data-i18n="heroSecondary">Lihat cara kerjanya</span>
+              <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+            </a>
+          </div>
+
+          <ul class="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm font-bold text-ink" aria-label="Keunggulan" data-i18n-aria="heroTrustAria">
+            <li class="flex items-center gap-2"><span aria-hidden="true" class="grid size-5 place-items-center rounded-full bg-xl-teal/15 text-xs text-teal-ink">✓</span><span data-i18n="trustLocal">Bayar lokal</span></li>
+            <li class="flex items-center gap-2"><span aria-hidden="true" class="grid size-5 place-items-center rounded-full bg-xl-teal/15 text-xs text-teal-ink">✓</span><span data-i18n="trustFast">Saldo aktif cepat</span></li>
+            <li class="flex items-center gap-2"><span aria-hidden="true" class="grid size-5 place-items-center rounded-full bg-xl-teal/15 text-xs text-teal-ink">✓</span><span data-i18n="trustReceipt">Lihat bukti transaksi</span></li>
+          </ul>
+        </div>
+
+        <!-- Project board illustration (mock) -->
+        <figure class="relative mx-auto w-full max-w-[30rem] animate-enter-right motion-reduce:animate-none lg:mx-0 lg:justify-self-end">
+          <figcaption class="sr-only" data-i18n="boardCaption">Ilustrasi: proyek sedang dibangun dengan bantuan AI, saldo menunjukkan status.</figcaption>
+
+          <div class="overflow-hidden rounded-card border border-line bg-white shadow-[0_24px_60px_rgba(0,22,106,.12)]">
+            <!-- Window bar -->
+            <div class="flex items-center gap-3 border-b border-line px-4 py-3">
+              <span aria-hidden="true" class="flex gap-1.5"><i class="size-2.5 rounded-full bg-line"></i><i class="size-2.5 rounded-full bg-line"></i><i class="size-2.5 rounded-full bg-line"></i></span>
+              <p class="min-w-0 truncate text-sm font-extrabold text-xl-dark" data-i18n="boardProject">Event Landing Page</p>
+              <span class="ml-auto shrink-0 rounded-full bg-paper px-2 py-0.5 font-mono text-[11px] font-semibold text-muted" data-i18n="boardTag">Proyek</span>
+            </div>
+
+            <div class="space-y-3 p-4">
+              <!-- Prompt -->
+              <p class="rounded-control bg-paper px-3 py-2.5 font-mono text-xs leading-relaxed text-ink sm:text-[13px]">
+                <span aria-hidden="true" class="text-xl-blue">›</span>
+                <span data-i18n="boardPrompt">Buat hero lebih hangat dan sederhana</span>
+              </p>
+
+              <!-- Code + preview panes -->
+              <div class="grid grid-cols-2 gap-3">
+                <div class="rounded-control bg-xl-dark p-3" aria-hidden="true">
+                  <div class="space-y-1.5">
+                    <i class="block h-1.5 w-3/4 rounded-full bg-xl-sky/70"></i>
+                    <i class="block h-1.5 w-1/2 rounded-full bg-white/30"></i>
+                    <i class="block h-1.5 w-5/6 rounded-full bg-xl-yellow/80"></i>
+                    <i class="block h-1.5 w-2/3 rounded-full bg-white/30"></i>
+                    <i class="block h-1.5 w-1/3 rounded-full bg-xl-teal/80"></i>
+                  </div>
+                  <p class="mt-3 font-mono text-[10px] text-white/70 sm:text-[11px]"><span data-i18n="boardCoding">Menulis komponen…</span></p>
+                </div>
+                <div class="flex flex-col rounded-control border border-line p-2">
+                  <div aria-hidden="true" class="flex aspect-[4/3] flex-col justify-end gap-1.5 rounded-lg bg-gradient-to-br from-xl-sky/25 to-xl-blue/10 p-2">
+                    <i class="block h-2 w-2/3 rounded-full bg-xl-dark/70"></i>
+                    <i class="block h-1.5 w-1/2 rounded-full bg-xl-dark/25"></i>
+                    <i class="mt-1 block h-3 w-10 rounded-md bg-xl-yellow"></i>
+                  </div>
+                  <p class="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-ink sm:text-xs">
+                    <span aria-hidden="true" class="size-1.5 rounded-full bg-xl-teal"></span>
+                    <span data-i18n="boardPreview">Halaman event siap</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Balance footer: lights up after a package is chosen (see script.js → renderHeroBalance) -->
+            <div class="group border-t border-line bg-paper/60 px-4 py-3" data-hero-balance data-state="off">
+              <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="boardBalance">Saldo aktif</p>
+                  <p class="font-mono text-base font-semibold text-xl-dark" data-hero-amount>Rp0</p>
+                </div>
+                <p class="flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-white px-2.5 py-1 text-xs font-extrabold text-muted
+                          group-data-[state=on]:border-xl-teal/40 group-data-[state=on]:text-teal-ink" aria-live="polite">
+                  <span aria-hidden="true" class="size-2 rounded-full bg-line transition-colors duration-300 group-data-[state=on]:bg-xl-teal"></span>
+                  <span data-hero-status>Belum nyala</span>
+                </p>
+              </div>
+              <div class="mt-2.5 h-2 overflow-hidden rounded-full bg-line" role="presentation">
+                <div class="h-full w-0 rounded-full bg-gradient-to-r from-xl-teal to-xl-sky transition-[width] duration-700 ease-out motion-reduce:transition-none" data-hero-meter></div>
+              </div>
+              <p class="mt-2 font-mono text-[11px] text-muted" data-hero-estimate>Pilih paket untuk menyalakan saldo</p>
+            </div>
+          </div>
+
+        </figure>
+      </div>
     </section>
   </main>
 

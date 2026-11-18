@@ -88,6 +88,7 @@ Catatan: browser build hanya untuk prototype. Untuk produksi, gunakan Tailwind C
 | `xl-yellow` | `#FFC93C` | Badge, highlight, on-state line (maks 10–15% area) |
 | `xl-teal` | `#00D2A0` | Success, selected, saldo siap |
 | `xl-sky` | `#5CD0F9` | Focus ring, info, estimasi |
+| `teal-ink` | `#007A5E` | Teks/ikon teal di atas latar terang (XL Teal terlalu terang untuk teks, kontras < 3:1) |
 | `ink` | `#17181A` | Teks utama |
 | `paper` | `#F7F8FC` | Background halaman |
 | `muted` | `#69728A` | Teks sekunder |

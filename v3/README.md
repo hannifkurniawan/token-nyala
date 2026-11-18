@@ -31,7 +31,7 @@ Mengecek 320, 375, 768, 1024, 1440, dan 667×375 landscape: overflow horizontal,
 ## Progres build
 
 - [x] 1. Shell — head, token, header + menu mobile, language switch, footer
-- [ ] 2. Hero
+- [x] 2. Hero — copy ID/EN, board ilustrasi, status saldo menyala lewat `TokenNyala.selectPackage(id)`
 - [ ] 3. Cara kerja
 - [ ] 4. Package picker
 - [ ] 5. Checkout
