@@ -41,7 +41,8 @@ TN.ui = (() => {
   onScroll();
 
   /* ---------- Language ---------- */
-  document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => TN.i18n.setLang(b.dataset.lang)));
+  // Delegated: language buttons can be rendered later (console account menu)
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-lang]'); if (b) TN.i18n.setLang(b.dataset.lang); });
   TN.i18n.onChange(syncMenuLabel);
 
   /* ---------- Placeholder legal links (mock) ---------- */

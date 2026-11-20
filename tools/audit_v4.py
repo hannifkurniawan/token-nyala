@@ -12,7 +12,10 @@ Definition of Done extras:
   - DoD 8  storage blocked (localStorage throws): page still renders and switches language
   - DoD 9  only the 4 loaded font faces render (Manrope 500/700/800, IBM Plex Mono 500)
   - DoD 10 assets/css/app.css equals a fresh `tailwindcss --minify` build of src/tailwind.css
-  - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact)
+  - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact);
+           console: only tn-v4-demo (+ tn-lang), never the email/phone used to sign in
+  - console: axe on sign-in, home (ayu), paused home (jeda), balance (raka) + top-up form/pay/success, "Lainnya",
+    account menu, confirm, Nala; preset balances/dates vs §8; history always sums to the balance
   - DoD 4  numbers: TN.data recomputes the values transcribed below from docs/v4/services-and-pricing.md
            (§3 units, §6 recipes, §7 example, §8 balance-until, §2 refund/prorata examples), and the landing
            renders them for every recipe in ID and EN; harga: calculator summary + CTA per recipe and every
@@ -35,6 +38,10 @@ TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"]
 FACES = ["Manrope 500", "Manrope 700", "Manrope 800", "IBM Plex Mono 500"]
 PAGES = ["index.html", "harga.html"]  # fase 4+: app.html routes
 RENDERED_CHECK = {"index.html": "[data-recipe-card] h3", "harga.html": "[data-calc-rows] li"}
+APP_ROUTES = [("masuk", "app.html?demo=reset#/masuk"), ("beranda", "app.html?demo=ayu#/beranda"),
+              ("jeda", "app.html?demo=ayu&state=jeda#/beranda"), ("saldo", "app.html?demo=raka#/saldo")]
+# services-and-pricing §8: preset → (balance, "cukup sampai" shown on the home card)
+PRESETS = {"ayu": ("Rp31.220", "±19 Des"), "raka": ("Rp239.640", "±31 Des"), "dimas": ("Rp647.800", "±22 Jan")}
 
 # ---- transcribed from docs/v4/services-and-pricing.md (the doc is the reference, data.js must agree) ----
 DOC = {
@@ -326,6 +333,102 @@ def main():
             if stored != {"local": {"tn-lang": "en"}, "session": {}, "cookie": ""}:
                 problems.append(f"[dod] {page_name} storage holds more than the language: {stored}")
             ctx.close()
+
+        # ================= console (app.html) =================
+        for label, url in APP_ROUTES:
+            for lang in ("id", "en"):
+                for w, h in ((375, 667), (1440, 900)):
+                    ctx = b.new_context(viewport={"width": w, "height": h}, reduced_motion="reduce")
+                    page = ctx.new_page()
+                    page.add_init_script(f"localStorage.setItem('tn-lang', '{lang}')")
+                    page.goto(base + url, wait_until="networkidle")
+                    tag = f"app {label} {lang} {w}"
+                    problems += axe(page, tag)
+                    problems += fonts(page, tag)
+                    if label == "beranda":
+                        page.locator("#view [data-topup]").first.click(); page.wait_for_timeout(300)
+                        page.locator("[data-co-submit]").click()
+                        problems += axe(page, f"topup form errors {tag}", "#topup")
+                        page.locator('#topup label:has(input[value="qris"])').click(); page.locator("[data-co-submit]").click(); page.wait_for_timeout(150)
+                        problems += axe(page, f"topup pay {tag}", "#topup")
+                        page.locator("[data-co-paid-main]").click(); page.wait_for_timeout(800)
+                        problems += axe(page, f"topup success {tag}", "#topup")
+                        page.keyboard.press("Escape"); page.wait_for_timeout(150)
+                        if w == 375:
+                            page.locator("[data-open-more]").click(); page.wait_for_timeout(300)
+                            problems += axe(page, f"more sheet {tag}", "#more")
+                            page.locator("#more [data-reset]").click(); page.wait_for_timeout(300)
+                        else:
+                            page.locator("#acct-btn").click()
+                            problems += axe(page, f"account menu {tag}")
+                            page.locator("#acct-menu [data-reset]").click(); page.wait_for_timeout(300)
+                        problems += axe(page, f"confirm {tag}", "#confirm")
+                        page.keyboard.press("Escape")
+                        page.evaluate("() => TN.nala.open()"); page.wait_for_timeout(250)
+                        problems += axe(page, f"chat {tag}", "#chat")
+                        page.evaluate("() => TN.nala.close()")
+                    ctx.close()
+
+        # numbers: presets render the documented balance + "lasts until"; history always sums to the balance
+        ctx = b.new_context(viewport={"width": 1440, "height": 900}, reduced_motion="reduce")
+        page = ctx.new_page()
+        for preset, (bal, until) in PRESETS.items():
+            page.goto(base + f"app.html?demo={preset}#/beranda", wait_until="networkidle")
+            text = page.evaluate("() => document.getElementById('view').textContent")
+            if bal not in text or until not in text:
+                problems.append(f"[numbers] app {preset}: expected {bal} and {until} on the home card")
+        for q in ("demo=ayu", "demo=raka", "demo=dimas", "demo=ayu&state=jeda"):
+            page.goto(base + f"app.html?{q}#/saldo", wait_until="networkidle")
+            sums = page.evaluate("() => [TN.store.state.history.reduce((n, h) => n + h.amount, 0), TN.store.state.balance]")
+            if sums[0] != sums[1]:
+                problems.append(f"[numbers] app {q}: history sums to {sums[0]} but balance is {sums[1]}")
+        page.goto(base + "app.html?demo=ayu&state=jeda#/beranda", wait_until="networkidle")
+        text = page.evaluate("() => document.getElementById('view').textContent")
+        for want in ("Rp8.000", "27 Des", "Rp20.000"):
+            if want not in text:
+                problems.append(f"[numbers] app jeda misses {want}")
+        ctx.close()
+
+        # DoD 1 file:// · DoD 7 reduced motion (no long transitions) · DoD 8 storage blocked · DoD 11 contact never stored
+        page = b.new_page()
+        errors = []
+        page.on("console", lambda m: errors.append(m.text) if m.type in ("error", "warning") else None)
+        page.on("pageerror", lambda e: errors.append(str(e)))
+        page.goto((ROOT / "app.html").as_uri() + "?demo=ayu#/beranda", wait_until="networkidle")
+        ok = page.evaluate("() => getComputedStyle(document.querySelector('header')).position === 'sticky' && TN.store.state.balance === 31220")
+        if errors or not ok:
+            problems.append(f"[dod] app file:// errors={errors} ok={ok}")
+        page.close()
+
+        ctx = b.new_context(viewport={"width": 375, "height": 667})
+        page = ctx.new_page()
+        page.add_init_script("""Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('blocked', 'SecurityError'); } });""")
+        errors = []
+        page.on("pageerror", lambda e: errors.append(str(e)))
+        page.goto(base + "app.html#/beranda", wait_until="networkidle")
+        page.fill("#auth-contact", "ayu@mail.com"); page.locator("[data-auth-form] [type=submit]").click()
+        page.fill("#auth-code", "123456"); page.locator("[data-auth-form] [type=submit]").click()
+        page.fill("#auth-name", "Ayu"); page.locator("[data-auth-form] [type=submit]").click()
+        page.wait_for_timeout(150)
+        h1 = page.evaluate("() => document.querySelector('#view h1')?.textContent")
+        if errors or h1 != "Hai, Ayu":
+            problems.append(f"[dod] app storage blocked: errors={errors} h1={h1}")
+        ctx.close()
+
+        ctx = b.new_context(viewport={"width": 1440, "height": 900})
+        page = ctx.new_page()
+        page.goto(base + "app.html?demo=reset#/masuk", wait_until="networkidle")
+        page.fill("#auth-contact", "0812-3456-7890"); page.locator("[data-auth-form] [type=submit]").click()
+        page.fill("#auth-code", "123456"); page.locator("[data-auth-form] [type=submit]").click()
+        page.fill("#auth-name", "Ayu"); page.locator("[data-auth-form] [type=submit]").click()
+        page.wait_for_timeout(150)
+        page.locator("#view [data-topup]").first.click(); page.wait_for_timeout(250)
+        page.locator('#topup label:has(input[value="va"])').click(); page.locator("[data-co-submit]").click()
+        page.locator("[data-co-paid-main]").click(); page.wait_for_timeout(800)
+        stored = page.evaluate("() => ({ keys: Object.keys(localStorage).sort(), demo: localStorage.getItem('tn-v4-demo') || '', session: sessionStorage.length, cookie: document.cookie })")
+        if stored["keys"] != ["tn-v4-demo"] or stored["session"] or stored["cookie"] or any(x in stored["demo"] for x in ("0812", "6281234567890", "@")):
+            problems.append(f"[dod] app storage holds more than demo state / holds contact data: {stored['keys']} {stored['demo'][:120]}")
+        ctx.close()
         b.close()
     httpd.shutdown()
 

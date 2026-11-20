@@ -17,7 +17,10 @@ With --interactive (per page, see the *_flow functions):
     Nala recipe flow (links carry the adjusted recipe) + offline contact, FAQ/templates/guides/copy
   - harga: calculator (defaults, switch, size, stepper, disabled size + arrows, add service, n8n minimum with AI,
     links from Nala, URL kept in sync, mobile breakdown), section nav, EN
-  - motion (375 + 1440, motion ON, every page): scroll the whole page, then nothing in <main> may stay hidden
+  - console (app.html): sign-in guard + 3 steps + contact never stored + empty home; ayu home/numbers, nav focus
+    + title + aria-current, history filter; top-up (method error, VA, success, other amount, failed); paused
+    project → suggested top-up → back on; "Lainnya" sheet / account menu, reset demo; EN at 320px
+  - motion (375 + 1440, motion ON, landing + harga): scroll the whole page, then nothing in <main> may stay hidden
 Layout checks run with prefers-reduced-motion so screenshots show every section.
 Full-page screenshots go to --out (default: a temp dir). Exit code 1 if any check fails.
 Phases add pages/routes here as they are built (fase 3: harga.html, fase 4+: app.html routes).
@@ -44,6 +47,11 @@ VIEWPORTS = [
 PAGES = {
     "index.html": {"fold": ["#hero-title", "#hero-cta"]},
     "harga.html": {"fold": ["#price-title"]},
+    # console routes (app.html): demo presets from services-and-pricing §8
+    "app-masuk": {"url": "app.html?demo=reset#/masuk", "fold": ["#view h1"]},
+    "app-beranda": {"url": "app.html?demo=ayu#/beranda", "fold": ["#view h1"]},
+    "app-jeda": {"url": "app.html?demo=ayu&state=jeda#/beranda", "fold": ["#view h1"]},
+    "app-saldo": {"url": "app.html?demo=raka#/saldo", "fold": ["#view h1"]},
 }
 ABOVE_FOLD_VIEWPORTS = {"320", "375"}
 
@@ -531,6 +539,223 @@ def harga_lang_flow(page, out, name, base):
     page.evaluate("() => localStorage.setItem('tn-lang', 'id')")
     return problems
 
+
+APP_JS = r"""
+() => ({
+  hash: location.hash, title: document.title, h1: document.querySelector('#view h1')?.textContent.trim(),
+  focus: document.activeElement === document.querySelector('#view h1') ? 'h1' : (document.activeElement?.id || document.activeElement?.tagName),
+  view: document.getElementById('view').textContent.replace(/\s+/g, ' '),
+  pill: document.querySelector('[data-balance-text]').textContent,
+  current: [...document.querySelectorAll('[aria-current=page][data-route]')].filter(a => a.getClientRects().length).map(a => a.dataset.route),
+  store: localStorage.getItem('tn-v4-demo') || '',
+})
+"""
+
+
+def console_auth_flow(page, out, name, base):
+    """Guard → sign in (contact, code, name) → back to the requested route; contact never stored; empty home."""
+    problems = []
+    st = lambda: page.evaluate(APP_JS)
+    page.goto(base + "app.html?demo=reset#/saldo", wait_until="networkidle")
+    page.wait_for_timeout(100)
+    if st()["hash"] != "#/masuk?next=%2Fsaldo":
+        problems.append(f"AUTH guard {st()['hash']}")
+    submit = lambda: page.locator("[data-auth-form] [type=submit]").click()
+    submit()
+    if page.evaluate("() => document.activeElement?.id") != "auth-contact" or page.locator("[data-auth-err=contact]").is_hidden():
+        problems.append("AUTH empty contact: no error/focus")
+    page.fill("#auth-contact", "0812 3456 7890"); submit()
+    page.screenshot(path=str(out / f"app-{name}-code.png"))
+    page.fill("#auth-code", "12"); submit()
+    if page.locator("[data-auth-err=code]").is_hidden():
+        problems.append("AUTH short code accepted")
+    page.fill("#auth-code", "123456"); submit()
+    submit()
+    if page.locator("[data-auth-err=name]").is_hidden():
+        problems.append("AUTH empty name accepted")
+    page.fill("#auth-name", "Sinta"); submit()
+    page.wait_for_timeout(150)
+    s1 = st()
+    if s1["hash"] != "#/saldo" or s1["h1"] not in ("Saldo", "Balance") or s1["focus"] != "h1":
+        problems.append(f"AUTH did not land on the next route {s1['hash']} h1={s1['h1']} focus={s1['focus']}")
+    if "6281234567890" in s1["store"] or "0812" in s1["store"] or '"Sinta"' not in s1["store"]:
+        problems.append(f"AUTH storage {s1['store'][:160]}")
+    page.evaluate("() => { location.hash = '#/beranda'; }")
+    page.wait_for_timeout(150)
+    home = page.evaluate("() => ({ chips: document.querySelectorAll('#view ul[aria-label] a').length, next: document.querySelector('#view a[href=\"#/saldo?isi=1\"]') !== null })")
+    if home != {"chips": 5, "next": True}:
+        problems.append(f"AUTH empty home {home}")
+    page.screenshot(path=str(out / f"app-{name}-empty-home.png"), full_page=True)
+    return problems
+
+
+def console_home_flow(page, out, name, base):
+    problems = []
+    st = lambda: page.evaluate(APP_JS)
+    page.goto(base + "app.html?demo=ayu#/beranda", wait_until="networkidle")
+    v = st()["view"]
+    for want in ("Rp31.220", "±19 Des", "portofolio-ayu", "ayu.my.id", "29 hari", "tetap Rp15.000 · pakai Rp3.780"):
+        if want not in v:
+            problems.append(f"HOME ayu misses {want!r}")
+    if st()["pill"] != "Rp31.220":
+        problems.append(f"HOME pill {st()['pill']}")
+    nav = "[data-tab-nav]" if page.viewport_size["width"] < 1024 else "[data-side-nav]"
+    page.locator(f'{nav} a[data-route="saldo"]').click()
+    page.wait_for_timeout(150)
+    s = st()
+    if s["h1"] != "Saldo" or s["focus"] != "h1" or s["title"] != "Saldo — TokenNyala" or s["current"] != ["saldo"]:
+        problems.append(f"NAV saldo h1={s['h1']} focus={s['focus']} title={s['title']} current={s['current']}")
+    rows = lambda: page.evaluate("() => document.querySelectorAll('#view ol > li').length")
+    if rows() != 4:
+        problems.append(f"HISTORY rows {rows()} != 4")
+    page.select_option("#hist-type", "domain")
+    if rows() != 1 or page.evaluate("() => document.activeElement?.id") != "hist-type":
+        problems.append(f"HISTORY filter rows={rows()}")
+    page.select_option("#hist-type", "all")
+    return problems
+
+
+def console_topup_flow(page, out, name, base):
+    problems = []
+    st = lambda: page.evaluate(APP_JS)
+    page.goto(base + "app.html?demo=ayu#/beranda", wait_until="networkidle")
+    opener = page.locator("#view [data-topup]").first
+    opener.click()
+    page.wait_for_timeout(300)
+    box = page.evaluate("() => { const r = document.getElementById('topup').getBoundingClientRect(); return { open: document.getElementById('topup').open, focus: document.activeElement?.id, inView: r.top >= -1 && r.bottom <= innerHeight + 1 }; }")
+    if box != {"open": True, "focus": "co-title", "inView": True}:
+        problems.append(f"TOPUP open {box}")
+    page.locator('#topup label:has(input[value="100000"])').click()
+    page.locator("[data-co-submit]").click()
+    if page.locator("#co-method-error").is_hidden():
+        problems.append("TOPUP no method error")
+    page.screenshot(path=str(out / f"app-{name}-topup-form.png"))
+    r = page.evaluate(CHECK_JS)
+    if r["small"] or r["spills"]:
+        problems.append(f"TOPUP small={r['small']} spills={r['spills']}")
+    page.locator('#topup label:has(input[value="va"])').click()
+    page.locator("[data-co-submit]").click()
+    page.wait_for_timeout(100)
+    va = page.locator("[data-co-va]").text_content()
+    if not va.startswith("8808") or page.evaluate("() => document.activeElement?.id") != "co-pay-title":
+        problems.append(f"TOPUP pay step va={va!r}")
+    page.locator("[data-co-paid-main]").click()
+    page.wait_for_timeout(800)
+    body = page.locator("[data-co-success-body]").text_content()
+    if "Rp115.000" not in body or "Rp146.220" not in body:
+        problems.append(f"TOPUP success {body!r}")
+    page.locator("#topup [data-step-panel=success] [data-co-close]").click()
+    page.wait_for_timeout(200)
+    s = st()
+    if s["pill"] != "Rp146.220" or "Rp146.220" not in s["view"]:
+        problems.append(f"TOPUP after pill={s['pill']}")
+    # other amount + failed payment
+    page.locator("#view [data-topup]").first.click()
+    page.wait_for_timeout(250)
+    page.locator('#topup label:has(input[value="other"])').click()
+    page.fill("#co-other", "15000")
+    page.locator('#topup label:has(input[value="qris"])').click()
+    page.locator("[data-co-submit]").click()
+    if page.locator("#co-other-error").is_hidden() or page.evaluate("() => document.activeElement?.id") != "co-other":
+        problems.append("TOPUP other amount below minimum accepted")
+    page.fill("#co-other", "25000")
+    page.locator("[data-co-submit]").click()
+    page.locator("[data-co-fail]").click()
+    if page.evaluate("() => document.activeElement?.id") != "co-failed-title":
+        problems.append("TOPUP failed step focus")
+    page.locator("#topup [data-step-panel=failed] [data-co-back]").click()
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(150)
+    if page.evaluate("() => TN.store.state.balance") != 146220:
+        problems.append("TOPUP failed payment changed the balance")
+    return problems
+
+
+def console_jeda_flow(page, out, name, base):
+    problems = []
+    st = lambda: page.evaluate(APP_JS)
+    page.goto(base + "app.html?demo=ayu&state=jeda#/beranda", wait_until="networkidle")
+    v = st()["view"]
+    for want in ("dijeda", "27 Des", "Rp20.000", "Dijeda"):
+        if want not in v:
+            problems.append(f"JEDA misses {want!r}")
+    page.locator("#view [role=status] [data-topup]").click()
+    page.wait_for_timeout(250)
+    sug = page.evaluate("() => document.querySelector('#topup input[name=co-amount]:checked')?.value")
+    after = page.locator("[data-co-after]").text_content()
+    if sug != "50000" or "Rp48.000" not in after:
+        problems.append(f"JEDA suggested={sug} after={after!r}")
+    page.locator('#topup label:has(input[value="ewallet"])').click()
+    page.locator("[data-co-submit]").click()
+    page.locator("#topup [data-pay-method=ewallet] [data-co-paid]").first.click()
+    page.wait_for_timeout(800)
+    if "portofolio-ayu" not in page.locator("[data-co-resumed]").text_content():
+        problems.append("JEDA resumed line missing")
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(200)
+    s = st()
+    if "dijeda karena" in s["view"] or "Nyala" not in s["view"] or s["pill"] != "Rp48.000":
+        problems.append(f"JEDA after top-up pill={s['pill']}")
+    return problems
+
+
+def console_account_flow(page, out, name, base):
+    problems = []
+    page.goto(base + "app.html?demo=dimas#/beranda", wait_until="networkidle")
+    if page.viewport_size["width"] < 1024:
+        page.locator("[data-open-more]").click()
+        page.wait_for_timeout(300)
+        o = page.evaluate("() => ({ open: document.getElementById('more').open, focus: document.activeElement?.id, links: document.querySelectorAll('#more [data-more-nav] a').length })")
+        page.screenshot(path=str(out / f"app-{name}-more.png"))
+        r = page.evaluate(CHECK_JS)
+        if o != {"open": True, "focus": "more-title", "links": 9} or r["small"]:
+            problems.append(f"MORE {o} small={r['small']}")
+        page.keyboard.press("Escape")
+        page.wait_for_timeout(100)
+        if page.evaluate("() => document.activeElement?.hasAttribute('data-open-more')") is not True:
+            problems.append("MORE focus not back on the tab")
+        page.locator("[data-open-more]").click()
+        page.locator("#more [data-reset]").click()
+    else:
+        page.locator("#acct-btn").click()
+        if page.locator("#acct-menu").is_hidden():
+            problems.append("ACCOUNT menu did not open")
+        page.keyboard.press("Escape")
+        if not page.locator("#acct-menu").is_hidden() or page.evaluate("() => document.activeElement?.id") != "acct-btn":
+            problems.append("ACCOUNT menu Escape")
+        page.locator("#acct-btn").click()
+        page.locator("#acct-menu [data-reset]").click()
+    page.wait_for_timeout(250)
+    if page.evaluate("() => document.getElementById('confirm').open && document.activeElement?.id === 'confirm-title'") is not True:
+        problems.append("RESET confirm not open/focused")
+    page.locator("[data-confirm-ok]").click()
+    page.wait_for_timeout(200)
+    if not page.evaluate("() => location.hash.startsWith('#/masuk') && TN.store.state.user === null && TN.store.state.balance === 0"):
+        problems.append("RESET did not clear the demo")
+    return problems
+
+
+def console_lang_flow(page, out, name, base):
+    problems = []
+    page.goto(base + "app.html?demo=raka#/saldo", wait_until="networkidle")
+    if page.viewport_size["width"] < 1024:
+        page.locator("[data-open-more]").click()
+        page.locator('#more [data-lang="en"]').click()
+        page.keyboard.press("Escape")
+    else:
+        page.locator("#acct-btn").click()
+        page.locator('#acct-menu [data-lang="en"]').click()
+        page.keyboard.press("Escape")
+    page.wait_for_timeout(150)
+    r = page.evaluate(CHECK_JS)
+    e = page.evaluate(EXTRA_JS)
+    h1 = page.locator("#view h1").text_content().strip()
+    if h1 != "Balance" or r["overflow"] > 0 or r["spills"] or r["escapes"] or r["small"] or e["keyLike"]:
+        problems.append(f"CONSOLE EN h1={h1!r} overflow={r['overflow']} spills={r['spills']} escapes={r['escapes']} small={r['small']} keys={e['keyLike']}")
+    page.screenshot(path=str(out / f"app-{name}-en.png"), full_page=True)
+    page.evaluate("() => localStorage.setItem('tn-lang', 'id')")
+    return problems
+
 def serve(directory):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -563,7 +788,7 @@ def main():
                 errors = []
                 page.on("console", lambda m: errors.append(m.text) if m.type in ("error", "warning") else None)
                 page.on("pageerror", lambda e: errors.append(str(e)))
-                page.goto(base + page_name, wait_until="networkidle")
+                page.goto(base + cfg.get("url", page_name), wait_until="networkidle")
                 page.wait_for_timeout(150)
                 r = page.evaluate(CHECK_JS)
                 e = page.evaluate(EXTRA_JS)
@@ -613,6 +838,19 @@ def main():
                     if name in ("320", "1440"):
                         status += harga_lang_flow(page, out, name, base)
 
+                if args.interactive and page_name == "app-masuk" and name in ("320", "375", "1440"):
+                    status += console_auth_flow(page, out, name, base)
+                if args.interactive and page_name == "app-beranda":
+                    if name in ("320", "375", "768", "1440"):
+                        status += console_home_flow(page, out, name, base)
+                        status += console_topup_flow(page, out, name, base)
+                    if name in ("375", "1440"):
+                        status += console_account_flow(page, out, name, base)
+                if args.interactive and page_name == "app-jeda" and name in ("375", "1440"):
+                    status += console_jeda_flow(page, out, name, base)
+                if args.interactive and page_name == "app-saldo" and name in ("320", "1440"):
+                    status += console_lang_flow(page, out, name, base)
+
                 if errors:
                     status.append(f"CONSOLE: {errors}")
                 print(f"[{'FAIL' if status else 'ok  '}] {page_name:<11} {name:>18}  " + ("; ".join(status) if status else ""))
@@ -620,7 +858,7 @@ def main():
                     failures.append(f"{page_name} {name}")
                 ctx.close()
         if args.interactive:
-            for page_name in pages:
+            for page_name in [x for x in pages if x in ("index.html", "harga.html")]:  # console has no scroll motion
                 for name, w, h in (("375", 375, 667), ("1440", 1440, 900)):
                     m = motion_flow(browser, base, out, name, w, h, page_name)
                     print(f"[{'FAIL' if m else 'ok  '}] {'motion ' + page_name.split('.')[0]:<11} {name:>18}  " + ("; ".join(m) if m else ""))

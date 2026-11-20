@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`: kalkulator resep + detail harga) selesai. **Berikutnya: Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Berikutnya: Fase 5** (wizard `#/buat` 4 langkah, detail proyek: ganti ukuran/berhenti/log, jam simulasi “majukan 30 hari” & dijeda). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -109,6 +109,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Kalkulator: layanan dimatikan tetap tampil (abu) agar bisa dinyalakan lagi; “Tambah layanan” lewat dialog; pilihan “Mulai dari kosong” | Pemula tidak kehilangan pilihan; satu pola dengan wizard nanti |
 | 20 Nov 2026 | Template berukuran minimum dengan AI: n8n + pesan/tugas AI → naik otomatis ke Rutin dengan pengumuman | Aturan §5.4 diterapkan di `applyMinimums()` (dipakai kalkulator & nanti wizard) |
 | 20 Nov 2026 | Harga tanpa CTA akhir biru; diakhiri FAQ harga + footer | Ringkasan lengket sudah punya CTA “Nyalakan” |
+| 20 Nov 2026 | Preset `jeda`: riwayat + 12 sesi + Coba AI 45 pesan agar saldo 8.000 sesuai dokumen | Riwayat harus selalu sama dengan saldo (dicek audit) |
+| 20 Nov 2026 | Isi saldo di console tanpa field kontak; masuk 3 langkah, kontak hanya di memori lalu dibuang | DoD 11: data kontak tidak pernah disimpan |
+| 20 Nov 2026 | Saat ada layanan dijeda, kartu saldo tidak menampilkan “cukup sampai” | Tanggal (hanya dari biaya alamat web) menyesatkan; banner sudah menjelaskan |
+| 20 Nov 2026 | Menu akun = popover avatar (semua ukuran) + bagian Akun di sheet Lainnya (mobile) | IA §4; satu render untuk keduanya |
+| 20 Nov 2026 | Rute Fase 5–6 menampilkan “Segera hadir” sementara | Link dari landing/harga tidak berakhir di halaman kosong |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -154,6 +159,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Kunci objek berbentuk angka diurutkan duluan di JavaScript.** `Object.keys({gratis, 2500, 10000})` → `2500, 10000, gratis` — pilihan email tampil terbalik. Pakai array urutan eksplisit.
 - **`<option>` tidak mewarisi weight body** → Manrope 400 (tidak dimuat). Set `font-weight` di `.field option`.
 - **Playwright tidak mau mengklik elemen `aria-disabled`** — benar secara aksesibilitas; uji “tidak bisa dipilih” dengan `force=True`.
+- **Tombol yang dirender ulang butuh event delegation.** Tombol ID/EN di menu akun console dibuat setelah `ui.js` memasang listener langsung → tidak berfungsi; ditemukan QA EN. `ui.js` sekarang mendelegasikan klik `[data-lang]`.
+- **Pratinjau “saldo setelahnya” harus memakai aturan yang sama dengan aksi sebenarnya.** Sheet isi saldo di state dijeda menampilkan Rp63.000, padahal setelah layanan menyala lagi saldo Rp48.000 → `previewTopup()` memakai urutan `settle()` yang sama.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -223,3 +230,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - `harga.html` (header/menu/footer/Nala diambil dari `index.html` dengan link ke `index.html#…`): kepala, chip nav lengket (scrollspy), kalkulator, mulai dari (10 kartu), AI (12 model + tarif + 3 satuan), Jalankan/Simpan/Hubungkan (tabel per layanan + detail teknis), saldo & tagihan (top-up + 10 aturan), FAQ harga.
 - `data.js`: `OPTIONS`, `NEW_ITEM`, `parseS`, `itemsFromUrl` (tanpa `s` → bawaan; `s` tidak menyebut → mati; nilai salah → bawaan), `applyMinimums`, `templateMinSize`, `usesAi`; `recipeTotals`/`serialize` melewati layanan mati; payments di `itemCost`. `itemView`/`fromLine` dipindah ke `ui.js` (dipakai bersama).
 - QA harga: alur kalkulator lengkap + nav + EN; audit: axe dialog tambah layanan & ringkasan terbuka, angka ringkasan/CTA per resep, semua harga & tarif model di tabel. Semua lolos.
+
+### Sesi 4 (lanjutan) — Fase 4 v4
+- `app.html` + `store.js` + `console.js`: header (pil saldo kuning bila perlu isi), sidebar desktop, tab bar mobile (Buat + kuning), sheet Lainnya, menu akun (bahasa, mulai ulang demo + konfirmasi, keluar), toast, label prototype; router hash dengan guard masuk; masuk 3 langkah + akun contoh; beranda (sapaan, banner dijeda/saldo kurang, chip resep untuk akun baru, kartu saldo + cukup sampai, langkah berikutnya, proyek, bulan ini, belajar); saldo (perkiraan, pengingat, riwayat + filter jenis/proyek, invoice contoh); sheet isi saldo (port checkout v3).
+- Preset §8 terverifikasi: Ayu 31.220/±19 Des, Raka 239.640/±31 Des, Dimas 647.800/±22 Jan, jeda 8.000 → isi 50 rb → 48.000 & nyala lagi.
+- QA console (alur masuk, beranda/nav, isi saldo, jeda, akun/reset, EN) + audit console (axe semua dialog, angka preset, riwayat = saldo, storage tanpa kontak, file://, storage diblokir) + i18n 4 rute console. Semua lolos (40 cek QA).

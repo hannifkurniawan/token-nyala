@@ -215,13 +215,15 @@
     if (intent === 'howto') {
       const guide = document.getElementById('pakai')
         ? { key: 'ans.guideBtn', run: leaveThen(() => document.getElementById('pakai').scrollIntoView({ block: 'start' })) }
-        : { key: 'ans.guideBtn', href: 'index.html#pakai' };
+        : { key: 'ans.guideBtn', href: document.getElementById('view') ? '#/ai' : 'index.html#pakai' };
       return reply({ from: 'nala', key: 'ans.howto', actions: [guide] });
     }
     if (intent === 'models') {
       const models = TN.landing?.openCatalog
         ? { key: 'ans.modelsBtn', run: leaveThen(() => TN.landing.openCatalog(launcher)) }
-        : { key: 'ans.modelsBtn', run: leaveThen(() => document.getElementById('ai')?.scrollIntoView({ block: 'start' })) };
+        : document.getElementById('ai')
+          ? { key: 'ans.modelsBtn', run: leaveThen(() => document.getElementById('ai').scrollIntoView({ block: 'start' })) }
+          : { key: 'ans.modelsBtn', href: '#/ai' };
       return reply({ from: 'nala', key: 'ans.models', actions: [models] });
     }
     if (intent === 'pay') return reply({ from: 'nala', key: 'ans.pay' });

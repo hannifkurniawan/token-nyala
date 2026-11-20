@@ -1,0 +1,212 @@
+/* TokenNyala v4 — console demo state (docs/v4/technical-spec.md §4, services-and-pricing §2 & §8).
+   localStorage `tn-v4-demo`; storage blocked → in-memory (reload = reset). Contact data (email/phone) is never stored.
+   Every balance change goes through charge()/topup() and writes a history row. No DOM access here. */
+window.TN = window.TN || {};
+TN.store = (() => {
+  'use strict';
+  const D = TN.data;
+  const KEY = 'tn-v4-demo';
+  const VERSION = 1;
+  const PRESET_DAY = '2026-11-21';
+
+  /* ---------- Dates: 'YYYY-MM-DD' strings, local calendar days ---------- */
+  const parse = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
+  const iso = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+  const addDays = (s, n) => { const dt = parse(s); dt.setDate(dt.getDate() + n); return iso(dt); };
+  const daysBetween = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+  const today = () => iso(new Date());
+
+  /* ---------- Persistence ---------- */
+  let memory = null;
+  const read = () => { try { const v = JSON.parse(localStorage.getItem(KEY)); return v?.version === VERSION ? v : null; } catch { return null; } };
+  const write = (s) => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* blocked: memory only */ } };
+  const empty = () => ({ version: VERSION, user: null, balance: 0, projects: [], services: [], history: [], reminder: true, clock: today(), seq: 0 });
+  let state = read() || empty();
+  const listeners = [];
+  function save() { memory = state; write(state); listeners.forEach((fn) => fn(state)); }
+
+  const uid = (p) => `${p}${++state.seq}`;
+
+  /* ---------- Service helpers ---------- */
+  /** Price per period for a service row (fixed: 30 days; domain: first year now, renew price later). */
+  function priceOf(sv, { renewal = false } = {}) {
+    if (sv.svc === 'domain') return renewal ? D.DOMAINS[sv.ext].renew : D.DOMAINS[sv.ext].first;
+    return D.itemCost(sv).amount;
+  }
+  const periodOf = (sv) => (sv.svc === 'domain' ? 365 : 30);
+  const label = (sv) => ({ svc: sv.svc, size: sv.size, tpl: sv.tpl, ext: sv.ext, domain: sv.domain });
+
+  /** Write a history row and move the balance. amount < 0 = charge, > 0 = top-up/refund. */
+  function charge({ amount, type, date = state.clock, svc = null, project = null, meta = {} }) {
+    state.balance += amount;
+    state.history.push({ id: uid('h'), date, type, amount, svc, project, meta });
+  }
+
+  /** Create a project + its services, charging each upfront (fixed per 30 days, domain per year). */
+  function addProject({ name, domain = null, items, date = state.clock }) {
+    const id = name;
+    state.projects.push({ id, name, domain, createdAt: date });
+    for (const it of items) {
+      if (it.svc === 'ai') continue; // AI is usage-based: no service row, charged per use
+      const sv = { id: uid('s'), project: id, ...it, startedAt: date, renewAt: addDays(date, periodOf(it)), status: 'nyala', autoRenew: true };
+      if (sv.svc === 'domain') sv.domain = domain;
+      state.services.push(sv);
+      const amount = priceOf(sv);
+      if (amount) charge({ amount: -amount, type: 'charge', date, svc: sv.svc, project: id, meta: label(sv) });
+    }
+    return id;
+  }
+
+  function useAi({ project, unit, qty, date = state.clock, chat = false }) {
+    charge({ amount: -D.usageCost(unit, qty), type: 'usage', date, svc: chat ? 'chat' : 'ai', project, meta: { unit, qty } });
+  }
+
+  /* ---------- Derived values ---------- */
+  const active = (s = state) => s.services.filter((x) => x.status === 'nyala');
+  function costs(s = state) {
+    const fixed = active(s).filter((x) => x.svc !== 'domain').reduce((n, x) => n + priceOf(x), 0);
+    const domainRenewals = active(s).filter((x) => x.svc === 'domain' && x.autoRenew).reduce((n, x) => n + priceOf(x, { renewal: true }), 0);
+    const since = addDays(s.clock, -7);
+    const usage7 = s.history.filter((h) => h.type === 'usage' && h.date > since && h.date <= s.clock).reduce((n, h) => n - h.amount, 0);
+    const month = s.clock.slice(0, 7);
+    const usageMonth = s.history.filter((h) => h.type === 'usage' && h.date.startsWith(month)).reduce((n, h) => n - h.amount, 0);
+    return { fixed, domainRenewals, usage7, usageMonth };
+  }
+  function until(s = state) {
+    const c = costs(s);
+    const d = D.balanceUntil({ balance: s.balance, fixed: c.fixed, domainRenewals: c.domainRenewals, usage7: c.usage7, today: parse(s.clock) });
+    return d ? iso(d) : null;
+  }
+  function projectView(p, s = state) {
+    const svcs = s.services.filter((x) => x.project === p.id);
+    const live = svcs.filter((x) => x.status !== 'berhenti');
+    const status = live.some((x) => x.status === 'dijeda') ? 'dijeda' : live.length ? 'nyala' : 'berhenti';
+    const monthly = live.filter((x) => x.svc !== 'domain').reduce((n, x) => n + priceOf(x), 0); // paused services still show their price
+    const renewals = live.filter((x) => x.svc !== 'domain' && x.status === 'nyala').map((x) => x.renewAt).sort();
+    const paused = live.filter((x) => x.status === 'dijeda');
+    return { ...p, services: svcs, status, monthly, renewAt: renewals[0] || null, renewIn: renewals[0] ? daysBetween(s.clock, renewals[0]) : null,
+      pausedAt: paused[0]?.pausedAt || null, url: p.domain || `${p.id}.tokennyala.app` };
+  }
+  /** Banners: paused projects, and renewals in ≤ 3 days that the balance can't cover (§2 rule 1). */
+  function banners(s = state) {
+    const out = [];
+    for (const p of s.projects.map((x) => projectView(x, s))) {
+      if (p.status === 'dijeda') {
+        const shortfall = p.services.filter((x) => x.status === 'dijeda').reduce((n, x) => n + priceOf(x), 0) - s.balance;
+        out.push({ type: 'paused', project: p.id, until: addDays(p.pausedAt, D.RULES.pauseDays), min: Math.max(shortfall, D.TOPUP_MIN) });
+      }
+    }
+    const soon = active(s).filter((x) => x.autoRenew && daysBetween(s.clock, x.renewAt) <= D.RULES.remindDays);
+    const byProject = {};
+    soon.forEach((x) => { (byProject[x.project] ||= []).push(x); });
+    let need = 0;
+    for (const [project, list] of Object.entries(byProject)) {
+      need += list.reduce((n, x) => n + priceOf(x, { renewal: true }), 0);
+      if (need > s.balance) out.push({ type: 'low', project, date: list.map((x) => x.renewAt).sort()[0], min: Math.max(need - s.balance, D.TOPUP_MIN) });
+    }
+    return out;
+  }
+
+  /** After a top-up: switch paused services back on if the balance covers them (§2 rule 2). */
+  function settle() {
+    const resumed = [];
+    for (const sv of state.services.filter((x) => x.status === 'dijeda')) {
+      const price = priceOf(sv, { renewal: true });
+      if (state.balance < price) continue;
+      sv.status = 'nyala';
+      delete sv.pausedAt;
+      sv.renewAt = addDays(state.clock, periodOf(sv));
+      charge({ amount: -price, type: 'charge', svc: sv.svc, project: sv.project, meta: { ...label(sv), resumed: true } });
+      resumed.push(sv.project);
+    }
+    return [...new Set(resumed)];
+  }
+
+  /** What a top-up of `credit` would leave after paused services switch back on (same order as settle()). */
+  function previewTopup(credit) {
+    let balance = state.balance + credit;
+    const resumed = [];
+    for (const sv of state.services.filter((x) => x.status === 'dijeda')) {
+      const price = priceOf(sv, { renewal: true });
+      if (balance < price) continue;
+      balance -= price;
+      resumed.push(sv.project);
+    }
+    return { after: balance, resumed: [...new Set(resumed)] };
+  }
+
+  /* ---------- Presets (services-and-pricing §8, clock 21 Nov 2026) ---------- */
+  const P = {
+    ayu() {
+      const s = empty(); state = s;
+      s.user = { name: 'Ayu' }; s.clock = PRESET_DAY;
+      charge({ amount: 55000, type: 'topup', date: '2026-11-20', meta: { method: 'qris', amount: 50000, bonus: 5000 } });
+      addProject({ name: 'portofolio-ayu', domain: 'ayu.my.id', date: '2026-11-20', items: [{ svc: 'hosting', size: 'coba' }, { svc: 'domain', ext: 'my.id' }] });
+      useAi({ project: 'portofolio-ayu', unit: 'sesi', qty: 2, date: '2026-11-21' });
+      return s;
+    },
+    raka() {
+      const s = empty(); state = s;
+      s.user = { name: 'Raka' }; s.clock = PRESET_DAY;
+      charge({ amount: 625000, type: 'topup', date: '2026-11-01', meta: { method: 'va', amount: 500000, bonus: 125000 } });
+      addProject({ name: 'klien-kopi', domain: 'kopikita.com', date: '2026-11-01', items: [{ svc: 'hosting', size: 'rutin' }, { svc: 'database', size: 'kecil' }, { svc: 'email', size: 'gratis' }, { svc: 'domain', ext: 'com' }] });
+      addProject({ name: 'klien-salon', domain: 'salonayu.biz.id', date: '2026-11-01', items: [{ svc: 'hosting', size: 'rutin' }, { svc: 'database', size: 'kecil' }, { svc: 'domain', ext: 'biz.id' }] });
+      [['klien-kopi', 8, '2026-11-07'], ['klien-salon', 8, '2026-11-13'], ['klien-kopi', 5, '2026-11-18'], ['klien-salon', 3, '2026-11-20']]
+        .forEach(([project, qty, date]) => useAi({ project, unit: 'sesi', qty, date })); // 24 sessions, 8 in the last 7 days
+      return s;
+    },
+    dimas() {
+      const s = empty(); state = s;
+      s.user = { name: 'Dimas' }; s.clock = PRESET_DAY;
+      charge({ amount: 625000, type: 'topup', date: '2026-11-01', meta: { method: 'va', amount: 500000, bonus: 125000 } });
+      addProject({ name: 'otomasi-tim', date: '2026-11-01', items: [{ svc: 'apps', tpl: 'n8n', size: 'ramai' }, { svc: 'database', size: 'sedang' }, { svc: 'email', size: '2500' }] });
+      addProject({ name: 'server-tim', date: '2026-11-01', items: [{ svc: 'server', size: 'kecil', location: 'jakarta' }] });
+      charge({ amount: 300000, type: 'topup', date: '2026-11-15', meta: { method: 'qris', amount: 250000, bonus: 50000 } });
+      [[780, '2026-11-08'], [780, '2026-11-13'], [420, '2026-11-17'], [420, '2026-11-20']]
+        .forEach(([qty, date]) => useAi({ project: 'otomasi-tim', unit: 'tugas', qty, date })); // 2.400 tasks, 840 in the last 7 days
+      state.history.sort((a, b) => a.date.localeCompare(b.date));
+      return s;
+    },
+    /** ayu, one month later: renewal on 20 Des failed → paused; data safe until 27 Des (§8). */
+    jeda() {
+      const s = P.ayu();
+      useAi({ project: 'portofolio-ayu', unit: 'sesi', qty: 12, date: '2026-12-05' });
+      useAi({ project: 'portofolio-ayu', unit: 'pesan', qty: 45, date: '2026-12-12', chat: true });
+      const host = s.services.find((x) => x.svc === 'hosting');
+      host.status = 'dijeda'; host.pausedAt = '2026-12-20';
+      s.clock = '2026-12-21';
+      return s;
+    },
+  };
+
+  /** Apply ?demo= from the page URL. Returns the preset name applied (or null). */
+  function applyDemo(params) {
+    const demo = params.get('demo');
+    if (!demo) return null;
+    if (demo === 'reset') { state = empty(); save(); return 'reset'; }
+    const name = demo === 'ayu' && params.get('state') === 'jeda' ? 'jeda' : demo;
+    if (!P[name] || name === 'jeda' && demo !== 'ayu') return null;
+    state = P[name]();
+    save();
+    return name;
+  }
+
+  /* ---------- Actions ---------- */
+  function signIn(name) { state.user = { name: name.trim().slice(0, 40) || 'Kamu' }; save(); }
+  function signOut() { state.user = null; save(); }
+  function reset() { state = empty(); save(); }
+  function topup({ amount, bonus, method }) {
+    charge({ amount: amount + bonus, type: 'topup', meta: { method, amount, bonus } });
+    const resumed = settle();
+    save();
+    return { resumed };
+  }
+  function setReminder(on) { state.reminder = on; save(); }
+
+  return {
+    get state() { return state; }, KEY, PRESET_DAY,
+    parse, iso, addDays, daysBetween, priceOf, costs, until, projectView, banners,
+    applyDemo, signIn, signOut, reset, topup, previewTopup, setReminder, addProject, useAi, charge, settle, save,
+    onChange(fn) { listeners.push(fn); },
+  };
+})();

@@ -93,7 +93,8 @@ def serve(root=None):
 
 
 V4_ROOT = ROOT.parent / "v4"
-V4_PAGES = ["index.html", "harga.html"]  # fase 4+: app.html (+ routes)
+V4_PAGES = ["index.html", "harga.html", "app.html?demo=reset#/masuk", "app.html?demo=ayu#/beranda",
+            "app.html?demo=ayu&state=jeda#/beranda", "app.html?demo=raka#/saldo"]
 V4_ALLOW = {
     "TokenNyala", "ID", "EN", "FAQ", "Prompt", "Online", "Landing page", "VPS", "Domain", "Email API & SMTP",
     "Chat playground", "localhost:5173", "eventku.my.id", "© 2026 TokenNyala", "01", "02", "03", "04", "05",
@@ -104,9 +105,13 @@ V4_ALLOW = {
     "DeepSeek Chat", "DeepSeek Reasoner", "Qwen Plus", "Qwen Max",
     "Cursor", "Lovable", "Cline", "Continue", "n8n", "OpenClaw", "Dify", "WordPress",
     "model.", "online",  # loanwords that end a heading in both languages
+    "Data", "Email", "QRIS", "E-wallet", "Virtual account", "DANA", "GoPay", "OVO", "DANA, GoPay, OVO",  # console
+    "ayu.my.id",
     "AI", "vCPU", "RAM", "1 GB", "5 GB", "20 GB", "10 GB", "100 GB", "1 TB", "2 TB", "4 TB", "512 MB", "2 GB", "4 GB", "8 GB",
     "40 GB", "80 GB", "160 GB", "0,5", ".my.id", ".biz.id", ".web.id", ".id", ".com", ".co.id", "Template", "Bonus", "Model",
 }
+# user data in the console: project names (klien-kopi), avatar initials (A)
+V4_NAMES = re.compile(r"^([a-z0-9]+(-[a-z0-9]+)+|[A-Z])$")
 V4_KEYS_JS = r"""
 () => {
   const used = new Set();
@@ -141,13 +146,13 @@ def main_v4():
                 page.close()
             for k, v in snaps["id"].items():
                 compared += 1
-                if snaps["en"].get(k) == v and v not in V4_ALLOW and not TRIVIAL.match(v):
+                if snaps["en"].get(k) == v and v not in V4_ALLOW and not TRIVIAL.match(v) and not V4_NAMES.match(v):
                     problems.append(f"{page_name}: same in ID and EN: {k.split(' ')[0]:<11} {v[:70]!r}   ({k.split(' ', 1)[1][-60:]})")
         b.close()
     httpd.shutdown()
 
     js = "\n".join(f.read_text() for f in sorted((V4_ROOT / "assets" / "js").glob("*.js")) if f.name not in ("i18n.js", "icons.js"))
-    html = "\n".join((V4_ROOT / pg).read_text() for pg in V4_PAGES)
+    html = "\n".join((V4_ROOT / f).read_text() for f in dict.fromkeys(pg.split("?")[0].split("#")[0] for pg in V4_PAGES))
     literal = set(re.findall(r"""['"]([a-z][A-Za-z0-9]*(?:\.[A-Za-z0-9-]+)+)['"]""", js))
     # key templates such as `svc.${id}.name` (only key characters + interpolations; nesting-safe)
     patterns = []
@@ -159,7 +164,7 @@ def main_v4():
     for k in sorted(used_html - keys):
         problems.append(f"key used in HTML but missing in dictionary: {k}")
     for k in sorted(k for k in literal if "." in k and k.split(".")[0] in {x.split(".")[0] for x in keys} and k not in keys
-                    and not k.endswith((".html", ".js", ".css", ".svg", ".png"))):
+                    and not k.endswith((".html", ".js", ".css", ".svg", ".png")) and k not in ("co.id", "my.id", "biz.id", "web.id")):
         problems.append(f"key used in JS but missing in dictionary: {k}")
     dead = sorted(k for k in keys if k not in used_html and k not in literal and not any(p.match(k) for p in patterns))
     problems += [f"dead key (defined, never used): {k}" for k in dead]
