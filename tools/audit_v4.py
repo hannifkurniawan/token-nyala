@@ -4,7 +4,8 @@
 Usage: python3 tools/audit_v4.py
 
 Accessibility — axe-core 4.14.0 (WCAG 2.1 AA + best practice) on every page in PAGES, ID + EN, 375 + 1440,
-  plus every overlay: mobile menu, model catalogue, team consultation (errors + success), Nala chat.
+  plus every overlay: mobile menu, Nala chat (all pages); model catalogue, team consultation (landing);
+  add-service dialog, open mobile summary (harga).
 Definition of Done extras:
   - DoD 1  every page opens from file:// without console errors (CSS applied, scripts ran)
   - DoD 7  prefers-reduced-motion: no animation/transition longer than 0.01ms, scroll-behavior auto, GSAP/Lenis off
@@ -14,7 +15,8 @@ Definition of Done extras:
   - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact)
   - DoD 4  numbers: TN.data recomputes the values transcribed below from docs/v4/services-and-pricing.md
            (§3 units, §6 recipes, §7 example, §8 balance-until, §2 refund/prorata examples), and the landing
-           renders them for every recipe in ID and EN
+           renders them for every recipe in ID and EN; harga: calculator summary + CTA per recipe and every
+           price/model rate in the detail tables
 Exit code 1 on any problem.
 """
 import functools
@@ -31,7 +33,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent / "v4"
 AXE = "https://cdn.jsdelivr.net/npm/axe-core@4.14.0/axe.min.js"
 TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"]
 FACES = ["Manrope 500", "Manrope 700", "Manrope 800", "IBM Plex Mono 500"]
-PAGES = ["index.html"]  # fase 3: harga.html, fase 4+: app.html routes
+PAGES = ["index.html", "harga.html"]  # fase 4+: app.html routes
+RENDERED_CHECK = {"index.html": "[data-recipe-card] h3", "harga.html": "[data-calc-rows] li"}
 
 # ---- transcribed from docs/v4/services-and-pricing.md (the doc is the reference, data.js must agree) ----
 DOC = {
@@ -119,6 +122,33 @@ RENDERED_JS = """
 """
 
 
+HARGA_JS = """
+() => {
+  const D = TN.data, I = TN.i18n, out = [];
+  const sel = document.getElementById('calc-recipe');
+  for (const r of D.RECIPES.filter(x => !x.aiOnly)) {
+    sel.value = r.id; sel.dispatchEvent(new Event('change'));
+    const tot = D.recipeTotals(r.items);
+    const sum = document.getElementById('calc-summary').textContent;
+    const want = [I.rpK(tot.perMonth), I.rp(tot.fixed), I.rp(tot.usage), I.rp(tot.perMonth), I.rp(tot.suggest.amount)].concat(tot.yearly ? [I.rp(tot.firstMonth), I.rp(tot.yearly)] : []);
+    for (const w of want) if (!sum.includes(w)) out.push(`${I.lang} summary ${r.id} misses ${w}`);
+    const cta = document.querySelector('[data-calc-cta]').getAttribute('href');
+    if (cta !== `app.html#/buat?resep=${r.id}&s=${D.serialize(r.items)}`) out.push(`cta ${r.id} ${cta}`);
+  }
+  const page = document.querySelector('main').textContent;
+  const prices = [
+    ...Object.values(D.SIZES).map(x => x.price), ...Object.values(D.SERVER).map(x => x.price), ...Object.values(D.DATABASE).map(x => x.price),
+    ...Object.values(D.STORAGE).map(x => x.price), ...Object.values(D.EMAIL).map(x => x.price), ...Object.values(D.DOMAINS).flatMap(x => [x.first, x.renew]),
+    ...D.TOPUPS.flatMap(p => [p.amount, p.bonus, p.amount + p.bonus]), ...Object.values(D.UNITS).map(u => u.cost),
+    ...Object.keys(D.TEMPLATES).map(D.templateCost), D.PAYMENTS.withdraw, D.TOPUP_MIN,
+  ];
+  for (const v of prices) if (!page.includes(I.rp(v))) out.push(`${I.lang} page misses ${I.rp(v)}`);
+  for (const m of D.MODELS) if (!page.includes(m.name) || !page.includes(I.num(m.in))) out.push(`${I.lang} model ${m.name}`);
+  return out;
+}
+"""
+
+
 def serve():
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *a):
@@ -188,13 +218,29 @@ def main():
                     tag = f"{page_name} {lang} {w}"
                     problems += axe(page, tag)
                     problems += fonts(page, tag)
-                    if page_name == "index.html":
+                    if w == 375:
+                        page.locator("#menu-button").click()
+                        page.wait_for_timeout(450)  # header colour transition (300ms) settles first
+                        problems += axe(page, f"mobile menu {tag}")
+                        page.keyboard.press("Escape")
+                    # Nala on every page (modal on mobile, panel on desktop)
+                    page.evaluate("() => TN.nala.open()"); page.wait_for_timeout(250)
+                    page.locator("#chat [data-chat-chips] button").first.click(); page.wait_for_timeout(700)
+                    problems += axe(page, f"chat {tag}", "#chat")
+                    problems += fonts(page, f"chat {tag}")
+                    page.evaluate("() => TN.nala.close()")
+                    if page_name == "harga.html":
+                        page.locator("[data-calc-add]").click(); page.wait_for_timeout(350)
+                        problems += axe(page, f"add service {tag}", "#add-svc")
+                        page.keyboard.press("Escape")
                         if w == 375:
-                            page.locator("#menu-button").click()
-                            page.wait_for_timeout(450)  # header colour transition (300ms) settles first
-                            problems += axe(page, f"mobile menu {tag}")
-                            page.keyboard.press("Escape")
-                        # dialogs: catalogue, consultation (errors + success), Nala (modal on mobile, panel on desktop)
+                            page.locator("[data-calc-rows]").scroll_into_view_if_needed()
+                            page.locator("[data-calc-toggle]").click()
+                            problems += axe(page, f"summary open {tag}", "#calc-summary")
+                        if w == 1440:
+                            problems += [f"[numbers] harga: {x}" for x in page.evaluate(HARGA_JS)]
+                    if page_name == "index.html":
+                        # dialogs: catalogue, consultation (errors + success)
                         page.evaluate("() => TN.landing.openCatalog()"); page.wait_for_timeout(350)
                         problems += axe(page, f"catalog {tag}", "#catalog")
                         page.keyboard.press("Escape")
@@ -206,11 +252,6 @@ def main():
                         page.locator("#consult input[name=consent]").check(); page.locator("#consult [type=submit]").click()
                         problems += axe(page, f"consult success {tag}", "#consult")
                         page.keyboard.press("Escape")
-                        page.evaluate("() => TN.nala.open()"); page.wait_for_timeout(250)
-                        page.locator("#chat [data-chat-chips] button").first.click(); page.wait_for_timeout(700)
-                        problems += axe(page, f"chat {tag}", "#chat")
-                        problems += fonts(page, f"chat {tag}")
-                        page.evaluate("() => TN.nala.close()")
                         if w == 1440:
                             if lang == "id":
                                 problems += [f"[numbers] {x}" for x in page.evaluate(NUMBERS_JS, DOC)]
@@ -257,7 +298,7 @@ def main():
             page.locator("#menu-button").click()
             page.locator('#mobile-menu [data-lang="en"]').click()
             lang = page.evaluate("() => document.documentElement.lang")
-            rendered = page.evaluate("() => !!document.querySelector('[data-recipe-card] h3')")
+            rendered = page.evaluate("(sel) => !!document.querySelector(sel)", RENDERED_CHECK[page_name])
             if errors or lang != "en" or not rendered:
                 problems.append(f"[dod] {page_name} storage blocked: errors={errors} lang={lang} rendered={rendered}")
             ctx.close()
@@ -267,12 +308,16 @@ def main():
             page = ctx.new_page()
             page.goto(base + page_name, wait_until="networkidle")
             page.locator('header [data-lang="en"]').click()
-            page.locator('[data-recipe-chips] [data-recipe="web-klien"]').click()
-            page.evaluate("() => TN.landing.openConsult()"); page.wait_for_timeout(300)
-            page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio"); page.fill("#cs-contact", "0812-3456-7890")
-            page.locator("#consult label:has(input[name=teamSize])").first.click()
-            page.locator("#consult input[name=consent]").check(); page.locator("#consult [type=submit]").click()
-            page.keyboard.press("Escape")
+            if page_name == "index.html":
+                page.locator('[data-recipe-chips] [data-recipe="web-klien"]').click()
+                page.evaluate("() => TN.landing.openConsult()"); page.wait_for_timeout(300)
+                page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio"); page.fill("#cs-contact", "0812-3456-7890")
+                page.locator("#consult label:has(input[name=teamSize])").first.click()
+                page.locator("#consult input[name=consent]").check(); page.locator("#consult [type=submit]").click()
+                page.keyboard.press("Escape")
+            if page_name == "harga.html":  # the calculator keeps its state in the URL, never in storage
+                page.select_option("#calc-recipe", "web-klien")
+                page.locator('[data-key="hosting"] [data-size="ramai"]').click()
             page.goto(base + page_name + "?chat=offline", wait_until="networkidle")
             page.evaluate("() => TN.nala.open()")
             page.locator("#chat [data-chat-chips] button").last.click(); page.wait_for_timeout(700)

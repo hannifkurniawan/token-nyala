@@ -108,5 +108,54 @@ TN.ui = (() => {
     b._t = setTimeout(() => { label.textContent = t('copy.label'); }, 1600);
   });
 
-  return { icon, esc, setMenu, setupModal, parseContact, focusIsFree };
+  /* ---------- Recipe items → plain-language rows ---------- */
+  function itemView(it) {
+    const D = TN.data, { rp, num } = TN.i18n;
+    const c = D.itemCost(it);
+    switch (it.svc) {
+      case 'hosting':
+        return { icon: D.ICONS.hosting, name: t('svc.hosting.name'), detail: t('item.sized', { size: t(`size.${it.size}`), rp: rp(c.amount) }) };
+      case 'apps':
+        return { icon: D.ICONS.apps, name: t(`tpl.${it.tpl}.name`), detail: t('item.sized', { size: t(`size.${it.size}`), rp: rp(c.amount) }) };
+      case 'database':
+        return { icon: D.ICONS.database, name: t('svc.database.name'),
+          detail: t('item.capacity', { size: t(`size.${it.size}`), cap: D.DATABASE[it.size].capacity, rp: rp(c.amount) }) };
+      case 'email': {
+        const e = D.EMAIL[it.size];
+        const quota = t(`email.quota.${e.per}`, { n: num(e.quota) });
+        return { icon: D.ICONS.email, name: t('svc.email.name'),
+          detail: e.price ? t('item.sized', { size: quota, rp: rp(e.price) }) : t('item.free', { quota }) };
+      }
+      case 'domain':
+        return { icon: D.ICONS.domain, name: t('item.domainName', { ext: it.ext }),
+          detail: c.amount === c.renew ? t('item.domainYear', { rp: rp(c.amount) })
+            : t('item.domainFirst', { rp: rp(c.amount), renew: rp(c.renew) }) };
+      case 'ai':
+        return { icon: D.ICONS.ai, name: t(`item.ai.${it.unit}`), estimate: true,
+          detail: t('item.usage', { qty: t(`unit.${it.unit}`, { n: num(it.qty) }), rp: rp(c.amount) }) };
+      case 'payments':
+        return { icon: D.ICONS.payments, name: t('svc.payments.name'), detail: t('svc.from.percent', { rp: rp(D.PAYMENTS.monthly), pct: num(D.PAYMENTS.feePct) }) };
+      case 'server':
+        return { icon: D.ICONS.server, name: t('svc.server.name'), detail: t('item.sized', { size: t(`size.${it.size}`), rp: rp(c.amount) }) };
+      case 'storage':
+        return { icon: D.ICONS.storage, name: t('svc.storage.name'), detail: t('item.sized', { size: D.STORAGE[it.size].capacity, rp: rp(c.amount) }) };
+      default: return { icon: 'check', name: it.svc, detail: '' };
+    }
+  }
+
+  /** "From" price line(s) for a service card: [main, sub?] */
+  function fromLine(id) {
+    const D = TN.data, { rp, num } = TN.i18n;
+    const f = D.FROM[id];
+    switch (f.kind) {
+      case 'usage': return [t('svc.from.usage'), id === 'ai' ? t('svc.from.aiRate', { n: D.sessionsPer(10000), rp: rp(10000) }) : t('svc.from.sameBalance')];
+      case 'per30': return [t('svc.from.per30', { rp: rp(f.price) })];
+      case 'firstYear': return [t('svc.from.firstYear', { rp: rp(f.price) })];
+      case 'free': return [t('svc.from.free', { n: num(f.quota) })];
+      case 'percent': return [t('svc.from.percent', { rp: rp(f.price), pct: num(f.pct) })];
+      default: return [''];
+    }
+  }
+
+  return { icon, esc, setMenu, setupModal, parseContact, focusIsFree, itemView, fromLine };
 })();

@@ -118,6 +118,7 @@ TN.data = (() => {
       case 'email': return { kind: 'fixed', amount: EMAIL[item.size].price };
       case 'domain': return { kind: 'yearly', amount: DOMAINS[item.ext].first, renew: DOMAINS[item.ext].renew };
       case 'ai': return { kind: 'usage', amount: usageCost(item.unit, item.qty) };
+      case 'payments': return { kind: 'fixed', amount: PAYMENTS.monthly };
       default: throw new Error('unknown service ' + item.svc);
     }
   }
@@ -190,7 +191,7 @@ TN.data = (() => {
   /** Totals for a list of items (recipe, calculator, wizard). */
   function recipeTotals(items) {
     const t = { fixed: 0, usage: 0, yearly: 0 };
-    for (const it of items) { const c = itemCost(it); t[c.kind] += c.amount; }
+    for (const it of items) { if (it.on === false) continue; const c = itemCost(it); t[c.kind] += c.amount; }
     const perMonth = t.fixed + t.usage;
     const firstMonth = perMonth + t.yearly;
     const suggest = suggestTopup(firstMonth);
@@ -269,12 +270,83 @@ TN.data = (() => {
 
   /** URL schema `s` (§6): hosting:coba,domain:my.id,ai:10 · apps use the template id (wa-bot:rutin). */
   function serialize(items) {
-    return items.map((it) => {
+    return items.filter((it) => it.on !== false).map((it) => {
       if (it.svc === 'ai') return `${it.unit === 'sesi' ? 'ai' : it.unit}:${it.qty}`;
+      if (it.svc === 'payments') return 'payments:on';
       if (it.svc === 'domain') return `domain:${it.ext}`;
       if (it.svc === 'apps') return `${it.tpl}:${it.size}`;
       return `${it.svc}:${it.size}`;
     }).join(',');
+  }
+
+  /* ---------- Calculator (harga) & wizard: options, URL parsing, minimum sizes ---------- */
+  const OPTIONS = {
+    hosting: SIZE_ORDER, apps: SIZE_ORDER, server: Object.keys(SERVER), database: Object.keys(DATABASE),
+    storage: Object.keys(STORAGE), email: ['gratis', '2500', '10000'], domain: Object.keys(DOMAINS), // explicit: JS sorts number-like keys first
+  };
+  const S_UNITS = { ai: 'sesi', pesan: 'pesan', tugas: 'tugas' }; // `s` key → AI unit
+  const AI_MAX = 100000;
+  /** One row per key: services once, templates once each, AI once per unit. */
+  const itemKey = (it) => (it.svc === 'apps' ? `apps:${it.tpl}` : it.svc === 'ai' ? `ai:${it.unit}` : it.svc);
+  /** Defaults when a service is added from "Tambah layanan". */
+  const NEW_ITEM = {
+    hosting: { svc: 'hosting', size: 'coba' }, server: { svc: 'server', size: 'kecil' }, database: { svc: 'database', size: 'kecil' },
+    storage: { svc: 'storage', size: '10gb' }, domain: { svc: 'domain', ext: 'my.id' }, email: { svc: 'email', size: 'gratis' },
+    payments: { svc: 'payments' },
+    'ai:sesi': { svc: 'ai', unit: 'sesi', qty: 10 }, 'ai:pesan': { svc: 'ai', unit: 'pesan', qty: 1000 }, 'ai:tugas': { svc: 'ai', unit: 'tugas', qty: 1000 },
+    ...Object.fromEntries(Object.keys(TEMPLATES).map((id) => [`apps:${id}`, { svc: 'apps', tpl: id, size: TEMPLATES[id].minNoAi || TEMPLATES[id].minAi }])),
+  };
+
+  /** Parse the URL `s` value (§6). Invalid tokens are ignored. Returns { items, keys } (keys = every key mentioned). */
+  function parseS(str) {
+    const items = new Map(), keys = new Set();
+    for (const token of String(str || '').split(',')) {
+      const [k, v] = token.split(':').map((x) => (x || '').trim());
+      if (!k) continue;
+      let it = null, key = k;
+      if (['hosting', 'server', 'database', 'storage', 'email'].includes(k)) { if (OPTIONS[k].includes(v)) it = { svc: k, size: v }; }
+      else if (k === 'domain') { if (DOMAINS[v]) it = { svc: 'domain', ext: v }; }
+      else if (k in S_UNITS) { key = `ai:${S_UNITS[k]}`; if (/^\d+$/.test(v) && +v <= AI_MAX) it = { svc: 'ai', unit: S_UNITS[k], qty: +v }; }
+      else if (k in TEMPLATES) { key = `apps:${k}`; if (SIZE_ORDER.includes(v)) it = { svc: 'apps', tpl: k, size: v }; }
+      else if (k === 'payments') { if (v === 'on') it = { svc: 'payments' }; }
+      else continue;
+      keys.add(key);
+      if (it) items.set(key, it);
+    }
+    return { items, keys };
+  }
+
+  /** Calculator/wizard state from ?resep= & s= : recipe defaults, overridden by `s` (missing → off, invalid → default). */
+  function itemsFromUrl(recipeId, s) {
+    const r = recipe(recipeId);
+    const base = (r && !r.aiOnly ? r.items : []).map((it) => ({ ...it, on: true }));
+    if (s == null || s === '') return applyMinimums(base).items;
+    const { items: parsed, keys } = parseS(s);
+    const out = base.map((it) => {
+      const k = itemKey(it);
+      if (parsed.has(k)) return { ...parsed.get(k), on: true };
+      return { ...it, on: keys.has(k) }; // mentioned with an invalid value → keep the default, else switched off
+    });
+    for (const [k, it] of parsed) if (!out.some((o) => itemKey(o) === k)) out.push({ ...it, on: true });
+    return applyMinimums(out).items;
+  }
+
+  /** Minimum size of a template: with AI (chatbot message / automation task switched on) or without (§5.4). */
+  const usesAi = (items) => items.some((i) => i.on !== false && i.svc === 'ai' && i.unit !== 'sesi' && i.qty > 0);
+  function templateMinSize(tpl, aiOn) {
+    const t = TEMPLATES[tpl];
+    return aiOn ? (t.minAi || t.minNoAi) : (t.minNoAi || t.minAi);
+  }
+  /** Raise templates below their minimum (e.g. switching AI on for n8n Coba-coba → Rutin). Returns { items, bumped: [tpl] }. */
+  function applyMinimums(items) {
+    const ai = usesAi(items), bumped = [];
+    const out = items.map((it) => {
+      if (it.svc !== 'apps') return it;
+      const min = templateMinSize(it.tpl, ai);
+      if (SIZE_ORDER.indexOf(it.size) < SIZE_ORDER.indexOf(min)) { bumped.push(it.tpl); return { ...it, size: min }; }
+      return it;
+    });
+    return { items: out, bumped };
   }
 
   return {
@@ -283,5 +355,6 @@ TN.data = (() => {
     PROVIDER_ICON, API, RULES, GUIDES,
     suggestTopup, usageCost, sessionCost, sessionsPer, itemCost, recipe, recipeTotals, coverMonths, roundK,
     refund, prorata, balanceUntil, heroScenario, exampleTotals, templateCost, templateMin, nalaItems, askCode, serialize,
+    OPTIONS, NEW_ITEM, AI_MAX, itemKey, parseS, itemsFromUrl, usesAi, templateMinSize, applyMinimums,
   };
 })();

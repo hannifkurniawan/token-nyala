@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Berikutnya: Fase 3** (`harga.html`: kalkulator + detail harga). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`: kalkulator resep + detail harga) selesai. **Berikutnya: Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -105,6 +105,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Urutan lembar: contoh (white) → aman (paper + kartu warna) → belajar (white); dokumen menulis belajar paper | Dua lembar putih berurutan tidak terlihat sebagai lembar terpisah |
 | 20 Nov 2026 | Kelas komponen `.field` (input/textarea) ditambahkan ke daftar `@layer components` | Dipakai berulang di form konsultasi, chat, dan nanti console |
 | 20 Nov 2026 | Mobile: kartu model AI di landing 3 (desktop 6) | 6 kartu = ±2.200px di 375px; katalog lengkap tetap di dialog |
+| 20 Nov 2026 | Kalkulator: state hanya di URL (`?resep=&s=`, `history.replaceState`), tidak di localStorage | Bisa dibagikan, dari Nala/landing langsung terisi, DoD 11 tetap (storage hanya `tn-lang`) |
+| 20 Nov 2026 | Kalkulator: layanan dimatikan tetap tampil (abu) agar bisa dinyalakan lagi; “Tambah layanan” lewat dialog; pilihan “Mulai dari kosong” | Pemula tidak kehilangan pilihan; satu pola dengan wizard nanti |
+| 20 Nov 2026 | Template berukuran minimum dengan AI: n8n + pesan/tugas AI → naik otomatis ke Rutin dengan pengumuman | Aturan §5.4 diterapkan di `applyMinimums()` (dipakai kalkulator & nanti wizard) |
+| 20 Nov 2026 | Harga tanpa CTA akhir biru; diakhiri FAQ harga + footer | Ringkasan lengket sudah punya CTA “Nyalakan” |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -147,6 +151,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Animasi masuk membuat axe dan screenshot menipu.** Elemen yang sedang fade-in terbaca kontrasnya rendah, dan screenshot full-page menampilkan section kosong. QA layout/axe memakai reduced motion; motion diuji terpisah (scroll seluruh halaman lalu pastikan tidak ada konten tersembunyi).
 - **Teks di dalam induk `font-bold` ikut 700**, termasuk `font-mono` → face Mono 700 yang tidak dimuat. Beri `font-medium` eksplisit pada mono di dalam teks tebal.
 - **Elemen yang dirotasi (ikon +45°, kartu −1°) memperbesar kotak** dan memicu cek teks meluap. Rotasi elemen dalam atau beri margin.
+- **Kunci objek berbentuk angka diurutkan duluan di JavaScript.** `Object.keys({gratis, 2500, 10000})` → `2500, 10000, gratis` — pilihan email tampil terbalik. Pakai array urutan eksplisit.
+- **`<option>` tidak mewarisi weight body** → Manrope 400 (tidak dimuat). Set `font-weight` di `.field option`.
+- **Playwright tidak mau mengklik elemen `aria-disabled`** — benar secara aksesibilitas; uji “tidak bisa dipilih” dengan `force=True`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -211,3 +218,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Landing selesai: template (5, ukuran minimum + biaya bawaan dari `data.js`), AI (6 model v3 + panduan pasang + konfigurasi salin + katalog 12 model dengan cari/filter), contoh proyek (Rp40.790–54.020, rincian sesi, link wizard dengan `s`), aman untuk pemula (4 kartu bertumpuk sticky di `lg:`, angka refund/prorata dari fungsi), belajar (3 panduan), tim + dialog konsultasi (port v3), FAQ 13, CTA akhir, chat Nala (port v3 + alur resep Q1–Q3 sesuai aturan Nala), motion GSAP/ScrollTrigger/Lenis (judul per kata, fade kartu, saklar menyala, kartu bertumpuk mengecil; mati saat reduced motion).
 - `data.js` + model AI, template, panduan, `exampleTotals`, `nalaItems`, `askCode`, `serialize`. Kamus 406 kunci.
 - QA: alur katalog, konsultasi, Nala (link resep `hosting:ramai,domain:my.id,ai:20`), FAQ/salin, uji motion. Audit: axe untuk semua dialog, angka template/contoh/kartu aman/Nala dibanding dokumen, storage setelah konsultasi + kontak Nala. Semua lolos.
+
+### Sesi 4 (lanjutan) — Fase 3 v4
+- `harga.html` (header/menu/footer/Nala diambil dari `index.html` dengan link ke `index.html#…`): kepala, chip nav lengket (scrollspy), kalkulator, mulai dari (10 kartu), AI (12 model + tarif + 3 satuan), Jalankan/Simpan/Hubungkan (tabel per layanan + detail teknis), saldo & tagihan (top-up + 10 aturan), FAQ harga.
+- `data.js`: `OPTIONS`, `NEW_ITEM`, `parseS`, `itemsFromUrl` (tanpa `s` → bawaan; `s` tidak menyebut → mati; nilai salah → bawaan), `applyMinimums`, `templateMinSize`, `usesAi`; `recipeTotals`/`serialize` melewati layanan mati; payments di `itemCost`. `itemView`/`fromLine` dipindah ke `ui.js` (dipakai bersama).
+- QA harga: alur kalkulator lengkap + nav + EN; audit: axe dialog tambah layanan & ringkasan terbuka, angka ringkasan/CTA per resep, semua harga & tarif model di tabel. Semua lolos.

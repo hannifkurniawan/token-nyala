@@ -213,9 +213,17 @@
     if (intent === 'recipe') return startRecipe();
     if (intent === 'team') return goTeam();
     if (intent === 'howto') {
-      return reply({ from: 'nala', key: 'ans.howto', actions: [{ key: 'ans.guideBtn', run: leaveThen(() => document.getElementById('pakai')?.scrollIntoView({ block: 'start' })) }] });
+      const guide = document.getElementById('pakai')
+        ? { key: 'ans.guideBtn', run: leaveThen(() => document.getElementById('pakai').scrollIntoView({ block: 'start' })) }
+        : { key: 'ans.guideBtn', href: 'index.html#pakai' };
+      return reply({ from: 'nala', key: 'ans.howto', actions: [guide] });
     }
-    if (intent === 'models') return reply({ from: 'nala', key: 'ans.models', actions: [{ key: 'ans.modelsBtn', run: leaveThen(() => TN.landing?.openCatalog(launcher)) }] });
+    if (intent === 'models') {
+      const models = TN.landing?.openCatalog
+        ? { key: 'ans.modelsBtn', run: leaveThen(() => TN.landing.openCatalog(launcher)) }
+        : { key: 'ans.modelsBtn', run: leaveThen(() => document.getElementById('ai')?.scrollIntoView({ block: 'start' })) };
+      return reply({ from: 'nala', key: 'ans.models', actions: [models] });
+    }
     if (intent === 'pay') return reply({ from: 'nala', key: 'ans.pay' });
     reply({ from: 'nala', key: 'ans.fallback' });
   }

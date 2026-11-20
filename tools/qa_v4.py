@@ -15,7 +15,9 @@ With --interactive (per page, see the *_flow functions):
     numbers match TN.data), language switch EN + persistence, EN at 320px has no overflow,
     model catalogue (search, empty, clear, Escape), team consultation (5 errors, success, reset),
     Nala recipe flow (links carry the adjusted recipe) + offline contact, FAQ/templates/guides/copy
-  - motion (375 + 1440, motion ON): scroll the whole page, then nothing in <main> may stay hidden
+  - harga: calculator (defaults, switch, size, stepper, disabled size + arrows, add service, n8n minimum with AI,
+    links from Nala, URL kept in sync, mobile breakdown), section nav, EN
+  - motion (375 + 1440, motion ON, every page): scroll the whole page, then nothing in <main> may stay hidden
 Layout checks run with prefers-reduced-motion so screenshots show every section.
 Full-page screenshots go to --out (default: a temp dir). Exit code 1 if any check fails.
 Phases add pages/routes here as they are built (fase 3: harga.html, fase 4+: app.html routes).
@@ -41,6 +43,7 @@ VIEWPORTS = [
 ]
 PAGES = {
     "index.html": {"fold": ["#hero-title", "#hero-cta"]},
+    "harga.html": {"fold": ["#price-title"]},
 }
 ABOVE_FOLD_VIEWPORTS = {"320", "375"}
 
@@ -384,13 +387,13 @@ MOTION_JS = r"""
 """
 
 
-def motion_flow(browser, base, out, name, w, h):
+def motion_flow(browser, base, out, name, w, h, page_name="index.html"):
     """With motion on: scroll the whole page slowly; afterwards nothing may stay hidden."""
     ctx = browser.new_context(viewport={"width": w, "height": h})
     page = ctx.new_page()
     errors = []
     page.on("pageerror", lambda e: errors.append(str(e)))
-    page.goto(base + "index.html", wait_until="networkidle")
+    page.goto(base + page_name, wait_until="networkidle")
     height = page.evaluate("() => document.documentElement.scrollHeight")
     y = 0
     while y < height:  # step through the page like a reader (via Lenis when it runs)
@@ -404,11 +407,128 @@ def motion_flow(browser, base, out, name, w, h):
         problems.append("MOTION gsap did not start (no .motion-ok)")
     if r["hidden"]:
         problems.append(f"MOTION content still hidden after scrolling: {r['hidden']}")
-    if r["switches"] != [True, True]:
+    if page_name == "index.html" and r["switches"] != [True, True]:
         problems.append(f"MOTION switches did not turn on {r['switches']}")
     if errors:
         problems.append(f"MOTION errors {errors}")
     ctx.close()
+    return problems
+
+
+CALC_JS = r"""
+() => ({
+  total: document.querySelector('[data-calc-total]').textContent.trim(),
+  cta: document.querySelector('[data-calc-cta]').getAttribute('href'),
+  search: location.search,
+  rows: [...document.querySelectorAll('[data-calc-rows] > li')].map(li => li.dataset.key + (li.querySelector('[role=switch]').getAttribute('aria-checked') === 'true' ? '' : '(off)')),
+  live: document.querySelector('[data-calc-live]').textContent,
+})
+"""
+
+
+def harga_calc_flow(page, out, name, base):
+    """Calculator: defaults, switch off, size, stepper, disabled sizes, add service, n8n bump, URL in/out."""
+    problems = []
+    st = lambda: page.evaluate(CALC_JS)
+    rk = lambda n: page.evaluate("(n) => '≈ ' + TN.i18n.rpK(n)", n)
+    page.goto(base + "harga.html", wait_until="networkidle")
+    s0 = st()
+    want_cta = "app.html#/buat?resep=portofolio&s=hosting:coba,domain:my.id,ai:10"
+    if s0["total"] != rk(33900) or s0["cta"] != want_cta or s0["search"] != "?resep=portofolio&s=hosting:coba,domain:my.id,ai:10":
+        problems.append(f"CALC default {s0}")
+    row = lambda key: page.locator(f'[data-calc-rows] > li[data-key="{key}"]')
+    row("ai:sesi").locator("[role=switch]").click()
+    s1 = st()
+    if s1["total"] != rk(15000) or "ai:" in s1["cta"] or "ai:sesi(off)" not in s1["rows"]:
+        problems.append(f"CALC switch AI off {s1}")
+    if page.evaluate("() => document.activeElement?.dataset?.fid") != "r-ai-sesi-sw":
+        problems.append("CALC focus lost after switching")
+    row("ai:sesi").locator("[role=switch]").click()
+    row("hosting").locator('[role=radio][data-size="rutin"]').click()
+    row("ai:sesi").locator('[data-step="1"]').click()
+    page.wait_for_timeout(100)  # live region is filled on the next frame
+    s2 = st()   # rutin 35.000 + 15 sessions 28.350 = 63.350
+    if s2["total"] != rk(63350) or "hosting:rutin" not in s2["cta"] or "ai:15" not in s2["cta"] or "Rp63" not in s2["live"]:
+        problems.append(f"CALC size/stepper {s2}")
+    page.select_option("#calc-recipe", "chatbot-wa")
+    dis = page.evaluate("() => [...document.querySelectorAll('[data-key=\"apps:wa-bot\"] [role=radio]')].map(b => b.dataset.size + ':' + (b.getAttribute('aria-disabled') || ''))")
+    row("apps:wa-bot").locator('[role=radio][data-size="coba"]').click(force=True)  # disabled: must not change anything
+    s3 = st()
+    if dis != ["coba:true", "rutin:", "ramai:"] or s3["total"] != rk(47000):
+        problems.append(f"CALC disabled size {dis} total={s3['total']}")
+    # keyboard: arrows skip the disabled size
+    row("apps:wa-bot").locator('[role=radio][aria-checked=true]').focus()
+    page.keyboard.press("ArrowRight")
+    page.keyboard.press("ArrowRight")
+    if "wa-bot:rutin" not in st()["cta"]:
+        problems.append(f"CALC arrows did not wrap past the disabled size: {st()['cta']}")
+    # add a service
+    page.locator("[data-calc-add]").click()
+    page.wait_for_timeout(300)
+    page.screenshot(path=str(out / f"harga-{name}-add.png"))
+    page.locator('#add-svc [data-add="storage"]').click()
+    page.wait_for_timeout(200)
+    s4 = st()
+    if "storage" not in s4["rows"] or "storage:10gb" not in s4["cta"] or page.evaluate("() => document.getElementById('add-svc').open"):
+        problems.append(f"CALC add storage {s4['rows']} {s4['cta']}")
+    if page.evaluate("() => document.activeElement?.closest('[data-key]')?.dataset.key") != "storage":
+        problems.append("CALC focus not on the added row")
+    # n8n minimum: AI tasks switch it from Coba-coba to Rutin
+    page.goto(base + "harga.html?s=n8n:coba,tugas:1000", wait_until="networkidle")
+    s5 = st()
+    if "n8n:rutin" not in s5["cta"] or s5["total"] != rk(63000):
+        problems.append(f"CALC n8n min with AI {s5}")
+    row("ai:tugas").locator("[role=switch]").click()
+    row("apps:n8n").locator('[role=radio][data-size="coba"]').click()
+    if "n8n:coba" not in st()["cta"]:
+        problems.append("CALC n8n Coba-coba not selectable without AI")
+    row("ai:tugas").locator("[role=switch]").click()
+    page.wait_for_timeout(100)
+    s6 = st()
+    if "n8n:rutin" not in s6["cta"] or "naik" not in s6["live"] and "moved up" not in s6["live"]:
+        problems.append(f"CALC n8n bump on AI on {s6}")
+    # link from Nala/landing
+    page.goto(base + "harga.html?resep=portofolio&s=hosting:ramai,domain:my.id,ai:20#kalkulator", wait_until="networkidle")
+    if st()["total"] != rk(112800):
+        problems.append(f"CALC from Nala link {st()['total']}")
+    # mobile breakdown
+    if page.viewport_size["width"] < 1024:
+        page.locator("[data-calc-rows]").scroll_into_view_if_needed()
+        t = page.locator("[data-calc-toggle]")
+        t.click()
+        d = page.evaluate("() => ({ exp: document.querySelector('[data-calc-toggle]').getAttribute('aria-expanded'), shown: getComputedStyle(document.querySelector('[data-calc-details]')).display !== 'none', bar: document.querySelector('#calc-summary').getBoundingClientRect().bottom <= innerHeight + 1 })")
+        page.screenshot(path=str(out / f"harga-{name}-summary-open.png"))
+        if d != {"exp": "true", "shown": True, "bar": True}:
+            problems.append(f"CALC mobile breakdown {d}")
+        r = page.evaluate(CHECK_JS)
+        if r["small"] or r["spills"] or r["overflow"] > 0:
+            problems.append(f"CALC open small={r['small']} spills={r['spills']} overflow={r['overflow']}")
+    # section nav
+    page.locator('[data-pnav] a[href="#saldo"]').click()
+    page.wait_for_timeout(1200)
+    cur = page.evaluate("() => document.querySelector('[data-pnav] a[aria-current=true]')?.getAttribute('href')")
+    top = page.evaluate("() => document.getElementById('saldo').getBoundingClientRect().top")
+    if cur != "#saldo" or top < 0 or top > 220:
+        problems.append(f"PNAV current={cur} sectionTop={top}")
+    return problems
+
+
+def harga_lang_flow(page, out, name, base):
+    page.goto(base + "harga.html", wait_until="networkidle")
+    if name.startswith("1440"):
+        page.locator('header [data-lang="en"]').click()
+    else:
+        page.locator("#menu-button").click()
+        page.locator('#mobile-menu [data-lang="en"]').click()
+        page.keyboard.press("Escape")
+    problems = []
+    cta = page.locator("[data-calc-cta]").text_content().strip()
+    r = page.evaluate(CHECK_JS)
+    e = page.evaluate(EXTRA_JS)
+    if cta != "Switch on" or r["overflow"] > 0 or r["spills"] or r["escapes"] or r["small"] or e["keyLike"]:
+        problems.append(f"HARGA EN cta={cta!r} overflow={r['overflow']} spills={r['spills']} escapes={r['escapes']} small={r['small']} keys={e['keyLike']}")
+    page.screenshot(path=str(out / f"harga-{name}-en.png"), full_page=True)
+    page.evaluate("() => localStorage.setItem('tn-lang', 'id')")
     return problems
 
 def serve(directory):
@@ -487,18 +607,25 @@ def main():
                     if name in ("320", "1440"):
                         status += landing_lang_flow(page, out, name)
 
+                if args.interactive and page_name == "harga.html":
+                    if name in ("320", "375", "768", "1440"):
+                        status += harga_calc_flow(page, out, name, base)
+                    if name in ("320", "1440"):
+                        status += harga_lang_flow(page, out, name, base)
+
                 if errors:
                     status.append(f"CONSOLE: {errors}")
                 print(f"[{'FAIL' if status else 'ok  '}] {page_name:<11} {name:>18}  " + ("; ".join(status) if status else ""))
                 if status:
                     failures.append(f"{page_name} {name}")
                 ctx.close()
-        if args.interactive and "index.html" in pages:
-            for name, w, h in (("375", 375, 667), ("1440", 1440, 900)):
-                m = motion_flow(browser, base, out, name, w, h)
-                print(f"[{'FAIL' if m else 'ok  '}] {'motion':<11} {name:>18}  " + ("; ".join(m) if m else ""))
-                if m:
-                    failures.append(f"motion {name}")
+        if args.interactive:
+            for page_name in pages:
+                for name, w, h in (("375", 375, 667), ("1440", 1440, 900)):
+                    m = motion_flow(browser, base, out, name, w, h, page_name)
+                    print(f"[{'FAIL' if m else 'ok  '}] {'motion ' + page_name.split('.')[0]:<11} {name:>18}  " + ("; ".join(m) if m else ""))
+                    if m:
+                        failures.append(f"motion {page_name} {name}")
         browser.close()
     httpd.shutdown()
     print(f"screenshots: {out}")

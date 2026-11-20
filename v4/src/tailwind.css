@@ -81,6 +81,7 @@
   .card { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-card); }
   .field { display: block; width: 100%; min-height: 48px; padding-inline: 12px; border: 2px solid var(--color-line); border-radius: var(--radius-control);
            background: #fff; color: var(--color-ink); font-size: 1rem; }
+  .field, .field option { font-weight: 500; } /* options don't inherit the body weight; only 500/700/800 are loaded */
   .field::placeholder { color: var(--color-muted); }
   .field:focus { outline: none; border-color: var(--color-xl-blue); }
   .field[aria-invalid="true"] { border-color: #b91c1c; }
@@ -92,6 +93,8 @@
                 background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / .2); transition: transform .3s var(--ease-out-soft); }
   .switch[aria-checked="true"], .switch[data-on] { background: var(--color-xl-teal); }
   .switch[aria-checked="true"] > i, .switch[data-on] > i { transform: translateX(calc(var(--w) - var(--h))); }
+  [role="switch"][aria-checked="true"] > .switch { background: var(--color-xl-teal); }
+  [role="switch"][aria-checked="true"] > .switch > i { transform: translateX(calc(var(--w) - var(--h))); }
   .switch--lg { --w: 88px; --h: 48px; }
   .switch--lg[data-on] { background: var(--color-xl-yellow); }
   .switch--inline { --w: 1.5em; --h: .74em; vertical-align: middle; position: relative; top: -.06em; margin-inline: .04em; }
@@ -149,3 +152,11 @@
   *, ::before, ::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
                          transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* harga.html: lift the Nala launcher above the calculator's sticky summary bar (mobile) */
+html[data-calc-bar] #chat-launcher { bottom: calc(var(--calc-bar-h, 88px) + 12px); }
+html[data-calc-bar][data-calc-open] #chat-launcher { display: none; }
+@media (width >= 64rem) { html[data-calc-bar] #chat-launcher { bottom: calc(1rem + env(safe-area-inset-bottom)); display: inline-flex; } }
+
+/* Current page in the header nav (harga.html → Harga) */
+header nav a[aria-current="page"] { text-decoration: underline 3px var(--color-xl-yellow); text-underline-offset: 6px; }

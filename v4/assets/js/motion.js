@@ -56,7 +56,7 @@
   }
   function animateHeadings() {
     all('[data-split]').forEach((h) => {
-      if (h.querySelector('.split-word')) return;
+      if (h.querySelector('.split-word') || !h.textContent.trim()) return;
       split(h);
       gsap.from(all('.split-word > span', h), {
         yPercent: 110, duration: 1, ease: EASE, stagger: 0.035,
@@ -77,7 +77,8 @@
   }
 
   /* ---- Hero: board steps arrive in order ---- */
-  gsap.from('#top figure li, #top figure > p', { y: 24, opacity: 0, duration: 0.8, ease: EASE, stagger: 0.12, delay: 0.3 });
+  const board = all('#top figure li, #top figure > p');
+  if (board.length) gsap.from(board, { y: 24, opacity: 0, duration: 0.8, ease: EASE, stagger: 0.12, delay: 0.3 });
 
   /* ---- Stall story: the "after" switch flips on when the card arrives ---- */
   const afterSwitch = document.querySelector('#cerita .switch[data-on]');

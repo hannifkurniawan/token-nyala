@@ -4,7 +4,7 @@
   const D = TN.data;
   const I = TN.i18n;
   const { t, rp, rpK, num } = I;
-  const { icon, esc } = TN.ui;
+  const { icon, esc, itemView, fromLine } = TN.ui;
 
   const state = { recipe: D.RECIPES[0].id };
 
@@ -18,34 +18,6 @@
     document.querySelectorAll('[data-trust-from]').forEach((el) => { el.textContent = t('hero.trust3', { rp: rpK(D.SIZES.coba.price) }); });
     document.querySelectorAll('[data-board-balance]').forEach((el) => { el.textContent = t('board.balance', { a: rp(s.balance), b: rp(s.left) }); });
     document.querySelectorAll('[data-domain]').forEach((el) => { el.textContent = D.HERO.domain; });
-  }
-
-  /* ---------- Recipe items → plain-language rows ---------- */
-  function itemView(it) {
-    const c = D.itemCost(it);
-    switch (it.svc) {
-      case 'hosting':
-        return { icon: D.ICONS.hosting, name: t('svc.hosting.name'), detail: t('item.sized', { size: t(`size.${it.size}`), rp: rp(c.amount) }) };
-      case 'apps':
-        return { icon: D.ICONS.apps, name: t(`tpl.${it.tpl}.name`), detail: t('item.sized', { size: t(`size.${it.size}`), rp: rp(c.amount) }) };
-      case 'database':
-        return { icon: D.ICONS.database, name: t('svc.database.name'),
-          detail: t('item.capacity', { size: t(`size.${it.size}`), cap: D.DATABASE[it.size].capacity, rp: rp(c.amount) }) };
-      case 'email': {
-        const e = D.EMAIL[it.size];
-        const quota = t(`email.quota.${e.per}`, { n: num(e.quota) });
-        return { icon: D.ICONS.email, name: t('svc.email.name'),
-          detail: e.price ? t('item.sized', { size: quota, rp: rp(e.price) }) : t('item.free', { quota }) };
-      }
-      case 'domain':
-        return { icon: D.ICONS.domain, name: t('item.domainName', { ext: it.ext }),
-          detail: c.amount === c.renew ? t('item.domainYear', { rp: rp(c.amount) })
-            : t('item.domainFirst', { rp: rp(c.amount), renew: rp(c.renew) }) };
-      case 'ai':
-        return { icon: D.ICONS.ai, name: t(`item.ai.${it.unit}`), estimate: true,
-          detail: t('item.usage', { qty: t(`unit.${it.unit}`, { n: num(it.qty) }), rp: rp(c.amount) }) };
-      default: return { icon: 'check', name: it.svc, detail: '' };
-    }
   }
 
   /* ---------- Recipe chips (radiogroup, arrow keys; docs/v4/technical-spec.md §7) ---------- */
@@ -158,18 +130,6 @@
   });
 
   /* ---------- All services ---------- */
-  function fromLine(id) {
-    const f = D.FROM[id];
-    switch (f.kind) {
-      case 'usage': return [t('svc.from.usage'), id === 'ai' ? t('svc.from.aiRate', { n: D.sessionsPer(10000), rp: rp(10000) }) : t('svc.from.sameBalance')];
-      case 'per30': return [t('svc.from.per30', { rp: rp(f.price) })];
-      case 'firstYear': return [t('svc.from.firstYear', { rp: rp(f.price) })];
-      case 'free': return [t('svc.from.free', { n: num(f.quota) })];
-      case 'percent': return [t('svc.from.percent', { rp: rp(f.price), pct: num(f.pct) })];
-      default: return [''];
-    }
-  }
-
   function renderServices() {
     const root = document.querySelector('[data-services]');
     if (!root) return;

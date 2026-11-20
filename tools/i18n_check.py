@@ -93,7 +93,7 @@ def serve(root=None):
 
 
 V4_ROOT = ROOT.parent / "v4"
-V4_PAGES = ["index.html"]  # fase 3: harga.html, fase 4+: app.html (+ routes)
+V4_PAGES = ["index.html", "harga.html"]  # fase 4+: app.html (+ routes)
 V4_ALLOW = {
     "TokenNyala", "ID", "EN", "FAQ", "Prompt", "Online", "Landing page", "VPS", "Domain", "Email API & SMTP",
     "Chat playground", "localhost:5173", "eventku.my.id", "© 2026 TokenNyala", "01", "02", "03", "04", "05",
@@ -104,6 +104,8 @@ V4_ALLOW = {
     "DeepSeek Chat", "DeepSeek Reasoner", "Qwen Plus", "Qwen Max",
     "Cursor", "Lovable", "Cline", "Continue", "n8n", "OpenClaw", "Dify", "WordPress",
     "model.", "online",  # loanwords that end a heading in both languages
+    "AI", "vCPU", "RAM", "1 GB", "5 GB", "20 GB", "10 GB", "100 GB", "1 TB", "2 TB", "4 TB", "512 MB", "2 GB", "4 GB", "8 GB",
+    "40 GB", "80 GB", "160 GB", "0,5", ".my.id", ".biz.id", ".web.id", ".id", ".com", ".co.id", "Template", "Bonus", "Model",
 }
 V4_KEYS_JS = r"""
 () => {
@@ -153,7 +155,7 @@ def main_v4():
         if "${" not in tpl:
             continue
         parts = _interleave(tpl)
-        patterns.append(re.compile("".join(re.escape(x) if i % 2 == 0 else r"[\w-]+" for i, x in enumerate(parts)) + "$"))
+        patterns.append(re.compile("".join(re.escape(x) if i % 2 == 0 else r"[\w.-]+" for i, x in enumerate(parts)) + "$"))
     for k in sorted(used_html - keys):
         problems.append(f"key used in HTML but missing in dictionary: {k}")
     for k in sorted(k for k in literal if "." in k and k.split(".")[0] in {x.split(".")[0] for x in keys} and k not in keys
