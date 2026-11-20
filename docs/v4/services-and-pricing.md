@@ -214,7 +214,9 @@ Setiap resep bisa diubah di kalkulator Harga dan di wizard console (ganti ukuran
 | Alamat web | `eventku.my.id`, tahun pertama | Rp5.000 |
 | **Total** | | **Rp40.790–54.020** |
 
-Kesimpulan: **top-up Rp50.000 (saldo 55.000) cukup sampai online**, sisa Rp980–14.210. Dipakai di hero (board proyek) dan section Contoh.
+Kesimpulan: **top-up Rp50.000 (saldo 55.000) cukup sampai online**, sisa Rp980–14.210. Dipakai di section Contoh.
+
+**Contoh konkret** untuk board hero dan animasi “Satu saldo” (satu skenario, angka pasti): 12 sesi kecil Rp22.680 + Online-kan Rp15.000 + `.my.id` Rp5.000 = **Rp42.680**; saldo 55.000 → **sisa Rp12.320**.
 
 ---
 
