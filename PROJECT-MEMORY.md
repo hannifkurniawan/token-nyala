@@ -26,6 +26,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | `docs/personas.md`, `docs/user-journey.md` | Ayu (pemula), Raka (freelancer), Dimas (tim kecil) |
 | `research/reference-gap-analysis.md` | Analisis OCTA, TokenKu, OpenRouter → gap G1–G12 + rekomendasi |
 | `research/reference-audit.md` | Audit referensi awal |
+| `research/ai-cloud-reference.md` | Teardown Sumopod & Helipod (AI cloud), peluang, pertanyaan untuk Pak Ferry |
 
 ## Keputusan yang Sudah Diambil
 
@@ -80,6 +81,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 1. Nominal final paket dan tarif model masih ilustratif (open item di technical-spec).
 2. Aturan saldo perlu validasi legal/finance sebelum produksi.
 3. Jam layanan dan SLA balasan tim nyata belum ditentukan.
+4. **(20 Nov, feedback Pak Ferry)** Arah produk: tetap “jualan token AI untuk vibecoder” atau berubah jadi **platform AI Cloud Services** (referensi sumopod.com, helipod.io)? Layanan apa saja yang masuk (AI API, deploy app, one-click app seperti n8n/Dify/agent, VPS, database, GPU)? Target user tetap vibecoder pemula? Deliverable hanya landing atau juga mock console? Lihat Sesi 3.
 
 ## Pelajaran (jangan diulang)
 
@@ -106,6 +108,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
 - **Weight yang tidak dimuat gagal diam-diam.** Browser memakai face terdekat tanpa error, jadi kode (400) dan tampilan (500) bisa beda tanpa ketahuan. Sekarang `audit_v3.py` mencocokkan family+weight hasil render dengan daftar `FACES`.
+- **Situs yang dirender JavaScript bisa dibaca dengan Playwright** yang sudah terpasang untuk QA (`python3 -P`, bukan `-I`, karena Playwright ada di user site-packages). WebFetch hanya melihat shell HTML. Jangan menembus captcha/login.
+- **`pgrep -f <pola>` di loop penunggu mencocokkan perintahnya sendiri** → loop tidak pernah selesai, dan `pkill -f` dengan pola yang sama membunuh shell sendiri. Tunggu berdasarkan PID atau file hasil.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -146,3 +150,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - PR #3 `type-scale-trim` → `main` di-merge atas persetujuan user.
 - User bertanya cara mempresentasikan web sebagai designer UI/UX → disarankan format studi kasus (masalah → persona → riset → keputusan desain → demo mobile → kualitas → pelajaran). Tawaran membuat deck belum dijawab.
 - Belum: merapikan 20 ukuran huruf menjadi skala token (opsional, belum diminta).
+
+### Sesi 3 — 20 Nov 2026
+- User mendemokan `showcase/v1` dan `showcase/v2` ke Pak Ferry. Feedback utama: terlalu fokus e-commerce jualan token AI; ekspektasi beliau = **platform AI Cloud Services** seperti sumopod.com / helipod. Gap dengan brief interview Rabu (web jualan token AI untuk vibecoder, tidak teknis, design taste unik).
+- Riset referensi lengkap → **`research/ai-cloud-reference.md`**. Ringkas: helipod.com dialihkan ke helipod.co.uk; yang relevan **helipod.io** (PaaS untuk engineer: Aplikasi, AI Gateway 76 model, VPS + app siap pakai, Postgres, Mail, Domain, Heli Crew via MCP; **satu dompet Rupiah**, QRIS/VA). **Sumopod** dibaca lewat Chromium headless + ±45 halaman docs: 15 menu dashboard (AI, Apps sekali klik n8n/OpenClaw/Hermes, VPS, Database, SMTP, Object Storage, Domain…), landing tipis tanpa harga, akuisisi pemula lewat video YouTube, **dua saldo (Rupiah + AI Balance dalam USD)**. Register Sumopod butuh Cloudflare Turnstile + kode email → tidak dilakukan otomatis; user diminta register sendiri dan kirim screenshot dashboard.
+- Peluang: keduanya berbahasa developer; belum ada yang menjawab “saya mau bikin X, butuh apa & berapa per bulan?” → pendekatan intent-first + estimasi awam dari v3 bisa diperluas ke multi-produk.
+- Analisa: v3/showcase sudah menutup pilar “AI API/gateway” (saldo, katalog model, API key, dashboard, tim, chat). Yang belum: pilar compute (deploy app, one-click app/agent, VPS, database), dompet multi-produk, halaman harga per produk, mock console.
+- Belum ada perubahan kode. Menunggu keputusan arah (pertanyaan terbuka no. 4).
+
