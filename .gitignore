@@ -4,3 +4,6 @@
 # Local preview and editor artifacts
 .vscode/
 .DS_Store
+
+# Python bytecode (tools)
+__pycache__/

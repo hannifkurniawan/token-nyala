@@ -245,7 +245,7 @@ harga.html?resep=portofolio&s=hosting:coba,domain:my.id,ai:10#kalkulator
 app.html#/buat?resep=portofolio&s=hosting:coba,domain:my.id,ai:10
 app.html#/buat?template=wa-bot
 ```
-`s` = daftar `layanan:nilai` dipisah koma; layanan yang mati tidak ditulis. Nilai: ukuran (`coba|rutin|ramai`, `kecil|sedang|besar`, `10gb|100gb|1tb`, `gratis|2500|10000`), ekstensi domain (`my.id`, `com`, …), atau jumlah AI (`ai:<sesi>`, `pesan:<n>`, `tugas:<n>`). Tanpa `s` → isi bawaan resep. Nilai tidak valid diabaikan (pakai bawaan) tanpa error.
+`s` = daftar `layanan:nilai` dipisah koma; layanan yang mati tidak ditulis. Layanan **Asisten & otomasi** ditulis dengan id template sebagai kunci (`wa-bot:rutin`, `n8n:ramai`), bukan `apps:` — supaya template ikut terbawa (ditetapkan Fase 2). Nilai: ukuran (`coba|rutin|ramai`, `kecil|sedang|besar`, `10gb|100gb|1tb`, `gratis|2500|10000`), ekstensi domain (`my.id`, `com`, …), atau jumlah AI (`ai:<sesi>`, `pesan:<n>`, `tugas:<n>`). Tanpa `s` → isi bawaan resep. Nilai tidak valid diabaikan (pakai bawaan) tanpa error.
 
 ### Aturan Nala “Bantu pilih resep”
 - Q1 memilih resep. Jika `ai-coding` → langsung kartu `ai-coding`.

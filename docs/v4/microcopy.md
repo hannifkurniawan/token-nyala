@@ -484,3 +484,29 @@ Kunci di `v4/assets/js/i18n.js` (format `[ID, EN]`). Hanya yang belum tertulis d
 | wallet.left / wallet.leftNote | Sisa saldo · Sisa saldo tetap bisa dipakai untuk AI atau bulan berikutnya. | Balance left · What is left stays available for AI or next month. |
 
 Kartu “Satu saldo” **tidak** menampilkan tanggal “cukup sampai” (aturan `services-and-pricing.md` §2: tanggal hanya di console); wireframe A6 disesuaikan.
+
+### Landing — tambahan Fase 2 (20 Nov 2026)
+| Kunci | ID | EN |
+|---|---|---|
+| tpl.lead | Asisten dan otomasi populer, sudah dirakit. Kamu cukup pilih ukuran — AI tersambung ke saldo yang sama. | Popular assistants and automations, already put together. Just pick a size — AI connects to the same balance. |
+| tpl.costAi | ≈ {Rp}/bulan, termasuk {jumlah} | ≈ {Rp}/month, including {qty} |
+| ai.title | Satu saldo untuk **semua** model. | One balance for **every** model. |
+| ai.lead | Pakai Claude, GPT, Gemini, DeepSeek, dan Qwen di Cursor, Lovable, atau Cline. Model hemat untuk tugas ringan, model premium untuk pekerjaan rumit. | Use Claude, GPT, Gemini, DeepSeek, and Qwen in Cursor, Lovable, or Cline. Budget models for light tasks, premium ones for hard problems. |
+| guide.1 | **Ambil API key proyek** — Ada di console → AI setelah isi saldo. (v3: “halaman saldo”) | **Get your project API key** — It's in the console → AI after you top up. |
+| ex.lead | Perkiraan biaya membangun dengan AI (model Seimbang), lalu online dengan alamat sendiri. | An estimate for building it with AI (a Balanced model), then putting it online at its own address. |
+| ex.left | Saldo {Rp} dengan bonus, sisa {a}–{b} untuk iterasi berikutnya. | With the bonus you get {Rp}, leaving {a}–{b} for more iterations. |
+| safe.title | Tidak ada kejutan di **tagihan**. | No surprises on your **bill**. |
+| safe.1.art | Berhenti di hari ke-10 → {Rp} kembali ke saldo | Stop on day 10 → {Rp} back to your balance |
+| safe.2.art | {ukuran} → {ukuran} di hari ke-10 → {Rp} kembali ke saldo | {size} → {size} on day 10 → {Rp} back to your balance |
+| safe.3.art | Data aman {n} hari · isi saldo, langsung nyala lagi | Data safe for {n} days · top up and it switches back on |
+| safe.4.art | Saldo kurang untuk perpanjangan dalam {n} hari. Isi minimal {Rp}. | Not enough balance to renew in {n} days. Top up at least {Rp}. |
+| learn.title / learn.lead | Panduan singkat, per tujuan. · Langkah demi langkah dengan bahasa sehari-hari. Bisa dibuka lagi kapan saja di console. | Short guides, by goal. · Step by step, in everyday words. Open them again anytime in the console. |
+| team.pt5 | Batas belanja per proyek | Spending limits per project |
+| faq.lead | Belum menemukan jawabannya? Tanya Nala, atau bicara dengan tim. | Still looking for an answer? Ask Nala, or talk to the team. |
+| faq.a13 (v3 diperbarui) | Nonaktifkan API key itu di console (AI → API key), lalu buat yang baru. Pasang batas belanja per proyek supaya pemakaian tidak melebihi rencana. | Disable that key in the console (AI → API key) and create a new one. Set a spending limit per project so usage never goes past your plan. |
+| final.trust | Bayar Rupiah · Tanpa kartu kredit · Saldo tidak kedaluwarsa | Pay in Rupiah · No credit card · Balance never expires |
+| chat.greeting | Hai, aku Nala! Mau dibantu pilih resep untuk proyekmu, atau ada pertanyaan lain? | Hi, I'm Nala! Want help picking a recipe for your project, or got another question? |
+| nala.resultAi | Untuk AI di tool coding: isi {Rp} → {range} sesi kecil. Ambil API key-mu di console. | For AI in your coding tools: top up {Rp} → {range} small sessions. Get your API key in the console. |
+| agent.greeting | Halo, aku Sari dari tim TokenNyala. Ada yang bisa kubantu? (v3: “…soal top up?”) | Hi, I'm Sari from the TokenNyala team. How can I help? |
+
+Chip utama Nala: Bantu pilih resep · Cara pakai saldo di tool · Model apa saja? · Metode pembayaran · Bicara dengan tim. Alur v3 “Bantu pilih paket” **digantikan** “Bantu pilih resep”; kebutuhan AI-saja dijawab lewat pilihan “AI coding saja” (tabel nominal → sesi kecil v3).
