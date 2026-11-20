@@ -107,7 +107,8 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 |---|---|
 | `tools/qa_v4.py --interactive --out <dir>` | 6 viewport untuk `index.html`, `harga.html`, dan rute console utama (state kosong + `?demo=ayu`), cek v3 (overflow, escape shell, teks meluap, touch target, console error, above-the-fold) + alur: resep → wizard → isi saldo → nyala → beranda; kalkulator; berhenti/ganti ukuran; jam simulasi → dijeda |
 | `tools/i18n_check.py` | Diperluas dengan `--root v4` (semua halaman + kamus + template JS) |
-| `tools/audit_v4.py` | axe-core 4.14.0 per halaman/rute/dialog, face font (4), `file://`, reduced motion, storage diblokir, **CSS compile up to date**, **konsistensi angka** (`services-and-pricing.md` §9) |
+| `tools/audit_v4.py` | axe-core 4.14.0 per halaman/rute/dialog, face font (4), `file://`, reduced motion, storage diblokir, **CSS compile up to date**, **konsistensi angka** (`services-and-pricing.md` §9), label simulasi |
+| `tools/demo_v4.py` | Gladi skrip demo (21 langkah, screenshot bernomor) |
 
 Skrip v3 tidak diubah perilakunya untuk v3.
 
@@ -124,6 +125,22 @@ Skrip v3 tidak diubah perilakunya untuk v3.
 10. `app.css` hasil build terbaru.
 11. Data kontak tidak tersimpan di storage.
 12. Label simulasi terlihat di footer, checkout, wizard, dan console.
+
+### Status DoD (Fase 7, 20 Nov 2026) — semua terpenuhi
+| # | Bukti |
+|---|---|
+| 1 | `audit_v4.py` membuka `index.html`, `harga.html`, `app.html?demo=ayu` lewat `file://` tanpa error; QA lewat server lokal |
+| 2 | `qa_v4.py --interactive`: 12 halaman/rute × 6 viewport + 4 uji motion = 76 cek, screenshot ditinjau |
+| 3 | `demo_v4.py`: 21 langkah skrip demo di 375×812 lolos |
+| 4 | `audit_v4.py` [numbers]: unit AI, resep, contoh, template, Nala, preset (saldo, cukup sampai), riwayat = saldo, harga tiap tabel |
+| 5 | `i18n_check.py --root v4`: semua kunci [ID, EN], 0 hilang, 0 mati, 0 belum diterjemahkan (31 halaman/rute) |
+| 6 | axe 0 pelanggaran di semua halaman, rute console, dan dialog (katalog, konsultasi, Nala, tambah layanan, isi saldo, Lainnya, menu akun, konfirmasi, ganti ukuran) |
+| 7 | reduced motion: tidak ada animasi/transisi > 0,01 ms, GSAP/Lenis tidak berjalan, konten tampil |
+| 8 | localStorage diblokir: landing/harga berganti bahasa, console masuk & berjalan di memori |
+| 9 | Hanya Manrope 500/700/800 + IBM Plex Mono 500 yang dirender (termasuk `<option>`) |
+| 10 | `app.css` dibangun ulang dan dibandingkan byte per byte |
+| 11 | Storage hanya `tn-lang` + `tn-v4-demo`; email/HP masuk, konsultasi, kontak Nala tidak pernah tersimpan |
+| 12 | Label simulasi terlihat di footer landing/harga, console (beranda, wizard), dan sheet isi saldo |
 
 ## 10. Urutan Build
 | Fase | Langkah |

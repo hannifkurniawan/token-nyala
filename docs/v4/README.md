@@ -32,3 +32,6 @@ v4 mengubah TokenNyala dari *top-up saldo AI* menjadi **platform AI Cloud Servic
 - Live chat Nala + serah ke agen Sari (skrip diperbarui di `microcopy.md`).
 - Tipografi 2 keluarga / 4 face (Manrope 500/700/800, IBM Plex Mono 500).
 - Mobile first, viewport uji 320/375/768/1024/1440 + 667×375, WCAG 2.1 AA.
+
+## Status build (20 Nov 2026)
+Fase 0–7 selesai di branch `v4-cloud`; kode di `v4/`, cara membuka & akun contoh di `v4/README.md`, skrip demo final di `user-journeys.md`, bukti DoD di `technical-spec.md` §9.
