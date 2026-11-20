@@ -13,7 +13,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind v4 browser build — prototype only. Version pinned; see docs/technical-spec.md -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
@@ -79,7 +79,7 @@
   </style>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="flex min-h-dvh flex-col">
+<body class="flex min-h-dvh flex-col font-medium">
   <a href="#main-content"
      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-control focus:border-2 focus:border-xl-blue focus:bg-white focus:px-4 focus:py-3 focus:font-bold"
      data-i18n="skipLink">Lewati ke konten utama</a>
@@ -202,7 +202,7 @@
             <div class="flex items-center gap-3 border-b border-line px-4 py-3">
               <span aria-hidden="true" class="flex gap-1.5"><i class="size-2.5 rounded-full bg-line"></i><i class="size-2.5 rounded-full bg-line"></i><i class="size-2.5 rounded-full bg-line"></i></span>
               <p class="min-w-0 truncate text-sm font-extrabold text-xl-dark" data-i18n="boardProject">Event Landing Page</p>
-              <span class="ml-auto shrink-0 rounded-full bg-paper px-2 py-0.5 font-mono text-[11px] font-semibold text-muted" data-i18n="boardTag">Proyek</span>
+              <span class="ml-auto shrink-0 rounded-full bg-paper px-2 py-0.5 font-mono text-[11px] text-muted" data-i18n="boardTag">Proyek</span>
             </div>
 
             <div class="space-y-3 p-4">
@@ -243,7 +243,7 @@
               <div class="flex items-center justify-between gap-3">
                 <div class="min-w-0">
                   <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="boardBalance">Saldo aktif</p>
-                  <p class="font-mono text-base font-semibold text-xl-dark" data-hero-amount>Rp0</p>
+                  <p class="font-mono text-base text-xl-dark" data-hero-amount>Rp0</p>
                 </div>
                 <p class="flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-white px-2.5 py-1 text-xs font-extrabold text-muted
                           group-data-[state=on]:border-xl-teal/40 group-data-[state=on]:text-teal-ink" aria-live="polite">
@@ -275,7 +275,7 @@
         <ol class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3" aria-label="Tiga langkah" data-i18n-aria="howStepsAria">
           <li data-decor-overflow class="relative flex flex-col rounded-card border border-line bg-white p-5 sm:p-6 md:grid md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-x-8 lg:flex after:absolute after:left-[2.375rem] after:top-full after:h-4 after:w-0.5 after:bg-line lg:after:left-full lg:after:top-[2.375rem] lg:after:h-0.5 lg:after:w-4">
             <div class="flex items-center gap-3">
-              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm font-semibold bg-xl-blue/10 text-xl-blue">01</span>
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm bg-xl-blue/10 text-xl-blue">01</span>
               <h3 class="text-lg font-extrabold leading-snug text-xl-dark" data-i18n="step1Title">Pilih tujuanmu</h3>
             </div>
             <div class="mt-3 md:mt-0 lg:mt-3">
@@ -289,7 +289,7 @@
           </li>
           <li data-decor-overflow class="relative flex flex-col rounded-card border border-line bg-white p-5 sm:p-6 md:grid md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-x-8 lg:flex after:absolute after:left-[2.375rem] after:top-full after:h-4 after:w-0.5 after:bg-line lg:after:left-full lg:after:top-[2.375rem] lg:after:h-0.5 lg:after:w-4">
             <div class="flex items-center gap-3">
-              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm font-semibold bg-xl-blue/10 text-xl-blue">02</span>
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm bg-xl-blue/10 text-xl-blue">02</span>
               <h3 class="text-lg font-extrabold leading-snug text-xl-dark" data-i18n="step2Title">Bayar dengan mudah</h3>
             </div>
             <div class="mt-3 md:mt-0 lg:mt-3">
@@ -303,7 +303,7 @@
           </li>
           <li class="relative flex flex-col rounded-card border border-line bg-white p-5 sm:p-6 md:grid md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-x-8 lg:flex">
             <div class="flex items-center gap-3">
-              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm font-semibold bg-xl-teal text-xl-dark">03</span>
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control font-mono text-sm bg-xl-teal text-xl-dark">03</span>
               <h3 class="text-lg font-extrabold leading-snug text-xl-dark" data-i18n="step3Title">Lanjutkan membangun</h3>
             </div>
             <div class="mt-3 md:mt-0 lg:mt-3">
@@ -377,12 +377,12 @@
                   </div>
 
                   <h3 id="pkg-learn-name" class="text-sm font-extrabold uppercase tracking-[0.1em] text-xl-blue group-data-[recommended=true]/card:mt-3 group-data-[selected=true]/card:mt-3 lg:mt-3">Mulai</h3>
-                  <p class="mt-1 text-sm font-semibold text-muted" data-i18n="pkgFor_learn">Belajar dan mencoba pertama kali</p>
+                  <p class="mt-1 text-sm font-bold text-muted" data-i18n="pkgFor_learn">Belajar dan mencoba pertama kali</p>
 
                   <p class="mt-4 text-[clamp(2.25rem,3.4vw+1rem,2.75rem)] font-extrabold leading-none tracking-[-0.04em] text-xl-dark lg:text-[clamp(2rem,2.6vw,2.75rem)]" data-price="50000">Rp50.000</p>
                   <p class="mt-3 flex flex-col items-start gap-1 text-sm">
                     <span class="rounded-full bg-xl-yellow/25 px-2.5 py-0.5 font-bold text-xl-dark">+ <span data-i18n="pkgBonus">Bonus</span> <span data-price="5000">Rp5.000</span></span>
-                    <span class="font-semibold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="55000">55.000</span> <span data-i18n="pkgCredits">kredit</span></span>
+                    <span class="font-bold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="55000">55.000</span> <span data-i18n="pkgCredits">kredit</span></span>
                   </p>
                 </div>
 
@@ -390,7 +390,7 @@
                 <div class="mt-5 flex flex-1 flex-col md:mt-0 lg:mt-5">
                   <div class="rounded-control bg-paper px-4 py-3">
                     <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="estimateLabel">Estimasi</p>
-                    <p class="mt-0.5 font-mono text-base font-semibold text-xl-dark" data-i18n="pkgSessions_learn">20–30 sesi kecil</p>
+                    <p class="mt-0.5 font-mono text-base text-xl-dark" data-i18n="pkgSessions_learn">20–30 sesi kecil</p>
                   </div>
                   <p class="mt-4 text-sm leading-relaxed text-muted" data-i18n="pkgHelper_learn">Cocok untuk memahami alur atau menyelesaikan satu mini-task.</p>
 
@@ -422,12 +422,12 @@
                   </div>
 
                   <h3 id="pkg-prototype-name" class="text-sm font-extrabold uppercase tracking-[0.1em] text-xl-blue group-data-[recommended=true]/card:mt-3 group-data-[selected=true]/card:mt-3 lg:mt-3">Bangun</h3>
-                  <p class="mt-1 text-sm font-semibold text-muted" data-i18n="pkgFor_prototype">Membuat satu prototype aktif</p>
+                  <p class="mt-1 text-sm font-bold text-muted" data-i18n="pkgFor_prototype">Membuat satu prototype aktif</p>
 
                   <p class="mt-4 text-[clamp(2.25rem,3.4vw+1rem,2.75rem)] font-extrabold leading-none tracking-[-0.04em] text-xl-dark lg:text-[clamp(2rem,2.6vw,2.75rem)]" data-price="100000">Rp100.000</p>
                   <p class="mt-3 flex flex-col items-start gap-1 text-sm">
                     <span class="rounded-full bg-xl-yellow/25 px-2.5 py-0.5 font-bold text-xl-dark">+ <span data-i18n="pkgBonus">Bonus</span> <span data-price="15000">Rp15.000</span></span>
-                    <span class="font-semibold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="115000">115.000</span> <span data-i18n="pkgCredits">kredit</span></span>
+                    <span class="font-bold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="115000">115.000</span> <span data-i18n="pkgCredits">kredit</span></span>
                   </p>
                 </div>
 
@@ -435,7 +435,7 @@
                 <div class="mt-5 flex flex-1 flex-col md:mt-0 lg:mt-5">
                   <div class="rounded-control bg-paper px-4 py-3">
                     <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="estimateLabel">Estimasi</p>
-                    <p class="mt-0.5 font-mono text-base font-semibold text-xl-dark" data-i18n="pkgSessions_prototype">40–60 sesi kecil</p>
+                    <p class="mt-0.5 font-mono text-base text-xl-dark" data-i18n="pkgSessions_prototype">40–60 sesi kecil</p>
                   </div>
                   <p class="mt-4 text-sm leading-relaxed text-muted" data-i18n="pkgHelper_prototype">Cocok untuk iterasi tampilan, prompt, dan perbaikan singkat.</p>
 
@@ -467,12 +467,12 @@
                   </div>
 
                   <h3 id="pkg-work-name" class="text-sm font-extrabold uppercase tracking-[0.1em] text-xl-blue group-data-[recommended=true]/card:mt-3 group-data-[selected=true]/card:mt-3 lg:mt-3">Scale</h3>
-                  <p class="mt-1 text-sm font-semibold text-muted" data-i18n="pkgFor_work">Freelancer atau proyek berkelanjutan</p>
+                  <p class="mt-1 text-sm font-bold text-muted" data-i18n="pkgFor_work">Freelancer atau proyek berkelanjutan</p>
 
                   <p class="mt-4 text-[clamp(2.25rem,3.4vw+1rem,2.75rem)] font-extrabold leading-none tracking-[-0.04em] text-xl-dark lg:text-[clamp(2rem,2.6vw,2.75rem)]" data-price="250000">Rp250.000</p>
                   <p class="mt-3 flex flex-col items-start gap-1 text-sm">
                     <span class="rounded-full bg-xl-yellow/25 px-2.5 py-0.5 font-bold text-xl-dark">+ <span data-i18n="pkgBonus">Bonus</span> <span data-price="50000">Rp50.000</span></span>
-                    <span class="font-semibold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="300000">300.000</span> <span data-i18n="pkgCredits">kredit</span></span>
+                    <span class="font-bold text-muted"><span data-i18n="pkgTotal">Total saldo</span> <span data-credit="300000">300.000</span> <span data-i18n="pkgCredits">kredit</span></span>
                   </p>
                 </div>
 
@@ -480,7 +480,7 @@
                 <div class="mt-5 flex flex-1 flex-col md:mt-0 lg:mt-5">
                   <div class="rounded-control bg-paper px-4 py-3">
                     <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="estimateLabel">Estimasi</p>
-                    <p class="mt-0.5 font-mono text-base font-semibold text-xl-dark" data-i18n="pkgSessions_work">100+ sesi kecil</p>
+                    <p class="mt-0.5 font-mono text-base text-xl-dark" data-i18n="pkgSessions_work">100+ sesi kecil</p>
                   </div>
                   <p class="mt-4 text-sm leading-relaxed text-muted" data-i18n="pkgHelper_work">Cocok saat kamu mulai mengerjakan kebutuhan klien atau banyak iterasi.</p>
 
@@ -539,21 +539,21 @@
 
           <ol class="mt-8" aria-label="Langkah pemasangan" data-i18n-aria="useStepsAria">
             <li data-decor-overflow class="relative flex gap-4 pb-8 last:pb-0 after:absolute after:left-[1.3125rem] after:top-12 after:-bottom-2 after:w-0.5 after:bg-line">
-              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm font-semibold text-white">1</span>
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm text-white">1</span>
               <div class="min-w-0 pt-1.5">
                 <h3 class="text-lg font-extrabold text-xl-dark" data-i18n="use1Title">Salin API key</h3>
                 <p class="mt-1 text-base leading-relaxed text-muted" data-i18n="use1Body">Ada di halaman saldo setelah top up.</p>
               </div>
             </li>
             <li data-decor-overflow class="relative flex gap-4 pb-8 last:pb-0 after:absolute after:left-[1.3125rem] after:top-12 after:-bottom-2 after:w-0.5 after:bg-line">
-              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm font-semibold text-white">2</span>
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm text-white">2</span>
               <div class="min-w-0 pt-1.5">
                 <h3 class="text-lg font-extrabold text-xl-dark" data-i18n="use2Title">Tempel di tool</h3>
                 <p class="mt-1 text-base leading-relaxed text-muted" data-i18n="use2Body">Isi Base URL dan API key di pengaturan tool.</p>
               </div>
             </li>
             <li data-decor-overflow class="relative flex gap-4 pb-8 last:pb-0">
-              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm font-semibold text-white">3</span>
+              <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue font-mono text-sm text-white">3</span>
               <div class="min-w-0 pt-1.5">
                 <h3 class="text-lg font-extrabold text-xl-dark" data-i18n="use3Title">Pilih model & mulai</h3>
                 <p class="mt-1 text-base leading-relaxed text-muted" data-i18n="use3Body">Semua model memakai saldo yang sama.</p>
@@ -646,7 +646,7 @@
 
               <p class="text-[11px] font-bold uppercase tracking-[0.08em] text-muted" data-i18n="dashBalance">Saldo tersisa</p>
               <p class="mt-1 flex flex-wrap items-baseline gap-x-2">
-                <span class="font-mono text-2xl font-semibold text-xl-dark" data-price="82400">Rp82.400</span>
+                <span class="font-mono text-2xl text-xl-dark" data-price="82400">Rp82.400</span>
                 <span class="text-sm text-muted"><span data-i18n="dashOf">dari</span> <span data-credit="115000">115.000</span> <span data-i18n="pkgCredits">kredit</span></span>
               </p>
               <div class="mt-2 h-2 overflow-hidden rounded-full bg-line" role="presentation"><div class="h-full w-[72%] rounded-full bg-xl-teal"></div></div>
@@ -660,7 +660,7 @@
 
               <div class="mt-6 space-y-2">
                 <div class="flex items-center justify-between gap-3 rounded-control bg-white px-3 py-2">
-                  <span id="dash-remind-label" class="text-sm font-semibold text-ink" data-i18n="dashRemind">Ingatkan saat saldo &lt; Rp20.000</span>
+                  <span id="dash-remind-label" class="text-sm font-bold text-ink" data-i18n="dashRemind">Ingatkan saat saldo &lt; Rp20.000</span>
                   <button type="button" role="switch" aria-checked="true" aria-labelledby="dash-remind-label" data-switch
                           class="group/sw relative inline-flex h-11 w-14 shrink-0 items-center justify-center">
                     <span aria-hidden="true" class="flex h-7 w-12 items-center rounded-full bg-line p-0.5 transition-colors group-aria-checked/sw:bg-xl-blue">
@@ -671,7 +671,7 @@
                 <div class="flex items-center justify-between gap-3 rounded-control bg-white px-3 py-2" data-key-row data-active="true">
                   <span class="min-w-0 text-sm">
                     <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span class="font-semibold text-ink" data-i18n="dashKeyName">Laptop kerja</span>
+                      <span class="font-bold text-ink" data-i18n="dashKeyName">Laptop kerja</span>
                       <span class="rounded-full px-2 py-0.5 text-xs font-extrabold" data-key-status></span>
                     </span>
                     <span class="mt-0.5 block font-mono text-xs text-muted">tn-demo-…3f9a</span>
@@ -705,11 +705,11 @@
             <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-ink" data-i18n="exTask2">Rapikan tampilan mobile</dt><dd class="shrink-0 font-mono text-xl-dark">2–4</dd></div>
             <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-ink" data-i18n="exTask3">Tambah form pendaftaran</dt><dd class="shrink-0 font-mono text-xl-dark">4–6</dd></div>
             <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-ink" data-i18n="exTask4">Perbaiki copy dan warna</dt><dd class="shrink-0 font-mono text-xl-dark">2–3</dd></div>
-            <div class="flex items-baseline justify-between gap-4 pt-3"><dt class="font-extrabold text-xl-dark" data-i18n="exTotal">Total sesi kecil</dt><dd class="shrink-0 font-mono font-semibold text-xl-dark">11–18</dd></div>
+            <div class="flex items-baseline justify-between gap-4 pt-3"><dt class="font-extrabold text-xl-dark" data-i18n="exTotal">Total sesi kecil</dt><dd class="shrink-0 font-mono text-xl-dark">11–18</dd></div>
           </dl>
           <p class="mt-4 rounded-control bg-xl-teal/10 px-3 py-2.5 text-sm text-ink">
             <span class="font-extrabold" data-i18n="exCostLabel">Perkiraan biaya:</span>
-            <span class="font-mono font-semibold"><span data-price="21000">Rp21.000</span>–<span data-price="34000">Rp34.000</span></span>.
+            <span class="font-mono"><span data-price="21000">Rp21.000</span>–<span data-price="34000">Rp34.000</span></span>.
             <span data-i18n="exFit">Paket Mulai (55.000 kredit) cukup, masih ada sisa untuk iterasi.</span>
           </p>
           <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -727,7 +727,7 @@
           <div>
             <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-xl-sky" data-i18n="teamKicker">Untuk tim & bisnis</p>
             <h2 id="team-title" class="mt-3 text-[clamp(1.5rem,5vw,2.25rem)] font-extrabold leading-[1.15] tracking-[-0.02em]" data-i18n="teamTitle">Butuh untuk tim atau perusahaan?</h2>
-            <ul class="mt-6 grid grid-cols-1 gap-3 text-base font-semibold sm:grid-cols-2">
+            <ul class="mt-6 grid grid-cols-1 gap-3 text-base font-bold sm:grid-cols-2">
               <li class="flex items-center gap-3"><span aria-hidden="true" class="grid size-6 shrink-0 place-items-center rounded-full bg-xl-teal text-xs font-extrabold text-xl-dark">✓</span><span data-i18n="teamPt1">Invoice atas nama perusahaan</span></li>
               <li class="flex items-center gap-3"><span aria-hidden="true" class="grid size-6 shrink-0 place-items-center rounded-full bg-xl-teal text-xs font-extrabold text-xl-dark">✓</span><span data-i18n="teamPt2">Faktur pajak</span></li>
               <li class="flex items-center gap-3"><span aria-hidden="true" class="grid size-6 shrink-0 place-items-center rounded-full bg-xl-teal text-xs font-extrabold text-xl-dark">✓</span><span data-i18n="teamPt3">Bayar lewat transfer bank</span></li>
@@ -869,7 +869,7 @@
 
       <nav aria-labelledby="footer-explore">
         <h2 id="footer-explore" class="text-xs font-extrabold uppercase tracking-[0.12em] text-white/60" data-i18n="footerExplore">Jelajahi</h2>
-        <ul class="mt-3 grid grid-cols-2 gap-x-6 text-sm font-semibold lg:grid-cols-1">
+        <ul class="mt-3 grid grid-cols-2 gap-x-6 text-sm font-bold lg:grid-cols-1">
           <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#cara-kerja" data-i18n="navHow">Cara kerja</a></li>
           <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#paket" data-i18n="navPackages">Paket</a></li>
           <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#model" data-i18n="navModels">Model AI</a></li>
@@ -879,7 +879,7 @@
 
       <nav aria-labelledby="footer-legal">
         <h2 id="footer-legal" class="text-xs font-extrabold uppercase tracking-[0.12em] text-white/60" data-i18n="footerLegal">Bantuan & legal</h2>
-        <ul class="mt-3 grid grid-cols-2 gap-x-6 text-sm font-semibold lg:grid-cols-1">
+        <ul class="mt-3 grid grid-cols-2 gap-x-6 text-sm font-bold lg:grid-cols-1">
           <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#" data-mock-link data-i18n="footerTerms">Syarat & Ketentuan</a></li>
           <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#" data-mock-link data-i18n="footerPrivacy">Kebijakan Privasi</a></li>
           <li><a class="flex min-h-11 items-center hover:text-xl-sky" href="#" data-mock-link data-i18n="footerContact">Hubungi kami</a></li>
@@ -906,8 +906,8 @@
         </div>
         <p class="mt-3 text-sm text-muted" data-m-meta></p>
         <p class="mt-4 flex flex-wrap items-baseline gap-x-2">
-          <span class="font-mono text-2xl font-semibold text-xl-dark" data-m-sessions></span>
-          <span class="text-sm font-semibold text-muted" data-m-sessions-unit></span>
+          <span class="font-mono text-2xl text-xl-dark" data-m-sessions></span>
+          <span class="text-sm font-bold text-muted" data-m-sessions-unit></span>
         </p>
         <details class="group/d mt-3">
           <summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 text-sm font-extrabold text-xl-blue [&::-webkit-details-marker]:hidden">
@@ -994,7 +994,7 @@
       <ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3" aria-labelledby="cat-title" data-cat-list></ul>
 
       <div class="mt-6 hidden flex-col items-center gap-3 rounded-card border border-dashed border-line bg-white px-4 py-8 text-center data-[show=true]:flex" data-cat-empty data-show="false">
-        <p class="text-sm font-semibold text-muted" data-i18n="catEmpty">Model tidak ditemukan. Coba kata kunci atau filter lain.</p>
+        <p class="text-sm font-bold text-muted" data-i18n="catEmpty">Model tidak ditemukan. Coba kata kunci atau filter lain.</p>
         <button type="button" class="btn btn-secondary" data-cat-clear data-i18n="catClear">Hapus filter</button>
       </div>
 
@@ -1033,18 +1033,18 @@
           <div>
             <label for="cs-name" class="block text-sm font-extrabold text-xl-dark" data-i18n="csName">Nama</label>
             <input id="cs-name" name="name" type="text" autocomplete="name" required aria-describedby="cs-name-error" class="mt-2 block min-h-12 w-full rounded-control border-2 border-line bg-white px-3 text-base text-ink placeholder:text-muted/70 focus:border-xl-blue focus:outline-none aria-invalid:border-red-600">
-            <p id="cs-name-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-cerr="name"></p>
+            <p id="cs-name-error" class="mt-1.5 hidden text-sm font-bold text-red-700" data-cerr="name"></p>
           </div>
           <div>
             <label for="cs-org" class="block text-sm font-extrabold text-xl-dark" data-i18n="csOrg">Nama tim atau perusahaan</label>
             <input id="cs-org" name="org" type="text" autocomplete="organization" required aria-describedby="cs-org-error" class="mt-2 block min-h-12 w-full rounded-control border-2 border-line bg-white px-3 text-base text-ink placeholder:text-muted/70 focus:border-xl-blue focus:outline-none aria-invalid:border-red-600">
-            <p id="cs-org-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-cerr="org"></p>
+            <p id="cs-org-error" class="mt-1.5 hidden text-sm font-bold text-red-700" data-cerr="org"></p>
           </div>
           <div class="md:col-span-2">
             <label for="cs-contact" class="block text-sm font-extrabold text-xl-dark" data-i18n="coContactLabel">Email atau nomor HP</label>
             <input id="cs-contact" name="contact" type="text" inputmode="email" autocomplete="email" required aria-describedby="cs-contact-error"
                    class="mt-2 block min-h-12 w-full rounded-control border-2 border-line bg-white px-3 text-base text-ink placeholder:text-muted/70 focus:border-xl-blue focus:outline-none aria-invalid:border-red-600" placeholder="nama@email.com atau 0812xxxxxxxx" data-i18n-placeholder="coContactPlaceholder">
-            <p id="cs-contact-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-cerr="contact"></p>
+            <p id="cs-contact-error" class="mt-1.5 hidden text-sm font-bold text-red-700" data-cerr="contact"></p>
           </div>
         </div>
 
@@ -1056,7 +1056,7 @@
               <label class="group/opt relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line bg-white px-3 text-sm font-extrabold text-xl-dark transition-colors hover:border-xl-blue/50 has-[:checked]:border-xl-blue has-[:checked]:bg-xl-blue has-[:checked]:text-white has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-xl-sky"><input type="radio" name="teamSize" value="21–50" class="sr-only" aria-describedby="cs-teamSize-error">21–50</label>
               <label class="group/opt relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line bg-white px-3 text-sm font-extrabold text-xl-dark transition-colors hover:border-xl-blue/50 has-[:checked]:border-xl-blue has-[:checked]:bg-xl-blue has-[:checked]:text-white has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-xl-sky"><input type="radio" name="teamSize" value="50+" class="sr-only" aria-describedby="cs-teamSize-error">50+</label>
           </div>
-          <p id="cs-teamSize-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-cerr="teamSize"></p>
+          <p id="cs-teamSize-error" class="mt-1.5 hidden text-sm font-bold text-red-700" data-cerr="teamSize"></p>
         </fieldset>
 
         <div class="mt-5">
@@ -1076,7 +1076,7 @@
             <input type="checkbox" name="consent" required class="mt-0.5 size-5 shrink-0 accent-xl-blue" aria-describedby="cs-consent-error">
             <span data-i18n="csConsent">Saya setuju dengan Syarat & Ketentuan dan Kebijakan Privasi</span>
           </label>
-          <p id="cs-consent-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-cerr="consent"></p>
+          <p id="cs-consent-error" class="mt-1.5 hidden text-sm font-bold text-red-700" data-cerr="consent"></p>
         </div>
       </div>
       <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
@@ -1089,7 +1089,7 @@
         <span aria-hidden="true" class="mx-auto grid size-16 place-items-center rounded-full bg-xl-teal text-3xl font-extrabold text-xl-dark animate-pop-in motion-reduce:animate-none">✓</span>
         <h3 id="cs-success-title" tabindex="-1" class="mt-4 text-2xl font-extrabold text-xl-dark outline-none" data-i18n="csSuccessTitle">Terima kasih!</h3>
         <p class="mt-2 text-sm leading-relaxed text-muted" data-cs-success-body></p>
-        <p class="mt-4 text-xs font-semibold text-muted" data-i18n="csSuccessNotice">Simulasi — tidak ada data yang dikirim.</p>
+        <p class="mt-4 text-xs font-bold text-muted" data-i18n="csSuccessNotice">Simulasi — tidak ada data yang dikirim.</p>
       </div>
       <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
         <button type="button" class="btn btn-secondary min-h-12 w-full" data-cs-close data-i18n="csDone">Selesai</button>
@@ -1186,19 +1186,19 @@
         <dl class="mt-4 rounded-control bg-paper px-4 py-2 text-sm" aria-label="Rincian biaya" data-i18n-aria="coBreakdownAria">
                 <div class="flex items-center justify-between gap-4 py-1.5">
                   <dt class="text-muted" data-i18n="coNominal">Nominal paket</dt>
-                  <dd class="font-mono font-semibold text-xl-dark" data-co-nominal>Rp0</dd>
+                  <dd class="font-mono text-xl-dark" data-co-nominal>Rp0</dd>
                 </div>
                 <div class="flex items-center justify-between gap-4 py-1.5">
                   <dt class="text-muted" data-i18n="coBonus">Bonus kredit</dt>
-                  <dd class="font-mono font-semibold text-xl-dark" data-co-bonus>Rp0</dd>
+                  <dd class="font-mono text-xl-dark" data-co-bonus>Rp0</dd>
                 </div>
                 <div class="flex items-center justify-between gap-4 py-1.5">
                   <dt class="text-muted" data-i18n="coFee">Biaya tambahan</dt>
-                  <dd class="font-mono font-semibold text-xl-dark" data-price="0">Rp0</dd>
+                  <dd class="font-mono text-xl-dark" data-price="0">Rp0</dd>
                 </div>
                 <div class="mt-1 flex items-center justify-between gap-4 border-t border-line pt-2.5 pb-1">
                   <dt class="font-extrabold text-xl-dark" data-i18n="coTotal">Total bayar</dt>
-                  <dd class="font-mono text-lg font-semibold text-xl-dark" data-co-total>Rp0</dd>
+                  <dd class="font-mono text-lg text-xl-dark" data-co-total>Rp0</dd>
                 </div>
         </dl>
         <p class="mt-2 text-xs text-muted" data-co-credit-note></p>
@@ -1211,7 +1211,7 @@
                  class="mt-2 block min-h-12 w-full rounded-control border-2 border-line bg-white px-3 text-base text-ink placeholder:text-muted/70
                         focus:border-xl-blue focus:outline-none aria-invalid:border-red-600"
                  placeholder="nama@email.com atau 0812xxxxxxxx" data-i18n-placeholder="coContactPlaceholder">
-          <p id="co-contact-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-error-for="contact"></p>
+          <p id="co-contact-error" class="mt-1.5 hidden text-sm font-bold text-red-700" data-error-for="contact"></p>
         </div>
 
         <fieldset class="mt-6">
@@ -1242,7 +1242,7 @@
                 </span>
               </label>
           </div>
-          <p id="co-method-error" class="mt-1.5 hidden text-sm font-semibold text-red-700" data-error-for="method"></p>
+          <p id="co-method-error" class="mt-1.5 hidden text-sm font-bold text-red-700" data-error-for="method"></p>
         </fieldset>
 
         <button type="button" class="mt-5 inline-flex min-h-11 items-center gap-1.5 text-sm font-extrabold text-xl-blue hover:underline" data-open-chat>
@@ -1277,7 +1277,7 @@
         <div data-pay-method="va" hidden class="mt-5 rounded-control bg-paper p-4">
           <p class="text-xs font-bold uppercase tracking-[0.08em] text-muted" data-i18n="coVaLabel">Nomor virtual account</p>
           <div class="mt-1 flex flex-wrap items-center justify-between gap-2">
-            <p class="font-mono text-xl font-semibold tracking-wider text-xl-dark" data-co-va></p>
+            <p class="font-mono text-xl tracking-wider text-xl-dark" data-co-va></p>
             <button type="button" class="btn btn-secondary" data-copy-target="[data-co-va]" data-i18n="coCopy">Salin</button>
           </div>
         </div>
@@ -1290,7 +1290,7 @@
 
         <div class="mt-6 flex flex-wrap items-center justify-between gap-x-4">
           <button type="button" class="inline-flex min-h-11 items-center text-sm font-extrabold text-xl-blue hover:underline" data-co-back data-i18n="coBack">Ubah data</button>
-          <button type="button" class="inline-flex min-h-11 items-center text-sm font-semibold text-muted underline-offset-4 hover:underline" data-co-fail data-i18n="coSimFail">Simulasikan pembayaran gagal</button>
+          <button type="button" class="inline-flex min-h-11 items-center text-sm font-bold text-muted underline-offset-4 hover:underline" data-co-fail data-i18n="coSimFail">Simulasikan pembayaran gagal</button>
         </div>
       </div>
       <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6" data-pay-footer>
@@ -1309,10 +1309,10 @@
 
         <div class="mt-6 rounded-control border border-line bg-paper p-4">
           <p class="text-xs font-bold uppercase tracking-[0.08em] text-muted" data-i18n="successKeyLabel">API key kamu</p>
-          <p class="mt-1 break-all font-mono text-base font-semibold text-xl-dark" data-co-key></p>
+          <p class="mt-1 break-all font-mono text-base text-xl-dark" data-co-key></p>
           <p class="mt-2 text-xs text-muted" data-i18n="successWarning">Simpan API key seperti kata sandi. Jangan dibagikan.</p>
         </div>
-        <p class="mt-4 text-center text-xs font-semibold text-muted" data-i18n="successNotice">Prototype — tidak ada transaksi nyata.</p>
+        <p class="mt-4 text-center text-xs font-bold text-muted" data-i18n="successNotice">Prototype — tidak ada transaksi nyata.</p>
       </div>
       <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
         <button type="button" class="btn btn-primary min-h-12" data-copy-key data-i18n="successCopyKey">Salin API key</button>

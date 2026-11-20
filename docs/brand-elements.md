@@ -129,14 +129,16 @@ Visual produk harus menampilkan proyek nyata dalam bentuk abstrak: prompt, panel
 | XL Sky `#5CD0F9` | Guidance, estimasi, dan visual pendukung |
 | Paper `#F7F8FC` | Background utama |
 | Ink `#17181A` | Teks sekunder |
-| Muted Gray `#69728A` | Supporting text |
+| Muted Gray `#626B82` | Supporting text (dulu `#69728A`; diganti demi kontras AA) |
 | Border `#D9DEEA` | Garis komponen |
 
 ## Typography Roles
 
-- **Manrope ExtraBold/SemiBold:** display headline dan judul package.
-- **Manrope Medium:** body dan button.
-- **IBM Plex Mono:** nominal kecil, status, estimate, dan mock transaction ID.
+- **Manrope ExtraBold (800):** display headline, judul package, harga, tombol.
+- **Manrope Bold (700):** label, link, penekanan kecil, pesan error.
+- **Manrope Medium (500):** body dan deskripsi.
+- **IBM Plex Mono Medium (500):** nominal kecil, status, estimate, dan mock transaction ID.
+- Total 2 keluarga, 4 face. Detail dan aturannya di `visual-direction.md` → Typography.
 - Jangan memakai warna textless, shadow berlebihan, atau font decoration pada heading.
 
 ## Composition

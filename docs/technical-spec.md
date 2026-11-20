@@ -590,7 +590,7 @@ TokenNyala — AI Credit untuk Vibecoding
 - Batasi animasi dan shadow
 - Tailwind CDN hanya untuk prototype, bukan build produksi
 - Lazy-load gambar non-hero jika ada
-- Hindari font weight berlebihan
+- Font: 2 keluarga, 4 face (Manrope 500/700/800, IBM Plex Mono 500) — lihat `visual-direction.md`; dicek `tools/audit_v3.py`
 - Gunakan satu loading state yang ringkas
 - Ukuran target awal: HTML + CSS + JS < 300KB sebelum asset illustration
 

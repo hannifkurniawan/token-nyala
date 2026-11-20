@@ -1258,7 +1258,7 @@
       }));
       daysRow.replaceChildren(...short.map((d) => {
         const li = document.createElement('li');
-        li.className = 'flex-1 text-center text-[11px] font-semibold text-muted';
+        li.className = 'flex-1 text-center text-[11px] font-bold text-muted';
         li.textContent = d;
         return li;
       }));
@@ -1407,7 +1407,7 @@
     const li = document.createElement('div');
     const text = msg.text ?? fill(t(msg.key), Object.fromEntries(Object.entries(msg.params || {}).map(([k, v]) => [k, typeof v === 'function' ? v() : v])));
     if (msg.from === 'system') {
-      li.className = 'text-center text-xs font-semibold text-muted';
+      li.className = 'text-center text-xs font-bold text-muted';
       li.textContent = text;
       return li;
     }
@@ -1449,7 +1449,7 @@
     const items = chat.messages.map(bubble);
     if (chat.typing) {
       const li = document.createElement('div');
-      li.className = 'text-xs font-semibold text-muted';
+      li.className = 'text-xs font-bold text-muted';
       li.textContent = t(chat.typing);
       items.push(li);
     }

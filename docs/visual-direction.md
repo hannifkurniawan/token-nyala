@@ -38,6 +38,16 @@ TokenNyala combines marketplace clarity with one memorable visual motif: a digit
 
 - Display and UI: “Manrope” or a robust locally available sans-serif.
 - Mono accents: “IBM Plex Mono” for usage estimates and mock identifiers.
+- **Exactly 2 families and 4 faces** (Google Fonts, no italic):
+
+  | Face | Tailwind | Use |
+  |---|---|---|
+  | Manrope 500 Medium | default (`body` has `font-medium`) | body text, descriptions, captions |
+  | Manrope 700 Bold | `font-bold` | labels, form labels, links, small emphasis, errors |
+  | Manrope 800 ExtraBold | `font-extrabold` | headings, buttons, prices, eyebrows |
+  | IBM Plex Mono 500 | `font-mono` | estimates, API key, Base URL, VA number, IDs, chart labels |
+
+- Do not use `font-semibold`, `font-normal`, `font-black`, or a weight on `font-mono`: those faces are not loaded and the browser would silently substitute the nearest one. Emphasis inside mono comes from size and color. `tools/audit_v3.py` fails if any text renders in an unloaded face.
 - Avoid highly expressive display fonts; the personality should come from composition and illustration, not decoration.
 
 ## Layout
