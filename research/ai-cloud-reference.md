@@ -7,7 +7,7 @@ Pemicu: feedback Pak Ferry setelah demo `showcase/v1` dan `showcase/v2` — outp
 
 | Referensi | Yang dibaca | Batasan |
 |---|---|---|
-| **sumopod.com** (PT Koding Kreasi Indonesia) | Landing (dirender dengan Chromium headless), halaman register/login (hanya dilihat, tidak diisi), Terms/Privacy/Refund, **±45 halaman docs** `docs.sumopod.com` | Dashboard ada di balik login. Register memakai Cloudflare Turnstile + kode verifikasi email, jadi tidak dilakukan otomatis. Harga per produk tidak tampil publik. |
+| **sumopod.com** (PT Koding Kreasi Indonesia) | Landing (dirender dengan Chromium headless), halaman register/login (hanya dilihat), Terms/Privacy/Refund, **seluruh docs `docs.sumopod.com`: 86 halaman + 212 screenshot dashboard** (atas saran user) | Tidak login: verifikasi Cloudflare Turnstile harus dicentang manusia. Dashboard dipelajari dari screenshot docs (per 4 Nov 2026). |
 | **helipod.com** | — | Dialihkan ke `helipod.co.uk` (bukan AI cloud). |
 | **helipod.io** (yang dimaksud, perlu dikonfirmasi ke Pak Ferry) | Landing, halaman harga, 13 halaman fitur, 14 halaman VPS/landing SEO, blog | Dashboard di balik login (“Masuk Kokpit”). |
 
@@ -19,32 +19,37 @@ Teks dan screenshot mentah disimpan di luar repo (scratchpad sesi), tidak di-com
 
 ### Positioning & landing
 - Hero (bahasa Inggris, generik): *“Unlock the power of the cloud with our affordable solutions.”* / *“Elevate your bussiness with our cloud solutions…”* (ada typo). CTA *Get started now*.
-- Isi landing tipis: logo infrastruktur (Cloudeka by Lintasarta, Alibaba Cloud, Tencent Cloud, MaxCloud) dan model (OpenAI, Claude, GLM, Kimi, DeepSeek), **carousel video tutorial YouTube berbahasa Indonesia**, satu blok fitur VPS, CTA penutup. **Tidak ada harga di landing.**
-- Judul tutorial menunjukkan siapa yang mereka kejar: *“Tutorial OpenClaw untuk Pemula Tanpa Pusing”*, *“Cara Menggunakan Sumopod AI Gratis untuk Vibecoding di Cline VSCode”*, *“Cara Menggunakan Sumopod AI di Bolt.diy”*, *“Bikin Pencatatan Keuangan dengan Hermes”*, *“Cara Bikin Akun Threads Auto Post 24 Jam dengan OpenClaw”*. → **Pemula/vibecoder diakuisisi lewat konten video & influencer, bukan lewat landing.**
+- Landing tipis: logo infrastruktur (Cloudeka by Lintasarta, Alibaba Cloud, Tencent Cloud, MaxCloud) dan model (OpenAI, Claude, GLM, Kimi, DeepSeek), **carousel video tutorial YouTube berbahasa Indonesia**, satu blok fitur VPS, CTA penutup. **Tidak ada harga di landing.**
+- **Docs (`docs.sumopod.com`) adalah “landing” yang sebenarnya:** 86 halaman, 212 screenshot dashboard, alur langkah demi langkah per produk + troubleshooting.
+- Judul tutorial menunjukkan siapa yang mereka kejar: *“Tutorial OpenClaw untuk Pemula Tanpa Pusing”*, *“Cara Menggunakan Sumopod AI Gratis untuk Vibecoding di Cline VSCode”*, *“OpenClaw Auto Post 24 Jam — serius tanpa coding?!”*, *“AI 24 jam cuma 36rb?!”*, *“1 miliar token/hari gratis?!”*. → **Pemula/vibecoder diakuisisi lewat video & influencer, bukan lewat landing.**
 
-### Peta produk (sidebar dashboard, terlihat di screenshot landing)
-- **Learning:** Learn (video tutorial & webinar)
-- **Services:** Chat, AI, Apps (Services), API Services, Managed Payment, Security Advisor, Cloud Payments
-- **Infrastructure:** Pods, VPS, Database, Object Storage, Domains
-- **Communication:** Email SMTP
+### Dashboard (dari screenshot docs)
+- **Halaman pertama setelah login = “Learn”** (video tutorial + webinar), bukan ringkasan saldo.
+- Sidebar: **Learning** (Learn) · **Services** (Chat, AI, Apps (Services), API Services, Managed Payment, Security Advisor, Cloud Payments) · **Infrastructure** (Pods, VPS / VPS NAT, Database, Object Storage, Domains) · **Communication** (Email SMTP, Email Inbox, Social API) · **Account** (Billing).
+- Pola halaman konsisten: daftar → tombol *Create/Add* → form bertahap di kiri + **panel ringkasan biaya lengket di kanan** (“Deployment Summary” / “Configuration Summary”, *Billed monthly · Cancel anytime*).
 
-### Detail dari docs
+### Produk
 | Produk | Cara kerja & harga |
 |---|---|
-| **AI** | Endpoint kompatibel OpenAI `ai.sumopod.com/v1`, key `sk-…` ditampilkan sekali, **limit belanja per key (USD)** dan pembatasan model per key, tab Usage. Teks saja. |
-| **Apps (Services)** | Marketplace template sekali klik: n8n, Hermes, OpenClaw, dll. Pilih nama → region → tier → billing cycle → *Deployment Summary* → Deploy. Tier ditulis teknis: *“n8n (0.5C0.5G) small/simple tasks only, not for chatbot or AI agent”*, *“n8n (1C1G) minimal requirement for building a chatbot or AI agent”*. Upgrade saja, tidak bisa downgrade. |
-| **VPS** | Pilih provider (Tencent, Cloudeka by Lintasarta, Alibaba), region (Jakarta/Singapura), OS, paket; root password diset sendiri (12–30 karakter). Bulanan. Tencent: kuota bandwidth habis → **VPS dimatikan** sampai bulan depan. |
-| **Database** | Shared (PostgreSQL 16, MySQL 8, MariaDB 11, MS SQL Express) **Rp10.000/GB/bulan**; +pgvector/PostGIS Rp12.500–15.000/GB. Ada Dedicated. |
-| **Lainnya** | Email SMTP, Object Storage, Domains, Managed Payment, Security Advisor. |
+| **AI** | Tab: Quick Start · Chat · Usage · Models · API Keys. Endpoint kompatibel OpenAI `ai.sumopod.com/v1`, key `sk-…` ditampilkan sekali, **limit belanja per key (USD)** + batasi model per key. Tabel model: provider, context, **harga input/cache/output dalam USD per 1M token**, beberapa model peak/off-peak. Usage: biaya harian (USD) + request log per key. Teks saja. |
+| **Chat** | “Chat Playground” mirip ChatGPT di dalam dashboard, pilih model, contoh prompt, export/import; dibayar dari AI Balance. Image/Speech/Video “coming soon”. |
+| **Apps (Services)** | Marketplace template: **Hermes** (agent Nous Research, mulai Rp10.000/bln), **n8n** (mulai Rp10.000/bln), n8n + ffmpeg (Rp30.000), **QwenPaw by Sumopod** (alternatif OpenClaw ber-GUI, Rp45.000). Form: nama → region (Jakarta / EU “50% off” / Singapura segera) → tier dengan sisa kuota (“971 remaining”, “Out of Quota”). Tier ditulis teknis tapi diberi petunjuk: *“n8n (0.5C0.5G) — NOT FOR CHATBOT OR AI AGENT”*, *“n8n (1C1G) — Minimal Requirement for Building Chatbot and AI Agent”* Rp30.000/bln. Setelah aktif: tab Access (URL admin + user/password), Monitor, Logs, File Manager, Custom Domain, Upgrade & Renew (tanpa downgrade). |
+| **VPS / VPS NAT** | Nama → **root password wajib diisi sendiri** (12–30 karakter) → provider (Tencent, Cloudeka by Lintasarta, Alibaba) → region (Singapura/Jakarta) → OS → paket. Contoh 2 vCPU/2 GB/40 GB/512 GB traffic = **Rp60.000/bln**. Tencent: kuota bandwidth habis → VPS dimatikan. |
+| **Database** | Shared (PostgreSQL 16, MySQL 8, MariaDB 11, MS SQL Express) **Rp10.000/GB/bln**; +pgvector/PostGIS Rp12.500–15.000/GB. Dedicated tersedia. Monitor, backup, rotate password. |
+| **Object Storage** | S3-compatible, 10 GB Rp6.500/bln s.d. 2 TB Rp1.300.000/bln. |
+| **Domains** | .my.id / .biz.id / .web.id **Rp3.500 tahun pertama** (perpanjang Rp15.000–65.000), DNS & nameserver. |
+| **Email SMTP / Inbox** | Kredensial SMTP, custom domain (DKIM/SPF), activity log. |
+| **Managed Payment** | **Payment gateway untuk aplikasi user** (QRIS, fee 0,7% + Rp300, settle ±2 hari), sandbox → live, webhook, tarik dana (fee Rp2.500). |
+| **Cloud Payments** | Top-up akun cloud pihak ketiga (via UIN/Account ID) $5–$500 dengan QRIS. |
 
 ### Akun & pembayaran
-- Register: Google, atau email + nama depan/belakang + **nama perusahaan** + Turnstile; login tanpa password (kode via email).
-- **Dua saldo:** *Sumopod Credit* (Rupiah, top-up preset Rp50.000/100.000/200.000) untuk VPS, domain, dll.; **AI Balance dalam USD** (preset $5/$10/$25/$50) yang dibeli dengan mengonversi Sumopod Credit memakai kurs. API key baru bisa dibuat setelah punya AI Balance.
-- Kredit tidak bisa di-refund atau ditarik.
+- Register: Google, atau email + nama depan/belakang + **nama perusahaan** + Cloudflare Turnstile (centang manual); login tanpa password (kode via email).
+- **Sumopod Credit (Rupiah)**: top-up preset Rp50.000/100.000/200.000 atau bebas; QRIS, VA, e-wallet (Dana, ShopeePay…), kartu; ada **Redeem voucher**. Peringatan kuning: *“Sumopod Credit is not real money and cannot be refunded or withdrawn.”*
+- **AI Balance (USD), terpisah**: dibeli dengan mengonversi Sumopod Credit — contoh di screenshot: bayar 89.775 kredit → $5, *“Exchange rate: 1 USD = 17.955 IDR”*; preset $5/$10/$25/$50; ada Turnstile lagi di dialog ini. API key dan Chat baru bisa dipakai setelah AI Balance terisi.
 
 ### Catatan UX
-- Kuat: harga murah, banyak produk, ekosistem tutorial Indonesia, limit belanja per API key.
-- Lemah untuk pemula: landing tidak menjelaskan produk/harga; copy Inggris generik; **dua saldo + USD + kurs**; tier berbahasa teknis (0.5C0.5G); risiko VPS mati saat bandwidth habis; harus paham provider/region/OS/root password.
+- Kuat: harga murah dan tampil sebelum bayar (panel ringkasan), banyak produk, template agent/automation sekali klik dengan petunjuk “cukup untuk chatbot?”, limit belanja per API key, ekosistem tutorial Indonesia, Learn sebagai beranda.
+- Lemah untuk pemula: landing tidak menjelaskan produk/harga; copy Inggris; **dua saldo + USD + kurs** (dua kali top-up sebelum bisa memakai AI); tier & form teknis (0.5C0.5G, root password, provider, region, OS); VPS bisa mati saat bandwidth habis; 18 menu sidebar berbobot sama.
 
 ---
 
@@ -100,7 +105,7 @@ Keduanya masih berbicara bahasa developer. Belum ada yang menjawab pertanyaan pe
 
 | Pertanyaan pemula | Sumopod | Helipod | Peluang |
 |---|---|---|---|
-| Butuh layanan apa untuk proyek saya? | Pilih sendiri dari 15 menu | Pilih sendiri dari 7 produk | **Mulai dari tujuan/resep**: “Chatbot WhatsApp AI”, “Landing page + form”, “Otomasi konten n8n” → paket berisi app + saldo AI |
+| Butuh layanan apa untuk proyek saya? | Pilih sendiri dari 18 menu | Pilih sendiri dari 7 produk | **Mulai dari tujuan/resep**: “Chatbot WhatsApp AI”, “Landing page + form”, “Otomasi konten n8n” → paket berisi app + saldo AI |
 | Berapa total per bulan? | Harga di dalam dashboard | Kalkulator per resource | **Satu angka per proyek** dalam bahasa awam (konsep “sesi kecil” diperluas) |
 | Saldo-nya bagaimana? | Dua saldo, AI dalam USD | Satu dompet Rupiah (+ sub-saldo AI) | Satu saldo Rupiah, aturan saldo jelas (sudah ada di v3) |
 | Tier mana yang cukup? | “0.5C0.5G / 1C1G” | vCPU, RAM, CU-jam | Ukuran berbahasa awam (“Coba-coba / Dipakai tim kecil / Ramai”) + detail teknis di `<details>` (pola v3) |
