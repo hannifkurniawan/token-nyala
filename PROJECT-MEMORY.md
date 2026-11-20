@@ -26,6 +26,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | `docs/personas.md`, `docs/user-journey.md` | Ayu (pemula), Raka (freelancer), Dimas (tim kecil) |
 | `research/reference-gap-analysis.md` | Analisis OCTA, TokenKu, OpenRouter → gap G1–G12 + rekomendasi |
 | `research/reference-audit.md` | Audit referensi awal |
+| `docs/v4-cloud-plan.md` | **Rencana v4 platform AI cloud** (draf): layanan berbahasa awam, resep per persona, peta halaman landing/harga/console, tahapan |
 | `research/ai-cloud-reference.md` | Teardown Sumopod & Helipod (AI cloud), peluang, pertanyaan untuk Pak Ferry |
 
 ## Keputusan yang Sudah Diambil
@@ -75,13 +76,21 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Semua modal (checkout, katalog, konsultasi) memakai `setupModal()`; chat tetap sendiri (modal di mobile, non-modal di desktop) | Satu perilaku buka/tutup/fokus; utang teknis lunas |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
 | 20 Nov 2026 | Tipografi = **2 keluarga, 4 face**: Manrope 500 (body, `font-medium` di `body`), 700 (`font-bold`, dulu juga `font-semibold`), 800 (`font-extrabold`); IBM Plex Mono 500 saja. Tanpa `font-semibold`/weight di mono | User ingin font tidak terlalu banyak. Sebelumnya 6 file dimuat, dan teks body meminta 400 yang tidak dimuat (dirender 500). Dicek `audit_v3.py` |
+| 20 Nov 2026 | **Arah produk berubah: TokenNyala = platform AI Cloud Services** (referensi helipod.io & sumopod.com), bukan hanya jualan token | Feedback Pak Ferry setelah demo showcase v1/v2; dikonfirmasi user |
+| 20 Nov 2026 | Cakupan layanan: **semua layanan** (AI API, app/agent sekali klik, hosting app, VPS, database, domain, email, dll.) | Jawaban konfirmasi no. 2 |
+| 20 Nov 2026 | Target utama tetap **vibecoder pemula**, mengikuti persona yang ada (Ayu, Raka, Dimas) | Jawaban no. 3 |
+| 20 Nov 2026 | Deliverable: **semuanya** — landing, halaman harga, mock dashboard/console, alur deploy | Jawaban no. 4 |
+| 20 Nov 2026 | **Satu saldo Rupiah** untuk semua layanan | Jawaban no. 5; pembeda dari Sumopod (2 saldo, AI dalam USD) |
+| 20 Nov 2026 | Nama TokenNyala tetap; **hanya tagline yang berubah** | Jawaban no. 6 |
+| 20 Nov 2026 | Pembeda: **paling mudah dipahami pemula**, “unique design taste”, tidak terlalu teknis | Jawaban no. 7 |
+| 20 Nov 2026 | Review berikutnya: **demo langsung, mobile first**; acuan visual = `showcase/v1` & `showcase/v2` | Jawaban no. 8 |
 
 ## Pertanyaan Terbuka untuk PO
 
 1. Nominal final paket dan tarif model masih ilustratif (open item di technical-spec).
 2. Aturan saldo perlu validasi legal/finance sebelum produksi.
 3. Jam layanan dan SLA balasan tim nyata belum ditentukan.
-4. **(20 Nov, feedback Pak Ferry)** Arah produk: tetap “jualan token AI untuk vibecoder” atau berubah jadi **platform AI Cloud Services** (referensi sumopod.com, helipod.io)? Layanan apa saja yang masuk (AI API, deploy app, one-click app seperti n8n/Dify/agent, VPS, database, GPU)? Target user tetap vibecoder pemula? Deliverable hanya landing atau juga mock console? Lihat Sesi 3.
+4. ~~**(20 Nov, feedback Pak Ferry)** Arah produk: tetap “jualan token AI untuk vibecoder” atau berubah jadi **platform AI Cloud Services** (referensi sumopod.com, helipod.io)? Layanan apa saja yang masuk (AI API, deploy app, one-click app seperti n8n/Dify/agent, VPS, database, GPU)? Target user tetap vibecoder pemula? Deliverable hanya landing atau juga mock console?~~ → **dijawab 20 Nov**, lihat tabel Keputusan.
 
 ## Pelajaran (jangan diulang)
 
@@ -157,4 +166,6 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Peluang: keduanya berbahasa developer; belum ada yang menjawab “saya mau bikin X, butuh apa & berapa per bulan?” → pendekatan intent-first + estimasi awam dari v3 bisa diperluas ke multi-produk.
 - Analisa: v3/showcase sudah menutup pilar “AI API/gateway” (saldo, katalog model, API key, dashboard, tim, chat). Yang belum: pilar compute (deploy app, one-click app/agent, VPS, database), dompet multi-produk, halaman harga per produk, mock console.
 - Belum ada perubahan kode. Menunggu keputusan arah (pertanyaan terbuka no. 4).
+- User menjawab 8 konfirmasi (dicatat di Keputusan). Showcase v1 = Tailwind (editorial bersih); showcase v2 = CSS custom 1.146 baris (lembar warna penuh, saklar, angka besar, label mono bernomor).
+- Draf `docs/v4-cloud-plan.md`. Menunggu: acuan visual (v1/v2), tagline, ID/EN, tanggal demo.
 
