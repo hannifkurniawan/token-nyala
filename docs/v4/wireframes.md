@@ -121,7 +121,7 @@ Biaya tetap = dipotong per 30 hari · Biaya pakai = AI, sesuai pemakaian
 ### A12–14. Tim (v3) · FAQ (v3 pola `<details>`) · CTA akhir (sheet blue, saklar besar).
 
 ### Desktop (≥1024)
-Hero 2 kolom (judul kiri, board kanan). Resep: judul + chip kiri (sticky), kartu kanan. Layanan 4 kolom. Saldo 2 kolom (copy | dompet). Konten maks `--maxw` (1600) dengan gutter fluid v2.
+Hero 2 kolom (judul kiri, board kanan). Resep: judul + chip kiri (sticky), kartu kanan. Layanan 4 kolom. Saldo 2 kolom (copy | dompet). Konten maks 1280px, gutter 16/24/40/64 (`visual-direction.md` §4).
 
 ---
 

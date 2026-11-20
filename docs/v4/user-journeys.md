@@ -25,7 +25,7 @@ Persona dasar: `docs/personas.md`. Angka: `services-and-pricing.md`.
 Resep `chatbot-wa` (Rutin + 1.000 pesan ≈ **Rp47 rb/bulan**). Di wizard ukuran Coba-coba tampil nonaktif: “Belum cukup untuk chatbot — pilih Rutin”. Setelah nyala: langkah “Pindai QR WhatsApp” (mock) dan tombol uji kirim pesan. Beranda menampilkan pemakaian “pesan dibalas bulan ini”.
 
 ## Skenario 3 — Raka: “Tiga klien, satu saldo, tagihan terpisah”
-- Resep `web-klien` ≈ **Rp101,7 rb/bulan** per klien (bulan pertama Rp346,7 rb termasuk `.com`). Top-up Rp500.000 → saldo 625.000, cukup ±3 bulan untuk satu klien.
+- Resep `web-klien` ≈ **Rp102 rb/bulan** per klien (Rp101.700; bulan pertama Rp346.700 termasuk `.com`). Top-up Rp500.000 → saldo 625.000, cukup ±3 bulan untuk satu klien.
 - Membuat 3 proyek (`klien-kopi`, `klien-salon`, `klien-event`); masing-masing punya **API key sendiri dengan limit Rupiah**.
 - Saldo → Riwayat difilter per proyek → unduh invoice (mock) per klien.
 - Kekhawatiran v3 terjawab: “Apakah saldo bisa dipakai lintas proyek?” → ya, dan pemakaian tetap terpisah.
