@@ -297,6 +297,7 @@ Perhitungan saldo: Ayu 55.000 − 15.000 − 5.000 − 3.780; Raka 625.000 − 2
 Perhitungan “cukup sampai” (rumus §2, dari 21 Nov): Ayu 500 + 68,5 + 540 = 1.108,5/hari → 28 hari → **19 Des**; Raka 3.000 + 739,7 + 2.160 = 5.899,7/hari → 40 hari → **31 Des**; Dimas 7.000 + 0 + 3.360 = 10.360/hari → 62 hari → **22 Jan**. (Diperbaiki 20 Nov 2026 saat Fase 1: Ayu sebelumnya tertulis ±20 Des.)
 
 `&state=jeda` (hanya `ayu`): jam simulasi **21 Des 2026**, saldo **8.000**, `portofolio-ayu` **dijeda sejak 20 Des**, data aman sampai **27 Des**, banner: “Isi minimal Rp20.000”.
+Riwayat `jeda` = riwayat `ayu` + AI 12 sesi kecil (5 Des, Rp22.680) + Coba AI 45 pesan (12 Des, Rp540) → 31.220 − 23.220 = **8.000**. Isi Rp50.000 (+5.000) → Online-kan menyala lagi (−15.000, 30 hari baru) → saldo **48.000**. (Ditetapkan Fase 4 supaya riwayat selalu sama dengan saldo.)
 
 Menu Akun juga berisi **“Simulasi: majukan 30 hari”** — memajukan jam demo dan menjalankan perpanjangan / jeda / berhenti otomatis sesuai §2.
 

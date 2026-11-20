@@ -527,3 +527,20 @@ Semua kunci ada di `v4/assets/js/i18n.js` (awalan `price.`, `pnav.`, `calc.`, `f
 | aip.title | Satu saldo, dua belas model. | One balance, twelve models. |
 | bal.title | Isi saldo sekali, dipotong dengan aturan yang **jelas**. | Top up once, charged by **clear** rules. |
 | rule.* | 10 aturan tagihan dari `services-and-pricing` §1–2 dengan angka dari `data.js` | — |
+
+### Console — tambahan Fase 4 (20 Nov 2026)
+Kunci di `v4/assets/js/i18n.js` (awalan `con.`, `acct.`, `auth.`, `home.`, `next.`, `banner.`, `bal.`, `h.`, `co.`, `method.`).
+
+| Kunci | ID | EN |
+|---|---|---|
+| auth.lead | Satu akun untuk semua layanan. Tanpa kartu kredit. | One account for every service. No credit card. |
+| auth.contactHelp | Kami kirim kode 6 digit ke sini. Di prototype ini tidak ada yang dikirim atau disimpan. | We send a 6-digit code here. In this prototype nothing is sent or stored. |
+| auth.demoTitle | Atau langsung coba akun contoh (Ayu · Raka · Dimas → `?demo=`) | Or jump into a sample account |
+| home.untilPaused | Ada layanan yang dijeda. Isi saldo untuk menyalakannya lagi. (tanggal “cukup sampai” tidak ditampilkan saat ada yang dijeda) | A service is paused. Top up to switch it back on. |
+| banner.paused | …Isi minimal {Rp} — langsung menyala lagi. (ditambah ajakan) | …Top up at least {Rp} and it switches back on. |
+| next.* | 5 langkah berikutnya (isi saldo · resep pertama · QR WhatsApp · alamat web · API key) | — |
+| co.afterResume | Saldo setelahnya {Rp} — sudah termasuk {proyek} menyala lagi untuk 30 hari. | Balance afterwards {Rp} — after {project} switches back on for 30 days. |
+| co.resumed | {proyek} menyala lagi — 30 hari baru sudah dipotong. | {project} is back on — a new 30 days has been charged. |
+| con.soonBody | Bagian ini dibangun di tahap berikutnya prototype. (rute Fase 5–6, sementara) | This part is built in the next stage of the prototype. |
+
+Isi saldo console = checkout v3 tanpa field kontak (pengguna sudah masuk): 4 nominal + bonus, “Nominal lain” (min. Rp20.000, kelipatan Rp1.000), metode, bayar (QRIS/VA/e-wallet), sukses/gagal.
