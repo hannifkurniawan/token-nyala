@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Berikutnya (perlu keputusan PO):** open item di technical-spec (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Berikutnya:** v4 platform AI cloud — Fase 0 dokumen (lihat `docs/v4-cloud-plan.md`). Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -84,6 +84,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Nama TokenNyala tetap; **hanya tagline yang berubah** | Jawaban no. 6 |
 | 20 Nov 2026 | Pembeda: **paling mudah dipahami pemula**, “unique design taste”, tidak terlalu teknis | Jawaban no. 7 |
 | 20 Nov 2026 | Review berikutnya: **demo langsung, mobile first**; acuan visual = `showcase/v1` & `showcase/v2` | Jawaban no. 8 |
+| 20 Nov 2026 | Acuan visual v4 = **showcase v2**, dibangun ulang dengan Tailwind v4 | Pilihan user; paling sesuai “unique design taste” |
+| 20 Nov 2026 | Tagline: **“Idemu nyala, dari prompt sampai online.”** | Pilihan user |
+| 20 Nov 2026 | v4 tetap **ID + EN** | Pilihan user; infrastruktur i18n sudah ada |
+| 20 Nov 2026 | Belum ada tanggal demo → bertahap, prioritas landing → harga → wizard deploy | Pilihan user |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -167,5 +171,5 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Analisa: v3/showcase sudah menutup pilar “AI API/gateway” (saldo, katalog model, API key, dashboard, tim, chat). Yang belum: pilar compute (deploy app, one-click app/agent, VPS, database), dompet multi-produk, halaman harga per produk, mock console.
 - Belum ada perubahan kode. Menunggu keputusan arah (pertanyaan terbuka no. 4).
 - User menjawab 8 konfirmasi (dicatat di Keputusan). Showcase v1 = Tailwind (editorial bersih); showcase v2 = CSS custom 1.146 baris (lembar warna penuh, saklar, angka besar, label mono bernomor).
-- Draf `docs/v4-cloud-plan.md`. Menunggu: acuan visual (v1/v2), tagline, ID/EN, tanggal demo.
+- `docs/v4-cloud-plan.md` disetujui arahnya: visual showcase v2, tagline “Idemu nyala, dari prompt sampai online.”, ID+EN, belum ada tanggal demo. **Berikutnya: Fase 0 (dokumen v4).**
 

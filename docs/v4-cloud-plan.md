@@ -1,6 +1,6 @@
 # Rencana v4 — TokenNyala sebagai Platform AI Cloud
 
-Tanggal: 20 November 2026 · Status: **draf, menunggu persetujuan user**
+Tanggal: 20 November 2026 · Status: **disetujui arahnya (20 Nov 2026)** — keputusan bagian 7 sudah diambil
 Dasar: feedback Pak Ferry (20 Nov), keputusan konfirmasi 1–8 (lihat `PROJECT-MEMORY.md` → Keputusan), riset `research/ai-cloud-reference.md`.
 
 ## 1. Ringkasan Arah
@@ -18,10 +18,8 @@ Dasar: feedback Pak Ferry (20 Nov), keputusan konfirmasi 1–8 (lihat `PROJECT-M
 ### Inti cerita (menjembatani brief lama dan ekspektasi baru)
 Vibecoder tidak berhenti di token. Setelah AI menulis kodenya, mereka bingung **cara meng-online-kan, menyimpan data, memasang domain, atau menjalankan agent 24 jam**. Pesaing menjawab dengan menu teknis (vCPU, pod, CU-jam, root password, saldo USD). TokenNyala menjawab dengan **tujuan**: “Mau bikin apa?” → resep layanan yang sudah dirangkai → **satu angka Rupiah per bulan**.
 
-### Kandidat tagline (pilih satu)
-1. **“Dari prompt sampai online.”** — paling jelas menjelaskan cakupan baru
-2. **“Bangun dengan AI. Nyalakan di cloud.”** — menjaga metafora *nyala*
-3. **“Idemu nyala, dari prompt sampai online.”** — gabungan keduanya
+### Tagline
+**“Idemu nyala, dari prompt sampai online.”** (dipilih user, 20 Nov). EN: *“Your idea, switched on — from prompt to online.”* (draf, dikunci di microcopy).
 
 ## 2. Layanan dalam Bahasa Awam
 
@@ -107,8 +105,8 @@ Semua layanan di satu halaman (pola Helipod), tetapi: mulai dari resep, angka pe
 
 Setiap fase: branch dari `main`, QA per section, commit + push per langkah, merge lewat PR atas persetujuan user.
 
-## 7. Masih Perlu Diputuskan
-1. Acuan visual utama: showcase v1 atau v2 (atau gabungan)?
-2. Tagline: salah satu dari tiga kandidat?
-3. Tetap dua bahasa (ID/EN)? Usulan: ya — infrastruktur i18n sudah ada.
-4. Tanggal demo ke Pak Ferry — menentukan apakah fase 6 dikerjakan penuh atau sebagian.
+## 7. Keputusan Tambahan (20 Nov 2026)
+1. **Acuan visual: `showcase/v2`** — lembar warna penuh, saklar “nyala”, angka besar, label mono bernomor; dibangun ulang dengan Tailwind v4 + token `@theme` (bukan menyalin CSS custom 1.146 baris).
+2. **Tagline: “Idemu nyala, dari prompt sampai online.”**
+3. **Dua bahasa: ID + EN.**
+4. **Belum ada tanggal demo** → kerjakan bertahap; prioritas alur demo utama: landing → harga → wizard deploy (fase 1–5) sebelum layanan lain di console (fase 6).
