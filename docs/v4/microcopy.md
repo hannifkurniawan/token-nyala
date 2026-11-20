@@ -510,3 +510,20 @@ Kartu “Satu saldo” **tidak** menampilkan tanggal “cukup sampai” (aturan 
 | agent.greeting | Halo, aku Sari dari tim TokenNyala. Ada yang bisa kubantu? (v3: “…soal top up?”) | Hi, I'm Sari from the TokenNyala team. How can I help? |
 
 Chip utama Nala: Bantu pilih resep · Cara pakai saldo di tool · Model apa saja? · Metode pembayaran · Bicara dengan tim. Alur v3 “Bantu pilih paket” **digantikan** “Bantu pilih resep”; kebutuhan AI-saja dijawab lewat pilihan “AI coding saja” (tabel nominal → sesi kecil v3).
+
+### Harga — tambahan Fase 3 (20 Nov 2026)
+Semua kunci ada di `v4/assets/js/i18n.js` (awalan `price.`, `pnav.`, `calc.`, `from.`, `det.`, `aip.`, `bal.`, `rule.`, `pfaq.`). Yang penting untuk review copy:
+
+| Kunci | ID | EN |
+|---|---|---|
+| price.title | Satu saldo Rupiah. Bayar yang kamu **pakai**. | One Rupiah balance. Pay for what you **use**. |
+| calc.title | Rakit sendiri, lihat **totalnya**. | Build your own, see the **total**. |
+| calc.offNote | Tidak dihitung. Nyalakan untuk menambahkannya ke total. | Not counted. Switch it on to add it to the total. |
+| calc.for.{coba,rutin,ramai} | Cocok untuk … · ±{n} pengunjung/hari (isi dari `services-and-pricing` §4) | Good for … · ±{n} visitors/day |
+| calc.bumped | {template} naik ke {ukuran} karena AI dinyalakan. | {template} moved up to {size} because AI is on. |
+| calc.recipeEmpty | Mulai dari kosong | Start from scratch |
+| calc.payments | {pct}% per transaksi, dipotong dari dana yang masuk — bukan dari saldo. | {pct}% per transaction, taken from the money you receive — not from your balance. |
+| det.server.* / det.database.* / det.storage.* | “Cukup untuk” per ukuran (baru, tidak ada di dokumen sebelumnya) — mis. Kecil: Belajar Linux, bot, atau beberapa aplikasi kecil | Good for … |
+| aip.title | Satu saldo, dua belas model. | One balance, twelve models. |
+| bal.title | Isi saldo sekali, dipotong dengan aturan yang **jelas**. | Top up once, charged by **clear** rules. |
+| rule.* | 10 aturan tagihan dari `services-and-pricing` §1–2 dengan angka dari `data.js` | — |
