@@ -9,7 +9,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Berikutnya (perlu keputusan PO):** open item di technical-spec (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
-- **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) di branch `type-scale-trim` — menunggu persetujuan merge.
+- **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
 - **`showcase/`** (commit user `0bcc69e`, 20 Nov): folder hasil akhir “v1” dan “v2” versi user (berisi turunan v3 + GSAP/Lenis). Bukan buatan Claude; jangan diedit tanpa diminta.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
@@ -143,4 +143,6 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Audit font: sebelumnya 2 keluarga, 6 face dimuat (Manrope 500/600/700/800, Plex Mono 500/600), 20 ukuran; teks tanpa kelas weight meminta 400 yang tidak dimuat.
 - Pull `main` (commit user `0bcc69e`: folder `showcase/`).
 - Branch `type-scale-trim`: `font-semibold` → `font-bold` (Manrope) / dihapus (mono), `body` → `font-medium`, URL Google Fonts jadi 4 face; `audit_v3.py` ditambah cek face (halaman + chat, ID/EN, mobile/desktop); dokumentasi tipografi di `visual-direction.md`, `brand-elements.md`, `technical-spec.md`. Ketiga tools lolos.
+- PR #3 `type-scale-trim` → `main` di-merge atas persetujuan user.
+- User bertanya cara mempresentasikan web sebagai designer UI/UX → disarankan format studi kasus (masalah → persona → riset → keputusan desain → demo mobile → kualitas → pelajaran). Tawaran membuat deck belum dijawab.
 - Belum: merapikan 20 ukuran huruf menjadi skala token (opsional, belum diminta).
