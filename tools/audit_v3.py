@@ -11,6 +11,8 @@ Definition of Done extras (docs/technical-spec.md):
   - prefers-reduced-motion: no running animations/transitions longer than 0.01ms
   - localStorage only ever holds the language preference (no email/phone) after a full checkout + consult
   - HTML + CSS + JS (excluding assets) < 300 KB
+Typography — every text node renders in a (family, weight) pair that is actually loaded (FACES, mirrors the
+  Google Fonts URL in index.html). Catches weights that silently fall back to the nearest loaded face.
 Exit code 1 on any violation.
 """
 import functools
@@ -24,6 +26,8 @@ from playwright.sync_api import sync_playwright
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "v3"
 AXE = "https://cdn.jsdelivr.net/npm/axe-core@4.14.0/axe.min.js"
 TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"]
+# Type system (docs/visual-direction.md): 2 families, 4 faces. Keep in sync with the <link> in index.html.
+FACES = ["Manrope 500", "Manrope 700", "Manrope 800", "IBM Plex Mono 500"]
 
 
 def serve():
@@ -51,6 +55,21 @@ def axe(page, label, include=None):
     return out
 
 
+def fonts(page, label):
+    """Text rendered in a family/weight that is not loaded (browser would substitute the nearest face)."""
+    bad = page.evaluate("""(faces) => {
+        const ok = new Set(faces), bad = new Set();
+        for (const el of document.querySelectorAll('body *')) {
+            if (![...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+            const s = getComputedStyle(el);
+            const k = s.fontFamily.split(',')[0].replace(/["']/g, '').trim() + ' ' + s.fontWeight + (s.fontStyle === 'normal' ? '' : ' ' + s.fontStyle);
+            if (!ok.has(k)) bad.add(`${k} :: ${el.tagName.toLowerCase()}.${[...el.classList].slice(0, 4).join('.')} "${el.textContent.trim().slice(0, 30)}"`);
+        }
+        return [...bad].slice(0, 6);
+    }""", FACES)
+    return [f"[font] {label}: {b}" for b in bad]
+
+
 def main():
     httpd = serve()
     base = f"http://127.0.0.1:{httpd.server_address[1]}/index.html"
@@ -66,6 +85,7 @@ def main():
                 page.goto(base, wait_until="networkidle")
                 tag = f"{lang} {w}"
                 problems += axe(page, f"page {tag}")
+                problems += fonts(page, f"page {tag}")
                 if lang == "id" and w == 375:
                     page.locator("#menu-button").click()
                     problems += axe(page, f"mobile menu {tag}")
@@ -96,6 +116,7 @@ def main():
                 page.evaluate("() => TokenNyala.openChat()"); page.wait_for_timeout(300)
                 page.locator("#chat [data-chat-chips] button").first.click(); page.wait_for_timeout(700)
                 problems += axe(page, f"chat {tag}", "#chat")
+                problems += fonts(page, f"chat {tag}")
                 page.keyboard.press("Escape")
                 ctx.close()
 
@@ -156,7 +177,7 @@ def main():
     if size >= 300 * 1024:
         problems.append(f"[dod] size {size} bytes >= 300 KB")
 
-    print("\n".join(problems) if problems else "ok — no axe violations (WCAG 2.1 AA + best practice), DoD extras pass")
+    print("\n".join(problems) if problems else "ok — no axe violations (WCAG 2.1 AA + best practice), DoD extras pass, only loaded font faces render")
     sys.exit(1 if problems else 0)
 
 

@@ -2,13 +2,15 @@
 
 Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perbarui bagian *Status*, *Keputusan*, dan *Log Sesi* di akhir sesi.
 
-## Status Saat Ini (per 18 Nov 2026)
+## Status Saat Ini (per 20 Nov 2026)
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
 - **Berikutnya (perlu keputusan PO):** open item di technical-spec (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
+- **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
+- **`showcase/`** (commit user `0bcc69e`, 20 Nov): folder hasil akhir “v1” dan “v2” versi user (berisi turunan v3 + GSAP/Lenis). Bukan buatan Claude; jangan diedit tanpa diminta.
 - **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
 ## Peta Dokumen
@@ -71,6 +73,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 18 Nov 2026 | Token `muted` → `#626B82` (dari `#69728A`) | axe: 4,47:1 di header sticky (< AA); nilai baru ≥ 4,84:1 di semua latar |
 | 18 Nov 2026 | Semua modal (checkout, katalog, konsultasi) memakai `setupModal()`; chat tetap sendiri (modal di mobile, non-modal di desktop) | Satu perilaku buka/tutup/fokus; utang teknis lunas |
 | 18 Nov 2026 | Token baru `teal-ink` `#007A5E` untuk teks/ikon teal | XL Teal terlalu terang untuk teks di latar terang |
+| 20 Nov 2026 | Tipografi = **2 keluarga, 4 face**: Manrope 500 (body, `font-medium` di `body`), 700 (`font-bold`, dulu juga `font-semibold`), 800 (`font-extrabold`); IBM Plex Mono 500 saja. Tanpa `font-semibold`/weight di mono | User ingin font tidak terlalu banyak. Sebelumnya 6 file dimuat, dan teks body meminta 400 yang tidak dimuat (dirender 500). Dicek `audit_v3.py` |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -102,6 +105,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Jalankan axe di setiap state dialog, bukan hanya halaman awal.** Masalah `role=log` pada `<ol>` dan `<header>` di dialog non-modal baru muncul saat chat terbuka. Kontras 4,47:1 hanya gagal di latar header (paper/95), tidak di paper biasa.
 - **Selalu lihat versi EN di 320px.** Copy EN lebih panjang (“Start vibe-coding.” terpotong di tanda hubung → pakai U+2011).
 - **Touch target 44px berlaku juga untuk link logo, link nav pendek (“FAQ”), dan tombol segmented (ID/EN).** QA shell menemukan ketiganya < 44px; pakai `min-h-11 min-w-11`.
+- **Weight yang tidak dimuat gagal diam-diam.** Browser memakai face terdekat tanpa error, jadi kode (400) dan tampilan (500) bisa beda tanpa ketahuan. Sekarang `audit_v3.py` mencocokkan family+weight hasil render dengan daftar `FACES`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -134,3 +138,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Langkah 12 audit ID/EN: `tools/i18n_check.py` (kunci di kedua kamus, kunci HTML ada di kamus, kunci mati, dan perbandingan 576 teks/aria/placeholder/alt ID vs EN termasuk dialog tertutup & template). Hasil: bersih; detektor kunci mati diverifikasi dengan kunci palsu.
 - Langkah 13 QA penuh: checkout & katalog dipindah ke `setupModal()` (QA penuh sebagai jaring pengaman); `tools/audit_v3.py` (axe-core 4.14.0 + DoD file://, reduced motion, storage, ukuran). Ditemukan & diperbaiki: `role=log` pada `<ol>` + `<li>` tidak valid → `div`; `<header>` di dialog terbaca banner kedua → `div`; kontras `muted` 4,47:1 di header → `#626B82`. DoD 21/21 dicatat di technical-spec.
 - Merge: PR #1 `v3-mobile-first` → `main` dibuat & di-merge dengan akun workspace `.github-cli` (hannifkurniawan, pemilik repo) — `GH_CONFIG_DIR=.github-cli gh …`. Akun gh global di mesin ini berbeda (Fajar-DS-XQ).
+
+### Sesi 2 — 20 Nov 2026
+- Audit font: sebelumnya 2 keluarga, 6 face dimuat (Manrope 500/600/700/800, Plex Mono 500/600), 20 ukuran; teks tanpa kelas weight meminta 400 yang tidak dimuat.
+- Pull `main` (commit user `0bcc69e`: folder `showcase/`).
+- Branch `type-scale-trim`: `font-semibold` → `font-bold` (Manrope) / dihapus (mono), `body` → `font-medium`, URL Google Fonts jadi 4 face; `audit_v3.py` ditambah cek face (halaman + chat, ID/EN, mobile/desktop); dokumentasi tipografi di `visual-direction.md`, `brand-elements.md`, `technical-spec.md`. Ketiga tools lolos.
+- PR #3 `type-scale-trim` → `main` di-merge atas persetujuan user.
+- User bertanya cara mempresentasikan web sebagai designer UI/UX → disarankan format studi kasus (masalah → persona → riset → keputusan desain → demo mobile → kualitas → pelajaran). Tawaran membuat deck belum dijawab.
+- Belum: merapikan 20 ukuran huruf menjadi skala token (opsional, belum diminta).
