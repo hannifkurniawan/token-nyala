@@ -300,6 +300,7 @@ Perhitungan “cukup sampai” (rumus §2, dari 21 Nov): Ayu 500 + 68,5 + 540 = 
 Riwayat `jeda` = riwayat `ayu` + AI 12 sesi kecil (5 Des, Rp22.680) + Coba AI 45 pesan (12 Des, Rp540) → 31.220 − 23.220 = **8.000**. Isi Rp50.000 (+5.000) → Online-kan menyala lagi (−15.000, 30 hari baru) → saldo **48.000**. (Ditetapkan Fase 4 supaya riwayat selalu sama dengan saldo.)
 
 Menu Akun juga berisi **“Simulasi: majukan 30 hari”** — memajukan jam demo dan menjalankan perpanjangan / jeda / berhenti otomatis sesuai §2.
+Cara kerja (Fase 5, `store.advance()`): hari demi hari — layanan jatuh tempo diperpanjang bila saldo cukup, jika tidak **dijeda**; dijeda > 7 hari → **berhenti**; domain dengan perpanjangan mati → berhenti saat habis. Pemakaian AI mengulang pola 7 hari terakhir (satu baris per minggu, dilewati bila saldo tidak cukup). Preset `ayu`: +30 hari → 21 Des, diperpanjang, saldo **1.100** (banner pengingat) · +30 → 20 Jan, **dijeda** · +30 → **berhenti**.
 
 ---
 

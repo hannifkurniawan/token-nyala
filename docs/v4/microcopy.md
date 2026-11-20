@@ -544,3 +544,15 @@ Kunci di `v4/assets/js/i18n.js` (awalan `con.`, `acct.`, `auth.`, `home.`, `next
 | con.soonBody | Bagian ini dibangun di tahap berikutnya prototype. (rute Fase 5–6, sementara) | This part is built in the next stage of the prototype. |
 
 Isi saldo console = checkout v3 tanpa field kontak (pengguna sudah masuk): 4 nominal + bonus, “Nominal lain” (min. Rp20.000, kelipatan Rp1.000), metode, bayar (QRIS/VA/e-wallet), sukses/gagal.
+
+### Console — tambahan Fase 5 (20 Nov 2026)
+Wizard (`wiz.*`), proyek (`proj.*`, `tab.*`), aksi layanan (`act.*`), log proyek (`log.*`), jam simulasi (`acct.advance*`, `banner.reminder`), riwayat (`h.renew*`, `h.refund`, `h.resize`). Contoh yang perlu dicek:
+
+| Kunci | ID | EN |
+|---|---|---|
+| wiz.renews | Diperpanjang otomatis {tanggal} jika saldo cukup. Bisa berhenti kapan saja — sisa hari kembali ke saldo. | Renews automatically on {date} if your balance covers it. Stop anytime — unused days go back to your balance. |
+| wiz.balance | Saldo: {sekarang} → {setelah} setelah nyala | Balance: {now} → {after} after switching on |
+| wiz.domainTaken | {domain} sudah dipakai orang lain. Coba nama lain. (mock: google, tokennyala, toko, admin, shop) | {domain} is already taken. Try another name. |
+| banner.reminder | Saldo tinggal {saldo}, di bawah pengingatmu. {proyek} diperpanjang {tanggal} sebesar {Rp}. | Your balance is down to {balance}, below your reminder. {project} renews on {date} for {price}. |
+| act.resizeDown / act.resizeUp / act.stopConfirm / act.stopDomain / act.stopProjectConfirm | sesuai §5 “Aksi layanan” di atas, angka dari `refund()` / `prorata()` | — |
+| next.resume | Isi saldo supaya tetap nyala · Layanan yang dijeda langsung menyala lagi setelah saldo cukup. | Top up to stay on · Paused services switch back on as soon as your balance covers them. |
