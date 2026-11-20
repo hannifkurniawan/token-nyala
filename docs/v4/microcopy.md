@@ -463,3 +463,24 @@ Contoh baris log (mock): “Proyek dinyalakan” / “Project switched on” · 
 | svcf.go | Nyalakan | Switch on |
 | svcf.sandbox | Mode uji — tidak ada uang sungguhan | Test mode — no real money |
 
+
+### Landing — tambahan Fase 1 (20 Nov 2026)
+Kunci di `v4/assets/js/i18n.js` (format `[ID, EN]`). Hanya yang belum tertulis di atas:
+
+| Kunci | ID | EN |
+|---|---|---|
+| hero.title | Idemu {saklar} **nyala**, dari prompt sampai online. | Your idea, {saklar} switched **on** — from prompt to online. |
+| story.before / story.beforeNote | Sebelum · Hanya bisa dibuka di laptopmu. | Before · Only opens on your laptop. |
+| story.after / story.afterNote | Sesudah · Bisa dibuka siapa saja, dari HP mana saja. | After · Anyone can open it, from any phone. |
+| status.off | Belum online | Not online |
+| recipe.approx | Perkiraan per bulan | Estimated per month |
+| recipe.suggestNote | Saldo masuk {Rp} termasuk bonus. | You get {Rp} including the bonus. |
+| item.ai.pesan / item.ai.tugas | AI untuk balasan chatbot · AI untuk langkah otomasi | AI for chatbot replies · AI for automation steps |
+| item.domainFirst | {Rp} tahun pertama, lalu {renew}/tahun | {Rp} first year, then {renew}/year |
+| how.title | Tiga langkah, dari tujuan sampai online. | Three steps, from goal to online. |
+| svc.lead | Nama yang mudah dipahami lebih dulu. Istilah teknisnya tetap ada, kecil di bawahnya. | Plain names first. The technical term is still there, in small print below. |
+| svc.domain.desc | Nama proyekmu di internet. (harga “mulai dari” tampil di baris harga kartu) | Your project's name on the internet. |
+| wallet.card | Contoh: satu landing page event | Example: one event landing page |
+| wallet.left / wallet.leftNote | Sisa saldo · Sisa saldo tetap bisa dipakai untuk AI atau bulan berikutnya. | Balance left · What is left stays available for AI or next month. |
+
+Kartu “Satu saldo” **tidak** menampilkan tanggal “cukup sampai” (aturan `services-and-pricing.md` §2: tanggal hanya di console); wireframe A6 disesuaikan.

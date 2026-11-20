@@ -70,7 +70,7 @@ tanggal      = hari_ini_simulasi + hari_cukup
 ```
 - `hari_ini_simulasi` = jam demo (`clock`) — tanggal nyata saat akun baru dibuat; preset persona memakai **21 Nov 2026** agar QA deterministik.
 - Fee **Terima pembayaran** dipotong dari dana yang diterima, **bukan dari saldo**, jadi tidak masuk rumus.
-- Ditampilkan hanya di console (Beranda, Saldo): “Saldo cukup sampai **±20 Des**” (contoh preset Ayu, §8). Jika `biaya_harian = 0`: “Belum ada layanan yang memakai saldo.” Landing tidak menampilkan tanggal.
+- Ditampilkan hanya di console (Beranda, Saldo): “Saldo cukup sampai **±19 Des**” (contoh preset Ayu, §8). Jika `biaya_harian = 0`: “Belum ada layanan yang memakai saldo.” Landing tidak menampilkan tanggal.
 
 ---
 
@@ -289,11 +289,12 @@ Mode demo cepat `?demo=ayu|raka|dimas` mengisi state berikut (jam simulasi **21 
 
 | Preset | Riwayat isi saldo | Proyek & layanan (nyala sejak) | AI 7 hari terakhir | Saldo | Cukup sampai |
 |---|---|---|---|---:|---|
-| `ayu` | 20 Nov: Rp50.000 + bonus 5.000 | `portofolio-ayu` (20 Nov): Online-kan Coba-coba 15.000 · `ayu.my.id` 5.000 | 2 sesi = 3.780 | **31.220** | ±20 Des |
+| `ayu` | 20 Nov: Rp50.000 + bonus 5.000 | `portofolio-ayu` (20 Nov): Online-kan Coba-coba 15.000 · `ayu.my.id` 5.000 | 2 sesi = 3.780 | **31.220** | ±19 Des |
 | `raka` | 1 Nov: Rp500.000 + bonus 125.000 | `klien-kopi` (1 Nov): Rutin 35.000 · data Kecil 10.000 · email Gratis · `kopikita.com` 245.000 · `klien-salon` (1 Nov): Rutin 35.000 · data Kecil 10.000 · `salonayu.biz.id` 5.000 | 8 sesi = 15.120 (24 sesi = 45.360 sejak 1 Nov) | **239.640** | ±31 Des |
 | `dimas` | 1 Nov: Rp500.000 + 125.000 · 15 Nov: Rp250.000 + 50.000 | `otomasi-tim` (1 Nov): n8n Ramai 75.000 · data Sedang 45.000 · email 2.500 25.000 · `server-tim` (1 Nov): Server Kecil Jakarta 65.000 | 840 tugas = 23.520 (2.400 tugas = 67.200 sejak 1 Nov) | **647.800** | ±22 Jan |
 
 Perhitungan saldo: Ayu 55.000 − 15.000 − 5.000 − 3.780; Raka 625.000 − 290.000 − 50.000 − 45.360; Dimas 925.000 − 210.000 − 67.200.
+Perhitungan “cukup sampai” (rumus §2, dari 21 Nov): Ayu 500 + 68,5 + 540 = 1.108,5/hari → 28 hari → **19 Des**; Raka 3.000 + 739,7 + 2.160 = 5.899,7/hari → 40 hari → **31 Des**; Dimas 7.000 + 0 + 3.360 = 10.360/hari → 62 hari → **22 Jan**. (Diperbaiki 20 Nov 2026 saat Fase 1: Ayu sebelumnya tertulis ±20 Des.)
 
 `&state=jeda` (hanya `ayu`): jam simulasi **21 Des 2026**, saldo **8.000**, `portofolio-ayu` **dijeda sejak 20 Des**, data aman sampai **27 Des**, banner: “Isi minimal Rp20.000”.
 

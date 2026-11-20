@@ -106,7 +106,7 @@ untuk semuanya.
 │ − Online-kan · 30 hari  15.000│
 │ − Alamat web · 1 tahun   5.000│
 │ − AI · 12 sesi          22.680│
-│ Sisa Rp12.320 · cukup sampai ±…│
+│ Sisa Rp12.320 (tanpa tanggal)  │
 └─────────────────────────────┘
 [1 kredit = Rp1][Termasuk PPN][Tidak kedaluwarsa][Tanpa USD]  chip
 Biaya tetap = dipotong per 30 hari · Biaya pakai = AI, sesuai pemakaian
@@ -196,7 +196,7 @@ Belajar: “Portofolio online dalam 5 menit” →
 ┌ sheet blue ───────────────────┐
 │ SALDO                         │
 │ Rp31.220                      │ angka besar, count-up
-│ Cukup sampai ±20 Des          │
+│ Cukup sampai ±19 Des          │
 │ [ Isi saldo ]  Riwayat →      │
 └───────────────────────────────┘
 LANGKAH BERIKUTNYA                 1 kartu kontekstual
@@ -260,7 +260,7 @@ Banner kondisional di atas: saldo kurang untuk perpanjang (kuning), layanan dije
 
 ### C6. Saldo
 ```text
-SALDO Rp31.220   Cukup sampai ±20 Des
+SALDO Rp31.220   Cukup sampai ±19 Des
 [ Isi saldo ]  [ Pengingat: < Rp20.000 ● ]
 RIWAYAT   [Semua ▾][Semua proyek ▾]
  20 Nov  + Isi saldo QRIS          +55.000
