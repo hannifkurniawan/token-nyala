@@ -13,9 +13,9 @@ Persona dasar: `docs/personas.md`. Angka: `services-and-pricing.md`.
 | 2 | Mau bikin apa? | Chip **Landing page / portofolio** sudah terpilih | Isi: Online-kan proyekmu (Coba-coba) + alamat `.my.id` + AI 10 sesi. **≈ Rp34 rb/bulan**. Isi Rp50.000 → cukup ±1 bulan |
 | 3 | — | Ketuk **Nyalakan resep ini** | Masuk console |
 | 4 | Masuk | Isi email, kode 6 digit (mock) | Satu field, tanpa nama perusahaan |
-| 5 | Wizard 1–2 | Resep terisi; beri nama `portofolio-ayu`, cari alamat `ayu.my.id` (tersedia, Rp5.000/tahun) | Ukuran Coba-coba sudah dipilih dengan “cukup untuk portofolio” |
+| 5 | Wizard 1–2 | Resep terisi; beri nama `portofolio-ayu`, cari alamat `ayu.my.id` (tersedia, Rp5.000 tahun pertama, lalu Rp25.000/tahun) | Ukuran Coba-coba sudah dipilih dengan “cukup untuk portofolio” |
 | 6 | Wizard 3 Ringkasan | Melihat Rp15.000 tetap + Rp5.000 domain = **Rp20.000 sekarang**; AI dipotong sesuai pakai. Saldo Rp0 → **Isi saldo** inline Rp50.000 (+5.000) via QRIS | Biaya terlihat sebelum bayar; saldo setelahnya Rp35.000 |
-| 7 | Wizard 4 Menyalakan | Menunggu ±5 detik: membuat ruang → memasang alamat → HTTPS → **Nyala** | Saklar menyala, confetti ringan (tidak saat reduced motion) |
+| 7 | Wizard 4 Menyalakan | Menunggu ±5 detik: Menyiapkan ruang → Memasang alamat ayu.my.id → Mengaktifkan HTTPS → Menyambungkan AI ke saldo → **Nyala** | Saklar menyala, confetti ringan (tidak saat reduced motion) |
 | 8 | Selesai | Upload folder hasil Lovable (mock) → link `ayu.my.id` | Langkah berikutnya: “Pakai AI di Lovable/Cursor — salin API key proyek” |
 | 9 | Beranda | Saldo Rp35.000 · **cukup sampai ±tanggal** · 1 proyek nyala | Tenang: tahu kapan perlu isi lagi |
 
@@ -24,9 +24,9 @@ Persona dasar: `docs/personas.md`. Angka: `services-and-pricing.md`.
 ## Skenario 2 — Ayu: “Chatbot WhatsApp untuk toko kue kakak”
 Resep `chatbot-wa` (Rutin + 1.000 pesan ≈ **Rp47 rb/bulan**). Di wizard ukuran Coba-coba tampil nonaktif: “Belum cukup untuk chatbot — pilih Rutin”. Setelah nyala: langkah “Pindai QR WhatsApp” (mock) dan tombol uji kirim pesan. Beranda menampilkan pemakaian “pesan dibalas bulan ini”.
 
-## Skenario 3 — Raka: “Tiga klien, satu saldo, tagihan terpisah”
+## Skenario 3 — Raka: “Beberapa klien, satu saldo, tagihan terpisah”
 - Resep `web-klien` ≈ **Rp102 rb/bulan** per klien (Rp101.700; bulan pertama Rp346.700 termasuk `.com`). Top-up Rp500.000 → saldo 625.000, cukup ±3 bulan untuk satu klien.
-- Membuat 3 proyek (`klien-kopi`, `klien-salon`, `klien-event`); masing-masing punya **API key sendiri dengan limit Rupiah**.
+- Preset `?demo=raka` sudah berisi 2 proyek (`klien-kopi`, `klien-salon`; `services-and-pricing.md` §8); saat demo Raka membuat proyek ketiga `klien-event`. Masing-masing punya **API key sendiri dengan limit Rupiah**.
 - Saldo → Riwayat difilter per proyek → unduh invoice (mock) per klien.
 - Kekhawatiran v3 terjawab: “Apakah saldo bisa dipakai lintas proyek?” → ya, dan pemakaian tetap terpisah.
 
@@ -56,7 +56,7 @@ Proyek Ayu jatuh tempo, saldo Rp8.000 < Rp15.000:
 | 2:00 | Harga → kalkulator | Total per bulan langsung terlihat; detail teknis tetap ada |
 | 3:00 | Console: masuk → wizard resep portofolio → isi saldo → **nyala** | Alur utama Ayu, < 3 menit |
 | 5:00 | Beranda → proyek → AI key → saldo/riwayat | Kontrol: cukup sampai tanggal, riwayat per layanan |
-| 6:00 | `?demo=dimas` | Console berisi untuk tim: beberapa proyek, server, database |
+| 6:00 | `?demo=dimas` | Console berisi untuk tim: proyek otomasi (n8n, data, email) + server sendiri |
 | 6:30 | Ganti bahasa EN, buka Nala | Kualitas: ID/EN, bantuan |
 
 Cadangan: tunjukkan state **saldo habis → dijeda** (`?demo=ayu&state=jeda`).

@@ -25,6 +25,8 @@ Acuan: **`showcase/v2`** (dipilih user, 20 Nov 2026) — editorial / scroll-stor
 | `ink` | `#17181A` | Teks sekunder gelap |
 | `muted` | `#626B82` | Teks pendukung (**bukan** `#69728A` dari showcase v2 — gagal AA di header) |
 | `line` | `#D9DEEA` | Garis, border |
+| `off` | `#C7CDDC` | Saklar OFF |
+| `stopped` | `#B4BCCF` | Titik status Berhenti (dekor, selalu dengan teks) |
 | `lead-ink` | `#2A3557` | Teks lead di latar terang (dari showcase v2) |
 
 Kontras wajib AA. Teks di lembar kuning memakai `xl-dark`; di lembar biru/gelap memakai putih / putih 82% untuk lead.
@@ -35,7 +37,7 @@ Kontras wajib AA. Teks di lembar kuning memakai `xl-dark`; di lembar biru/gelap 
 | Menyalakan | `xl-sky`, berdenyut (statis saat reduced motion) | `xl-dark` | |
 | Nyala | `xl-teal` + ring 4px teal 22% | `teal-ink` | |
 | Dijeda | `xl-yellow` | `xl-dark` + ikon jeda | Selalu dengan teks, tidak hanya warna |
-| Berhenti | `#B4BCCF` | `muted` | |
+| Berhenti | `stopped` (`#B4BCCF`) | `muted` | |
 
 ## 3. Tipografi
 Tetap **2 keluarga, 4 face** (aturan 20 Nov 2026): Manrope 500 (body), 700 (`font-bold`), 800 (`font-extrabold`); IBM Plex Mono 500 (`font-mono`, tanpa kelas weight). Showcase v2 memuat 400/600 — **tidak dibawa**.
@@ -55,7 +57,7 @@ Di console, display maksimum `clamp(2rem, 6vw, 3rem)`; angka saldo boleh lebih b
 
 ## 4. Layout
 
-- **Lembar (sheet):** latar penuh tepi ke tepi, sudut atas membulat `clamp(28px, 4vw, 64px)`, bertumpuk dengan margin negatif sebesar radiusnya. Urutan warna landing: paper (hero) → dark (cerita) → **blue (resep)** → paper (cara kerja) → white (layanan) → **yellow (saldo)** → paper (template) → dark (AI) → white (contoh) → stack 4 warna (aman) → paper (belajar) → yellow (tim) → paper (FAQ) → blue (CTA akhir).
+- **Lembar (sheet):** latar penuh tepi ke tepi, sudut atas membulat `clamp(28px, 4vw, 64px)`, bertumpuk dengan margin negatif sebesar radiusnya. Urutan warna landing (wireframe mengikuti ini): paper (hero) → dark (cerita) → **blue (resep)** → paper (cara kerja) → white (layanan) → **yellow (saldo)** → paper (template) → dark (AI) → white (contoh) → stack 4 warna (aman) → paper (belajar) → yellow (tim) → paper (FAQ) → blue (CTA akhir).
 - **Konten:** maks **1280px**; gutter **16px** (<640), **24px** (`sm:`), **40px** (`lg:`), **64px** (`xl:`). (v3: 1184/16/24; v2: 1600/fluid. Dipilih jalan tengah, satu aturan.)
 - Padding vertikal lembar: `clamp(72px, 12vw, 180px)` atas, sedikit lebih besar di bawah (untuk tumpukan lembar berikutnya).
 - Grid: selalu kolom eksplisit (`grid-cols-1`, `minmax(0,…)`) — aturan v3.

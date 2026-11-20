@@ -38,7 +38,7 @@ Nama teknis tetap terlihat kecil sebagai label sekunder (supaya Raka/Dimas tetap
 | Email | **Email dari domainmu** | Kirim notifikasi & struk | keduanya |
 | Payment gateway | **Terima pembayaran** | QRIS untuk toko kecil | Sumopod Managed Payment |
 
-Ukuran layanan memakai bahasa awam — **Coba-coba / Dipakai rutin / Ramai** — dengan keterangan “cukup untuk …”, dan spesifikasi teknis (vCPU, RAM, storage) di `<details>` (pola v3 untuk tarif model).
+Ukuran layanan memakai bahasa awam — **Coba-coba / Rutin / Ramai** — dengan keterangan “cukup untuk …”, dan spesifikasi teknis (vCPU, RAM, storage) di `<details>` (pola v3 untuk tarif model).
 
 ## 3. Resep per Persona (inti landing & console)
 
@@ -103,7 +103,7 @@ Semua layanan di satu halaman (pola Helipod), tetapi: mulai dari resep, angka pe
 | 6. Console lengkap | AI, layanan lain, Belajar, Bantuan | |
 | 7. QA & demo | QA 6 viewport per halaman, i18n, axe, skrip demo untuk Pak Ferry | Siap demo |
 
-Setiap fase: branch dari `main`, QA per section, commit + push per langkah, merge lewat PR atas persetujuan user.
+Semua fase di satu branch `v4-cloud` (dibuat 20 Nov), QA per section, commit + push per langkah, PR ke `main` per fase atas persetujuan user. Detail fase terbaru: `docs/v4/technical-spec.md` §10.
 
 ## 7. Keputusan Tambahan (20 Nov 2026)
 1. **Acuan visual: `showcase/v2`** — lembar warna penuh, saklar “nyala”, angka besar, label mono bernomor; dibangun ulang dengan Tailwind v4 + token `@theme` (bukan menyalin CSS custom 1.146 baris).

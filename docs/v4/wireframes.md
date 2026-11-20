@@ -9,7 +9,7 @@
 ### A1. Hero (375px, above the fold)
 ```text
 ┌─────────────────────────────────┐
-│ [mark] TokenNyala  [Mulai][☰]   │ header 64px sticky; [Mulai] mulai sm:
+│ [mark] TokenNyala           [☰] │ header 64px sticky; [Mulai bangun] tampil mulai sm: (640)
 ├─────────────────────────────────┤
 │ ● UNTUK IDE, PROTOTYPE, PROYEK  │ kicker mono
 │                                 │
@@ -67,7 +67,7 @@ bukan dari menu.
 │ ───────────────────────────── │
 │ Isi Rp50.000 → cukup ±1 bulan │ chip kuning
 │ [ Nyalakan resep ini      → ] │ primary
-│ Ubah di kalkulator →          │ link → harga.html#kalkulator?resep=
+│ Ubah di kalkulator →          │ link → harga.html?resep=…&s=…#kalkulator (skema URL: services-and-pricing §6)
 └───────────────────────────────┘
 Perkiraan. Pemakaian AI bergantung pada model dan prompt.
 ```
@@ -76,7 +76,7 @@ Perkiraan. Pemakaian AI bergantung pada model dan prompt.
 ### A4. Cara kerja — 3 kartu stacked (01/02/03 angka outline v2)
 Pilih tujuan → Isi saldo Rupiah → Nyala & online. `lg:` geser horizontal (v2) dengan tombol ←/→.
 
-### A5. Semua layanan (sheet paper)
+### A5. Semua layanan (sheet white)
 ```text
 (02) SEMUA LAYANAN
 Semua yang dibutuhkan
@@ -92,7 +92,7 @@ BANGUN DENGAN AI                    sub-kelompok mono
 └──────────────┘
 JALANKAN  · Online-kan proyekmu Rp15 rb · Asisten & otomasi Rp15 rb · Server sendiri Rp65 rb
 SIMPAN    · Tempat simpan data Rp10 rb · Tempat simpan file Rp7 rb
-HUBUNGKAN · Alamat web Rp5 rb/thn · Email Gratis · Terima pembayaran 0,7%
+HUBUNGKAN · Alamat web Rp5 rb tahun pertama · Email Gratis · Terima pembayaran 0,7%
 [ Lihat semua harga → ]
 ```
 
@@ -113,7 +113,7 @@ Biaya tetap = dipotong per 30 hari · Biaya pakai = AI, sesuai pemakaian
 [ Isi saldo ]
 ```
 
-### A7. Template (sheet white) — kartu 5 template, label ukuran minimum, CTA “Pakai template”.
+### A7. Template (sheet paper) — kartu 5 template, label ukuran minimum, CTA “Pakai template”.
 ### A8. AI untuk tool-mu (sheet dark) — reuse v3/v2: 6 kartu model + 3 langkah pasang + konfigurasi contoh.
 ### A9. Contoh proyek — tabel 3 tahap (Bangun · Online · Alamat), total, “Rp50.000 cukup sampai online”, CTA.
 ### A10. Aman untuk pemula — stack card v2 (4 kartu warna: sky, yellow, teal, blue), sticky di `lg:`.
@@ -143,7 +143,7 @@ Resep: [Landing page / portofolio ▾]   select
   ( Coba-coba | Rutin | Ramai )        segmented ukuran
   Cukup untuk portofolio · ±1.000 pengunjung/hari
 ◎ Alamat web  [.my.id ▾]     [on]
-✦ AI · sesi kecil  [ − 10 + ]          stepper (langkah 5)
+✦ AI · sesi kecil  [ − 10 + ]          stepper (langkah: sesi 5 · pesan 500 · tugas 1.000)
 + Tambah layanan                        sheet daftar layanan
 
 ┌ ringkasan — sticky bottom (mobile) ┐  ringkas: “≈ Rp34 rb/bulan  [Rincian ▴] [Nyalakan]”
@@ -168,7 +168,7 @@ Per layanan: judul awam + label teknis, tabel ukuran (nama awam · cukup untuk �
 ### C1. Kerangka mobile
 ```text
 ┌─────────────────────────────────┐
-│ [mark]        (● Rp35.000) [A]  │ header 56px; pil saldo → #/saldo
+│ [mark]        (● Rp31.220) [A]  │ header 56px; pil saldo → #/saldo
 ├─────────────────────────────────┤
 │                                 │
 │            konten               │ padding bawah = tinggi tab bar + safe area
@@ -183,7 +183,7 @@ Desktop: sidebar kiri 248px, konten maks 960px.
 ```text
 Hai, Ayu 👋
 Mau bikin apa hari ini?
-[ chip 5 resep ]                 → #/buat?resep=
+[ chip 5 resep ]                 → #/buat?resep= (AI coding saja → #/ai?isi=1)
 ┌ Saldo Rp0 ──────────────┐
 │ Isi saldo untuk mulai.  │
 │ [ Isi saldo ]           │
@@ -195,8 +195,8 @@ Belajar: “Portofolio online dalam 5 menit” →
 ```text
 ┌ sheet blue ───────────────────┐
 │ SALDO                         │
-│ Rp35.000                      │ angka besar, count-up
-│ Cukup sampai ±12 Des          │
+│ Rp31.220                      │ angka besar, count-up
+│ Cukup sampai ±20 Des          │
 │ [ Isi saldo ]  Riwayat →      │
 └───────────────────────────────┘
 LANGKAH BERIKUTNYA                 1 kartu kontekstual
@@ -208,11 +208,12 @@ PROYEK (1)
 ┌───────────────────────────────┐
 │ portofolio-ayu        ● Nyala │
 │ ayu.my.id ↗                   │
-│ ▣ ◎ ✦   Rp15.000/bln · 23 hari│ sisa hari sampai perpanjang
+│ ▣ ◎ ✦   Rp15.000/bln · 29 hari│
 └───────────────────────────────┘
 BULAN INI  tetap Rp15.000 · pakai Rp3.780 (2 sesi)
+(Angka C1–C3 & C6 = preset `ayu`, hari ini 21 Nov 2026: 55.000 − 15.000 − 5.000 − 3.780 = 31.220; diperpanjang 20 Des = 29 hari lagi.)
 ```
-Banner kondisional di atas: saldo kurang untuk perpanjang (kuning), layanan dijeda (kuning tua + CTA).
+Banner kondisional di atas: saldo kurang untuk perpanjang (kuning), layanan dijeda (latar `xl-yellow` penuh + ikon jeda + CTA). Saldo kurang: latar `xl-yellow`/20.
 
 ### C4. Wizard `#/buat` (4 langkah, progress “1/4” mono + bar)
 ```text
@@ -221,7 +222,7 @@ Banner kondisional di atas: saldo kurang untuk perpanjang (kuning), layanan dije
   ○ Chatbot WhatsApp            ≈ Rp47 rb/bln
   ○ Website klien               ≈ Rp102 rb/bln
   ○ Otomasi tim                 ≈ Rp285 rb/bln
-  ○ Mulai kosong (pilih layanan sendiri)
+  ○ Mulai kosong (pilih layanan sendiri)        (AI coding saja tidak di sini → #/ai)
   ○ Template siap pakai →
   [ Lanjut ]                                      sticky bottom
 
@@ -242,7 +243,7 @@ Banner kondisional di atas: saldo kurang untuk perpanjang (kuning), layanan dije
    Total sekarang             Rp20.000
   Nanti, sesuai pakai: AI ±Rp1.890/sesi
   Saldo: Rp0 → kurang Rp20.000
-  [ Isi saldo Rp50.000 → ]   sheet checkout v3 inline, kembali ke langkah 3
+  [ Isi saldo Rp50.000 → ]   = saran(kekurangan) §1; sheet checkout v3 inline, kembali ke langkah 3
   …setelah isi: Saldo Rp55.000 → Rp35.000 setelah nyala
   [ Nyalakan sekarang ]
 
@@ -255,11 +256,11 @@ Banner kondisional di atas: saldo kurang untuk perpanjang (kuning), layanan dije
   Berikutnya: [Upload hasil Lovable] [Salin API key] [Ke beranda]
 ```
 
-### C5. Detail proyek — header (nama, status, link, biaya/bln, sisa hari) + tab scroll-x: Ringkasan · Layanan · AI · Log · Pengaturan. Aksi destruktif (Berhenti) di Pengaturan dengan dialog yang menampilkan **sisa saldo kembali**.
+### C5. Detail proyek — header (nama, status, link, biaya/bln, sisa hari) + tab scroll-x: Ringkasan · Layanan · AI · Log · Pengaturan. Tab **Layanan**: per layanan — Ganti ukuran · Hentikan (dialog menampilkan **Rp yang kembali ke saldo**; domain: matikan perpanjangan). Tab **Pengaturan**: alamat web, **Hentikan proyek** (semua layanan). Layanan berhenti tampil “Data dihapus {tanggal}” + Nyalakan lagi.
 
 ### C6. Saldo
 ```text
-SALDO Rp35.000   Cukup sampai ±12 Des
+SALDO Rp31.220   Cukup sampai ±20 Des
 [ Isi saldo ]  [ Pengingat: < Rp20.000 ● ]
 RIWAYAT   [Semua ▾][Semua proyek ▾]
  20 Nov  + Isi saldo QRIS          +55.000

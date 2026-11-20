@@ -131,6 +131,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Weight yang tidak dimuat gagal diam-diam.** Browser memakai face terdekat tanpa error, jadi kode (400) dan tampilan (500) bisa beda tanpa ketahuan. Sekarang `audit_v3.py` mencocokkan family+weight hasil render dengan daftar `FACES`.
 - **Situs yang dirender JavaScript bisa dibaca dengan Playwright** yang sudah terpasang untuk QA (`python3 -P`, bukan `-I`, karena Playwright ada di user site-packages). WebFetch hanya melihat shell HTML. Jangan menembus captcha/login.
 - **`pgrep -f <pola>` di loop penunggu mencocokkan perintahnya sendiri** → loop tidak pernah selesai, dan `pkill -f` dengan pola yang sama membunuh shell sendiri. Tunggu berdasarkan PID atau file hasil.
+- **Minta review independen untuk dokumen sebelum coding.** Agent yang tidak membaca kesimpulan kita menemukan 13 kontradiksi di dokumen v4 yang sudah “dicek” sendiri — terutama contoh angka di wireframe yang tidak dihitung dari rumus, dan aturan yang hanya ada sebagai contoh tabel (top-up disarankan). Setiap angka contoh harus bisa dihasilkan rumus + state yang tertulis.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -180,5 +181,5 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Belum ada perubahan kode. Menunggu keputusan arah (pertanyaan terbuka no. 4).
 - User menjawab 8 konfirmasi (dicatat di Keputusan). Showcase v1 = Tailwind (editorial bersih); showcase v2 = CSS custom 1.146 baris (lembar warna penuh, saklar, angka besar, label mono bernomor).
 - `docs/v4-cloud-plan.md` disetujui arahnya: visual showcase v2, tagline “Idemu nyala, dari prompt sampai online.”, ID+EN, belum ada tanggal demo. 
-- **Fase 0 (branch `v4-cloud`):** `docs/v4/` 9 dokumen. Angka resep dihitung dengan skrip (portofolio Rp33.900/bln, chatbot-wa Rp47.000, web-klien Rp101.700, otomasi-tim Rp285.000; contoh event Rp40.790–54.020 muat di saldo 55.000). Review kontradiksi oleh agent independen. `CLAUDE.md` diarahkan ke v4.
+- **Fase 0 (branch `v4-cloud`):** `docs/v4/` 9 dokumen. Angka resep dihitung dengan skrip (portofolio Rp33.900/bln, chatbot-wa Rp47.000, web-klien Rp101.700, otomasi-tim Rp285.000; contoh event Rp40.790–54.020 muat di saldo 55.000). Review kontradiksi oleh agent independen menemukan 13 masalah wajib (contoh saldo console salah hitung, aturan top-up disarankan tidak ada, ai-coding tanpa tujuan, siklus berhenti/dijeda, preset demo tidak terdefinisi, FAQ/EN kurang, pelanggaran glosarium) → semua diperbaiki. `CLAUDE.md` diarahkan ke v4.
 

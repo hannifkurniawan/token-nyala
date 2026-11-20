@@ -45,6 +45,7 @@ v4/
   --color-xl-teal: #00D2A0;  --color-teal-ink: #007A5E; --color-xl-sky: #5CD0F9;
   --color-paper: #F7F8FC;    --color-ink: #17181A;      --color-muted: #626B82;
   --color-line: #D9DEEA;     --color-lead-ink: #2A3557; --color-off: #C7CDDC;
+  --color-stopped: #B4BCCF;
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --radius-card: 20px; --radius-control: 12px;
@@ -69,8 +70,8 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 
 - **Data kontak (email/HP) tidak pernah disimpan** — aturan v3. Hanya nama tampilan mock.
 - Semua akses localStorage dibungkus try/catch; tanpa storage, console tetap jalan dalam memori (reload = reset).
-- Preset: `?demo=ayu|raka|dimas` mengisi state persona; `&state=jeda` membuat satu proyek dijeda; `?demo=reset` mengosongkan.
-- **Jam simulasi** (`clock`): menu Lainnya → “Simulasi: majukan 30 hari” menjalankan perpanjangan/jeda sesuai aturan tagihan — untuk demo saldo habis.
+- Preset: `?demo=ayu|raka|dimas` mengisi state persona **persis seperti tabel `services-and-pricing.md` §8** (jam 21 Nov 2026); `&state=jeda` (ayu); `?demo=reset` mengosongkan.
+- **Jam simulasi** (`clock`): menu Akun → “Simulasi: majukan 30 hari” menjalankan perpanjangan / jeda / berhenti otomatis sesuai §2 aturan tagihan — untuk demo saldo habis.
 - Semua perubahan saldo lewat satu fungsi `store.charge({amount, service, project, note})` yang menulis riwayat.
 
 ## 5. Router Console
@@ -91,7 +92,7 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 7. **QA per section/layar**, bukan di akhir — v3 #7, untuk **setiap halaman dan setiap rute console**, termasuk EN di 320px.
 8. **Konten dulu, dekorasi belakangan** — v3 #8.
 9. **Satu sumber angka:** semua harga/estimasi dari `data.js`; QA membandingkan dengan `services-and-pricing.md`.
-10. **Commit kecil + push setiap langkah** ke branch `v4-cloud`; merge lewat PR atas persetujuan user.
+10. **Commit kecil + push setiap langkah** ke branch `v4-cloud` (satu branch untuk seluruh v4); PR ke `main` per fase atau sesuai permintaan user, merge atas persetujuan user.
 11. **Jangan bawa CSS showcase v2**; bawa bahasa visualnya (`visual-direction.md`). Logika JS v3/showcase boleh dipakai ulang setelah dibaca.
 
 ## 7. Aksesibilitas (tambahan v4)

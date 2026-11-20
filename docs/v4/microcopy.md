@@ -56,7 +56,7 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 | label.usage | Sesuai pakai | Pay as you go |
 | label.techDetails | Detail teknis | Technical details |
 | footer.tagline | Idemu nyala, dari prompt sampai online. | Your idea, switched on — from prompt to online. |
-| footer.prototype | Prototype interaktif — tidak ada transaksi, deploy, atau data nyata. | Interactive prototype — no real transactions, deployments, or data. |
+| footer.prototype | Prototype interaktif — tidak ada transaksi, layanan, atau data nyata. | Interactive prototype — no real transactions, services, or data. |
 
 ---
 
@@ -88,11 +88,16 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 | recipe.kicker | Mau bikin apa? | What are you building? |
 | recipe.title | Mulai dari tujuanmu, bukan dari menu. | Start from your goal, not a menu. |
 | recipe.lead | Pilih tujuan. Kami tunjukkan layanan yang dibutuhkan dan total per bulannya. | Pick a goal. We'll show the services you need and the monthly total. |
-| recipe.firstMonth | Bulan pertama {Rp} — termasuk alamat web 1 tahun | First month {Rp} — includes 1 year of web address |
+| recipe.firstMonth | Bulan pertama {Rp} — termasuk biaya tahunan (alamat web) | First month {Rp} — includes the yearly cost (web address) |
+| recipe.aiOnlyTitle | Isi saldo, pakai di tool coding-mu | Top up, use it in your coding tools |
+| recipe.aiOnlyRow | Isi {Rp} → {range} sesi kecil | Top up {Rp} → {range} small sessions |
+| recipe.aiOnlyCta | Ambil API key | Get an API key |
 | recipe.suggest | Isi {Rp} → cukup ±{n} bulan | Top up {Rp} → lasts ±{n} months |
 | recipe.cta | Nyalakan resep ini | Switch on this recipe |
 | recipe.edit | Ubah di kalkulator | Adjust in the calculator |
 | recipe.note | Perkiraan. Pemakaian AI bergantung pada model, panjang prompt, dan jumlah pesan. | Estimate. AI usage depends on the model, prompt length, and message volume. |
+
+Nama pendek (chip, Nala Q1): portofolio **Landing page** / *Landing page* · chatbot-wa **Chatbot WA** / *WhatsApp bot* · web-klien **Web klien** / *Client site* · otomasi-tim **Otomasi tim** / *Team automation* · ai-coding **AI coding saja** / *AI for coding*.
 
 | Resep | Nama ID | Nama EN | Kalimat ID | Kalimat EN |
 |---|---|---|---|---|
@@ -100,7 +105,7 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 | chatbot-wa | Chatbot WhatsApp | WhatsApp chatbot | Balas pesan pelanggan otomatis, 24 jam. | Reply to customers automatically, 24/7. |
 | web-klien | Website klien dengan form | Client website with a form | Website, data pendaftar, email, dan alamat .com untuk satu klien. | Website, sign-up data, email, and a .com address for one client. |
 | otomasi-tim | Otomasi untuk tim | Team automation | Workflow n8n dengan AI, data, dan email untuk tim kecil. | n8n workflows with AI, data, and email for a small team. |
-| ai-coding | AI untuk tool coding saja | AI for coding tools only | Saldo AI untuk Cursor, Lovable, Cline, dan tool lain. | AI balance for Cursor, Lovable, Cline, and other tools. |
+| ai-coding | AI untuk tool coding saja | AI for coding tools only | Pakai saldomu untuk AI di Cursor, Lovable, Cline, dan tool lain. | Use your balance for AI in Cursor, Lovable, Cline, and other tools. |
 
 ### Cara kerja
 | # | ID judul / isi | EN |
@@ -130,9 +135,9 @@ Nama & label layanan: tabel bagian 5 `services-and-pricing.md`. Satu kalimat per
 | server | Kontrol penuh untuk yang butuh lebih. | Full control when you need more. |
 | database | Simpan data pendaftar, pesanan, atau pelanggan. | Keep sign-ups, orders, or customer data. |
 | storage | Simpan foto, dokumen, dan file upload. | Store photos, documents, and uploads. |
-| domain | Nama proyekmu di internet, mulai Rp5.000. | Your project's name on the internet, from Rp5,000. |
+| domain | Nama proyekmu di internet, mulai Rp5.000 tahun pertama. | Your project's name on the internet, from Rp5,000 for the first year. |
 | email | Kirim notifikasi dan struk dari alamatmu sendiri. | Send notifications and receipts from your own address. |
-| payments | Terima pembayaran QRIS di aplikasimu. | Accept QRIS payments in your app. |
+| payments | Terima pembayaran QRIS di proyekmu. | Accept QRIS payments in your project. |
 
 ### Satu saldo Rupiah
 | Kunci | ID | EN |
@@ -187,7 +192,18 @@ Template: Chatbot WhatsApp — “Balas pesan pelanggan pakai AI.” / “Answer
 | calc.empty | Belum ada layanan. Pilih resep atau tambah layanan. | No services yet. Pick a recipe or add a service. |
 | size.disabled | Belum cukup untuk {template} — pilih {size} | Not enough for {template} — choose {size} |
 
-FAQ Harga (ID/EN): *Kapan biaya tetap dipotong?* — Di muka per 30 hari sejak layanan nyala. / *When are fixed costs charged?* — Upfront every 30 days from when the service switches on. · *Bagaimana kalau saldo habis?* — Layanan dijeda, data aman 7 hari, isi saldo untuk menyalakan lagi. · *Bisa berhenti di tengah bulan?* — Bisa, sisa hari kembali ke saldo. · *Kenapa biaya AI perkiraan?* — Bergantung pada model, panjang prompt, dan jumlah pesan. · *Apakah ada biaya tersembunyi?* — Tidak. Semua harga termasuk PPN, biaya tambahan Rp0.
+| calc.details | Rincian | Details |
+| calc.managed | Kenapa Online-kan lebih mahal dari server dengan spesifikasi mirip? Karena sudah dikelola: alamat, HTTPS, restart, dan update kami urus. Server sendiri kamu kelola sendiri. | Why does Put online cost more than a server with similar specs? It's managed: we handle the address, HTTPS, restarts, and updates. A server is yours to manage. |
+| price.withdrawFee | Penarikan dana ke rekening Rp2.500 per penarikan. | Withdrawals to your bank account cost Rp2,500 each. |
+
+### FAQ Harga (5)
+| ID | EN |
+|---|---|
+| **Kapan biaya tetap dipotong?** Di muka per 30 hari sejak layanan nyala, diperpanjang otomatis jika saldo cukup. | **When are fixed costs charged?** Upfront every 30 days from when the service switches on, renewed automatically if your balance covers it. |
+| **Bagaimana kalau saldo habis?** Layanan dijeda, bukan dihapus. Datamu aman 7 hari; isi saldo dan layanan menyala lagi. | **What if my balance runs out?** Services pause, they aren't deleted. Your data is safe for 7 days; top up and they switch back on. |
+| **Bisa berhenti di tengah bulan?** Bisa. Sisa hari kembali ke saldo. Alamat web tidak bisa dikembalikan, tapi tetap aktif sampai masa berlakunya habis. | **Can I stop mid-month?** Yes. Unused days go back to your balance. Web address fees can't be refunded, but the address stays active until it expires. |
+| **Kenapa biaya AI hanya perkiraan?** Bergantung pada model, panjang prompt, dan jumlah pesan. Kamu bisa memasang batas belanja per proyek. | **Why is AI cost only an estimate?** It depends on the model, prompt length, and message volume. You can set a spending limit per project. |
+| **Ada biaya tersembunyi?** Tidak. Semua harga termasuk PPN dan isi saldo tanpa biaya tambahan. Satu-satunya biaya lain: penarikan dana Terima pembayaran Rp2.500. | **Any hidden fees?** No. All prices include tax and topping up has no extra fee. The only other fee: Rp2,500 per withdrawal from Accept payments. |
 
 ---
 
@@ -204,7 +220,36 @@ FAQ Harga (ID/EN): *Kapan biaya tetap dipotong?* — Di muka per 30 hari sejak l
 | auth.name | Mau dipanggil siapa? | What should we call you? |
 
 ### Navigasi console
-Beranda / Home · Proyek / Projects · Buat / Create · Saldo / Balance · Lainnya / More · AI · Layanan / Services · Belajar / Learn · Bantuan / Help · Mulai ulang demo / Restart demo · Keluar / Sign out
+| Kunci | ID | EN |
+|---|---|---|
+| nav.home | Beranda | Home |
+| nav.projects | Proyek | Projects |
+| nav.create | Buat | Create |
+| nav.createLong | Buat baru | Create new |
+| nav.balance | Saldo | Balance |
+| nav.more | Lainnya | More |
+| nav.ai | AI | AI |
+| nav.servicesGroup | Layanan lain | Other services |
+| nav.svc.server | Server | Servers |
+| nav.svc.database | Data | Data |
+| nav.svc.storage | File | Files |
+| nav.svc.domain | Alamat web | Web addresses |
+| nav.svc.email | Email | Email |
+| nav.svc.payments | Pembayaran | Payments |
+| nav.learn | Belajar | Learn |
+| nav.help | Bantuan | Help |
+| nav.account | Akun | Account |
+
+### Menu Akun (mobile: sheet Lainnya · desktop: menu avatar)
+| Kunci | ID | EN |
+|---|---|---|
+| acct.language | Bahasa | Language |
+| acct.reset | Mulai ulang demo | Restart demo |
+| acct.resetConfirm | Hapus semua data demo dan mulai dari akun baru? | Clear all demo data and start with a new account? |
+| acct.advance | Simulasi: majukan 30 hari | Simulate: skip ahead 30 days |
+| acct.advanced | Waktu demo sekarang {date}. {n} layanan diperpanjang, {m} dijeda. | Demo time is now {date}. {n} services renewed, {m} paused. |
+| acct.signout | Keluar | Sign out |
+| acct.demoBadge | Mode demo | Demo mode |
 
 ### Beranda
 | Kunci | ID | EN |
@@ -219,6 +264,8 @@ Beranda / Home · Proyek / Projects · Buat / Create · Saldo / Balance · Lainn
 | home.month | Bulan ini: tetap {Rp} · pakai {Rp} | This month: fixed {Rp} · usage {Rp} |
 | home.renewIn | Diperpanjang {n} hari lagi | Renews in {n} days |
 | banner.low | Saldo kurang untuk memperpanjang {project} pada {date}. Isi minimal {Rp}. | Not enough balance to renew {project} on {date}. Top up at least {Rp}. |
+
+`{Rp}` di banner = `max(kekurangan, Rp20.000)` (`services-and-pricing.md` §1).
 | banner.paused | {project} dijeda karena saldo habis. Datamu aman sampai {date}. | {project} is paused because your balance ran out. Your data is safe until {date}. |
 
 Langkah berikutnya (kontekstual): *Isi saldo untuk mulai* · *Upload hasil Lovable/Bolt* · *Pakai AI di tool coding — salin API key proyek* · *Pasang alamat web sendiri* · *Pindai QR WhatsApp untuk chatbot*.
@@ -235,7 +282,7 @@ Langkah berikutnya (kontekstual): *Isi saldo untuk mulai* · *Upload hasil Lovab
 | wiz.source | Dari mana proyekmu? | Where is your project from? |
 | wiz.upload | Upload folder / ZIP | Upload a folder / ZIP |
 | wiz.github | Sambungkan GitHub | Connect GitHub |
-| wiz.domainAvail | Tersedia · {Rp} tahun pertama | Available · {Rp} first year |
+| wiz.domainAvail | Tersedia · {Rp} tahun pertama, lalu {Rp2}/tahun | Available · {Rp} first year, then {Rp2}/year |
 | wiz.domainTaken | Sudah dipakai. Coba {suggest}. | Taken. Try {suggest}. |
 | wiz.freeAddr | Atau pakai gratis: {name}.tokennyala.app | Or use it free: {name}.tokennyala.app |
 | wiz.aiKey | API key proyek dibuat otomatis. Batas belanja: | A project API key is created automatically. Spending limit: |
@@ -247,10 +294,16 @@ Langkah berikutnya (kontekstual): *Isi saldo untuk mulai* · *Upload hasil Lovab
 | wiz.topup | Isi saldo {Rp} | Top up {Rp} |
 | wiz.go | Nyalakan sekarang | Switch on now |
 | wiz.s4 | Menyalakan… | Switching on… |
-| wiz.p1 | Menyiapkan ruang | Preparing space |
-| wiz.p2 | Memasang alamat {domain} | Setting up {domain} |
-| wiz.p3 | Mengaktifkan HTTPS | Turning on HTTPS |
-| wiz.p4 | Menyambungkan AI ke saldo | Connecting AI to your balance |
+| wiz.p.space | Menyiapkan ruang | Preparing space |
+| wiz.p.template | Memasang {template} | Installing {template} |
+| wiz.p.database | Membuat tempat simpan data | Creating data storage |
+| wiz.p.domain | Memasang alamat {domain} | Setting up {domain} |
+| wiz.p.free | Menyiapkan alamat gratis {name}.tokennyala.app | Setting up the free address {name}.tokennyala.app |
+| wiz.p.https | Mengaktifkan HTTPS | Turning on HTTPS |
+| wiz.p.email | Menyiapkan email | Setting up email |
+| wiz.p.ai | Menyambungkan AI ke saldo | Connecting AI to your balance |
+
+Daftar progres dibuat dari layanan proyek, berurutan: space → template (jika ada) → database → domain **atau** free → https → email → ai.
 | wiz.done | Nyala! | It's on! |
 | wiz.doneLead | {project} sudah online. Saldo terpotong {Rp}. | {project} is online. {Rp} was deducted from your balance. |
 | wiz.copyLink | Salin link | Copy link |
@@ -271,7 +324,12 @@ Langkah berikutnya (kontekstual): *Isi saldo untuk mulai* · *Upload hasil Lovab
 | act.resizeUp | Naik ke {size}: dipotong {Rp} untuk {n} hari tersisa. | Move up to {size}: {Rp} charged for the {n} days left. |
 | act.resizeDown | Turun ke {size}: {Rp} kembali ke saldo. | Move down to {size}: {Rp} goes back to your balance. |
 | act.stop | Hentikan layanan | Stop service |
-| act.stopConfirm | Hentikan {service}? {Rp} sisa {n} hari kembali ke saldo. Data dihapus setelah 7 hari. | Stop {service}? {Rp} for the {n} unused days goes back to your balance. Data is deleted after 7 days. |
+| act.stopConfirm | Hentikan {service}? {Rp} untuk sisa {n} hari kembali ke saldo. Datanya disimpan 7 hari, lalu dihapus. | Stop {service}? {Rp} for the {n} unused days goes back to your balance. Its data is kept for 7 days, then deleted. |
+| act.stopDomain | Matikan perpanjangan {domain}? Alamat tetap aktif sampai {date}. Biaya alamat web tidak bisa dikembalikan. | Turn off renewal for {domain}? It stays active until {date}. Web address fees can't be refunded. |
+| act.stopProject | Hentikan proyek | Stop project |
+| act.stopProjectConfirm | Hentikan semua layanan di {project}? {Rp} kembali ke saldo. Alamat web tetap aktif sampai masa berlakunya habis. | Stop every service in {project}? {Rp} goes back to your balance. Web addresses stay active until they expire. |
+| act.resume | Nyalakan lagi | Switch on again |
+| st.stoppedUntil | Data dihapus {date} | Data deleted on {date} |
 | act.restart | Mulai ulang | Restart |
 | act.copied | Disalin | Copied |
 
@@ -292,7 +350,7 @@ Baris riwayat: `+ Isi saldo · QRIS` / `+ Top up · QRIS` · `− {layanan} · {
 | database | Belum ada tempat simpan data. Biasanya dibutuhkan untuk form pendaftaran atau login. | No data storage yet. You usually need it for sign-up forms or logins. |
 | storage | Belum ada tempat simpan file. Cocok untuk foto produk dan file upload. | No file storage yet. Good for product photos and uploads. |
 | domain | Belum ada alamat web. Proyekmu tetap bisa dibuka di alamat gratis .tokennyala.app. | No web address yet. Your project still works at its free .tokennyala.app address. |
-| email | Belum mengirim email. Paket Gratis cukup untuk 50 email per hari. | No email yet. The Free plan covers 50 emails a day. |
+| email | Belum mengirim email. Ukuran Gratis cukup untuk 50 email per hari — tanpa alamat web sendiri pun bisa. | No email yet. The Free size covers 50 emails a day — even without your own web address. |
 | payments | Belum menerima pembayaran. Mulai di mode uji — tidak ada uang sungguhan. | Not accepting payments yet. Start in test mode — no real money. |
 
 ### Server — sukses
@@ -311,25 +369,97 @@ Baris riwayat: `+ Isi saldo · QRIS` / `+ Top up · QRIS` · `− {layanan} · {
 
 ---
 
-## 6. FAQ Landing (12)
-Dipertahankan dari v3 (disesuaikan kata “saldo untuk semua layanan”): kapan saldo aktif · apakah saldo kedaluwarsa · termasuk PPN · request gagal · metode bayar · refund · data prompt · API key bocor · untuk tim.
-Baru:
+## 6. FAQ Landing (13)
+Dipertahankan dari v3 (kata “saldo” dibaca sebagai saldo untuk semua layanan): kapan saldo aktif · apakah saldo kedaluwarsa · termasuk PPN · request AI gagal · metode bayar · data prompt dikirim ke mana · API key bocor. (Refund v3 digantikan FAQ “berhenti” di bawah; “untuk tim” cukup di section Tim.)
+
+Baru (6):
 | ID | EN |
 |---|---|
 | **Layanan apa saja yang ada?** AI untuk tool coding, hosting, chatbot & otomasi siap pakai, server, tempat simpan data & file, alamat web, email, dan terima pembayaran — semua dari satu saldo. | **What services are there?** AI for coding tools, hosting, ready-made chatbots & automations, servers, data & file storage, web addresses, email, and payments — all from one balance. |
 | **Saya tidak paham server. Bisa pakai?** Bisa. Mulai dari tujuan, kami pilihkan ukurannya. Detail teknis hanya muncul kalau kamu buka. | **I don't understand servers. Can I still use it?** Yes. Start from your goal and we pick the size. Technical details only show up if you open them. |
-| **Bagaimana kalau saldo habis?** Layanan dijeda, bukan dihapus. Datamu aman 7 hari. Kami ingatkan 3 hari sebelumnya. | **What if my balance runs out?** Services pause, they aren't deleted. Your data is safe for 7 days, and we remind you 3 days before. |
-
----
+| **Kapan biaya bulanan dipotong?** Di muka per 30 hari sejak layanan nyala. AI dipotong sesuai pemakaian. | **When are monthly costs charged?** Upfront every 30 days from when a service switches on. AI is charged as you use it. |
+| **Bagaimana kalau saldo habis?** Layanan dijeda, bukan dihapus. Datamu aman 7 hari, dan kami ingatkan 3 hari sebelumnya. | **What if my balance runs out?** Services pause, they aren't deleted. Your data is safe for 7 days, and we remind you 3 days before. |
+| **Bisa berhenti atau batal?** Bisa kapan saja. Sisa hari kembali ke saldo. Pembayaran isi saldo yang belum selesai bisa dibatalkan; saldo yang sudah masuk tidak bisa diuangkan. | **Can I stop or cancel?** Anytime. Unused days go back to your balance. Unfinished top-up payments can be cancelled; balance already added can't be cashed out. |
+| **Berapa biaya alamat web setelah tahun pertama?** `.my.id`, `.biz.id`, dan `.web.id` Rp5.000 tahun pertama, lalu Rp25.000 per tahun. Harga lain ada di halaman Harga. | **How much is a web address after the first year?** `.my.id`, `.biz.id`, and `.web.id` are Rp5,000 for the first year, then Rp25,000 a year. Other prices are on the Pricing page. |
 
 ## 7. Nala — Alur “Bantu pilih resep”
 | Langkah | ID | EN |
 |---|---|---|
 | Pembuka (chip baru) | Bantu pilih resep | Help me pick a recipe |
-| Q1 | Mau bikin apa? (Landing page · Chatbot WhatsApp · Website klien · Otomasi tim · Cuma AI untuk coding) | What are you building? |
-| Q2 | Kodenya sudah ada? (Sudah, dari Lovable/Bolt/GitHub · Belum, mau dibuat dengan AI) | Do you have the code already? |
-| Q3 | Kira-kira seramai apa? (Baru coba · Rutin dipakai · Ramai) | How busy will it be? |
+| Q1 | Mau bikin apa? — pilihan = nama pendek resep (§3) | What are you building? — options = short recipe names |
+| Q2 | Kodenya sudah ada? — *Sudah, dari Lovable/Bolt/GitHub* · *Belum, mau dibuat dengan AI* | Do you have the code already? — *Yes, from Lovable/Bolt/GitHub* · *Not yet, I'll build it with AI* |
+| Q3 | Kira-kira seramai apa? — *Baru coba* · *Rutin dipakai* · *Ramai* | How busy will it be? — *Just trying* · *Used regularly* · *Busy* |
 | Hasil | Ini resep yang pas: {recipe} — ≈ {Rp}/bulan. | Here's the right recipe: {recipe} — ≈ {Rp}/month. |
 | Aksi | Nyalakan resep ini · Ubah di kalkulator | Switch on this recipe · Adjust in the calculator |
 
-Q2 “Belum” menambah AI +10 sesi kecil ke resep; Q3 memilih ukuran (Baru coba → minimum resep, Rutin → Rutin, Ramai → Ramai).
+Aturan Q2/Q3: `services-and-pricing.md` §6 “Aturan Nala”.
+
+---
+
+## 8. Copy Tambahan
+
+### Landing — Contoh proyek
+| Kunci | ID | EN |
+|---|---|---|
+| ex.kicker | Contoh proyek | Example project |
+| ex.title | Satu landing page event, dari prompt sampai online. | One event landing page, from prompt to online. |
+| ex.build | Bangun dengan AI · 11–18 sesi kecil | Build with AI · 11–18 small sessions |
+| ex.online | Online-kan · Coba-coba, 30 hari | Put online · Starter, 30 days |
+| ex.domain | Alamat web eventku.my.id · tahun pertama | Web address eventku.my.id · first year |
+| ex.total | Total {Rp}–{Rp2} | Total {Rp}–{Rp2} |
+| ex.verdict | Isi Rp50.000 sudah cukup sampai online. | A Rp50,000 top-up gets you all the way online. |
+| ex.cta | Nyalakan contoh ini | Switch on this example |
+
+### Landing — Belajar (3 panduan, juga di console)
+| id | ID | EN |
+|---|---|---|
+| g-portofolio | Portofolio online dalam 5 menit · 3 menit baca | Your portfolio online in 5 minutes · 3-min read |
+| g-chatbot | Chatbot WhatsApp pertamamu · 4 menit baca | Your first WhatsApp chatbot · 4-min read |
+| g-ai-tool | Pakai saldo di Cursor & Lovable · 2 menit baca | Use your balance in Cursor & Lovable · 2-min read |
+| learn.cta | Buka panduan | Open guide |
+
+### Console — Detail proyek
+| Kunci | ID | EN |
+|---|---|---|
+| prj.tab.overview | Ringkasan | Overview |
+| prj.tab.services | Layanan | Services |
+| prj.tab.ai | AI | AI |
+| prj.tab.log | Log | Log |
+| prj.tab.settings | Pengaturan | Settings |
+| prj.visit | Buka {domain} | Open {domain} |
+| prj.cost | {Rp}/bulan · diperpanjang {date} | {Rp}/month · renews {date} |
+| prj.log.empty | Belum ada catatan. | Nothing logged yet. |
+| prj.log.row | {time} · {message} | {time} · {message} |
+| prj.addService | Tambah layanan ke proyek ini | Add a service to this project |
+Contoh baris log (mock): “Proyek dinyalakan” / “Project switched on” · “Alamat ayu.my.id aktif” / “ayu.my.id is live” · “Dimulai ulang otomatis” / “Restarted automatically”.
+
+### Console — AI
+| Kunci | ID | EN |
+|---|---|---|
+| ai.tab.start | Mulai cepat | Quick start |
+| ai.tab.try | Coba AI | Try AI |
+| ai.tab.models | Model | Models |
+| ai.tab.usage | Pemakaian | Usage |
+| ai.tab.keys | API key | API keys |
+| ai.limit | Batas belanja per bulan | Monthly spending limit |
+| ai.noLimit | Tanpa batas | No limit |
+| ai.tryCost | Pesan ini ±{Rp} | This message ±{Rp} |
+| ai.keyNew | Buat API key | Create API key |
+| ai.keyOnce | Salin sekarang. Key lengkap hanya ditampilkan sekali. | Copy it now. The full key is only shown once. |
+
+### Console — Form layanan (pola bersama)
+| Kunci | ID | EN |
+|---|---|---|
+| svcf.add | Tambah | Add |
+| svcf.name | Nama | Name |
+| svcf.size | Ukuran | Size |
+| svcf.location | Lokasi | Location |
+| svcf.jakarta | Jakarta — paling dekat dengan pengguna Indonesia | Jakarta — closest to users in Indonesia |
+| svcf.singapore | Singapura | Singapore |
+| svcf.system | Sistem | System |
+| svcf.engine | Jenis database | Database type |
+| svcf.engineHint | PostgreSQL — pilihan aman untuk kebanyakan proyek | PostgreSQL — a safe choice for most projects |
+| svcf.summary | Ringkasan | Summary |
+| svcf.go | Nyalakan | Switch on |
+| svcf.sandbox | Mode uji — tidak ada uang sungguhan | Test mode — no real money |
+
