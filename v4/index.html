@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F7F8FC">
+  <meta name="description" content="TokenNyala — AI untuk membangun, cloud untuk menjalankan. Pilih tujuanmu, dibayar dari satu saldo Rupiah.">
+  <meta property="og:title" content="TokenNyala — Idemu nyala, dari prompt sampai online.">
+  <meta property="og:description" content="Platform AI cloud untuk vibecoder: hosting, otomasi, data, alamat web, dan AI dengan satu saldo Rupiah.">
+  <meta property="og:type" content="website">
+  <title>TokenNyala — Idemu nyala, dari prompt sampai online.</title>
+  <link rel="icon" href="assets/img/tokennyala-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- 2 families / 4 faces (docs/v4/visual-direction.md §3) -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script defer src="assets/js/data.js"></script>
+  <script defer src="assets/js/i18n.js"></script>
+  <script defer src="assets/js/icons.js"></script>
+  <script defer src="assets/js/ui.js"></script>
+  <script defer src="assets/js/landing.js"></script>
+</head>
+<body>
+  <a href="#main" class="sr-only z-[60] rounded-full bg-xl-yellow px-5 py-3 font-bold focus:not-sr-only focus:fixed focus:top-3 focus:left-3" data-i18n="skip">Lewati ke konten utama</a>
+
+  <!-- ===== Header (information-architecture §1) ===== -->
+  <header data-header class="group sticky top-0 z-50 h-(--header-h) transition-colors duration-300 data-scrolled:bg-paper/90 data-scrolled:backdrop-blur-md data-menu-open:bg-xl-blue data-menu-open:text-white data-menu-open:backdrop-blur-none">
+    <div class="shell flex h-full items-center gap-4">
+      <a href="#top" class="flex min-h-11 items-center gap-2.5 text-[1.2rem] font-extrabold tracking-[-.03em]" data-i18n-aria="brand.home" aria-label="TokenNyala — ke atas">
+        <img src="assets/img/tokennyala-mark.svg" alt="" width="34" height="34" class="size-[34px] rounded-[9px] group-data-menu-open:ring-2 group-data-menu-open:ring-white">TokenNyala
+      </a>
+      <nav class="ml-6 hidden gap-1 font-bold lg:flex" data-i18n-aria="nav.aria" aria-label="Navigasi utama">
+        <a class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 underline-offset-[6px] decoration-xl-yellow decoration-[3px] hover:underline" href="#layanan" data-i18n="nav.services">Layanan</a>
+        <a class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 underline-offset-[6px] decoration-xl-yellow decoration-[3px] hover:underline" href="harga.html" data-i18n="nav.pricing">Harga</a>
+        <a class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 underline-offset-[6px] decoration-xl-yellow decoration-[3px] hover:underline" href="#template" data-i18n="nav.templates">Template</a>
+        <a class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 underline-offset-[6px] decoration-xl-yellow decoration-[3px] hover:underline" href="#belajar" data-i18n="nav.learn">Belajar</a>
+        <a class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 underline-offset-[6px] decoration-xl-yellow decoration-[3px] hover:underline" href="#faq" data-i18n="nav.faq">FAQ</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-2">
+        <div class="hidden rounded-full border-[1.5px] border-current p-[3px] lg:inline-flex" role="group" data-i18n-aria="lang.aria" aria-label="Pilih bahasa">
+          <button type="button" data-lang="id" aria-pressed="true" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">ID</button>
+          <button type="button" data-lang="en" aria-pressed="false" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">EN</button>
+        </div>
+        <a href="app.html#/masuk" class="hidden min-h-11 items-center px-3 font-bold lg:inline-flex" data-i18n="nav.signin">Masuk</a>
+        <a href="app.html#/buat?resep=portofolio" data-start class="btn hidden group-data-menu-open:hidden sm:inline-flex" data-i18n="cta.start">Mulai bangun</a>
+        <button type="button" id="menu-button" class="grid size-12 place-items-center rounded-control bg-xl-dark text-white aria-expanded:bg-xl-yellow aria-expanded:text-xl-dark lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Buka menu">
+          <svg class="icon group-data-menu-open:hidden" aria-hidden="true"><use href="#i-menu"/></svg>
+          <svg class="icon hidden group-data-menu-open:block" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobile-menu" class="menu-panel lg:hidden" hidden>
+    <nav class="shell !px-0" data-i18n-aria="nav.aria" aria-label="Navigasi utama">
+      <ol class="grid grid-cols-1">
+        <li><a class="flex items-baseline gap-3 border-b border-white/20 py-2 text-[clamp(2.25rem,10vw,4rem)] leading-[1.05] font-extrabold tracking-[-.05em] hover:text-xl-yellow" href="#layanan"><small class="font-mono text-[.8rem] font-medium tracking-normal text-white/70">01</small><span data-i18n="nav.services">Layanan</span></a></li>
+        <li><a class="flex items-baseline gap-3 border-b border-white/20 py-2 text-[clamp(2.25rem,10vw,4rem)] leading-[1.05] font-extrabold tracking-[-.05em] hover:text-xl-yellow" href="harga.html"><small class="font-mono text-[.8rem] font-medium tracking-normal text-white/70">02</small><span data-i18n="nav.pricing">Harga</span></a></li>
+        <li><a class="flex items-baseline gap-3 border-b border-white/20 py-2 text-[clamp(2.25rem,10vw,4rem)] leading-[1.05] font-extrabold tracking-[-.05em] hover:text-xl-yellow" href="#template"><small class="font-mono text-[.8rem] font-medium tracking-normal text-white/70">03</small><span data-i18n="nav.templates">Template</span></a></li>
+        <li><a class="flex items-baseline gap-3 border-b border-white/20 py-2 text-[clamp(2.25rem,10vw,4rem)] leading-[1.05] font-extrabold tracking-[-.05em] hover:text-xl-yellow" href="#belajar"><small class="font-mono text-[.8rem] font-medium tracking-normal text-white/70">04</small><span data-i18n="nav.learn">Belajar</span></a></li>
+        <li><a class="flex items-baseline gap-3 border-b border-white/20 py-2 text-[clamp(2.25rem,10vw,4rem)] leading-[1.05] font-extrabold tracking-[-.05em] hover:text-xl-yellow" href="#faq"><small class="font-mono text-[.8rem] font-medium tracking-normal text-white/70">05</small><span data-i18n="nav.faq">FAQ</span></a></li>
+      </ol>
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <div class="inline-flex rounded-full border-[1.5px] border-white/70 p-[3px]" role="group" data-i18n-aria="lang.aria" aria-label="Pilih bahasa">
+          <button type="button" data-lang="id" aria-pressed="true" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">ID</button>
+          <button type="button" data-lang="en" aria-pressed="false" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">EN</button>
+        </div>
+        <a href="app.html#/masuk" class="btn btn--ghost-light" data-i18n="nav.signin">Masuk</a>
+      </div>
+      <a href="app.html#/buat?resep=portofolio" data-start class="btn btn--yellow btn--lg mt-4 w-full" data-i18n="cta.start">Mulai bangun</a>
+    </nav>
+  </div>
+
+  <main id="main" tabindex="-1" class="focus:outline-none">
+    <!-- ===== 1. Hero (sheet paper) ===== -->
+    <section id="top" class="relative pt-6 pb-[calc(var(--sheet-r)+56px)] sm:pt-10 lg:pt-14" aria-labelledby="hero-title">
+      <div class="shell">
+        <p class="kicker"><span class="dot dot--on"></span><span data-i18n="hero.kicker">Untuk ide, prototype, dan proyekmu</span></p>
+        <h1 id="hero-title" class="display display--xl mt-5 max-w-[16ch] lg:max-w-none" data-i18n-html="hero.title">Idemu <mark>nyala</mark>, dari prompt sampai online.</h1>
+        <div class="mt-6 grid grid-cols-1 gap-10 lg:mt-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start lg:gap-16">
+          <div class="grid grid-cols-1 content-start gap-6">
+            <p class="lead" data-i18n="hero.lead">AI untuk membangun, cloud untuk menjalankan.</p>
+            <div class="flex flex-col gap-3 sm:flex-row">
+              <a href="app.html#/buat?resep=portofolio" id="hero-cta" data-start class="btn btn--lg w-full sm:w-auto"><span data-i18n="cta.start">Mulai bangun</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+              <a href="harga.html" class="btn btn--ghost btn--lg w-full sm:w-auto" data-i18n="cta.pricing">Lihat harga</a>
+            </div>
+            <ul class="trust flex flex-wrap gap-x-5 gap-y-2 font-mono text-[.85rem] text-muted" data-i18n-aria="hero.trustAria" aria-label="Keunggulan">
+              <li data-i18n="hero.trust1">Bayar Rupiah</li>
+              <li data-i18n="hero.trust2">Tanpa kartu kredit</li>
+              <li data-trust-from>Mulai Rp15 rb</li>
+            </ul>
+          </div>
+
+          <!-- Board: prompt → building → online (A1). Decorative copy is real text; caption names it. -->
+          <figure class="card relative p-4 shadow-[0_30px_60px_-30px_rgb(0_22_106/.35)] sm:p-5 lg:mx-3 lg:-rotate-1">
+            <figcaption class="sr-only" data-i18n="board.aria">Ilustrasi: satu proyek dari prompt sampai online</figcaption>
+            <div class="flex items-center gap-3" aria-hidden="true">
+              <span class="flex gap-1.5"><i class="size-2.5 rounded-full bg-xl-yellow"></i><i class="size-2.5 rounded-full bg-line"></i><i class="size-2.5 rounded-full bg-line"></i></span>
+              <span class="font-mono text-[.78rem] text-muted" data-i18n="board.title">Dari prompt sampai online</span>
+              <span class="ml-auto rounded-full bg-paper px-2.5 py-1 font-mono text-[.7rem] text-muted uppercase" data-i18n="board.note">Contoh</span>
+            </div>
+            <ol class="mt-4 grid grid-cols-1 gap-3">
+              <li class="rounded-[18px] bg-paper p-4">
+                <p class="font-mono text-[.7rem] tracking-[.12em] text-muted uppercase">01 · <span data-i18n="board.step1">Prompt</span></p>
+                <p class="mt-1 text-[1.05rem] leading-snug font-bold"><span data-i18n="board.prompt">Buat landing page event yang hangat dan simpel</span><span class="ml-0.5 inline-block h-[1.05em] w-0.5 translate-y-[.15em] bg-xl-blue" aria-hidden="true"></span></p>
+              </li>
+              <li class="rounded-[18px] bg-xl-dark p-4 text-white">
+                <p class="font-mono text-[.7rem] tracking-[.12em] text-white/70 uppercase">02 · <span data-i18n="board.step2">Membangun</span></p>
+                <div class="mt-3 grid gap-2" aria-hidden="true">
+                  <i class="block h-2 w-[62%] rounded-full bg-xl-sky"></i>
+                  <i class="ml-[8%] block h-2 w-[48%] rounded-full bg-white/35"></i>
+                  <i class="ml-[8%] block h-2 w-[70%] rounded-full bg-xl-yellow"></i>
+                  <i class="block h-2 w-[36%] rounded-full bg-white/35"></i>
+                </div>
+                <p class="mt-3 text-[.9rem] text-white/80" data-i18n="board.building">Membangun komponen…</p>
+              </li>
+              <li class="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[18px] border border-line p-4">
+                <p class="w-full font-mono text-[.7rem] tracking-[.12em] text-muted uppercase">03 · <span data-i18n="board.step3">Online</span></p>
+                <span class="inline-flex min-w-0 items-center gap-2 font-mono font-medium"><svg class="icon size-4 text-teal-ink" aria-hidden="true"><use href="#i-lock"/></svg><span data-domain>eventku.my.id</span></span>
+                <span class="ml-auto inline-flex items-center gap-2 font-mono text-[.85rem] text-teal-ink"><span class="dot dot--on"></span><span data-i18n="status.on">Nyala</span></span>
+              </li>
+            </ol>
+            <p class="mt-3 flex items-center gap-3 rounded-[18px] bg-xl-yellow px-4 py-3 font-bold">
+              <svg class="icon size-5" aria-hidden="true"><use href="#i-wallet"/></svg><span class="num" data-board-balance>Saldo Rp55.000 → sisa Rp12.320</span>
+            </p>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 2. Stall story (sheet dark) ===== -->
+    <section id="cerita" class="sheet sheet--dark" aria-labelledby="story-title">
+      <div class="shell grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
+        <div>
+          <p class="kicker" data-i18n="story.kicker">Kode sudah jadi.</p>
+          <h2 id="story-title" class="display mt-5" data-i18n="story.title">Tapi belum bisa dibuka orang lain.</h2>
+          <p class="lead mt-6 text-white/80" data-i18n="story.body">Di TokenNyala, proyekmu online dalam beberapa ketukan — lengkap dengan alamat sendiri.</p>
+        </div>
+        <ol class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <li class="flex flex-col gap-4 rounded-card border border-white/20 bg-white/5 p-5 sm:p-6">
+            <p class="font-mono text-[.75rem] tracking-[.1em] text-white/70 uppercase" data-i18n="story.before">Sebelum</p>
+            <span class="switch switch--lg" aria-hidden="true"><i></i></span>
+            <p class="font-mono text-[1.05rem]">localhost:5173</p>
+            <p class="text-white/80" data-i18n="story.beforeNote">Hanya bisa dibuka di laptopmu.</p>
+            <p class="mt-auto inline-flex items-center gap-2 font-mono text-[.85rem] text-white/70"><span class="dot"></span><span data-i18n="status.off">Belum online</span></p>
+          </li>
+          <li class="flex flex-col gap-4 rounded-card bg-white p-5 text-xl-dark sm:p-6">
+            <p class="font-mono text-[.75rem] tracking-[.1em] text-muted uppercase" data-i18n="story.after">Sesudah</p>
+            <span class="switch switch--lg" data-on aria-hidden="true"><i></i></span>
+            <p class="inline-flex items-center gap-2 font-mono text-[1.05rem]"><svg class="icon size-4 text-teal-ink" aria-hidden="true"><use href="#i-lock"/></svg><span data-domain>eventku.my.id</span></p>
+            <p class="text-lead-ink" data-i18n="story.afterNote">Bisa dibuka siapa saja, dari HP mana saja.</p>
+            <p class="mt-auto inline-flex items-center gap-2 font-mono text-[.85rem] text-teal-ink"><span class="dot dot--on"></span><span data-i18n="status.on">Nyala</span></p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== 3. What are you building? (sheet blue) — core of the landing ===== -->
+    <section id="resep" class="sheet sheet--blue" aria-labelledby="recipe-title">
+      <div class="shell grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="lg:sticky lg:top-[calc(var(--header-h)+32px)] lg:self-start" data-decor-overflow>
+          <p class="kicker"><b>(01)</b><span data-i18n="recipe.kicker">Mau bikin apa?</span></p>
+          <h2 id="recipe-title" class="display mt-5" data-i18n-html="recipe.title">Mulai dari tujuanmu, bukan dari menu.</h2>
+          <p class="lead mt-6 text-white/80" data-i18n="recipe.lead">Pilih tujuan.</p>
+          <div data-recipe-chips data-allow-bleed role="radiogroup" data-i18n-aria="recipe.chipsAria" aria-label="Pilih tujuan"
+               class="no-scrollbar -mx-(--gutter) mt-8 flex gap-2 overflow-x-auto px-(--gutter) pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 lg:flex-col lg:items-start"></div>
+        </div>
+        <div>
+          <article id="recipe-card" data-recipe-card class="card overflow-hidden text-xl-dark" aria-labelledby="recipe-name"></article>
+          <p class="mt-4 text-[.88rem] text-white/75" data-i18n="recipe.note">Perkiraan.</p>
+          <p class="sr-only" aria-live="polite" data-recipe-live></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 4. How it works (sheet paper) ===== -->
+    <section id="cara-kerja" class="sheet sheet--paper" aria-labelledby="how-title">
+      <div class="shell">
+        <p class="kicker" data-i18n="how.kicker">Cara kerja</p>
+        <h2 id="how-title" class="display mt-5 max-w-[18ch]" data-i18n="how.title">Tiga langkah, dari tujuan sampai online.</h2>
+        <ol class="mt-12 grid grid-cols-1 gap-4 lg:mt-16 lg:grid-cols-3">
+          <li class="flex flex-col rounded-card bg-xl-sky p-6 sm:p-8">
+            <span class="outline-num num text-[clamp(4.5rem,11vw,7.5rem)] leading-[.85] font-extrabold" aria-hidden="true">01</span>
+            <h3 class="mt-6 text-2xl sm:mt-10 font-extrabold tracking-tight" data-i18n="how.1.title">Pilih tujuanmu</h3>
+            <p class="mt-2 text-lead-ink" data-i18n="how.1.body"></p>
+          </li>
+          <li class="flex flex-col rounded-card bg-xl-yellow p-6 sm:p-8">
+            <span class="outline-num num text-[clamp(4.5rem,11vw,7.5rem)] leading-[.85] font-extrabold" aria-hidden="true">02</span>
+            <h3 class="mt-6 text-2xl sm:mt-10 font-extrabold tracking-tight" data-i18n="how.2.title">Isi saldo Rupiah</h3>
+            <p class="mt-2 text-lead-ink" data-i18n="how.2.body"></p>
+          </li>
+          <li class="flex flex-col rounded-card bg-xl-teal p-6 sm:p-8">
+            <span class="outline-num num text-[clamp(4.5rem,11vw,7.5rem)] leading-[.85] font-extrabold" aria-hidden="true">03</span>
+            <h3 class="mt-6 text-2xl sm:mt-10 font-extrabold tracking-tight" data-i18n="how.3.title">Nyala &amp; online</h3>
+            <p class="mt-2 text-xl-dark" data-i18n="how.3.body"></p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== 5. All services (sheet white) ===== -->
+    <section id="layanan" class="sheet sheet--white" aria-labelledby="svc-title">
+      <div class="shell">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end">
+          <div>
+            <p class="kicker"><b>(02)</b><span data-i18n="svc.kicker">Semua layanan</span></p>
+            <h2 id="svc-title" class="display mt-5" data-i18n-html="svc.title">Semua yang dibutuhkan proyekmu, di satu tempat.</h2>
+          </div>
+          <p class="lead" data-i18n="svc.lead"></p>
+        </div>
+        <div data-services class="mt-12 grid grid-cols-1 gap-12 lg:mt-20"></div>
+        <a href="harga.html" class="btn btn--ghost btn--lg mt-12 w-full sm:w-auto"><span data-i18n="svc.cta">Lihat semua harga</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+    </section>
+
+    <!-- ===== 6. One balance (sheet yellow) ===== -->
+    <section id="saldo" class="sheet sheet--yellow on-yellow" aria-labelledby="wallet-title">
+      <div class="shell grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-16">
+        <div>
+          <p class="kicker"><b>(03)</b><span data-i18n="wallet.kicker">Satu saldo</span></p>
+          <h2 id="wallet-title" class="display mt-5" data-i18n-html="wallet.title">Satu saldo Rupiah untuk semuanya.</h2>
+          <p class="lead mt-6" data-i18n="wallet.lead"></p>
+          <ul class="mt-8 grid grid-cols-1 gap-4 text-[1.02rem]">
+            <li class="flex gap-3"><svg class="icon mt-0.5" aria-hidden="true"><use href="#i-calendar-clock"/></svg><span data-i18n-html="wallet.fixed"></span></li>
+            <li class="flex gap-3"><svg class="icon mt-0.5" aria-hidden="true"><use href="#i-sparkles"/></svg><span data-i18n-html="wallet.usage"></span></li>
+            <li class="flex gap-3"><svg class="icon mt-0.5" aria-hidden="true"><use href="#i-bell"/></svg><span data-i18n="wallet.until"></span></li>
+          </ul>
+          <ul class="mt-8 flex flex-wrap gap-2 font-mono text-[.82rem]" data-i18n-aria="wallet.chipsAria" aria-label="Aturan saldo">
+            <li class="rounded-full bg-white/70 px-3 py-1.5" data-i18n="wallet.chip1">1 kredit = Rp1</li>
+            <li class="rounded-full bg-white/70 px-3 py-1.5" data-i18n="wallet.chip2">Termasuk PPN</li>
+            <li class="rounded-full bg-white/70 px-3 py-1.5" data-i18n="wallet.chip3">Tidak kedaluwarsa</li>
+            <li class="rounded-full bg-white/70 px-3 py-1.5" data-i18n="wallet.chip4">Tanpa USD</li>
+          </ul>
+          <a href="app.html#/saldo?isi=1" class="btn btn--lg mt-8 w-full sm:w-auto"><span data-i18n="cta.topup">Isi saldo</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+        <div data-wallet class="card border-0 p-5 shadow-[0_30px_60px_-30px_rgb(0_22_106/.45)] sm:p-8"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="sheet sheet--dark !pb-10" aria-labelledby="footer-brand">
+    <div class="shell">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+        <div class="col-span-2 lg:col-span-1">
+          <p id="footer-brand" class="flex items-center gap-3 text-2xl font-extrabold tracking-[-.03em]"><img src="assets/img/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10">TokenNyala</p>
+          <p class="mt-5 max-w-[16ch] text-[clamp(1.9rem,4vw,3rem)] leading-[1.02] font-extrabold tracking-[-.04em]" data-i18n="footer.tagline">Idemu nyala, dari prompt sampai online.</p>
+        </div>
+        <nav aria-labelledby="footer-explore">
+          <h2 id="footer-explore" class="font-mono text-[.8rem] tracking-[.1em] text-white/70 uppercase" data-i18n="footer.explore">Jelajahi</h2>
+          <ul class="mt-3 grid grid-cols-1">
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#layanan" data-i18n="nav.services">Layanan</a></li>
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="harga.html" data-i18n="nav.pricing">Harga</a></li>
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#template" data-i18n="nav.templates">Template</a></li>
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#belajar" data-i18n="nav.learn">Belajar</a></li>
+          </ul>
+        </nav>
+        <nav aria-labelledby="footer-help">
+          <h2 id="footer-help" class="font-mono text-[.8rem] tracking-[.1em] text-white/70 uppercase" data-i18n="footer.help">Bantuan &amp; legal</h2>
+          <ul class="mt-3 grid grid-cols-1">
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#faq" data-i18n="nav.faq">FAQ</a></li>
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#tim" data-i18n="footer.team">Untuk tim</a></li>
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#" data-mock-link data-i18n="footer.terms">Syarat &amp; Ketentuan</a></li>
+            <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#" data-mock-link data-i18n="footer.privacy">Kebijakan Privasi</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="mt-14 flex flex-col gap-3 border-t border-white/20 pt-6 text-[.88rem] text-white/70 sm:flex-row sm:justify-between">
+        <p data-i18n="footer.prototype">Prototype interaktif — tidak ada transaksi, layanan, atau data nyata.</p>
+        <p class="shrink-0">© 2026 TokenNyala</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

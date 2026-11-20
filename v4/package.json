@@ -1,0 +1,12 @@
+{
+  "name": "tokennyala-v4",
+  "private": true,
+  "description": "TokenNyala v4 — CSS build only. Compiled assets/css/app.css is committed so file:// works without a build.",
+  "scripts": {
+    "build": "tailwindcss -i src/tailwind.css -o assets/css/app.css --minify",
+    "watch": "tailwindcss -i src/tailwind.css -o assets/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3"
+  }
+}

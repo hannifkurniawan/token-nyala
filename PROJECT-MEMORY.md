@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4:** Fase 0 (dokumen `docs/v4/`) selesai di branch `v4-cloud` — menunggu review user. **Berikutnya: Fase 1** (setup `v4/` + landing bagian 1). Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen `docs/v4/`) dan **Fase 1** (`v4/` + landing bagian 1: header/menu/bahasa, hero, cerita macet, Mau bikin apa? 5 resep, cara kerja, semua layanan, satu saldo, footer) selesai. **Berikutnya: Fase 2** (template, AI, contoh, aman, belajar, tim, FAQ, CTA akhir, motion, Nala). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -96,6 +96,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Ukuran bersama **Coba-coba / Rutin / Ramai** (Rp15/35/75 rb) untuk hosting & template; biaya tetap dipotong per 30 hari; berhenti → sisa hari kembali; saldo habis → dijeda 7 hari | Satu skala untuk pemula; aturan ramah pemula (perlu validasi finance/legal) |
 | 20 Nov 2026 | Satuan estimasi baru: pesan chatbot Rp12, tugas otomasi Rp28 (model Hemat); sesi kecil Rp1.890 tetap | Resep chatbot & otomasi butuh satuan awam |
 | 20 Nov 2026 | Ikon Lucide (ISC) disalin lokal | Satu set ikon garis, tanpa CDN |
+| 20 Nov 2026 | Ikon Lucide v0.460.0 disuntikkan lewat `icons.js` (bukan `<use href="sprite.svg#…">`); atribut stroke di CSS `.icon` | `<use>` ke file eksternal diblokir di `file://`; atribut di `<svg>` sprite tidak diwarisi instance `<use>` |
+| 20 Nov 2026 | Kamus i18n v4 berformat `'kunci': [ID, EN]` di `i18n.js` | EN yang hilang langsung terlihat; `i18n_check.py --root v4` membaca kamus dari halaman |
+| 20 Nov 2026 | Cara kerja di `lg:` = grid 3 kolom (wireframe A4 menyebut geser horizontal) | Konten dulu; geser horizontal bisa ditambah di fase motion jika perlu |
+| 20 Nov 2026 | Kartu resep satu kolom di `lg:`; angka “≈ RpX rb” memakai `cqi` + `nowrap` | Di kolom kanan desktop kartu terlalu sempit untuk dua kolom (angka patah “Rp34 / rb”) |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -132,6 +136,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Situs yang dirender JavaScript bisa dibaca dengan Playwright** yang sudah terpasang untuk QA (`python3 -P`, bukan `-I`, karena Playwright ada di user site-packages). WebFetch hanya melihat shell HTML. Jangan menembus captcha/login.
 - **`pgrep -f <pola>` di loop penunggu mencocokkan perintahnya sendiri** → loop tidak pernah selesai, dan `pkill -f` dengan pola yang sama membunuh shell sendiri. Tunggu berdasarkan PID atau file hasil.
 - **Minta review independen untuk dokumen sebelum coding.** Agent yang tidak membaca kesimpulan kita menemukan 13 kontradiksi di dokumen v4 yang sudah “dicek” sendiri — terutama contoh angka di wireframe yang tidak dihitung dari rumus, dan aturan yang hanya ada sebagai contoh tabel (top-up disarankan). Setiap angka contoh harus bisa dihasilkan rumus + state yang tertulis.
+- **Hitung ulang contoh di dokumen dengan kode yang sebenarnya.** Fase 1 menemukan “cukup sampai ±20 Des” (preset Ayu) yang tidak sesuai rumus dokumen sendiri (hasilnya 19 Des) — lolos dua kali review manual. `audit_v4.py` sekarang mengecek angka dokumen terhadap `data.js` (dan diuji negatif: harga diubah → audit gagal).
+- **Animasi transisi bisa membuat axe salah ukur kontras.** Menu mobile mengganti warna header dengan transisi 300ms; axe yang langsung jalan melihat warna di tengah transisi. Tunggu transisi selesai sebelum audit.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -183,3 +189,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - `docs/v4-cloud-plan.md` disetujui arahnya: visual showcase v2, tagline “Idemu nyala, dari prompt sampai online.”, ID+EN, belum ada tanggal demo. 
 - **Fase 0 (branch `v4-cloud`):** `docs/v4/` 9 dokumen. Angka resep dihitung dengan skrip (portofolio Rp33.900/bln, chatbot-wa Rp47.000, web-klien Rp101.700, otomasi-tim Rp285.000; contoh event Rp40.790–54.020 muat di saldo 55.000). Review kontradiksi oleh agent independen menemukan 13 masalah wajib (contoh saldo console salah hitung, aturan top-up disarankan tidak ada, ai-coding tanpa tujuan, siklus berhenti/dijeda, preset demo tidak terdefinisi, FAQ/EN kurang, pelanggaran glosarium) → semua diperbaiki. `CLAUDE.md` diarahkan ke v4.
 
+
+### Sesi 4 — 20 Nov 2026 (Fase 1 v4)
+- `v4/` dibuat: `package.json` (`@tailwindcss/cli` 4.3.3 di-pin), `src/tailwind.css` (token + komponen, 1 sumber), `assets/css/app.css` di-commit, `data.js` (semua angka + fungsi murni), `i18n.js` (180 kunci [ID, EN]), `icons.js` (28 ikon Lucide), `ui.js`, `landing.js`, `index.html`, `README.md`.
+- Landing bagian 1: header sticky (menu biru layar penuh di mobile, ID/EN), hero (saklar inline menyala, board prompt → membangun → online, saldo 55.000 → sisa 12.320), cerita macet (localhost vs eventku.my.id), **Mau bikin apa?** (radiogroup 5 resep dengan panah, kartu dihitung dari `data.js`, link “Mulai bangun” ikut resep terpilih, ai-coding → `app.html#/ai?isi=1`), cara kerja, semua layanan (4 kelompok, 10 kartu), satu saldo (kartu dompet contoh), footer.
+- Tools: `tools/qa_v4.py` (6 viewport + menu, resep, bahasa EN), `tools/i18n_check.py --root v4` (v3 tidak berubah), `tools/audit_v4.py` (axe, font, file://, reduced motion, storage diblokir, CSS terbaru, konsistensi angka), `tools/build_icons_v4.py`. Semua lolos.
+- Ditemukan & diperbaiki saat QA/screenshot: grid tanpa kolom eksplisit (aturan #2), ikon terisi hitam, kartu layanan mobile terlalu panjang (±3.500px → tata letak ikon kiri), harga resep patah di desktop, chip top-up EN 2 baris, logo hilang di header biru.
+- Dokumen: preset Ayu “cukup sampai” dikoreksi **±19 Des** (+ perhitungan ketiga preset ditulis di §8); microcopy tambahan Fase 1; wireframe A6 tanpa tanggal.
+- Link ke `harga.html` dan `app.html` belum punya tujuan (Fase 3–4).

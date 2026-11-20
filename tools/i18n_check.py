@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """ID/EN completeness audit for v3 (step 12).
 
-Usage: python3 tools/i18n_check.py
+Usage: python3 tools/i18n_check.py            # v3 (unchanged)
+       python3 tools/i18n_check.py --root v4  # v4: every page in V4_PAGES + the TN.i18n dictionary
 
 1. Every data-i18n / data-i18n-aria / data-i18n-placeholder key exists in copy.id AND copy.en,
    and both dictionaries have the same keys.
 2. Loads the page in ID and in EN and compares every text node, aria-label, placeholder, alt and title
    (including closed dialogs and the template). Anything identical in both languages that is not on the
    allowlist is reported as "probably untranslated".
+v4 mode: every dictionary entry is a non-empty [ID, EN] pair; every key used in HTML (data-i18n*) or JS
+(t('key') literals, template-literal patterns such as `svc.${id}.name`) exists; no dead keys; ID/EN text diff.
 Exit code 1 if anything is found.
 """
+import argparse
 import functools
 import http.server
 import pathlib
@@ -79,16 +83,98 @@ KEYS_JS = r"""
 """
 
 
-def serve():
+def serve(root=None):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *a):
             pass
-    httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory=str(ROOT)))
+    httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory=str(root or ROOT)))
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     return httpd
 
 
+V4_ROOT = ROOT.parent / "v4"
+V4_PAGES = ["index.html"]  # fase 3: harga.html, fase 4+: app.html (+ routes)
+V4_ALLOW = {
+    "TokenNyala", "ID", "EN", "FAQ", "Prompt", "Online", "Landing page", "VPS", "Domain", "Email API & SMTP",
+    "Chat playground", "localhost:5173", "eventku.my.id", "© 2026 TokenNyala", "01", "02", "03", "04", "05",
+}
+V4_KEYS_JS = r"""
+() => {
+  const used = new Set();
+  for (const el of document.querySelectorAll('[data-i18n],[data-i18n-html],[data-i18n-aria],[data-i18n-placeholder]'))
+    for (const k of [el.dataset.i18n, el.dataset.i18nHtml, el.dataset.i18nAria, el.dataset.i18nPlaceholder]) if (k) used.add(k);
+  const dict = TN.i18n.dict;
+  const bad = Object.entries(dict).filter(([k, v]) => !Array.isArray(v) || v.length !== 2 || !v[0].trim() || !v[1].trim()).map(([k]) => k);
+  return { used: [...used], keys: Object.keys(dict), bad };
+}
+"""
+
+
+def main_v4():
+    httpd = serve(V4_ROOT)
+    base = f"http://127.0.0.1:{httpd.server_address[1]}/"
+    problems, keys, used_html = [], set(), set()
+    compared = 0
+    with sync_playwright() as p:
+        b = p.chromium.launch()
+        for page_name in V4_PAGES:
+            snaps = {}
+            for lang in ("id", "en"):
+                page = b.new_page(viewport={"width": 1440, "height": 900})
+                page.add_init_script(f"localStorage.setItem('tn-lang', '{lang}')")
+                page.goto(base + page_name, wait_until="networkidle")
+                snaps[lang] = page.evaluate(COLLECT_JS)
+                if lang == "id":
+                    k = page.evaluate(V4_KEYS_JS)
+                    keys |= set(k["keys"])
+                    used_html |= set(k["used"])
+                    problems += [f"{page_name}: dictionary entry is not a non-empty [ID, EN] pair: {x}" for x in k["bad"]]
+                page.close()
+            for k, v in snaps["id"].items():
+                compared += 1
+                if snaps["en"].get(k) == v and v not in V4_ALLOW and not TRIVIAL.match(v):
+                    problems.append(f"{page_name}: same in ID and EN: {k.split(' ')[0]:<11} {v[:70]!r}   ({k.split(' ', 1)[1][-60:]})")
+        b.close()
+    httpd.shutdown()
+
+    js = "\n".join(f.read_text() for f in sorted((V4_ROOT / "assets" / "js").glob("*.js")) if f.name not in ("i18n.js", "icons.js"))
+    html = "\n".join((V4_ROOT / pg).read_text() for pg in V4_PAGES)
+    literal = set(re.findall(r"""['"]([a-z][A-Za-z0-9]*(?:\.[A-Za-z0-9-]+)+)['"]""", js))
+    # key templates such as `svc.${id}.name` (only key characters + interpolations; nesting-safe)
+    patterns = []
+    for tpl in re.findall(r"`((?:[A-Za-z0-9.\-]|\$\{[^}`]+\})+)`", js):
+        if "${" not in tpl:
+            continue
+        parts = _interleave(tpl)
+        patterns.append(re.compile("".join(re.escape(x) if i % 2 == 0 else r"[\w-]+" for i, x in enumerate(parts)) + "$"))
+    for k in sorted(used_html - keys):
+        problems.append(f"key used in HTML but missing in dictionary: {k}")
+    for k in sorted(k for k in literal if "." in k and k.split(".")[0] in {x.split(".")[0] for x in keys} and k not in keys
+                    and not k.endswith((".html", ".js", ".css", ".svg", ".png"))):
+        problems.append(f"key used in JS but missing in dictionary: {k}")
+    dead = sorted(k for k in keys if k not in used_html and k not in literal and not any(p.match(k) for p in patterns))
+    problems += [f"dead key (defined, never used): {k}" for k in dead]
+
+    print(f"v4 keys: {len(keys)} (all [ID, EN]); used in HTML: {len(used_html)}; JS literals: {len(literal)}, patterns: {len(patterns)}; strings compared: {compared}")
+    print("\n".join(problems) if problems else "ok — no missing keys, no dead keys, no untranslated strings")
+    sys.exit(1 if problems else 0)
+
+
+def _interleave(tpl):
+    """`svc.${id}.name` → ['svc.', '<var>', '.name'] (even = literal, odd = variable)."""
+    out, pos = [], 0
+    for m in re.finditer(r"\$\{[^}]+\}", tpl):
+        out += [tpl[pos:m.start()], m.group(0)]
+        pos = m.end()
+    out.append(tpl[pos:])
+    return out
+
+
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--root", choices=["v3", "v4"], default="v3")
+    if ap.parse_args().root == "v4":
+        return main_v4()
     httpd = serve()
     url = f"http://127.0.0.1:{httpd.server_address[1]}/index.html"
     problems = []

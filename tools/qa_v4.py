@@ -1,0 +1,326 @@
+#!/usr/bin/env python3
+"""Responsive + interaction QA for v4 (docs/v4/technical-spec.md §8, rule 7).
+
+Usage:
+    python3 tools/qa_v4.py [--out DIR] [--interactive] [--pages index.html,...]
+
+Serves v4/ on a local port and opens every page in PAGES at 6 viewports (headless Chromium):
+  - no horizontal overflow, no content escaping its .shell gutter, no text spilling out of its box
+  - visible buttons/links/inputs have a tap target >= 44x44 px (inline text links in paragraphs are exempt)
+  - no console errors / page errors, compiled CSS applied (header is sticky), no broken images, icons resolve
+  - above the fold on 320x640 / 375x667: H1 + main CTA
+  - no missing i18n key rendered as text
+With --interactive (per page, see the *_flow functions):
+  - landing: mobile menu (open, Escape, focus back), recipe chips (arrow keys, card + links update,
+    numbers match TN.data), language switch EN + persistence, EN at 320px has no overflow
+Full-page screenshots go to --out (default: a temp dir). Exit code 1 if any check fails.
+Phases add pages/routes here as they are built (fase 3: harga.html, fase 4+: app.html routes).
+"""
+import argparse
+import functools
+import http.server
+import pathlib
+import sys
+import tempfile
+import threading
+
+from playwright.sync_api import sync_playwright
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent / "v4"
+VIEWPORTS = [
+    ("320", 320, 640),
+    ("375", 375, 667),
+    ("768", 768, 1024),
+    ("1024", 1024, 768),
+    ("1440", 1440, 900),
+    ("667x375-landscape", 667, 375),
+]
+PAGES = {
+    "index.html": {"fold": ["#hero-title", "#hero-cta"]},
+}
+ABOVE_FOLD_VIEWPORTS = {"320", "375"}
+
+FOLD_JS = """
+(selectors) => selectors.map((sel) => {
+  const el = document.querySelector(sel);
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  return r.bottom <= window.innerHeight ? null : `${sel} bottom=${Math.round(r.bottom)} > ${window.innerHeight}`;
+}).filter(Boolean)
+"""
+
+CHECK_JS = """
+() => {
+  const doc = document.documentElement;
+  const overflow = doc.scrollWidth - window.innerWidth;
+  const offenders = [];
+  if (overflow > 0) {
+    for (const el of document.body.querySelectorAll('*')) {
+      const r = el.getBoundingClientRect();
+      if (r.width && (r.right > window.innerWidth + 1 || r.left < -1)) {
+        const s = getComputedStyle(el);
+        if (s.position === 'fixed' || el.closest('[hidden]')) continue;
+        offenders.push((el.id ? '#' + el.id : el.tagName.toLowerCase()) + '.' + [...el.classList].slice(0, 3).join('.') + ` right=${Math.round(r.right)}`);
+        if (offenders.length > 8) break;
+      }
+    }
+  }
+  const small = [];
+  for (const el of document.querySelectorAll('a[href], button, input, select, textarea, summary, [role=tab]')) {
+    const r = el.getBoundingClientRect();
+    const s = getComputedStyle(el);
+    if (!r.width || !r.height || s.visibility === 'hidden') continue;
+    if (el.matches('.sr-only, .sr-only *') && !el.matches(':focus')) continue;
+    if (el.tagName === 'A' && el.closest('p, li > p')) continue; // inline text link
+    if (el.matches('input[type=checkbox], input[type=radio]') && el.closest('label')) continue;
+    if (r.width < 44 - 0.5 || r.height < 44 - 0.5) {
+      small.push(`${el.tagName.toLowerCase()} "${(el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 24)}" ${Math.round(r.width)}x${Math.round(r.height)}`);
+    }
+  }
+  // Content escaping its .shell content box (catches overflow hidden by overflow-x-clip on a section)
+  const escapes = [];
+  for (const shell of document.querySelectorAll('.shell')) {
+    if (shell.closest('[hidden]')) continue;
+    const sr = shell.getBoundingClientRect();
+    const cs = getComputedStyle(shell);
+    const left = sr.left + parseFloat(cs.paddingLeft) - 1;
+    const right = sr.right - parseFloat(cs.paddingRight) + 1;
+    for (const el of shell.querySelectorAll('*')) {
+      if (el.closest('[aria-hidden="true"], .sr-only, [hidden], [data-allow-bleed]')) continue;
+      const s = getComputedStyle(el);
+      if (s.position === 'absolute' || s.position === 'fixed' || s.display === 'none') continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width) continue;
+      if (r.right > right || r.left < left) {
+        escapes.push(`${el.tagName.toLowerCase()}.${[...el.classList].slice(0, 3).join('.')} [${Math.round(r.left)}–${Math.round(r.right)}] vs [${Math.round(left)}–${Math.round(right)}]`);
+        if (escapes.length > 6) break;
+      }
+    }
+  }
+  // Text spilling out of its own box (box fits, glyphs don't) — e.g. a big price in a narrow card
+  const spills = [];
+  for (const el of document.body.querySelectorAll('h1, h2, h3, h4, p, span, a, button, li, dt, dd, strong, label, legend, div')) {
+    if (el.closest('[aria-hidden="true"], .sr-only, [hidden]') || el.matches('[data-decor-overflow]')) continue;
+    const s = getComputedStyle(el);
+    if (s.display === 'none' || s.display === 'inline' || s.overflowX !== 'visible' || s.textOverflow === 'ellipsis') continue;
+    if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) {
+      spills.push(`${el.tagName.toLowerCase()} "${el.textContent.trim().slice(0, 24)}" ${el.scrollWidth}>${el.clientWidth}`);
+      if (spills.length > 6) break;
+    }
+  }
+  const broken = [...document.images].filter((i) => i.getAttribute('src') && i.complete && i.naturalWidth === 0).map((i) => i.getAttribute('src'));
+  const header = document.querySelector('header');
+  return {
+    overflow, offenders, small, escapes, spills, broken,
+    headerPosition: header ? getComputedStyle(header).position : null,
+  };
+}
+"""
+
+EXTRA_JS = r"""
+() => {
+  // icons: every <use href="#i-..."> resolves to an injected symbol
+  const missingIcons = [...new Set([...document.querySelectorAll('use')].map(u => u.getAttribute('href'))
+    .filter(h => h && h.startsWith('#') && !document.querySelector(h)))];
+  // i18n: a missing key renders as the key itself (e.g. "recipe.name.x")
+  const keyLike = [];
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    const v = n.textContent.trim();
+    if (/^[a-z]+(\.[a-zA-Z0-9-]+)+$/.test(v) && !/\.(id|com|app|html|my\.id)$/.test(v)) keyLike.push(v);
+  }
+  return { missingIcons, keyLike: keyLike.slice(0, 6) };
+}
+"""
+
+
+def landing_menu_flow(page, out, name):
+    problems = []
+    btn = page.locator("#menu-button")
+    btn.click()
+    page.wait_for_timeout(100)
+    opened = page.evaluate("() => !document.getElementById('mobile-menu').hidden")
+    expanded = btn.get_attribute("aria-expanded")
+    label_open = btn.get_attribute("aria-label")
+    page.screenshot(path=str(out / f"index-{name}-menu.png"))
+    r = page.evaluate(CHECK_JS)
+    if r["overflow"] > 0:
+        problems.append(f"MENU OVERFLOW {r['overflow']}px")
+    if r["small"]:
+        problems.append(f"MENU SMALL TARGETS: {r['small']}")
+    page.keyboard.press("Escape")
+    closed = page.evaluate("() => document.getElementById('mobile-menu').hidden")
+    focused = page.evaluate("() => document.activeElement?.id")
+    locked = page.evaluate("() => document.documentElement.classList.contains('overflow-hidden')")
+    if not (opened and expanded == "true" and label_open in ("Tutup menu", "Close menu") and closed and focused == "menu-button" and not locked):
+        problems.append(f"MENU opened={opened} expanded={expanded} label={label_open!r} closedOnEsc={closed} focus={focused} stillLocked={locked}")
+    # a link closes the menu
+    btn.click()
+    page.locator("#mobile-menu a[href='#layanan']").click()
+    page.wait_for_timeout(100)
+    if not page.evaluate("() => document.getElementById('mobile-menu').hidden"):
+        problems.append("MENU link click did not close the menu")
+    return problems
+
+
+RECIPE_JS = r"""
+() => {
+  const D = TN.data, I = TN.i18n;
+  const id = TN.landing.recipe, r = D.recipe(id);
+  const card = document.querySelector('[data-recipe-card]');
+  const res = {
+    id,
+    checked: [...document.querySelectorAll('[data-recipe-chips] [role=radio][aria-checked=true]')].map(b => b.dataset.recipe),
+    focused: document.activeElement?.dataset?.recipe || null,
+    tabbable: [...document.querySelectorAll('[data-recipe-chips] [role=radio]')].filter(b => b.tabIndex === 0).length,
+    start: [...document.querySelectorAll('[data-start]')].map(a => a.getAttribute('href')),
+    live: document.querySelector('[data-recipe-live]').textContent,
+    text: card.textContent.replace(/\s+/g, ' '),
+  };
+  if (!r.aiOnly) {
+    const t = D.recipeTotals(r.items);
+    res.expect = [I.rpK(t.perMonth), I.rp(t.fixed), I.rp(t.usage), I.rp(t.suggest.amount)].concat(t.yearly ? [I.rp(t.firstMonth), I.rp(t.yearly)] : []);
+  } else {
+    res.expect = D.AI_ONLY.map(x => I.rp(x.amount));
+  }
+  res.missing = res.expect.filter(s => !res.text.includes(s));
+  return res;
+}
+"""
+
+
+def landing_recipe_flow(page, out, name):
+    problems = []
+    page.locator("[data-recipe-chips] [role=radio]").first.focus()
+    seen = []
+    for _ in range(5):
+        r = page.evaluate(RECIPE_JS)
+        seen.append(r["id"])
+        if r["checked"] != [r["id"]] or r["tabbable"] != 1:
+            problems.append(f"RECIPE {r['id']} checked={r['checked']} tabbable={r['tabbable']}")
+        if r["missing"]:
+            problems.append(f"RECIPE {r['id']} card misses {r['missing']}")
+        want = "app.html#/ai?isi=1" if r["id"] == "ai-coding" else f"app.html#/buat?resep={r['id']}"
+        if set(r["start"]) != {want}:
+            problems.append(f"RECIPE {r['id']} start links {set(r['start'])} != {want}")
+        if r["id"] != "portofolio" and not r["live"]:
+            problems.append(f"RECIPE {r['id']} not announced")
+        if r["id"] != "portofolio" and r["focused"] != r["id"]:
+            problems.append(f"RECIPE focus {r['focused']} != {r['id']}")
+        page.screenshot(path=str(out / f"index-{name}-recipe-{r['id']}.png"), clip=page.locator("#resep").bounding_box(), full_page=True)
+        rr = page.evaluate(CHECK_JS)
+        if rr["spills"] or rr["escapes"] or rr["overflow"] > 0:
+            problems.append(f"RECIPE {r['id']} spills={rr['spills']} escapes={rr['escapes']} overflow={rr['overflow']}")
+        page.keyboard.press("ArrowRight")
+    if seen != ["portofolio", "chatbot-wa", "web-klien", "otomasi-tim", "ai-coding"]:
+        problems.append(f"RECIPE order {seen}")
+    if page.evaluate("() => TN.landing.recipe") != "portofolio":
+        problems.append("RECIPE ArrowRight on the last chip does not wrap to the first")
+    return problems
+
+
+def landing_lang_flow(page, out, name):
+    problems = []
+    if name.startswith("1440"):
+        page.locator('header [data-lang="en"]').click()
+    else:
+        page.locator("#menu-button").click()
+        page.locator('#mobile-menu [data-lang="en"]').click()
+        page.keyboard.press("Escape")
+    lang = page.evaluate("() => document.documentElement.lang")
+    cta = page.locator("#hero-cta").text_content().strip()
+    page.reload(wait_until="networkidle")
+    persisted = page.evaluate("() => document.documentElement.lang")
+    if not (lang == "en" and cta == "Start building" and persisted == "en"):
+        problems.append(f"LANG lang={lang} cta={cta!r} persisted={persisted}")
+    r = page.evaluate(CHECK_JS)
+    e = page.evaluate(EXTRA_JS)
+    if r["overflow"] > 0 or r["spills"] or r["escapes"] or r["small"] or e["keyLike"]:
+        problems.append(f"EN overflow={r['overflow']} spills={r['spills']} escapes={r['escapes']} small={r['small']} keys={e['keyLike']}")
+    page.screenshot(path=str(out / f"index-{name}-en.png"), full_page=True)
+    return problems
+
+
+def serve(directory):
+    class Quiet(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+    handler = functools.partial(Quiet, directory=str(directory))
+    httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    return httpd
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out")
+    ap.add_argument("--interactive", action="store_true")
+    ap.add_argument("--pages", help="comma-separated subset of " + ",".join(PAGES))
+    args = ap.parse_args()
+    out = pathlib.Path(args.out or tempfile.mkdtemp(prefix="qa-v4-"))
+    out.mkdir(parents=True, exist_ok=True)
+    pages = args.pages.split(",") if args.pages else list(PAGES)
+    httpd = serve(ROOT)
+    base = f"http://127.0.0.1:{httpd.server_address[1]}/"
+    failures = []
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        for page_name in pages:
+            cfg = PAGES[page_name]
+            for name, w, h in VIEWPORTS:
+                ctx = browser.new_context(viewport={"width": w, "height": h}, device_scale_factor=1)
+                page = ctx.new_page()
+                errors = []
+                page.on("console", lambda m: errors.append(m.text) if m.type in ("error", "warning") else None)
+                page.on("pageerror", lambda e: errors.append(str(e)))
+                page.goto(base + page_name, wait_until="networkidle")
+                page.wait_for_timeout(150)
+                r = page.evaluate(CHECK_JS)
+                e = page.evaluate(EXTRA_JS)
+                page.screenshot(path=str(out / f"{page_name.split('.')[0]}-{name}.png"), full_page=True)
+
+                status = []
+                if r["overflow"] > 0:
+                    status.append(f"OVERFLOW {r['overflow']}px: {r['offenders']}")
+                if r["small"]:
+                    status.append(f"SMALL TARGETS: {r['small']}")
+                if r["spills"]:
+                    status.append(f"TEXT SPILLS: {r['spills']}")
+                if r["broken"]:
+                    status.append(f"BROKEN IMAGES: {r['broken']}")
+                if r["escapes"]:
+                    status.append(f"ESCAPES SHELL: {r['escapes']}")
+                if r["headerPosition"] != "sticky":
+                    status.append(f"CSS not applied? header position={r['headerPosition']}")
+                if e["missingIcons"]:
+                    status.append(f"MISSING ICONS: {e['missingIcons']}")
+                if e["keyLike"]:
+                    status.append(f"I18N KEYS SHOWN: {e['keyLike']}")
+                if name in ABOVE_FOLD_VIEWPORTS and cfg.get("fold"):
+                    below = page.evaluate(FOLD_JS, cfg["fold"])
+                    if below:
+                        status.append(f"BELOW FOLD: {below}")
+
+                if args.interactive and page_name == "index.html":
+                    if w < 1024:
+                        status += landing_menu_flow(page, out, name)
+                    if name in ("320", "375", "768", "1440"):
+                        page.evaluate("() => window.scrollTo(0, 0)")
+                        status += landing_recipe_flow(page, out, name)
+                    if name in ("320", "1440"):
+                        status += landing_lang_flow(page, out, name)
+
+                if errors:
+                    status.append(f"CONSOLE: {errors}")
+                print(f"[{'FAIL' if status else 'ok  '}] {page_name:<11} {name:>18}  " + ("; ".join(status) if status else ""))
+                if status:
+                    failures.append(f"{page_name} {name}")
+                ctx.close()
+        browser.close()
+    httpd.shutdown()
+    print(f"screenshots: {out}")
+    sys.exit(1 if failures else 0)
+
+
+if __name__ == "__main__":
+    main()
