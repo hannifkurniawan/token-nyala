@@ -556,3 +556,15 @@ Wizard (`wiz.*`), proyek (`proj.*`, `tab.*`), aksi layanan (`act.*`), log proyek
 | banner.reminder | Saldo tinggal {saldo}, di bawah pengingatmu. {proyek} diperpanjang {tanggal} sebesar {Rp}. | Your balance is down to {balance}, below your reminder. {project} renews on {date} for {price}. |
 | act.resizeDown / act.resizeUp / act.stopConfirm / act.stopDomain / act.stopProjectConfirm | sesuai §5 “Aksi layanan” di atas, angka dari `refund()` / `prorata()` | — |
 | next.resume | Isi saldo supaya tetap nyala · Layanan yang dijeda langsung menyala lagi setelah saldo cukup. | Top up to stay on · Paused services switch back on as soon as your balance covers them. |
+
+### Console — tambahan Fase 6 (20 Nov 2026)
+AI (`ai.*`), layanan lain (`svcp.*`, `empty.*` sesuai §5), belajar (`learn.*` — 11 langkah panduan), bantuan (`help.*`), rute tidak dikenal (`con.nf*`). Contoh:
+
+| Kunci | ID | EN |
+|---|---|---|
+| ai.try.reply | (Simulasi) Ini contoh jawaban dari {model}. Di produk nyata, jawaban asli muncul di sini dan biayanya dihitung dari token yang dipakai. | (Simulation) This is a sample answer from {model}… |
+| ai.try.cost | {model} · ±{in} token masuk, ±{out} keluar · {Rp} | {model} · ~{in} tokens in, ~{out} out · {Rp} |
+| ai.usage.keys | Pakai panah kiri/kanan untuk melihat tiap hari. | Use the left/right arrows to read each day. |
+| svcp.once | Simpan password ini sekarang. Kami hanya menampilkannya sekali. | Save this password now. We only show it once. |
+| learn.g-portofolio.1–4 · g-chatbot.1–4 · g-ai-tool.1–3 | langkah panduan (lihat `i18n.js`) | — |
+| con.nfTitle | Halaman tidak ditemukan | Page not found |
