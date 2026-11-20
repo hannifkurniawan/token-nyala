@@ -42,7 +42,10 @@ RENDERED_CHECK = {"index.html": "[data-recipe-card] h3", "harga.html": "[data-ca
 APP_ROUTES = [("masuk", "app.html?demo=reset#/masuk"), ("beranda", "app.html?demo=ayu#/beranda"),
               ("jeda", "app.html?demo=ayu&state=jeda#/beranda"), ("saldo", "app.html?demo=raka#/saldo"),
               ("buat-1", "app.html?demo=ayu#/buat"), ("buat-2", "app.html?demo=ayu#/buat?resep=web-klien"),
-              ("proyek", "app.html?demo=dimas#/proyek"), ("detail", "app.html?demo=raka#/proyek/klien-kopi")]
+              ("proyek", "app.html?demo=dimas#/proyek"), ("detail", "app.html?demo=raka#/proyek/klien-kopi"),
+              ("ai", "app.html?demo=raka#/ai"), ("layanan", "app.html?demo=raka#/layanan/server?tambah=1"),
+              ("layanan-kosong", "app.html?demo=ayu#/layanan/storage"), ("belajar", "app.html?demo=ayu#/belajar?panduan=g-chatbot"),
+              ("bantuan", "app.html?demo=ayu#/bantuan")]
 # services-and-pricing §8: preset → (balance, "cukup sampai" shown on the home card)
 PRESETS = {"ayu": ("Rp31.220", "±19 Des"), "raka": ("Rp239.640", "±31 Des"), "dimas": ("Rp647.800", "±22 Jan")}
 
@@ -357,6 +360,18 @@ def main():
                         page.wait_for_function("() => document.getElementById('wz-on')", timeout=8000)
                         problems += axe(page, f"wizard done {tag}")
                         problems += fonts(page, f"wizard done {tag}")
+                    if label == "ai":
+                        for tab in ("coba", "model", "pemakaian", "key"):
+                            page.evaluate(f"() => {{ location.hash = '#/ai?tab={tab}'; }}"); page.wait_for_timeout(150)
+                            if tab == "coba":
+                                page.locator("[data-example]").first.click(); page.wait_for_timeout(800)
+                            if tab == "pemakaian":
+                                page.locator("[data-plot]").focus()
+                                page.locator("#panel-pemakaian summary").click()
+                            problems += axe(page, f"ai {tab} {tag}")
+                    if label == "layanan":
+                        page.locator("[data-sf-go]").click(); page.wait_for_timeout(200)
+                        problems += axe(page, f"server result {tag}")
                     if label == "detail":
                         for tab in ("layanan", "ai", "log", "pengaturan"):
                             page.evaluate(f"() => {{ location.hash = '#/proyek/klien-kopi?tab={tab}'; }}"); page.wait_for_timeout(150)

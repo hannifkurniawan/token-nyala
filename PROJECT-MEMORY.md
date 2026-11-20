@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 5** (wizard, proyek, jam simulasi) selesai. **Berikutnya: Fase 6** (AI, layanan lain, belajar, bantuan), lalu **Fase 7** (audit penuh, README, skrip demo). User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 5** (wizard, proyek, jam simulasi) dan **Fase 6** (AI, layanan lain, belajar, bantuan) selesai. **Berikutnya: Fase 7** (audit penuh, README, skrip demo). User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -118,6 +118,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | “Mulai kosong” = 6 layanan umum dalam keadaan mati (saklar), bukan dialog tambah | Satu pola dengan kalkulator; lebih sedikit layar |
 | 20 Nov 2026 | Jam simulasi mengulang pola AI 7 hari terakhir per minggu | Demo saldo habis terasa nyata tanpa input manual |
 | 20 Nov 2026 | Banner baru “di bawah pengingat” (saldo < Rp20.000 dan masih ada perpanjangan) | Peringatan sebelum dijeda; aturan pengingat §2 |
+| 20 Nov 2026 | Grafik pemakaian AI: satu area fokus (←/→ antar hari) + hover per kolom + tabel, bukan 7 tombol | Tombol per batang < 44px di mobile; tooltip saat fokus wajib (skill dataviz) |
+| 20 Nov 2026 | Coba AI memotong saldo per balasan sesuai tarif model (min Rp1), riwayat “Coba AI · {model}” | Menunjukkan biaya pakai nyata di demo |
+| 20 Nov 2026 | Layanan lain bisa ditambahkan ke proyek baru; server: password sekali tampil + salin | Alur Sumopod tetapi tanpa merancang password sendiri (§5.5) |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -168,6 +171,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Render ulang di tengah alur bisa me-reset state modul.** Wizard menginisialisasi ulang saat router merender langkah 4 (kondisi `step < 4`) → proyek hilang. Inisialisasi hanya saat alamat masuk berubah. Lalu daftar progres kosong sempat dianggap “selesai” satu frame → siapkan data sebelum render.
 - **Listener pada kontainer yang tidak ikut dirender ulang menumpuk.** `#view` tetap ada antar rute → pasang listener di elemen dalam yang diganti setiap render.
 - **QA yang memuat ulang `?demo=` me-reset state.** Navigasi lanjutan dalam satu skenario lewat `location.hash`.
+- **Tombol per elemen grafik gagal target sentuh di mobile.** 7 batang di 320px = 28px per batang. Grafik = satu elemen fokus dengan panah + hover, dan tabel untuk nilai lengkap.
+- **`<dl>` hanya boleh berisi `dt`/`dd` (atau `div` berisi itu).** Peringatan di dalam daftar detail koneksi gagal axe — letakkan di luar daftar.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -247,3 +252,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - `projects.js`: wizard 4 langkah (tujuan → atur: nama proyek tervalidasi, saklar/ukuran/sumber kode/alamat web + cek ketersediaan mock/limit AI → ringkasan: dipotong sekarang, nanti sesuai pakai, saldo sebelum/sesudah, isi saldo inline = saran(kekurangan) → menyalakan: progres per layanan + “Nyala!” + langkah berikutnya). Proyek: daftar, detail dengan tab (keyboard), ringkasan (upload mock, QR WhatsApp + pesan uji), layanan (ganti ukuran prorata, hentikan + refund, matikan perpanjangan domain, nyalakan lagi, isi saldo bila dijeda), AI (key, aktif/nonaktif, limit), log, pengaturan (hentikan proyek).
 - `store.js`: `createProject`/`finishStarting`, `resize`, `stopService`, `resume`, `stopProject`, `setLimit`, `setKeyActive`, `advance()`; status proyek tidak dianggap nyala hanya karena domain; banner pengingat.
 - Alur Ayu (journey 1) diverifikasi QA: Rp20.000 sekarang, saldo 55.000 → 35.000, `ayu.my.id` nyala. Raka: turun ke Coba-coba hari ke-20 → Rp6.600 kembali; hentikan → Rp5.000 kembali. 52 cek QA lolos, audit & i18n lolos.
+
+### Sesi 4 (lanjutan) — Fase 6 v4
+- `ai.js`: tab Mulai cepat (key per proyek/akun + Base URL + salin), Coba AI (pilih model, contoh prompt, balasan simulasi dipotong per tarif), Model (12), Pemakaian (2 angka + grafik kolom 7 hari sesuai skill dataviz + tabel + per proyek), API key (aktif/nonaktif, limit). `services.js`: 6 layanan dengan pola daftar → tambah (proyek lama/baru, ukuran, lokasi/sistem/mesin/alamat) → hasil (IP/user/password sekali, DATABASE_URL, endpoint, SMTP, kunci mode uji). `learn.js`: 3 panduan + langkah + “Coba sekarang”; bantuan (6 FAQ, Nala, tim). Rute tak dikenal → “Halaman tidak ditemukan”.
+- Store: `chargeChat`, `chatCost`, `accountKey`, `addService`. Launcher Nala naik di atas bar lengket mana pun (`[data-wz-bar]`).
+- 76 cek QA lolos; audit (axe semua tab AI, hasil server) & i18n lolos.

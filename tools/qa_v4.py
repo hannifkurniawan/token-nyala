@@ -54,6 +54,10 @@ PAGES = {
     "app-saldo": {"url": "app.html?demo=raka#/saldo", "fold": ["#view h1"]},
     "app-buat": {"url": "app.html?demo=ayu#/buat", "fold": ["#view h1"]},
     "app-proyek": {"url": "app.html?demo=dimas#/proyek/otomasi-tim?tab=layanan", "fold": ["#view h1"]},
+    "app-ai": {"url": "app.html?demo=raka#/ai?tab=pemakaian", "fold": ["#view h1"]},
+    "app-layanan": {"url": "app.html?demo=raka#/layanan/server?tambah=1", "fold": ["#view h1"]},
+    "app-belajar": {"url": "app.html?demo=ayu#/belajar?panduan=g-portofolio", "fold": ["#view h1"]},
+    "app-bantuan": {"url": "app.html?demo=ayu#/bantuan", "fold": ["#view h1"]},
 }
 ABOVE_FOLD_VIEWPORTS = {"320", "375"}
 
@@ -867,6 +871,83 @@ def clock_flow(page, out, name, base):
     page.screenshot(path=str(out / f"app-{name}-clock-paused.png"), full_page=True)
     return problems
 
+
+def ai_flow(page, out, name, base):
+    problems = []
+    page.goto(base + "app.html?demo=raka#/ai", wait_until="networkidle")
+    page.locator("#tab-mulai").focus(); page.keyboard.press("ArrowRight"); page.wait_for_timeout(150)
+    if page.evaluate("() => [location.hash, document.activeElement?.id]") != ["#/ai?tab=coba", "tab-coba"]:
+        problems.append("AI tabs keyboard")
+    b0 = page.evaluate("() => TN.store.state.balance")
+    page.locator("[data-example]").first.click(); page.wait_for_timeout(900)
+    cost = page.evaluate("() => TN.store.chatCost(TN.data.MODELS.find(m => m.id === 'deepseek-chat'), 400 + Math.ceil(TN.i18n.t('ai.try.ex1').length / 4), 350)")
+    b1 = page.evaluate("() => TN.store.state.balance")
+    log = page.locator("#panel-coba [role=log]").text_content()
+    if b0 - b1 != cost or "DeepSeek Chat" not in log or page.evaluate("() => document.activeElement?.id") != "try-input":
+        problems.append(f"AI try cost={cost} delta={b0 - b1}")
+    page.screenshot(path=str(out / f"app-{name}-ai-try.png"), full_page=True)
+    page.evaluate("() => { location.hash = '#/ai?tab=pemakaian'; }"); page.wait_for_timeout(150)
+    bars = page.locator("[data-bar]")
+    if bars.count() != 7:
+        problems.append(f"AI chart bars {bars.count()}")
+    page.locator("[data-plot]").focus()            # keyboard: focus starts on today, ←×3 → 18 Nov
+    for _ in range(3):
+        page.keyboard.press("ArrowLeft")
+    tip = page.evaluate("() => { const t = document.querySelector('[data-bar][data-active] [role=tooltip]'); return t && getComputedStyle(t).display !== 'none' ? t.textContent + ' | ' + document.querySelector('[data-chart-live]').textContent : null; }")
+    if not tip or "18 Nov" not in tip or "Rp9.450" not in tip:
+        problems.append(f"AI chart tooltip on focus {tip!r}")
+    page.locator("[data-chart]").screenshot(path=str(out / f"app-{name}-ai-chart.png"))
+    page.locator("#panel-pemakaian summary").click()
+    if page.evaluate("() => document.querySelectorAll('#panel-pemakaian tbody tr').length") != 7:
+        problems.append("AI table view rows")
+    page.evaluate("() => { location.hash = '#/ai?tab=key'; }"); page.wait_for_timeout(150)
+    page.locator("[data-key-active]").first.click()
+    if page.evaluate("() => TN.store.state.projects[0].keyActive") is not False:
+        problems.append("AI key toggle")
+    return problems
+
+
+def services_flow(page, out, name, base):
+    problems = []
+    page.goto(base + "app.html?demo=raka#/layanan/server?tambah=1", wait_until="networkidle")
+    b0 = page.evaluate("() => TN.store.state.balance")
+    page.locator('[role=radio][data-size="sedang"]').click()
+    page.locator('label:has(input[value="singapura"])').click()
+    page.locator("[data-sf-go]").click(); page.wait_for_timeout(200)
+    res = page.evaluate("() => ({ focus: document.activeElement?.id, text: document.getElementById('view').textContent, bal: TN.store.state.balance, sv: TN.store.state.services.filter(s => s.svc === 'server').map(s => s.size + ':' + s.location) })")
+    if res["focus"] != "sf-done" or b0 - res["bal"] != 120000 or res["sv"] != ["sedang:singapura"] or "hanya menampilkannya sekali" not in res["text"]:
+        problems.append(f"SERVER add focus={res['focus']} delta={b0 - res['bal']} sv={res['sv']}")
+    page.screenshot(path=str(out / f"app-{name}-server-done.png"), full_page=True)
+    page.locator("[data-sf-close]").click(); page.wait_for_timeout(150)
+    if page.locator("#view ul a[href*='tab=layanan']").count() != 1:
+        problems.append("SERVER not listed after adding")
+    page.evaluate("() => { location.hash = '#/layanan/storage'; }"); page.wait_for_timeout(150)
+    if "Belum ada tempat simpan file" not in page.locator("#view").text_content():
+        problems.append("STORAGE empty state")
+    page.evaluate("() => { location.hash = '#/layanan/domain?tambah=1'; }"); page.wait_for_timeout(150)
+    page.fill("#sf-domain", "kopikita"); page.select_option("#sf-ext", "com")
+    page.fill("#sf-domain", "kopikita")
+    page.locator("[data-sf-go]").click(); page.wait_for_timeout(150)
+    if page.evaluate("() => document.activeElement?.id") != "sf-domain" or page.locator("#sf-domain-error").count() == 0:
+        problems.append("DOMAIN taken address accepted")
+    return problems
+
+
+def learn_flow(page, out, name, base):
+    problems = []
+    page.goto(base + "app.html?demo=ayu#/belajar", wait_until="networkidle")
+    page.locator("#view a[href='#/belajar?panduan=g-chatbot']").click(); page.wait_for_timeout(150)
+    g = page.evaluate("() => ({ h1: document.querySelector('#view h1').textContent, steps: document.querySelectorAll('#view ol > li').length, try: document.querySelector('#view a.btn')?.getAttribute('href') })")
+    if g != {"h1": "Chatbot WhatsApp pertamamu", "steps": 4, "try": "#/buat?template=wa-bot"}:
+        problems.append(f"LEARN guide {g}")
+    page.evaluate("() => { location.hash = '#/bantuan'; }"); page.wait_for_timeout(150)
+    if page.locator("#view details").count() != 6:
+        problems.append("HELP faq count")
+    page.locator("[data-help-team]").click(); page.wait_for_timeout(800)
+    if not page.evaluate("() => document.getElementById('chat').open && TN.nala.state.mode !== 'bot'"):
+        problems.append("HELP talk to team did not open Nala in team mode")
+    return problems
+
 def serve(directory):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -963,6 +1044,12 @@ def main():
                     status += console_lang_flow(page, out, name, base)
                 if args.interactive and page_name == "app-buat" and name in ("320", "375", "1440"):
                     status += wizard_flow(page, out, name, base)
+                if args.interactive and page_name == "app-ai" and name in ("375", "1440"):
+                    status += ai_flow(page, out, name, base)
+                if args.interactive and page_name == "app-layanan" and name in ("320", "375", "1440"):
+                    status += services_flow(page, out, name, base)
+                if args.interactive and page_name == "app-bantuan" and name in ("375", "1440"):
+                    status += learn_flow(page, out, name, base)
                 if args.interactive and page_name == "app-proyek" and name in ("375", "1440"):
                     status += project_flow(page, out, name, base)
                     status += clock_flow(page, out, name, base)

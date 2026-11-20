@@ -331,6 +331,33 @@ TN.store = (() => {
     return { ...out, date: state.clock };
   }
 
+  /** "Coba AI": charge one reply at the chosen model's rate (rounded to whole Rupiah, at least Rp1). */
+  const chatCost = (model, tin, tout) => Math.max(1, Math.round((tin * model.in + tout * model.out) / 1e6));
+  function chargeChat({ model, tin, tout }) {
+    const cost = chatCost(model, tin, tout);
+    if (cost > state.balance) return { ok: false, cost };
+    charge({ amount: -cost, type: 'usage', svc: 'chat', meta: { model: model.name, tin, tout } });
+    save();
+    return { ok: true, cost };
+  }
+  /** Account-level demo key (AI page without a project). */
+  const accountKey = () => demoKey(`akun-${state.user?.name || 'demo'}`);
+
+  /** Other services page: add one service to an existing or new project, charged upfront. */
+  function addService({ project, item, newProject = false, domain = null }) {
+    if (newProject) state.projects.push({ id: project, name: project, domain: null, createdAt: state.clock, key: demoKey(project), keyActive: true, limit: 50000, log: [] }), plog(project, 'log.created');
+    const p = state.projects.find((x) => x.id === project);
+    const sv = { id: uid('s'), project, ...item, startedAt: state.clock, renewAt: addDays(state.clock, periodOf(item)), status: 'nyala', autoRenew: true };
+    if (sv.svc === 'domain') { sv.domain = domain; if (!p.domain) p.domain = domain; }
+    const amount = priceOf(sv);
+    if (amount > state.balance) { if (newProject) state.projects.pop(); return { ok: false, need: amount - state.balance }; }
+    state.services.push(sv);
+    if (amount) charge({ amount: -amount, type: 'charge', svc: sv.svc, project, meta: label(sv) });
+    plog(project, 'log.added', { svc: sv.svc, tpl: sv.tpl, domain: sv.domain });
+    save();
+    return { ok: true, id: sv.id };
+  }
+
   /* ---------- Actions ---------- */
   function signIn(name) { state.user = { name: name.trim().slice(0, 40) || 'Kamu' }; save(); }
   function signOut() { state.user = null; save(); }
@@ -349,6 +376,7 @@ TN.store = (() => {
     applyDemo, signIn, signOut, reset, topup, previewTopup, setReminder, addProject, useAi, charge, settle, save,
     createProject, finishStarting, resizePreview, resize, stopPreview, stopService, resume, stopProjectPreview, stopProject,
     setLimit, setKeyActive, logUpload, advance, daysLeft, demoKey,
+    chatCost, chargeChat, accountKey, addService,
     onChange(fn) { listeners.push(fn); },
   };
 })();

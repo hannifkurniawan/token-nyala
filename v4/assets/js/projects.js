@@ -257,20 +257,12 @@
     if (!onItems().some((i) => i.svc !== 'ai')) e.items = 'err.nothingOn';
     return e;
   }
-  /** Keep the Nala launcher above the wizard's sticky bar (tab bar + bar on mobile, bar on desktop). */
-  function liftLauncher() {
-    const bar = view.querySelector('[data-wz-bar]');
-    document.documentElement.toggleAttribute('data-wz-bar', Boolean(bar));
-    if (bar) document.documentElement.style.setProperty('--wz-bar-h', `${bar.offsetHeight + (window.matchMedia('(min-width: 64rem)').matches ? 0 : 64)}px`);
-  }
   window.addEventListener('hashchange', () => {
     if (location.hash.startsWith('#/buat')) return;
-    document.documentElement.removeAttribute('data-wz-bar');
     if (wz.step === 4) wz.key = null; // a finished wizard starts fresh next time
   });
   function mountWizard() {
     const root = view;
-    liftLauncher();
     root.querySelectorAll('input[name=goal]').forEach((r) => r.addEventListener('change', () => { setGoal(r.value); }));
     root.querySelector('[data-wz-next]')?.addEventListener('click', () => {
       if (wz.step === 1) {

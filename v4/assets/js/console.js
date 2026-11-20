@@ -163,6 +163,13 @@
   }
 
   const ROUTES = {};
+  /** Keep the Nala launcher above a sticky action bar ([data-wz-bar]; ="mobile" = only sticky below lg). */
+  function liftLauncher() {
+    const bar = view.querySelector('[data-wz-bar]');
+    const lg = window.matchMedia('(min-width: 64rem)').matches;
+    document.documentElement.toggleAttribute('data-wz-bar', Boolean(bar));
+    if (bar) document.documentElement.style.setProperty('--wz-bar-h', `${lg ? (bar.dataset.wzBar === 'mobile' ? 4 : bar.offsetHeight) : bar.offsetHeight + 64}px`);
+  }
   function render({ focus = true } = {}) {
     const r = parseHash();
     const name = r.parts[0] || 'beranda';
@@ -172,6 +179,7 @@
     const route = ROUTES[name] || ROUTES.soon;
     view.innerHTML = route.html(r);
     route.mount?.(r);
+    liftLauncher();
     renderPill();
     renderAccount();
     markCurrent();
@@ -351,7 +359,7 @@
       else if (m.renewal) title = t(h.svc === 'domain' ? 'h.renewYear' : 'h.renew30', { service: name });
       else title = t(m.resumed ? 'h.resumed' : h.svc === 'domain' ? 'h.chargeYear' : 'h.charge30', { service: name });
     }
-    if (h.type === 'usage') title = t(h.svc === 'chat' ? 'h.chat' : 'h.usage', { qty: t(`unit.${m.unit}`, { n: num(m.qty) }).replace('±', '') });
+    if (h.type === 'usage') title = m.model ? t('h.chatModel', { model: m.model }) : t(h.svc === 'chat' ? 'h.chat' : 'h.usage', { qty: t(`unit.${m.unit}`, { n: num(m.qty) }).replace('±', '') });
     const plus = h.amount > 0;
     return `<li class="grid grid-cols-[4.25rem_minmax(0,1fr)_auto] items-baseline gap-x-3 border-b border-line py-3">
       <span class="font-mono text-[.82rem] text-muted">${esc(dateStr(h.date))}</span>
@@ -419,10 +427,10 @@
     },
   };
 
-  /* ---------- Not built yet (fase 5–6) ---------- */
+  /* ---------- Unknown route ---------- */
   ROUTES.soon = {
-    title: () => t('con.soonTitle'),
-    html: () => `${h1(t('con.soonTitle'))}<p class="mt-3 max-w-xl text-lg text-lead-ink">${esc(t('con.soonBody'))}</p>
+    title: () => t('con.nfTitle'),
+    html: () => `${h1(t('con.nfTitle'))}<p class="mt-3 max-w-xl text-lg text-lead-ink">${esc(t('con.nfBody'))}</p>
       <div class="mt-6 flex flex-wrap gap-3"><a href="#/beranda" class="btn">${esc(t('con.toHome'))}</a><button type="button" class="btn btn--ghost" data-topup>${esc(t('cta.topup'))}</button></div>`,
   };
 
