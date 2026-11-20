@@ -52,6 +52,8 @@ PAGES = {
     "app-beranda": {"url": "app.html?demo=ayu#/beranda", "fold": ["#view h1"]},
     "app-jeda": {"url": "app.html?demo=ayu&state=jeda#/beranda", "fold": ["#view h1"]},
     "app-saldo": {"url": "app.html?demo=raka#/saldo", "fold": ["#view h1"]},
+    "app-buat": {"url": "app.html?demo=ayu#/buat", "fold": ["#view h1"]},
+    "app-proyek": {"url": "app.html?demo=dimas#/proyek/otomasi-tim?tab=layanan", "fold": ["#view h1"]},
 }
 ABOVE_FOLD_VIEWPORTS = {"320", "375"}
 
@@ -756,6 +758,115 @@ def console_lang_flow(page, out, name, base):
     page.evaluate("() => localStorage.setItem('tn-lang', 'id')")
     return problems
 
+
+def wizard_flow(page, out, name, base):
+    """User journey 1 (Ayu): new account → recipe from the landing → summary short of balance → inline top-up →
+    switch on → progress → Nyala; balance 55.000 → 35.000; project on at ayu.my.id."""
+    problems = []
+    page.goto(base + "app.html?demo=reset#/buat?resep=portofolio", wait_until="networkidle")
+    page.fill("#auth-contact", "ayu@mail.com"); page.locator("[data-auth-form] [type=submit]").click()
+    page.fill("#auth-code", "123456"); page.locator("[data-auth-form] [type=submit]").click()
+    page.fill("#auth-name", "Ayu"); page.locator("[data-auth-form] [type=submit]").click()
+    page.wait_for_timeout(200)
+    s = page.evaluate("() => ({ h1: document.querySelector('#view h1').textContent, name: document.getElementById('wz-name')?.value, domain: document.getElementById('wz-domain')?.value })")
+    if s != {"h1": "Atur proyekmu", "name": "portofolio-ayu", "domain": "ayu"}:
+        problems.append(f"WIZ step 2 {s}")
+    # validation: bad name
+    page.fill("#wz-name", "Ayu Web!"); page.locator("[data-wz-next]").click()
+    if page.evaluate("() => document.activeElement?.id") != "wz-name" or page.locator("#wz-name-error").count() == 0:
+        problems.append("WIZ bad project name accepted")
+    page.fill("#wz-name", "portofolio-ayu")
+    page.locator("[data-wz-next]").click(); page.wait_for_timeout(150)
+    sm = page.evaluate("() => ({ h1: document.querySelector('#view h1').textContent, focus: document.activeElement === document.querySelector('#view h1'), total: document.querySelector('[data-wz-total]')?.textContent, topup: document.querySelector('[data-wz-topup]')?.textContent.trim() })")
+    if sm != {"h1": "Ringkasan biaya", "focus": True, "total": "Rp20.000", "topup": "Isi saldo Rp50.000"}:
+        problems.append(f"WIZ summary {sm}")
+    page.screenshot(path=str(out / f"app-{name}-wiz-summary.png"), full_page=True)
+    r = page.evaluate(CHECK_JS)
+    if r["small"] or r["spills"] or r["overflow"] > 0:
+        problems.append(f"WIZ summary small={r['small']} spills={r['spills']}")
+    page.locator("[data-wz-next]").click()  # not enough balance → focus the top-up button
+    if page.evaluate("() => document.activeElement?.hasAttribute('data-wz-topup')") is not True:
+        problems.append("WIZ switch-on without balance did not point to top-up")
+    page.locator("[data-wz-topup]").click(); page.wait_for_timeout(300)
+    page.locator('#topup label:has(input[value="qris"])').click(); page.locator("[data-co-submit]").click()
+    page.locator("[data-co-paid-main]").click(); page.wait_for_timeout(800)
+    page.locator("#topup [data-step-panel=success] [data-co-close]").click(); page.wait_for_timeout(200)
+    bal = page.locator("[data-wz-balance]").text_content()
+    if "Rp55.000 → Rp35.000" not in bal:
+        problems.append(f"WIZ balance after top-up {bal!r}")
+    page.locator("[data-wz-next]").click()
+    page.wait_for_function("() => document.getElementById('wz-on')", timeout=8000)
+    page.wait_for_timeout(100)
+    d = page.evaluate("() => ({ focus: document.activeElement?.id, bal: TN.store.state.balance, st: TN.store.projectView(TN.store.state.projects[0]).status, url: TN.store.projectView(TN.store.state.projects[0]).url })")
+    if d != {"focus": "wz-on", "bal": 35000, "st": "nyala", "url": "ayu.my.id"}:
+        problems.append(f"WIZ done {d}")
+    page.screenshot(path=str(out / f"app-{name}-wiz-done.png"), full_page=True)
+    # template entry + minimum size
+    page.goto(base + "app.html?demo=ayu#/buat?template=wa-bot", wait_until="networkidle")
+    dis = page.evaluate("() => [...document.querySelectorAll('[data-key=\"apps:wa-bot\"] [role=radio]')].map(b => b.getAttribute('aria-disabled') === 'true')")
+    if dis != [True, False, False]:
+        problems.append(f"WIZ template minimum {dis}")
+    return problems
+
+
+def project_flow(page, out, name, base):
+    """Detail: tabs (keyboard), resize down with refund, stop with refund, resume, domain renewal off, stop project."""
+    problems = []
+    st = lambda: page.evaluate("() => TN.store.state.balance")
+    page.goto(base + "app.html?demo=raka#/proyek/klien-kopi", wait_until="networkidle")
+    page.locator("#tab-ringkasan").focus(); page.keyboard.press("ArrowRight"); page.wait_for_timeout(150)
+    if page.evaluate("() => [location.hash, document.activeElement?.id]") != ["#/proyek/klien-kopi?tab=layanan", "tab-layanan"]:
+        problems.append(f"TABS keyboard {page.evaluate('() => [location.hash, document.activeElement?.id]')}")
+    b0 = st()
+    page.locator("[data-resize]").first.click(); page.wait_for_timeout(250)
+    page.locator('#resize [role=radio][data-size="coba"]').click()
+    prev = page.locator("[data-rz-preview]").text_content()
+    page.screenshot(path=str(out / f"app-{name}-resize.png"))
+    page.locator("[data-rz-go]").click(); page.wait_for_timeout(200)
+    # Rutin → Coba-coba with 10 days left: (15.000 − 35.000) ÷ 30 × 10 = −6.666 → Rp6.600 back
+    if "Rp6.600" not in prev or st() - b0 != 6600:
+        problems.append(f"RESIZE preview={prev!r} delta={st() - b0}")
+    b1 = st()
+    page.locator("[data-stop]").first.click(); page.wait_for_timeout(250)
+    body = page.locator("[data-confirm-body]").text_content()
+    page.locator("[data-confirm-ok]").click(); page.wait_for_timeout(200)
+    # Coba-coba with 10 days left: floor(15.000 ÷ 30 × 10 ÷ 100) × 100 = Rp5.000
+    if "Rp5.000" not in body or st() - b1 != 5000:
+        problems.append(f"STOP body={body!r} delta={st() - b1}")
+    if page.locator("[data-resume]").count() == 0:
+        problems.append("STOP no 'Nyalakan lagi'")
+    page.locator("[data-resume]").first.click(); page.wait_for_timeout(200)
+    if st() != b1 + 5000 - 15000:
+        problems.append(f"RESUME balance {st()}")
+    page.evaluate("() => { location.hash = '#/proyek/klien-kopi?tab=pengaturan'; }"); page.wait_for_timeout(150)  # keep the state (no ?demo= reload)
+    page.locator("[data-stop-project]").click(); page.wait_for_timeout(250)
+    page.locator("[data-confirm-ok]").click(); page.wait_for_timeout(200)
+    v = page.evaluate("() => TN.store.projectView(TN.store.state.projects[0]).status")
+    if v != "berhenti":
+        problems.append(f"STOP PROJECT status {v}")
+    page.evaluate("() => { location.hash = '#/proyek/klien-kopi?tab=log'; }"); page.wait_for_timeout(150)
+    if page.evaluate("() => document.querySelectorAll('#panel-log li').length") < 2:
+        problems.append("LOG empty after actions")
+    sums = page.evaluate("() => [TN.store.state.history.reduce((n, h) => n + h.amount, 0), TN.store.state.balance]")
+    if sums[0] != sums[1]:
+        problems.append(f"HISTORY != balance {sums}")
+    return problems
+
+
+def clock_flow(page, out, name, base):
+    """Simulated clock: ayu → +30 days renews (reminder banner) → +30 pauses (paused banner) → top-up resumes."""
+    problems = []
+    page.goto(base + "app.html?demo=ayu#/beranda", wait_until="networkidle")
+    adv = lambda: (page.locator("[data-open-more]").click(), page.locator("#more [data-advance]").click()) if page.viewport_size["width"] < 1024 else (page.locator("#acct-btn").click(), page.locator("#acct-menu [data-advance]").click())
+    adv(); page.wait_for_timeout(200)
+    t1 = page.evaluate("() => [TN.store.state.clock, TN.store.state.balance, TN.store.banners().map(b => b.type)]")
+    adv(); page.wait_for_timeout(200)
+    t2 = page.evaluate("() => [TN.store.state.clock, TN.store.banners().map(b => b.type), document.getElementById('view').textContent.includes('dijeda')]")
+    if t1 != ["2026-12-21", 1100, ["reminder"]] or t2 != ["2027-01-20", ["paused"], True]:
+        problems.append(f"CLOCK {t1} {t2}")
+    page.screenshot(path=str(out / f"app-{name}-clock-paused.png"), full_page=True)
+    return problems
+
 def serve(directory):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -850,6 +961,11 @@ def main():
                     status += console_jeda_flow(page, out, name, base)
                 if args.interactive and page_name == "app-saldo" and name in ("320", "1440"):
                     status += console_lang_flow(page, out, name, base)
+                if args.interactive and page_name == "app-buat" and name in ("320", "375", "1440"):
+                    status += wizard_flow(page, out, name, base)
+                if args.interactive and page_name == "app-proyek" and name in ("375", "1440"):
+                    status += project_flow(page, out, name, base)
+                    status += clock_flow(page, out, name, base)
 
                 if errors:
                     status.append(f"CONSOLE: {errors}")

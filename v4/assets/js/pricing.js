@@ -35,28 +35,7 @@
   }
 
   /* ---------- Calculator rows ---------- */
-  const optionLabel = (svc, v) => {
-    if (svc === 'storage') return D.STORAGE[v].capacity;
-    if (svc === 'email') return t(`email.name.${v}`);
-    return t(`size.${v}`);
-  };
-  const optionPrice = (svc, v) => D.itemCost(svc === 'apps' ? { svc, tpl: 'n8n', size: v } : { svc, size: v }).amount;
-
-  function segmented(it, fid) {
-    const ai = D.usesAi(state.items);
-    const min = it.svc === 'apps' ? D.templateMinSize(it.tpl, ai) : null;
-    const opts = D.OPTIONS[it.svc];
-    const name = itemView(it).name;
-    return `<div role="radiogroup" aria-label="${esc(t('calc.sizeAria', { name }))}" class="grid gap-1 rounded-control bg-paper p-1" style="grid-template-columns:repeat(${opts.length},minmax(0,1fr))" data-seg="${fid}">
-      ${opts.map((v) => {
-        const on = it.size === v;
-        const off = min && D.SIZE_ORDER.indexOf(v) < D.SIZE_ORDER.indexOf(min);
-        return `<button type="button" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" ${off ? 'aria-disabled="true"' : ''} data-size="${v}" data-fid="${fid}-${v}"
-          class="flex min-h-12 flex-col items-center justify-center rounded-[9px] px-1 py-1.5 text-center leading-tight aria-checked:bg-white aria-checked:shadow-[0_1px_4px_rgb(0_22_106/.18)] aria-disabled:cursor-not-allowed aria-disabled:opacity-45">
-          <span class="text-[.9rem] font-bold">${esc(optionLabel(it.svc, v))}</span>
-          <span class="num text-[.78rem] text-muted">${esc(rp(optionPrice(it.svc, v)))}</span></button>`;
-      }).join('')}</div>`;
-  }
+  const segmented = (it, fid) => TN.ui.segmented(it, fid, state.items);
 
   function hint(it) {
     if (it.svc === 'hosting' || it.svc === 'apps') {
@@ -179,16 +158,10 @@
     update();
   });
   rowsRoot?.addEventListener('keydown', (e) => { // radiogroup: arrows move + select, skipping disabled sizes
-    const group = e.target.closest('[role=radiogroup]');
-    if (!group || !['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
-    e.preventDefault();
-    const opts = [...group.querySelectorAll('[role=radio]')].filter((b) => b.getAttribute('aria-disabled') !== 'true');
-    const i = opts.indexOf(group.querySelector('[aria-checked=true]'));
-    const next = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: opts.length - 1 }[e.key];
-    const target = opts[(next + opts.length) % opts.length];
+    const target = TN.ui.radioKeys(e);
+    if (!target) return;
     findItem(e.target.closest('[data-key]').dataset.key).size = target.dataset.size;
-    target.focus(); // keeps the focus id for the re-render
-    update();
+    update(); // focus id kept for the re-render
   });
 
   document.getElementById('calc-recipe')?.addEventListener('change', (e) => {

@@ -86,6 +86,8 @@
             <button type="button" data-lang="id" aria-pressed="${I.lang === 'id'}" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow">ID</button>
             <button type="button" data-lang="en" aria-pressed="${I.lang === 'en'}" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow">EN</button></div></div>
         <div class="mt-3 grid grid-cols-1 gap-1 border-t border-line pt-3">
+          <button type="button" class="flex min-h-11 items-center gap-3 rounded-control px-2 text-left font-bold hover:bg-paper" data-advance>${icon('calendar-clock', 'icon size-5')}${esc(t('acct.advance'))}</button>
+          <p class="px-2 pb-1 font-mono text-[.75rem] text-muted">${esc(t('acct.clock', { date: dateStr(S.state.clock, { year: true }) }))}</p>
           <button type="button" class="flex min-h-11 items-center gap-3 rounded-control px-2 text-left font-bold hover:bg-paper" data-reset>${icon('rotate-ccw', 'icon size-5')}${esc(t('acct.reset'))}</button>
           <button type="button" class="flex min-h-11 items-center gap-3 rounded-control px-2 text-left font-bold hover:bg-paper" data-signout>${icon('power', 'icon size-5')}${esc(t('acct.signout'))}</button>
         </div>`;
@@ -130,6 +132,13 @@
     if (reset) {
       setAcct(false);
       confirmAsk({ title: t('acct.reset'), body: t('acct.resetConfirm'), ok: t('acct.resetGo'), opener: acctBtn, action: () => { S.reset(); go('#/masuk'); } });
+    }
+    if (e.target.closest('[data-advance]')) {
+      setAcct(false); moreModal.close({ returnFocus: false });
+      const r = S.advance(30);
+      render({ focus: false });
+      toast(t('acct.advanced', { date: dateStr(r.date), n: r.renewed, m: r.paused + r.stopped }));
+      acctBtn.focus();
     }
     if (e.target.closest('[data-signout]')) { setAcct(false); moreModal.close({ returnFocus: false }); S.signOut(); go('#/masuk'); }
     if (e.target.closest('[data-topup]')) openTopup({ opener: e.target.closest('[data-topup]'), amount: Number(e.target.closest('[data-topup]').dataset.amount) || null });
@@ -247,13 +256,15 @@
   function bannerHtml(b) {
     const paused = b.type === 'paused';
     const text = paused ? t('banner.paused', { project: b.project, date: dateStr(b.until), rp: rp(b.min) })
-      : t('banner.low', { project: b.project, date: dateStr(b.date), rp: rp(b.min) });
+      : b.type === 'reminder' ? t('banner.reminder', { balance: rp(S.state.balance), project: b.project, date: dateStr(b.date), price: rp(b.price) })
+        : t('banner.low', { project: b.project, date: dateStr(b.date), rp: rp(b.min) });
     return `<div class="mt-5 flex flex-col gap-3 rounded-card ${paused ? 'bg-xl-yellow' : 'bg-xl-yellow/30 ring-1 ring-xl-yellow'} p-4 sm:flex-row sm:items-center sm:p-5 on-yellow" role="status">
       <p class="flex flex-1 gap-3 font-bold">${icon(paused ? 'circle-pause' : 'bell', 'icon mt-0.5 shrink-0')}<span>${esc(text)}</span></p>
       <button type="button" class="btn shrink-0" data-topup data-amount="${b.min}">${esc(t('cta.topup'))}</button></div>`;
   }
   function nextStep(s) {
-    if ((s.balance <= 0 && !s.projects.length) || S.banners().length) return { key: 'topup', href: '#/saldo?isi=1', ic: 'wallet' };
+    if (S.banners().length) return { key: 'resume', href: '#/saldo?isi=1', ic: 'wallet' };
+    if (s.balance <= 0 && !s.projects.length) return { key: 'topup', href: '#/saldo?isi=1', ic: 'wallet' };
     if (!s.projects.length) return { key: 'recipe', href: '#/buat', ic: 'plus' };
     const sv = s.services.filter((x) => x.status !== 'berhenti');
     if (sv.some((x) => x.tpl === 'wa-bot')) return { key: 'qr', href: `#/proyek/${sv.find((x) => x.tpl === 'wa-bot').project}`, ic: 'qr-code' };
@@ -322,14 +333,23 @@
 
   /* ---------- Balance (C6) ---------- */
   const historyFilter = { type: 'all', project: 'all' };
+  const sizeName = (svc, size) => (!size ? '' : svc === 'email' ? t(`email.name.${size}`) : svc === 'storage' ? D.STORAGE[size].capacity : t(`size.${size}`));
+  /** "Online-kan proyekmu Coba-coba", "ayu.my.id", "Otomasi n8n Ramai" */
+  function serviceName(m, { size = true } = {}) {
+    if (m.svc === 'domain') return m.domain || t('svc.domain.name');
+    if (!m.size && m.svc !== 'payments') return m.tpl ? t(`tpl.${m.tpl}.name`) : t(`svc.${m.svc}.name`); // log rows carry no size
+    return `${TN.ui.itemView(m).name} ${size ? sizeName(m.svc, m.size) : ''}`.trim();
+  }
   function historyRow(h) {
     let title = '', sub = h.project || '';
     const m = h.meta || {};
     if (h.type === 'topup') { title = t('h.topup', { method: t(`method.${m.method}`) }); sub = m.bonus ? t('h.bonus', { rp: rp(m.bonus) }) : ''; }
-    if (h.type === 'charge') {
-      const size = !m.size ? '' : h.svc === 'email' ? t(`email.name.${m.size}`) : h.svc === 'storage' ? D.STORAGE[m.size].capacity : t(`size.${m.size}`);
-      const name = h.svc === 'domain' ? m.domain || t('svc.domain.name') : `${TN.ui.itemView(m).name} ${size}`.trim();
-      title = t(m.resumed ? 'h.resumed' : h.svc === 'domain' ? 'h.chargeYear' : 'h.charge30', { service: name });
+    if (h.type === 'charge' || h.type === 'refund') {
+      const name = serviceName(m, { size: !m.resize });
+      if (m.resize) title = t('h.resize', { service: name, from: sizeName(h.svc, m.from), to: sizeName(h.svc, m.to), n: m.days });
+      else if (h.type === 'refund') title = t('h.refund', { service: name, n: m.days });
+      else if (m.renewal) title = t(h.svc === 'domain' ? 'h.renewYear' : 'h.renew30', { service: name });
+      else title = t(m.resumed ? 'h.resumed' : h.svc === 'domain' ? 'h.chargeYear' : 'h.charge30', { service: name });
     }
     if (h.type === 'usage') title = t(h.svc === 'chat' ? 'h.chat' : 'h.usage', { qty: t(`unit.${m.unit}`, { n: num(m.qty) }).replace('±', '') });
     const plus = h.amount > 0;
@@ -530,9 +550,10 @@
     }, 600);
   });
 
-  /* ---------- Start ---------- */
-  I.init();
-  renderNav();
-  render();
-  window.TN.console = { render, openTopup, toast, get route() { return parseHash(); } };
+  /* ---------- Start (after every console script registered its routes) ---------- */
+  window.TN.console = {
+    ROUTES, render, openTopup, toast, confirmAsk, h1, kicker, statusPill, projectCard, bannerHtml, go, view, routeLive, parseHash, dateStr,
+    serviceName, get route() { return parseHash(); },
+  };
+  document.addEventListener('DOMContentLoaded', () => { I.init(); renderNav(); render(); });
 })();

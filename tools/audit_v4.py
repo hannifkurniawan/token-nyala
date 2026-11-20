@@ -14,8 +14,9 @@ Definition of Done extras:
   - DoD 10 assets/css/app.css equals a fresh `tailwindcss --minify` build of src/tailwind.css
   - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact);
            console: only tn-v4-demo (+ tn-lang), never the email/phone used to sign in
-  - console: axe on sign-in, home (ayu), paused home (jeda), balance (raka) + top-up form/pay/success, "Lainnya",
-    account menu, confirm, Nala; preset balances/dates vs §8; history always sums to the balance
+  - console: axe on sign-in, home (ayu), paused home (jeda), balance (raka), wizard (goal, setup, summary, done),
+    projects, project detail (every tab) + top-up form/pay/success, resize, stop confirm, "Lainnya", account menu,
+    confirm, Nala; preset balances/dates vs §8; history always sums to the balance
   - DoD 4  numbers: TN.data recomputes the values transcribed below from docs/v4/services-and-pricing.md
            (§3 units, §6 recipes, §7 example, §8 balance-until, §2 refund/prorata examples), and the landing
            renders them for every recipe in ID and EN; harga: calculator summary + CTA per recipe and every
@@ -39,7 +40,9 @@ FACES = ["Manrope 500", "Manrope 700", "Manrope 800", "IBM Plex Mono 500"]
 PAGES = ["index.html", "harga.html"]  # fase 4+: app.html routes
 RENDERED_CHECK = {"index.html": "[data-recipe-card] h3", "harga.html": "[data-calc-rows] li"}
 APP_ROUTES = [("masuk", "app.html?demo=reset#/masuk"), ("beranda", "app.html?demo=ayu#/beranda"),
-              ("jeda", "app.html?demo=ayu&state=jeda#/beranda"), ("saldo", "app.html?demo=raka#/saldo")]
+              ("jeda", "app.html?demo=ayu&state=jeda#/beranda"), ("saldo", "app.html?demo=raka#/saldo"),
+              ("buat-1", "app.html?demo=ayu#/buat"), ("buat-2", "app.html?demo=ayu#/buat?resep=web-klien"),
+              ("proyek", "app.html?demo=dimas#/proyek"), ("detail", "app.html?demo=raka#/proyek/klien-kopi")]
 # services-and-pricing §8: preset → (balance, "cukup sampai" shown on the home card)
 PRESETS = {"ayu": ("Rp31.220", "±19 Des"), "raka": ("Rp239.640", "±31 Des"), "dimas": ("Rp647.800", "±22 Jan")}
 
@@ -345,6 +348,26 @@ def main():
                     tag = f"app {label} {lang} {w}"
                     problems += axe(page, tag)
                     problems += fonts(page, tag)
+                    if label == "buat-2":  # summary (short of balance) and the finished "Nyala!" screen
+                        page.locator("[data-wz-next]").click(); page.wait_for_timeout(200)
+                        problems += axe(page, f"wizard summary {tag}")
+                        page.evaluate("() => TN.store.topup({ amount: 500000, bonus: 125000, method: 'qris' })")
+                        page.evaluate("() => TN.console.render({ focus: false })")
+                        page.locator("[data-wz-next]").click()
+                        page.wait_for_function("() => document.getElementById('wz-on')", timeout=8000)
+                        problems += axe(page, f"wizard done {tag}")
+                        problems += fonts(page, f"wizard done {tag}")
+                    if label == "detail":
+                        for tab in ("layanan", "ai", "log", "pengaturan"):
+                            page.evaluate(f"() => {{ location.hash = '#/proyek/klien-kopi?tab={tab}'; }}"); page.wait_for_timeout(150)
+                            problems += axe(page, f"detail {tab} {tag}")
+                        page.evaluate("() => { location.hash = '#/proyek/klien-kopi?tab=layanan'; }"); page.wait_for_timeout(150)
+                        page.locator("[data-resize]").first.click(); page.wait_for_timeout(300)
+                        problems += axe(page, f"resize {tag}", "#resize")
+                        page.keyboard.press("Escape"); page.wait_for_timeout(100)
+                        page.locator("[data-stop]").first.click(); page.wait_for_timeout(300)
+                        problems += axe(page, f"stop confirm {tag}", "#confirm")
+                        page.keyboard.press("Escape")
                     if label == "beranda":
                         page.locator("#view [data-topup]").first.click(); page.wait_for_timeout(300)
                         page.locator("[data-co-submit]").click()

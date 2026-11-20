@@ -8,14 +8,15 @@ Dokumen: [`docs/v4/README.md`](../docs/v4/README.md) · aturan membangun: [`docs
 - Server lokal: `python3 -m http.server 8000` di folder ini → http://localhost:8000
 - Console dengan data contoh: `app.html?demo=ayu` · `?demo=raka` · `?demo=dimas` · `?demo=ayu&state=jeda` (saldo habis, dijeda) · `?demo=reset` (akun baru)
 
-## Status (fase 4 dari 7)
+## Status (fase 5 dari 7)
 | Halaman | Isi | Status |
 |---|---|---|
 | `index.html` | Header + menu + bahasa, hero, cerita macet, **Mau bikin apa?** (5 resep), cara kerja, semua layanan, satu saldo, footer | Fase 1 ✓ |
 | `index.html` | Template (5), AI (model + panduan pasang + katalog), contoh proyek, aman untuk pemula (kartu bertumpuk), belajar, tim (+ form konsultasi), FAQ (13), CTA akhir, motion GSAP/Lenis, chat Nala (alur “Bantu pilih resep”) | Fase 2 ✓ |
 | `harga.html` | Kalkulator resep (saklar, ukuran, stepper, tambah layanan, ringkasan lengket, URL `?resep=&s=`), mulai dari, AI 12 model + 3 satuan, detail per layanan, saldo & tagihan, FAQ harga | Fase 3 ✓ |
 | `app.html` | Console: kerangka (header + pil saldo, sidebar, tab bar, sheet Lainnya, menu akun), router, masuk (3 langkah), beranda (kosong/berisi/banner), saldo + riwayat + filter, isi saldo (checkout v3) | Fase 4 ✓ |
-| `app.html` | Wizard `#/buat`, detail proyek, jam simulasi (Fase 5) · AI, layanan lain, belajar, bantuan (Fase 6) | rute ini sementara “Segera hadir” |
+| `app.html` | Wizard `#/buat` (4 langkah, isi saldo di dalam ringkasan, progres menyalakan), daftar & detail proyek (ringkasan, layanan: ganti ukuran / hentikan / nyalakan lagi, AI key + limit, log, pengaturan: hentikan proyek), jam simulasi | Fase 5 ✓ |
+| `app.html` | AI, layanan lain, belajar, bantuan | Fase 6 — sementara “Segera hadir” |
 
 ## Mengembangkan
 ```bash
@@ -43,6 +44,7 @@ python3 -P tools/audit_v4.py                               # axe, font, file://,
 | `assets/js/pricing.js` | Halaman Harga: kalkulator (state = `?resep=&s=`, tidak disimpan di storage), tabel detail, navigasi chip |
 | `assets/js/store.js` | State demo console (`tn-v4-demo`, tanpa data kontak), preset `?demo=ayu|raka|dimas` (+ `&state=jeda`), `charge()`/`topup()` menulis riwayat, `until()`, `banners()`, `settle()` (dijeda → nyala setelah isi saldo) |
 | `assets/js/console.js` | Router hash (fokus `h1`, judul, pengumuman, `#/masuk?next=`), navigasi, menu akun, masuk, beranda, saldo, sheet isi saldo |
+| `assets/js/projects.js` | Wizard `#/buat`, `#/proyek`, `#/proyek/:id` (tab), dialog ganti ukuran |
 | `assets/js/nala.js` | Chat Nala (port v3, lokal tanpa server) + alur resep → link wizard/kalkulator dengan parameter `s` |
 | `assets/js/motion.js` | GSAP + ScrollTrigger + Lenis (`assets/vendor/`); mati saat reduced motion atau GSAP gagal dimuat — konten tetap tampil |
 

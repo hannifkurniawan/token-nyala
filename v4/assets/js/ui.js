@@ -158,5 +158,45 @@ TN.ui = (() => {
     }
   }
 
-  return { icon, esc, setMenu, setupModal, parseContact, focusIsFree, itemView, fromLine };
+  /* ---------- Size picker (radiogroup) shared by the calculator and the wizard ---------- */
+  const optionLabel = (svc, v) => {
+    const D = TN.data;
+    if (svc === 'storage') return D.STORAGE[v].capacity;
+    if (svc === 'email') return t(`email.name.${v}`);
+    return t(`size.${v}`);
+  };
+  const optionPrice = (svc, v) => TN.data.itemCost(svc === 'apps' ? { svc, tpl: 'n8n', size: v } : { svc, size: v }).amount;
+
+  /** Sizes for one item; sizes below a template's minimum (with AI in `items`) are aria-disabled. */
+  function segmented(it, fid, items) {
+    const D = TN.data, { rp } = TN.i18n;
+    const ai = D.usesAi(items);
+    const min = it.svc === 'apps' ? D.templateMinSize(it.tpl, ai) : null;
+    const opts = D.OPTIONS[it.svc];
+    const name = itemView(it).name;
+    return `<div role="radiogroup" aria-label="${esc(t('calc.sizeAria', { name }))}" class="grid gap-1 rounded-control bg-paper p-1" style="grid-template-columns:repeat(${opts.length},minmax(0,1fr))" data-seg="${fid}">
+      ${opts.map((v) => {
+        const on = it.size === v;
+        const off = min && D.SIZE_ORDER.indexOf(v) < D.SIZE_ORDER.indexOf(min);
+        return `<button type="button" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" ${off ? 'aria-disabled="true"' : ''} data-size="${v}" data-fid="${fid}-${v}"
+          class="flex min-h-12 flex-col items-center justify-center rounded-[9px] px-1 py-1.5 text-center leading-tight aria-checked:bg-white aria-checked:shadow-[0_1px_4px_rgb(0_22_106/.18)] aria-disabled:cursor-not-allowed aria-disabled:opacity-45">
+          <span class="text-[.9rem] font-bold">${esc(optionLabel(it.svc, v))}</span>
+          <span class="num text-[.78rem] text-muted">${esc(rp(optionPrice(it.svc, v)))}</span></button>`;
+      }).join('')}</div>`;
+  }
+
+  /** Arrow keys inside a size radiogroup: move + pick, skipping disabled sizes. Returns the picked button or null. */
+  function radioKeys(e) {
+    const group = e.target.closest('[role=radiogroup]');
+    if (!group || !['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(e.key)) return null;
+    e.preventDefault();
+    const opts = [...group.querySelectorAll('[role=radio]')].filter((b) => b.getAttribute('aria-disabled') !== 'true');
+    const i = opts.indexOf(group.querySelector('[aria-checked=true]'));
+    const next = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: opts.length - 1 }[e.key];
+    const target = opts[(next + opts.length) % opts.length];
+    target.focus();
+    return target;
+  }
+
+  return { icon, esc, setMenu, setupModal, parseContact, focusIsFree, itemView, fromLine, segmented, radioKeys };
 })();

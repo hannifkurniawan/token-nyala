@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Berikutnya: Fase 5** (wizard `#/buat` 4 langkah, detail proyek: ganti ukuran/berhenti/log, jam simulasi “majukan 30 hari” & dijeda). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 5** (wizard, proyek, jam simulasi) selesai. **Berikutnya: Fase 6** (AI, layanan lain, belajar, bantuan), lalu **Fase 7** (audit penuh, README, skrip demo). User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -114,6 +114,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Saat ada layanan dijeda, kartu saldo tidak menampilkan “cukup sampai” | Tanggal (hanya dari biaya alamat web) menyesatkan; banner sudah menjelaskan |
 | 20 Nov 2026 | Menu akun = popover avatar (semua ukuran) + bagian Akun di sheet Lainnya (mobile) | IA §4; satu render untuk keduanya |
 | 20 Nov 2026 | Rute Fase 5–6 menampilkan “Segera hadir” sementara | Link dari landing/harga tidak berakhir di halaman kosong |
+| 20 Nov 2026 | Wizard: datang dengan `?resep=`/`?template=`/`?s=` langsung ke langkah 2; tanpa itu langkah 1 | Alur Ayu dari landing < 3 menit; tetap bisa kembali |
+| 20 Nov 2026 | “Mulai kosong” = 6 layanan umum dalam keadaan mati (saklar), bukan dialog tambah | Satu pola dengan kalkulator; lebih sedikit layar |
+| 20 Nov 2026 | Jam simulasi mengulang pola AI 7 hari terakhir per minggu | Demo saldo habis terasa nyata tanpa input manual |
+| 20 Nov 2026 | Banner baru “di bawah pengingat” (saldo < Rp20.000 dan masih ada perpanjangan) | Peringatan sebelum dijeda; aturan pengingat §2 |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -161,6 +165,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Playwright tidak mau mengklik elemen `aria-disabled`** — benar secara aksesibilitas; uji “tidak bisa dipilih” dengan `force=True`.
 - **Tombol yang dirender ulang butuh event delegation.** Tombol ID/EN di menu akun console dibuat setelah `ui.js` memasang listener langsung → tidak berfungsi; ditemukan QA EN. `ui.js` sekarang mendelegasikan klik `[data-lang]`.
 - **Pratinjau “saldo setelahnya” harus memakai aturan yang sama dengan aksi sebenarnya.** Sheet isi saldo di state dijeda menampilkan Rp63.000, padahal setelah layanan menyala lagi saldo Rp48.000 → `previewTopup()` memakai urutan `settle()` yang sama.
+- **Render ulang di tengah alur bisa me-reset state modul.** Wizard menginisialisasi ulang saat router merender langkah 4 (kondisi `step < 4`) → proyek hilang. Inisialisasi hanya saat alamat masuk berubah. Lalu daftar progres kosong sempat dianggap “selesai” satu frame → siapkan data sebelum render.
+- **Listener pada kontainer yang tidak ikut dirender ulang menumpuk.** `#view` tetap ada antar rute → pasang listener di elemen dalam yang diganti setiap render.
+- **QA yang memuat ulang `?demo=` me-reset state.** Navigasi lanjutan dalam satu skenario lewat `location.hash`.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -235,3 +242,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - `app.html` + `store.js` + `console.js`: header (pil saldo kuning bila perlu isi), sidebar desktop, tab bar mobile (Buat + kuning), sheet Lainnya, menu akun (bahasa, mulai ulang demo + konfirmasi, keluar), toast, label prototype; router hash dengan guard masuk; masuk 3 langkah + akun contoh; beranda (sapaan, banner dijeda/saldo kurang, chip resep untuk akun baru, kartu saldo + cukup sampai, langkah berikutnya, proyek, bulan ini, belajar); saldo (perkiraan, pengingat, riwayat + filter jenis/proyek, invoice contoh); sheet isi saldo (port checkout v3).
 - Preset §8 terverifikasi: Ayu 31.220/±19 Des, Raka 239.640/±31 Des, Dimas 647.800/±22 Jan, jeda 8.000 → isi 50 rb → 48.000 & nyala lagi.
 - QA console (alur masuk, beranda/nav, isi saldo, jeda, akun/reset, EN) + audit console (axe semua dialog, angka preset, riwayat = saldo, storage tanpa kontak, file://, storage diblokir) + i18n 4 rute console. Semua lolos (40 cek QA).
+
+### Sesi 4 (lanjutan) — Fase 5 v4
+- `projects.js`: wizard 4 langkah (tujuan → atur: nama proyek tervalidasi, saklar/ukuran/sumber kode/alamat web + cek ketersediaan mock/limit AI → ringkasan: dipotong sekarang, nanti sesuai pakai, saldo sebelum/sesudah, isi saldo inline = saran(kekurangan) → menyalakan: progres per layanan + “Nyala!” + langkah berikutnya). Proyek: daftar, detail dengan tab (keyboard), ringkasan (upload mock, QR WhatsApp + pesan uji), layanan (ganti ukuran prorata, hentikan + refund, matikan perpanjangan domain, nyalakan lagi, isi saldo bila dijeda), AI (key, aktif/nonaktif, limit), log, pengaturan (hentikan proyek).
+- `store.js`: `createProject`/`finishStarting`, `resize`, `stopService`, `resume`, `stopProject`, `setLimit`, `setKeyActive`, `advance()`; status proyek tidak dianggap nyala hanya karena domain; banner pengingat.
+- Alur Ayu (journey 1) diverifikasi QA: Rp20.000 sekarang, saldo 55.000 → 35.000, `ayu.my.id` nyala. Raka: turun ke Coba-coba hari ke-20 → Rp6.600 kembali; hentikan → Rp5.000 kembali. 52 cek QA lolos, audit & i18n lolos.

@@ -43,12 +43,23 @@ TN.store = (() => {
   }
 
   /** Create a project + its services, charging each upfront (fixed per 30 days, domain per year). */
-  function addProject({ name, domain = null, items, date = state.clock }) {
+  /** Deterministic demo API key per project (never a real key). */
+  const demoKey = (id) => 'tn-demo-' + Array.from(id + 'tokennyala-demo-key-0123456789').slice(0, 24)
+    .map((ch, i) => ((ch.charCodeAt(0) * 31 + i * 7) % 16).toString(16)).join('');
+  /** Project log (detail page "Log" tab): { date, key, params } — params hold plain values only. */
+  function plog(project, key, params = {}, date = state.clock) {
+    const p = state.projects.find((x) => x.id === project);
+    if (p) (p.log ||= []).push({ date, key, params });
+  }
+
+  function addProject({ name, domain = null, items, date = state.clock, status = 'nyala', limit = 50000 }) {
     const id = name;
-    state.projects.push({ id, name, domain, createdAt: date });
+    state.projects.push({ id, name, domain, createdAt: date, key: demoKey(id), keyActive: true, limit, log: [] });
+    plog(id, 'log.created', {}, date);
     for (const it of items) {
-      if (it.svc === 'ai') continue; // AI is usage-based: no service row, charged per use
-      const sv = { id: uid('s'), project: id, ...it, startedAt: date, renewAt: addDays(date, periodOf(it)), status: 'nyala', autoRenew: true };
+      if (it.svc === 'ai' || it.on === false) continue; // AI is usage-based: no service row, charged per use
+      const { on, ...clean } = it;
+      const sv = { id: uid('s'), project: id, ...clean, startedAt: date, renewAt: addDays(date, periodOf(it)), status, autoRenew: true };
       if (sv.svc === 'domain') sv.domain = domain;
       state.services.push(sv);
       const amount = priceOf(sv);
@@ -80,7 +91,9 @@ TN.store = (() => {
   function projectView(p, s = state) {
     const svcs = s.services.filter((x) => x.project === p.id);
     const live = svcs.filter((x) => x.status !== 'berhenti');
-    const status = live.some((x) => x.status === 'dijeda') ? 'dijeda' : live.length ? 'nyala' : 'berhenti';
+    // A web address alone doesn't keep a project "on": judge by the other services when there are any
+    const core = svcs.some((x) => x.svc !== 'domain') ? live.filter((x) => x.svc !== 'domain') : live;
+    const status = core.some((x) => x.status === 'menyalakan') ? 'menyalakan' : core.some((x) => x.status === 'dijeda') ? 'dijeda' : core.length ? 'nyala' : 'berhenti';
     const monthly = live.filter((x) => x.svc !== 'domain').reduce((n, x) => n + priceOf(x), 0); // paused services still show their price
     const renewals = live.filter((x) => x.svc !== 'domain' && x.status === 'nyala').map((x) => x.renewAt).sort();
     const paused = live.filter((x) => x.status === 'dijeda');
@@ -103,6 +116,11 @@ TN.store = (() => {
     for (const [project, list] of Object.entries(byProject)) {
       need += list.reduce((n, x) => n + priceOf(x, { renewal: true }), 0);
       if (need > s.balance) out.push({ type: 'low', project, date: list.map((x) => x.renewAt).sort()[0], min: Math.max(need - s.balance, D.TOPUP_MIN) });
+    }
+    // Reminder (§2 defaults): balance under the threshold while something still renews — next renewal first
+    if (!out.length && s.reminder && s.balance < D.REMINDER_BELOW) {
+      const next = active(s).filter((x) => x.autoRenew).sort((a, b) => a.renewAt.localeCompare(b.renewAt))[0];
+      if (next) out.push({ type: 'reminder', project: next.project, date: next.renewAt, price: priceOf(next, { renewal: true }), min: D.TOPUP_MIN });
     }
     return out;
   }
@@ -191,6 +209,128 @@ TN.store = (() => {
     return name;
   }
 
+  /* ---------- Project & service actions (services-and-pricing §2 rules 4–7) ---------- */
+  const findSv = (id) => state.services.find((x) => x.id === id);
+  const daysLeft = (sv) => Math.max(0, daysBetween(state.clock, sv.renewAt));
+
+  /** Wizard: create a project in "menyalakan" state (charged now), switched on by finishStarting(). */
+  function createProject({ name, domain, items, limit }) {
+    addProject({ name, domain, items, status: 'menyalakan', limit });
+    save();
+    return name;
+  }
+  function finishStarting(project) {
+    state.services.filter((x) => x.project === project && x.status === 'menyalakan').forEach((x) => { x.status = 'nyala'; });
+    plog(project, 'log.on');
+    save();
+  }
+  /** Prorated difference for a size change: > 0 charged now (rounded up), < 0 refunded (rounded down). */
+  function resizePreview(id, size) {
+    const sv = findSv(id);
+    return { diff: D.prorata(priceOf(sv), priceOf({ ...sv, size }), daysLeft(sv)), days: daysLeft(sv) };
+  }
+  function resize(id, size) {
+    const sv = findSv(id);
+    const { diff, days } = resizePreview(id, size);
+    if (diff > state.balance) return { ok: false, need: diff - state.balance };
+    if (diff) charge({ amount: -diff, type: diff > 0 ? 'charge' : 'refund', svc: sv.svc, project: sv.project, meta: { ...label(sv), resize: true, from: sv.size, to: size, days } });
+    plog(sv.project, 'log.resize', { svc: sv.svc, tpl: sv.tpl, from: sv.size, to: size });
+    sv.size = size;
+    save();
+    return { ok: true, diff };
+  }
+  /** Stop: unused days back to the balance (rule 4); domain = turn off auto-renewal, no refund (rule 6). */
+  function stopPreview(id) {
+    const sv = findSv(id);
+    if (sv.svc === 'domain') return { refund: 0, until: sv.renewAt };
+    return { refund: sv.status === 'nyala' ? D.refund(priceOf(sv), daysLeft(sv)) : 0, days: daysLeft(sv), deleteAt: addDays(state.clock, D.RULES.stopKeepDays) };
+  }
+  function stopService(id, { quiet = false } = {}) {
+    const sv = findSv(id);
+    const { refund, days } = stopPreview(id);
+    if (sv.svc === 'domain') { sv.autoRenew = false; plog(sv.project, 'log.renewOff', { domain: sv.domain }); }
+    else {
+      if (refund) charge({ amount: refund, type: 'refund', svc: sv.svc, project: sv.project, meta: { ...label(sv), days } });
+      sv.status = 'berhenti'; sv.stoppedAt = state.clock; sv.deleteAt = addDays(state.clock, D.RULES.stopKeepDays);
+      delete sv.pausedAt;
+      plog(sv.project, 'log.stop', { svc: sv.svc, tpl: sv.tpl });
+    }
+    if (!quiet) save();
+    return refund;
+  }
+  function resume(id) {
+    const sv = findSv(id);
+    if (sv.svc === 'domain') { sv.autoRenew = true; plog(sv.project, 'log.renewOn', { domain: sv.domain }); save(); return { ok: true }; }
+    const price = priceOf(sv, { renewal: true });
+    if (state.balance < price) return { ok: false, need: price - state.balance };
+    charge({ amount: -price, type: 'charge', svc: sv.svc, project: sv.project, meta: { ...label(sv), resumed: true } });
+    sv.status = 'nyala'; sv.renewAt = addDays(state.clock, periodOf(sv));
+    delete sv.stoppedAt; delete sv.deleteAt; delete sv.pausedAt;
+    plog(sv.project, 'log.resume', { svc: sv.svc, tpl: sv.tpl });
+    save();
+    return { ok: true };
+  }
+  /** Rule 7: stop every service in the project (domains: renewal off). */
+  function stopProjectPreview(project) {
+    return state.services.filter((x) => x.project === project && x.status !== 'berhenti').reduce((n, x) => n + stopPreview(x.id).refund, 0);
+  }
+  function stopProject(project) {
+    let refund = 0;
+    state.services.filter((x) => x.project === project && x.status !== 'berhenti' && !(x.svc === 'domain' && !x.autoRenew))
+      .forEach((x) => { refund += stopService(x.id, { quiet: true }); });
+    plog(project, 'log.stopProject', { rp: refund });
+    save();
+    return refund;
+  }
+  function setLimit(project, limit) { const p = state.projects.find((x) => x.id === project); p.limit = limit; plog(project, 'log.limit', { limit }); save(); }
+  function setKeyActive(project, on) { const p = state.projects.find((x) => x.id === project); p.keyActive = on; plog(project, on ? 'log.keyOn' : 'log.keyOff'); save(); }
+  function logUpload(project, files) { plog(project, 'log.upload', { files }); save(); }
+
+  /** Simulated clock (§2): day by day — renew when the balance covers it, else pause; paused > 7 days → stopped.
+      AI keeps the last 7 days' rhythm (one usage row per week, skipped when the balance can't cover it). */
+  function advance(days = 30) {
+    const start = state.clock;
+    const since = addDays(start, -7);
+    const rhythm = {};
+    state.history.filter((h) => h.type === 'usage' && h.date > since && h.date <= start).forEach((h) => {
+      const k = `${h.project}|${h.svc}|${h.meta.unit}`;
+      rhythm[k] = (rhythm[k] || 0) + h.meta.qty;
+    });
+    const out = { renewed: 0, paused: 0, stopped: 0 };
+    for (let d = 1; d <= days; d++) {
+      const day = addDays(start, d);
+      state.clock = day;
+      if (d % 7 === 0) {
+        for (const [k, qty] of Object.entries(rhythm)) {
+          const [project, svc, unit] = k.split('|');
+          const live = state.services.some((x) => x.project === project && x.status === 'nyala');
+          if (live && state.balance >= D.usageCost(unit, qty)) useAi({ project, unit, qty, date: day, chat: svc === 'chat' });
+        }
+      }
+      for (const sv of state.services) {
+        if (sv.status === 'nyala' && sv.renewAt <= day) {
+          if (sv.svc === 'domain' && !sv.autoRenew) { sv.status = 'berhenti'; sv.stoppedAt = day; continue; }
+          const price = priceOf(sv, { renewal: true });
+          if (state.balance >= price) {
+            charge({ amount: -price, type: 'charge', date: day, svc: sv.svc, project: sv.project, meta: { ...label(sv), renewal: true } });
+            sv.renewAt = addDays(sv.renewAt, periodOf(sv));
+            out.renewed++;
+          } else {
+            sv.status = 'dijeda'; sv.pausedAt = day;
+            plog(sv.project, 'log.paused', { svc: sv.svc, tpl: sv.tpl, domain: sv.domain }, day);
+            out.paused++;
+          }
+        } else if (sv.status === 'dijeda' && addDays(sv.pausedAt, D.RULES.pauseDays) <= day) {
+          sv.status = 'berhenti'; sv.stoppedAt = day; sv.deleteAt = day;
+          plog(sv.project, 'log.autoStop', { svc: sv.svc, tpl: sv.tpl }, day);
+          out.stopped++;
+        }
+      }
+    }
+    save();
+    return { ...out, date: state.clock };
+  }
+
   /* ---------- Actions ---------- */
   function signIn(name) { state.user = { name: name.trim().slice(0, 40) || 'Kamu' }; save(); }
   function signOut() { state.user = null; save(); }
@@ -207,6 +347,8 @@ TN.store = (() => {
     get state() { return state; }, KEY, PRESET_DAY,
     parse, iso, addDays, daysBetween, priceOf, costs, until, projectView, banners,
     applyDemo, signIn, signOut, reset, topup, previewTopup, setReminder, addProject, useAi, charge, settle, save,
+    createProject, finishStarting, resizePreview, resize, stopPreview, stopService, resume, stopProjectPreview, stopProject,
+    setLimit, setKeyActive, logUpload, advance, daysLeft, demoKey,
     onChange(fn) { listeners.push(fn); },
   };
 })();

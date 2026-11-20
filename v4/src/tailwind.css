@@ -160,3 +160,6 @@ html[data-calc-bar][data-calc-open] #chat-launcher { display: none; }
 
 /* Current page in the header nav (harga.html → Harga) */
 header nav a[aria-current="page"] { text-decoration: underline 3px var(--color-xl-yellow); text-underline-offset: 6px; }
+
+/* app.html wizard: lift the Nala launcher above the sticky step bar */
+html[data-wz-bar] #chat-launcher { bottom: calc(var(--wz-bar-h, 128px) + env(safe-area-inset-bottom) + 12px); }
