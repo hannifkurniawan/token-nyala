@@ -12,6 +12,7 @@ Definition of Done extras:
   - DoD 8  storage blocked (localStorage throws): page still renders and switches language
   - DoD 9  only the 4 loaded font faces render (Manrope 500/700/800, IBM Plex Mono 500)
   - DoD 10 assets/css/app.css equals a fresh `tailwindcss --minify` build of src/tailwind.css
+  - DoD 12 the simulation label is visible on landing, harga, console (home + wizard) and in the top-up sheet
   - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact);
            console: only tn-v4-demo (+ tn-lang), never the email/phone used to sign in
   - console: axe on sign-in, home (ayu), paused home (jeda), balance (raka), wizard (goal, setup, summary, done),
@@ -425,6 +426,22 @@ def main():
         for want in ("Rp8.000", "27 Des", "Rp20.000"):
             if want not in text:
                 problems.append(f"[numbers] app jeda misses {want}")
+        ctx.close()
+
+        # DoD 12: the simulation label is visible on every page, in the top-up sheet, and in the wizard
+        ctx = b.new_context(viewport={"width": 375, "height": 667}, reduced_motion="reduce")
+        page = ctx.new_page()
+        label_js = """(key) => { const want = TN.i18n.t(key); return [...document.querySelectorAll('body *')].some(el =>
+            el.children.length === 0 && el.textContent.trim() === want && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden'); }"""
+        for url, key in (("index.html", "footer.prototype"), ("harga.html", "footer.prototype"), ("app.html?demo=ayu#/beranda", "con.prototype"),
+                         ("app.html?demo=ayu#/buat?resep=portofolio", "con.prototype")):
+            page.goto(base + url, wait_until="networkidle")
+            if not page.evaluate(label_js, key):
+                problems.append(f"[dod] simulation label {key} not visible on {url}")
+        page.locator("#view [data-wz-next]").click(); page.wait_for_timeout(150)
+        page.goto(base + "app.html?demo=ayu#/saldo?isi=1", wait_until="networkidle"); page.wait_for_timeout(300)
+        if not page.evaluate(label_js, "co.notice"):
+            problems.append("[dod] top-up sheet has no visible simulation notice")
         ctx.close()
 
         # DoD 1 file:// · DoD 7 reduced motion (no long transitions) · DoD 8 storage blocked · DoD 11 contact never stored

@@ -1,22 +1,31 @@
 # TokenNyala v4 — platform AI cloud (prototype)
 
-*Idemu nyala, dari prompt sampai online.* Landing + Harga + console mock, mobile first, ID/EN.
-Dokumen: [`docs/v4/README.md`](../docs/v4/README.md) · aturan membangun: [`docs/v4/technical-spec.md`](../docs/v4/technical-spec.md) · semua angka: [`docs/v4/services-and-pricing.md`](../docs/v4/services-and-pricing.md).
+*Idemu nyala, dari prompt sampai online.* AI untuk membangun, cloud untuk menjalankan, satu saldo Rupiah —
+untuk vibecoder pemula (ID/EN, mobile first). Semua harga, layanan, dan transaksi adalah **contoh/simulasi**.
+
+Dokumen: [`docs/v4/README.md`](../docs/v4/README.md) · aturan membangun: [`docs/v4/technical-spec.md`](../docs/v4/technical-spec.md) ·
+semua angka: [`docs/v4/services-and-pricing.md`](../docs/v4/services-and-pricing.md) · skrip demo: [`docs/v4/user-journeys.md`](../docs/v4/user-journeys.md).
 
 ## Membuka
-- Langsung: buka `index.html` di browser (`file://` didukung — CSS hasil build ikut di-commit).
+- Langsung: buka `index.html` di browser — `file://` didukung (CSS hasil build ikut di-commit, script klasik tanpa module).
 - Server lokal: `python3 -m http.server 8000` di folder ini → http://localhost:8000
-- Console dengan data contoh: `app.html?demo=ayu` · `?demo=raka` · `?demo=dimas` · `?demo=ayu&state=jeda` (saldo habis, dijeda) · `?demo=reset` (akun baru)
 
-## Status (fase 6 dari 7)
-| Halaman | Isi | Status |
-|---|---|---|
-| `index.html` | Header + menu + bahasa, hero, cerita macet, **Mau bikin apa?** (5 resep), cara kerja, semua layanan, satu saldo, footer | Fase 1 ✓ |
-| `index.html` | Template (5), AI (model + panduan pasang + katalog), contoh proyek, aman untuk pemula (kartu bertumpuk), belajar, tim (+ form konsultasi), FAQ (13), CTA akhir, motion GSAP/Lenis, chat Nala (alur “Bantu pilih resep”) | Fase 2 ✓ |
-| `harga.html` | Kalkulator resep (saklar, ukuran, stepper, tambah layanan, ringkasan lengket, URL `?resep=&s=`), mulai dari, AI 12 model + 3 satuan, detail per layanan, saldo & tagihan, FAQ harga | Fase 3 ✓ |
-| `app.html` | Console: kerangka (header + pil saldo, sidebar, tab bar, sheet Lainnya, menu akun), router, masuk (3 langkah), beranda (kosong/berisi/banner), saldo + riwayat + filter, isi saldo (checkout v3) | Fase 4 ✓ |
-| `app.html` | Wizard `#/buat` (4 langkah, isi saldo di dalam ringkasan, progres menyalakan), daftar & detail proyek (ringkasan, layanan: ganti ukuran / hentikan / nyalakan lagi, AI key + limit, log, pengaturan: hentikan proyek), jam simulasi | Fase 5 ✓ |
-| `app.html` | AI (mulai cepat, coba AI berbayar per model, model, pemakaian 7 hari + tabel, API key per proyek), layanan lain (server, data, file, alamat web, email, pembayaran: daftar, kosong yang mengarahkan, tambah + ringkasan, detail koneksi/password sekali tampil), belajar (3 panduan), bantuan | Fase 6 ✓ |
+| Halaman | Isi |
+|---|---|
+| `index.html` | Landing 14 section: hero, cerita macet, **Mau bikin apa?** (5 resep), cara kerja, semua layanan, satu saldo, template, AI + katalog, contoh, aman untuk pemula, belajar, tim + konsultasi, FAQ, CTA · chat Nala · motion GSAP/Lenis |
+| `harga.html` | Kalkulator resep (state di `?resep=&s=`), mulai dari, AI (12 model + 3 satuan), detail tiap layanan, saldo & tagihan, FAQ harga |
+| `app.html` | Console mock: masuk, beranda, **wizard Buat** (4 langkah), proyek (ganti ukuran, hentikan, log…), AI (coba AI, pemakaian, API key), saldo + isi saldo, layanan lain, belajar, bantuan, jam simulasi |
+
+### Akun contoh (console)
+| Link | Isi |
+|---|---|
+| `app.html?demo=reset` | Akun baru — mulai dari masuk |
+| `app.html?demo=ayu` | Ayu: 1 proyek (`ayu.my.id`), saldo Rp31.220, cukup sampai ±19 Des |
+| `app.html?demo=raka` | Raka: 2 klien, saldo Rp239.640, ±31 Des |
+| `app.html?demo=dimas` | Dimas: otomasi tim + server, saldo Rp647.800, ±22 Jan |
+| `app.html?demo=ayu&state=jeda` | Saldo habis: proyek **dijeda**, data aman sampai 27 Des |
+
+Menu Akun (avatar / Lainnya): bahasa, **Simulasi: majukan 30 hari**, mulai ulang demo, keluar. Masuk: kode 6 digit apa pun diterima; email/HP tidak disimpan.
 
 ## Mengembangkan
 ```bash
@@ -24,32 +33,31 @@ cd v4 && npm install          # sekali: @tailwindcss/cli 4.3.3 (di-pin)
 npm run watch                 # saat mengubah HTML/JS/CSS
 npm run build                 # WAJIB sebelum commit → assets/css/app.css
 ```
-Lalu dari root repo (semua harus lolos):
+Dari root repo (semua harus lolos; `-P` karena Playwright ada di user site-packages):
 ```bash
-python3 -P tools/qa_v4.py --interactive --out /tmp/qa-v4   # 6 viewport + alur; lihat screenshot-nya
-python3 -P tools/i18n_check.py --root v4                   # kunci ID/EN lengkap, tanpa kunci mati
-python3 -P tools/audit_v4.py                               # axe, font, file://, reduced motion, storage, CSS terbaru, angka
+python3 -P tools/qa_v4.py --interactive --out /tmp/qa-v4   # 12 halaman/rute × 6 viewport + alur + motion; lihat screenshot
+python3 -P tools/i18n_check.py --root v4                   # kunci [ID, EN] lengkap, tanpa kunci mati / teks belum diterjemahkan
+python3 -P tools/audit_v4.py                               # axe, font, file://, reduced motion, storage, CSS terbaru, angka, label simulasi
+python3 -P tools/demo_v4.py --out /tmp/demo-v4             # gladi skrip demo 21 langkah (screenshot bernomor)
 ```
-(`-P` karena Playwright terpasang di user site-packages.)
 
 ## Struktur
 | File | Isi |
 |---|---|
-| `src/tailwind.css` | Satu-satunya tempat token (`@theme`) + komponen (`.shell`, `.sheet`, `.btn`, `.display`, `.kicker`, `.switch`, `.card`) |
-| `assets/js/data.js` | **Semua angka** + fungsi hitung murni (`recipeTotals`, `suggestTopup`, `coverMonths`, `refund`, `prorata`, `balanceUntil`, `heroScenario`) |
-| `assets/js/i18n.js` | Kamus `[ID, EN]` + `t()`, format `rp()` / `rpK()`; atribut `data-i18n`, `data-i18n-html`, `data-i18n-aria` |
+| `src/tailwind.css` | Satu-satunya tempat token (`@theme`) + komponen (`.shell`, `.sheet`, `.btn`, `.display`, `.kicker`, `.switch`, `.card`, `.field`, `.stack-card`) |
+| `assets/js/data.js` | **Semua angka** + fungsi hitung murni: resep, `recipeTotals`, `suggestTopup`, `coverMonths`, `refund`, `prorata`, `balanceUntil`, URL `s` (`parseS`/`itemsFromUrl`/`serialize`), ukuran minimum template, model AI |
+| `assets/js/i18n.js` | Kamus `'kunci': [ID, EN]` + `t()`, `rp()`, `rpK()`, `date()` |
 | `assets/js/icons.js` | Sprite Lucide (hasil `tools/build_icons_v4.py`, jangan diedit) |
-| `assets/js/ui.js` | Header, menu mobile, tombol bahasa, `setupModal()` (dialog v3), `parseContact()`, tombol salin, helper `icon()` / `esc()` |
-| `assets/js/landing.js` | Render semua section landing dari `data.js` + dialog katalog model & konsultasi tim |
-| `assets/js/pricing.js` | Halaman Harga: kalkulator (state = `?resep=&s=`, tidak disimpan di storage), tabel detail, navigasi chip |
-| `assets/js/store.js` | State demo console (`tn-v4-demo`, tanpa data kontak), preset `?demo=ayu|raka|dimas` (+ `&state=jeda`), `charge()`/`topup()` menulis riwayat, `until()`, `banners()`, `settle()` (dijeda → nyala setelah isi saldo) |
-| `assets/js/console.js` | Router hash (fokus `h1`, judul, pengumuman, `#/masuk?next=`), navigasi, menu akun, masuk, beranda, saldo, sheet isi saldo |
-| `assets/js/projects.js` | Wizard `#/buat`, `#/proyek`, `#/proyek/:id` (tab), dialog ganti ukuran |
-| `assets/js/ai.js` · `services.js` · `learn.js` | Rute `#/ai`, `#/layanan/:id`, `#/belajar`, `#/bantuan` |
-| `assets/js/nala.js` | Chat Nala (port v3, lokal tanpa server) + alur resep → link wizard/kalkulator dengan parameter `s` |
-| `assets/js/motion.js` | GSAP + ScrollTrigger + Lenis (`assets/vendor/`); mati saat reduced motion atau GSAP gagal dimuat — konten tetap tampil |
+| `assets/js/ui.js` | Header + menu, bahasa, `setupModal()`, `parseContact()`, salin, `itemView()`, `fromLine()`, pemilih ukuran bersama |
+| `assets/js/landing.js` · `pricing.js` | Landing (+ katalog model, konsultasi tim) · Harga (kalkulator, tabel) |
+| `assets/js/store.js` | State console `tn-v4-demo` (tanpa data kontak), preset, `charge()`/`topup()` → riwayat, tagihan (perpanjang/jeda/berhenti, prorata, refund), `advance()` |
+| `assets/js/console.js` | Router hash (fokus `h1`, judul, pengumuman, guard masuk), kerangka, masuk, beranda, saldo, isi saldo |
+| `assets/js/projects.js` · `ai.js` · `services.js` · `learn.js` | Wizard + proyek · AI · layanan lain · belajar + bantuan |
+| `assets/js/nala.js` | Chat Nala (lokal, tanpa server): bantu pilih resep, cara pakai, model, bayar, tim online/offline |
+| `assets/js/motion.js` | GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 (landing & harga); mati saat reduced motion |
 
-Script klasik `defer` dengan namespace `window.TN` (ES module diblokir di `file://`). Urutan muat: data → i18n → icons → ui → halaman (`landing.js` / `pricing.js`) → nala → vendor (GSAP, ScrollTrigger, Lenis) → motion.
+Script klasik `defer` dengan namespace `window.TN`. Urutan muat: data → i18n → icons → ui → (halaman) → nala → vendor → motion.
 
 ## Kredit
-Ikon [Lucide](https://lucide.dev) v0.460.0 (ISC) — `assets/icons/SOURCE.md`. Logo model: Lobe Icons (MIT) — `assets/img/models/SOURCE.md`. GSAP 3.12.5 + Lenis 1.1.13 — `assets/vendor/SOURCE.md`. Font Manrope + IBM Plex Mono (Google Fonts). Semua harga, layanan, dan transaksi adalah contoh.
+Ikon [Lucide](https://lucide.dev) v0.460.0 (ISC) — `assets/icons/SOURCE.md`. Logo model: Lobe Icons (MIT) — `assets/img/models/SOURCE.md`.
+GSAP 3.12.5 + Lenis 1.1.13 — `assets/vendor/SOURCE.md`. Font Manrope + IBM Plex Mono (Google Fonts).

@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 5** (wizard, proyek, jam simulasi) dan **Fase 6** (AI, layanan lain, belajar, bantuan) selesai. **Berikutnya: Fase 7** (audit penuh, README, skrip demo). User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 0–7 selesai (20 Nov 2026)** — v4 lengkap: landing, harga, console. DoD 12/12 terpenuhi (bukti di `docs/v4/technical-spec.md` §9). Gladi demo: `python3 -P tools/demo_v4.py`. **Menunggu:** persetujuan user untuk PR `v4-cloud` → `main`; review Pak Ferry; validasi finance/legal aturan tagihan & harga contoh. User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -123,6 +123,9 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Layanan lain bisa ditambahkan ke proyek baru; server: password sekali tampil + salin | Alur Sumopod tetapi tanpa merancang password sendiri (§5.5) |
 
 ## Pertanyaan Terbuka untuk PO
+
+0. **(v4, 20 Nov)** Harga contoh v4 (Coba-coba/Rutin/Ramai Rp15/35/75 rb, server mulai Rp65 rb, domain .my.id Rp5 rb) dan aturan ramah pemula (sisa hari kembali, dijeda 7 hari, ganti ukuran prorata) perlu dikonfirmasi finance/legal sebelum dipakai sungguhan.
+0b. **(v4)** Teks “cukup untuk” server/data/file dan langkah panduan Belajar ditulis Claude — perlu review copy.
 
 1. Nominal final paket dan tarif model masih ilustratif (open item di technical-spec).
 2. Aturan saldo perlu validasi legal/finance sebelum produksi.
@@ -257,3 +260,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - `ai.js`: tab Mulai cepat (key per proyek/akun + Base URL + salin), Coba AI (pilih model, contoh prompt, balasan simulasi dipotong per tarif), Model (12), Pemakaian (2 angka + grafik kolom 7 hari sesuai skill dataviz + tabel + per proyek), API key (aktif/nonaktif, limit). `services.js`: 6 layanan dengan pola daftar → tambah (proyek lama/baru, ukuran, lokasi/sistem/mesin/alamat) → hasil (IP/user/password sekali, DATABASE_URL, endpoint, SMTP, kunci mode uji). `learn.js`: 3 panduan + langkah + “Coba sekarang”; bantuan (6 FAQ, Nala, tim). Rute tak dikenal → “Halaman tidak ditemukan”.
 - Store: `chargeChat`, `chatCost`, `accountKey`, `addService`. Launcher Nala naik di atas bar lengket mana pun (`[data-wz-bar]`).
 - 76 cek QA lolos; audit (axe semua tab AI, hasil server) & i18n lolos.
+
+### Sesi 4 (lanjutan) — Fase 7 v4 (penutup)
+- Pemindaian glosarium ID: bersih (sisa “kredit”/“token” hanya di konteks yang diizinkan).
+- `audit_v4.py` + DoD 12 (label simulasi terlihat di landing, harga, console beranda & wizard, sheet isi saldo).
+- `tools/demo_v4.py`: gladi 21 langkah skrip demo di 375×812 (landing → resep → layanan → saldo → kalkulator → masuk → wizard → isi saldo QRIS → nyala → beranda → API key → riwayat → Dimas → pemakaian AI → EN → Nala → cadangan dijeda) — semua lolos.
+- Dokumen final: skrip demo di `docs/v4/user-journeys.md`, status DoD di `technical-spec.md` §9, `v4/README.md` lengkap, `CLAUDE.md` menyebut gladi demo.
+- Hasil akhir: QA 76 cek, i18n (31 halaman/rute) dan audit lolos. Belum ada PR ke `main` (menunggu persetujuan user).
