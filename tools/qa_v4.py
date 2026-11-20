@@ -12,7 +12,11 @@ Serves v4/ on a local port and opens every page in PAGES at 6 viewports (headles
   - no missing i18n key rendered as text
 With --interactive (per page, see the *_flow functions):
   - landing: mobile menu (open, Escape, focus back), recipe chips (arrow keys, card + links update,
-    numbers match TN.data), language switch EN + persistence, EN at 320px has no overflow
+    numbers match TN.data), language switch EN + persistence, EN at 320px has no overflow,
+    model catalogue (search, empty, clear, Escape), team consultation (5 errors, success, reset),
+    Nala recipe flow (links carry the adjusted recipe) + offline contact, FAQ/templates/guides/copy
+  - motion (375 + 1440, motion ON): scroll the whole page, then nothing in <main> may stay hidden
+Layout checks run with prefers-reduced-motion so screenshots show every section.
 Full-page screenshots go to --out (default: a temp dir). Exit code 1 if any check fails.
 Phases add pages/routes here as they are built (fase 3: harga.html, fase 4+: app.html routes).
 """
@@ -241,6 +245,172 @@ def landing_lang_flow(page, out, name):
     return problems
 
 
+
+def landing_catalog_flow(page, out, name):
+    problems = []
+    opener = page.locator("[data-open-catalog]").first
+    opener.scroll_into_view_if_needed()
+    opener.click()
+    page.wait_for_timeout(300)
+    st = page.evaluate("""() => { const d = document.getElementById('catalog'); const r = d.getBoundingClientRect();
+        return { open: d.open, focus: document.activeElement?.id, cards: d.querySelectorAll('[data-cat-list] > li').length,
+                 count: d.querySelector('[data-cat-count]').textContent, inView: r.top >= -1 && r.bottom <= innerHeight + 1 }; }""")
+    if not (st["open"] and st["focus"] == "cat-title" and st["cards"] == 6 and st["inView"]):
+        problems.append(f"CATALOG open {st}")
+    page.screenshot(path=str(out / f"index-{name}-catalog.png"))
+    r = page.evaluate(CHECK_JS)
+    if r["small"] or r["spills"]:
+        problems.append(f"CATALOG small={r['small']} spills={r['spills']}")
+    page.fill("#cat-search", "claude")
+    n = page.evaluate("() => document.querySelectorAll('#catalog [data-cat-list] > li').length")
+    page.fill("#cat-search", "zzz")
+    empty = page.evaluate("() => document.querySelector('#catalog [data-cat-empty]').dataset.show")
+    page.locator("#catalog [data-cat-clear]").click()
+    after = page.evaluate("() => document.querySelectorAll('#catalog [data-cat-list] > li').length")
+    if (n, empty, after) != (3, "true", 6):
+        problems.append(f"CATALOG search claude={n} emptyShown={empty} afterClear={after}")
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(100)
+    back = page.evaluate("() => document.activeElement?.hasAttribute('data-open-catalog') && !document.getElementById('catalog').open && !document.documentElement.classList.contains('overflow-hidden')")
+    if not back:
+        problems.append("CATALOG Escape did not close / return focus / unlock scroll")
+    return problems
+
+
+def landing_consult_flow(page, out, name):
+    problems = []
+    b = page.locator("[data-open-consult]")
+    b.scroll_into_view_if_needed()
+    b.click()
+    page.wait_for_timeout(350)
+    page.locator("#consult [type=submit]").click()
+    errs = page.evaluate("() => ({ shown: [...document.querySelectorAll('#consult [data-cerr]')].filter(e => !e.classList.contains('hidden')).length, focus: document.activeElement?.id })")
+    if errs != {"shown": 5, "focus": "cs-name"}:
+        problems.append(f"CONSULT empty submit {errs}")
+    page.screenshot(path=str(out / f"index-{name}-consult-errors.png"))
+    page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio Dimas"); page.fill("#cs-contact", "0812 3456 7890")
+    page.locator("#consult label:has(input[name=teamSize])").first.click()
+    page.locator("#consult input[name=consent]").check()
+    page.locator("#consult [type=submit]").click()
+    ok = page.evaluate("() => ({ success: !document.querySelector('#consult [data-cs-panel=success]').hidden, focus: document.activeElement?.id, body: document.querySelector('[data-cs-success-body]').textContent })")
+    if not (ok["success"] and ok["focus"] == "cs-success-title" and "+6281234567890" in ok["body"]):
+        problems.append(f"CONSULT success {ok}")
+    page.screenshot(path=str(out / f"index-{name}-consult-success.png"))
+    page.locator("#consult [data-cs-panel=success] [data-cs-close]").click()
+    page.wait_for_timeout(100)
+    reset = page.evaluate("() => ({ form: !document.querySelector('#consult form').hidden, name: document.getElementById('cs-name').value, focusBack: document.activeElement?.hasAttribute('data-open-consult') })")
+    if reset != {"form": True, "name": "", "focusBack": True}:
+        problems.append(f"CONSULT reset {reset}")
+    return problems
+
+
+def chat_wait(page):
+    page.wait_for_function("() => !TN.nala.state.typing", timeout=3000)
+    page.wait_for_timeout(50)
+
+
+def landing_chat_flow(page, out, name, base_url):
+    """Recipe flow: portofolio → code not ready → Ramai gives hosting:ramai + 20 sessions; offline team collects a contact."""
+    problems = []
+    page.locator("#chat-launcher").click()
+    page.wait_for_timeout(200)
+    modal = page.evaluate("() => document.getElementById('chat').matches(':modal')")
+    if modal != (page.viewport_size["width"] < 768):
+        problems.append(f"CHAT modal={modal} at width {page.viewport_size['width']}")
+    chips = lambda: page.locator("#chat [data-chat-chips] button")
+    chips().first.click(); chat_wait(page)                       # Bantu pilih resep
+    chips().first.click(); chat_wait(page)                       # Landing page
+    chips().nth(1).click(); chat_wait(page)                      # Belum, mau dibuat dengan AI
+    chips().nth(2).click(); chat_wait(page)                      # Ramai
+    links = page.evaluate("() => [...document.querySelectorAll('#chat [data-chat-log] a')].map(a => a.getAttribute('href'))")
+    want = ["app.html#/buat?resep=portofolio&s=hosting:ramai,domain:my.id,ai:20", "harga.html?resep=portofolio&s=hosting:ramai,domain:my.id,ai:20#kalkulator"]
+    if links != want:
+        problems.append(f"CHAT recipe links {links}")
+    page.screenshot(path=str(out / f"index-{name}-chat.png"))
+    r = page.evaluate(CHECK_JS)
+    if r["small"] or r["spills"] or r["overflow"] > 0:
+        problems.append(f"CHAT small={r['small']} spills={r['spills']} overflow={r['overflow']}")
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(100)
+    if page.evaluate("() => document.getElementById('chat').open || document.activeElement?.id !== 'chat-launcher'"):
+        problems.append("CHAT Escape did not close or return focus to the launcher")
+    # team offline → contact collected (never stored)
+    page.goto(base_url + "?chat=offline", wait_until="networkidle")
+    page.locator("#chat-launcher").click()
+    page.locator("#chat [data-chat-chips] button").last.click(); chat_wait(page)
+    page.fill("#chat-input", "ayu@mail.com"); page.keyboard.press("Enter"); chat_wait(page)
+    last = page.evaluate("() => [...document.querySelectorAll('#chat [data-chat-log] p')].pop().textContent")
+    if "ayu@mail.com" not in last:
+        problems.append(f"CHAT offline thanks {last!r}")
+    page.keyboard.press("Escape")
+    return problems
+
+
+def landing_misc_flow(page, out, name):
+    problems = []
+    f = page.evaluate("""() => ({ faq: document.querySelectorAll('#faq details').length,
+        templates: [...document.querySelectorAll('[data-templates] a')].map(a => a.getAttribute('href').split('=')[1]),
+        guides: document.querySelectorAll('[data-guides] a').length, safe: document.querySelectorAll('[data-safe] > li').length })""")
+    want = {"faq": 13, "templates": ["wa-bot", "n8n", "agent", "dify", "wordpress"], "guides": 3, "safe": 4}
+    if f != want:
+        problems.append(f"SECTIONS {f} != {want}")
+    page.locator("#faq summary").first.click()
+    if not page.evaluate("() => document.querySelector('#faq details').open"):
+        problems.append("FAQ did not open")
+    b = page.locator("[data-copy-url]")
+    b.scroll_into_view_if_needed()
+    b.click()
+    page.wait_for_timeout(100)
+    if b.locator("[data-copy-label]").text_content().strip() not in ("Tersalin", "Copied"):
+        problems.append("COPY label did not change")
+    return problems
+
+
+MOTION_JS = r"""
+() => {
+  const hidden = [];
+  for (const el of document.querySelectorAll('main *')) {
+    if (el.closest('[hidden], dialog, .sr-only')) continue;
+    const s = getComputedStyle(el);
+    if (s.display === 'none') continue;
+    if (parseFloat(s.opacity) < 0.95 && !el.matches('[aria-hidden="true"], [aria-hidden="true"] *')) {
+      hidden.push(`${el.tagName.toLowerCase()}.${[...el.classList].slice(0, 2).join('.')} opacity=${s.opacity}`);
+      if (hidden.length > 5) break;
+    }
+  }
+  return { motion: document.documentElement.classList.contains('motion-ok'), hidden,
+           switches: [...document.querySelectorAll('[data-final-switch], #cerita li:last-child .switch--lg')].map(s => s.hasAttribute('data-on')) };
+}
+"""
+
+
+def motion_flow(browser, base, out, name, w, h):
+    """With motion on: scroll the whole page slowly; afterwards nothing may stay hidden."""
+    ctx = browser.new_context(viewport={"width": w, "height": h})
+    page = ctx.new_page()
+    errors = []
+    page.on("pageerror", lambda e: errors.append(str(e)))
+    page.goto(base + "index.html", wait_until="networkidle")
+    height = page.evaluate("() => document.documentElement.scrollHeight")
+    y = 0
+    while y < height:  # step through the page like a reader (via Lenis when it runs)
+        y += int(h * 0.6)
+        page.evaluate("(y) => TN.motion?.lenis ? TN.motion.lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y)", y)
+        page.wait_for_timeout(120)
+    page.wait_for_timeout(2500)
+    r = page.evaluate(MOTION_JS)
+    problems = []
+    if not r["motion"]:
+        problems.append("MOTION gsap did not start (no .motion-ok)")
+    if r["hidden"]:
+        problems.append(f"MOTION content still hidden after scrolling: {r['hidden']}")
+    if r["switches"] != [True, True]:
+        problems.append(f"MOTION switches did not turn on {r['switches']}")
+    if errors:
+        problems.append(f"MOTION errors {errors}")
+    ctx.close()
+    return problems
+
 def serve(directory):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -268,7 +438,7 @@ def main():
         for page_name in pages:
             cfg = PAGES[page_name]
             for name, w, h in VIEWPORTS:
-                ctx = browser.new_context(viewport={"width": w, "height": h}, device_scale_factor=1)
+                ctx = browser.new_context(viewport={"width": w, "height": h}, device_scale_factor=1, reduced_motion="reduce")
                 page = ctx.new_page()
                 errors = []
                 page.on("console", lambda m: errors.append(m.text) if m.type in ("error", "warning") else None)
@@ -307,6 +477,13 @@ def main():
                     if name in ("320", "375", "768", "1440"):
                         page.evaluate("() => window.scrollTo(0, 0)")
                         status += landing_recipe_flow(page, out, name)
+                    if name in ("320", "375", "768", "1440"):
+                        status += landing_catalog_flow(page, out, name)
+                        status += landing_consult_flow(page, out, name)
+                    if name in ("375", "1440"):
+                        status += landing_misc_flow(page, out, name)
+                        status += landing_chat_flow(page, out, name, base + page_name)
+                        page.goto(base + page_name, wait_until="networkidle")
                     if name in ("320", "1440"):
                         status += landing_lang_flow(page, out, name)
 
@@ -316,6 +493,12 @@ def main():
                 if status:
                     failures.append(f"{page_name} {name}")
                 ctx.close()
+        if args.interactive and "index.html" in pages:
+            for name, w, h in (("375", 375, 667), ("1440", 1440, 900)):
+                m = motion_flow(browser, base, out, name, w, h)
+                print(f"[{'FAIL' if m else 'ok  '}] {'motion':<11} {name:>18}  " + ("; ".join(m) if m else ""))
+                if m:
+                    failures.append(f"motion {name}")
         browser.close()
     httpd.shutdown()
     print(f"screenshots: {out}")

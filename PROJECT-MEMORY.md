@@ -6,7 +6,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen `docs/v4/`) dan **Fase 1** (`v4/` + landing bagian 1: header/menu/bahasa, hero, cerita macet, Mau bikin apa? 5 resep, cara kerja, semua layanan, satu saldo, footer) selesai. **Berikutnya: Fase 2** (template, AI, contoh, aman, belajar, tim, FAQ, CTA akhir, motion, Nala). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Berikutnya: Fase 3** (`harga.html`: kalkulator + detail harga). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -100,6 +100,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Kamus i18n v4 berformat `'kunci': [ID, EN]` di `i18n.js` | EN yang hilang langsung terlihat; `i18n_check.py --root v4` membaca kamus dari halaman |
 | 20 Nov 2026 | Cara kerja di `lg:` = grid 3 kolom (wireframe A4 menyebut geser horizontal) | Konten dulu; geser horizontal bisa ditambah di fase motion jika perlu |
 | 20 Nov 2026 | Kartu resep satu kolom di `lg:`; angka “≈ RpX rb” memakai `cqi` + `nowrap` | Di kolom kanan desktop kartu terlalu sempit untuk dua kolom (angka patah “Rp34 / rb”) |
+| 20 Nov 2026 | Nala: chip “Bantu pilih paket” (v3) diganti “Bantu pilih resep”; AI-saja lewat pilihan “AI coding saja” | Produk berubah dari paket token ke resep; satu alur, tidak dua |
+| 20 Nov 2026 | Parameter `s` menulis template sebagai kunci (`wa-bot:rutin`), bukan `apps:` | Template harus ikut ke wizard/kalkulator (dicatat di services-and-pricing §6) |
+| 20 Nov 2026 | Urutan lembar: contoh (white) → aman (paper + kartu warna) → belajar (white); dokumen menulis belajar paper | Dua lembar putih berurutan tidak terlihat sebagai lembar terpisah |
+| 20 Nov 2026 | Kelas komponen `.field` (input/textarea) ditambahkan ke daftar `@layer components` | Dipakai berulang di form konsultasi, chat, dan nanti console |
+| 20 Nov 2026 | Mobile: kartu model AI di landing 3 (desktop 6) | 6 kartu = ±2.200px di 375px; katalog lengkap tetap di dialog |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -138,6 +143,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Minta review independen untuk dokumen sebelum coding.** Agent yang tidak membaca kesimpulan kita menemukan 13 kontradiksi di dokumen v4 yang sudah “dicek” sendiri — terutama contoh angka di wireframe yang tidak dihitung dari rumus, dan aturan yang hanya ada sebagai contoh tabel (top-up disarankan). Setiap angka contoh harus bisa dihasilkan rumus + state yang tertulis.
 - **Hitung ulang contoh di dokumen dengan kode yang sebenarnya.** Fase 1 menemukan “cukup sampai ±20 Des” (preset Ayu) yang tidak sesuai rumus dokumen sendiri (hasilnya 19 Des) — lolos dua kali review manual. `audit_v4.py` sekarang mengecek angka dokumen terhadap `data.js` (dan diuji negatif: harga diubah → audit gagal).
 - **Animasi transisi bisa membuat axe salah ukur kontras.** Menu mobile mengganti warna header dengan transisi 300ms; axe yang langsung jalan melihat warna di tengah transisi. Tunggu transisi selesai sebelum audit.
+- **Jangan validasi di `blur` jika pesan error bisa hilang/muncul.** Pesan error yang hilang saat field ditinggalkan menggeser layout di antara mousedown dan mouseup, sehingga klik ke field berikutnya (radio ukuran tim) meleset — ditemukan QA konsultasi. Validasi saat submit, hapus error saat mengetik.
+- **Animasi masuk membuat axe dan screenshot menipu.** Elemen yang sedang fade-in terbaca kontrasnya rendah, dan screenshot full-page menampilkan section kosong. QA layout/axe memakai reduced motion; motion diuji terpisah (scroll seluruh halaman lalu pastikan tidak ada konten tersembunyi).
+- **Teks di dalam induk `font-bold` ikut 700**, termasuk `font-mono` → face Mono 700 yang tidak dimuat. Beri `font-medium` eksplisit pada mono di dalam teks tebal.
+- **Elemen yang dirotasi (ikon +45°, kartu −1°) memperbesar kotak** dan memicu cek teks meluap. Rotasi elemen dalam atau beri margin.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
@@ -197,3 +206,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Ditemukan & diperbaiki saat QA/screenshot: grid tanpa kolom eksplisit (aturan #2), ikon terisi hitam, kartu layanan mobile terlalu panjang (±3.500px → tata letak ikon kiri), harga resep patah di desktop, chip top-up EN 2 baris, logo hilang di header biru.
 - Dokumen: preset Ayu “cukup sampai” dikoreksi **±19 Des** (+ perhitungan ketiga preset ditulis di §8); microcopy tambahan Fase 1; wireframe A6 tanpa tanggal.
 - Link ke `harga.html` dan `app.html` belum punya tujuan (Fase 3–4).
+
+### Sesi 4 (lanjutan) — Fase 2 v4
+- Landing selesai: template (5, ukuran minimum + biaya bawaan dari `data.js`), AI (6 model v3 + panduan pasang + konfigurasi salin + katalog 12 model dengan cari/filter), contoh proyek (Rp40.790–54.020, rincian sesi, link wizard dengan `s`), aman untuk pemula (4 kartu bertumpuk sticky di `lg:`, angka refund/prorata dari fungsi), belajar (3 panduan), tim + dialog konsultasi (port v3), FAQ 13, CTA akhir, chat Nala (port v3 + alur resep Q1–Q3 sesuai aturan Nala), motion GSAP/ScrollTrigger/Lenis (judul per kata, fade kartu, saklar menyala, kartu bertumpuk mengecil; mati saat reduced motion).
+- `data.js` + model AI, template, panduan, `exampleTotals`, `nalaItems`, `askCode`, `serialize`. Kamus 406 kunci.
+- QA: alur katalog, konsultasi, Nala (link resep `hosting:ramai,domain:my.id,ai:20`), FAQ/salin, uji motion. Audit: axe untuk semua dialog, angka template/contoh/kartu aman/Nala dibanding dokumen, storage setelah konsultasi + kontak Nala. Semua lolos.

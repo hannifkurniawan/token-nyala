@@ -97,6 +97,13 @@ V4_PAGES = ["index.html"]  # fase 3: harga.html, fase 4+: app.html (+ routes)
 V4_ALLOW = {
     "TokenNyala", "ID", "EN", "FAQ", "Prompt", "Online", "Landing page", "VPS", "Domain", "Email API & SMTP",
     "Chat playground", "localhost:5173", "eventku.my.id", "© 2026 TokenNyala", "01", "02", "03", "04", "05",
+    # AI catalogue: model/provider names, rate labels, tools, template engines (same in both languages)
+    "Input", "Output", "Premium", "Coding", "Total", "Nala", "Sari", "Base URL", "API key",
+    "Anthropic", "OpenAI", "Google", "DeepSeek", "Alibaba", "Anthropic · Coding",
+    "Claude Sonnet", "Claude Opus", "Claude Haiku", "GPT", "GPT Mini", "GPT Pro", "Gemini Pro", "Gemini Flash",
+    "DeepSeek Chat", "DeepSeek Reasoner", "Qwen Plus", "Qwen Max",
+    "Cursor", "Lovable", "Cline", "Continue", "n8n", "OpenClaw", "Dify", "WordPress",
+    "model.", "online",  # loanwords that end a heading in both languages
 }
 V4_KEYS_JS = r"""
 () => {
@@ -120,7 +127,7 @@ def main_v4():
         for page_name in V4_PAGES:
             snaps = {}
             for lang in ("id", "en"):
-                page = b.new_page(viewport={"width": 1440, "height": 900})
+                page = b.new_page(viewport={"width": 1440, "height": 900}, reduced_motion="reduce")  # no word splitting
                 page.add_init_script(f"localStorage.setItem('tn-lang', '{lang}')")
                 page.goto(base + page_name, wait_until="networkidle")
                 snaps[lang] = page.evaluate(COLLECT_JS)

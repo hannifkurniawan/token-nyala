@@ -12,6 +12,10 @@
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --radius-card: 20px; --radius-control: 12px;
   --ease-out-soft: cubic-bezier(.22,1,.36,1);
+  --animate-sheet-in: sheet-in 280ms cubic-bezier(.22,1,.36,1) both;
+  --animate-dialog-in: dialog-in 220ms cubic-bezier(.22,1,.36,1) both;
+  @keyframes sheet-in { from { transform: translateY(100%); } }
+  @keyframes dialog-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
 }
 
 /* Layout variables (visual-direction §4): gutter 16 / 24 (sm) / 40 (lg) / 64 (xl), content max 1280px */
@@ -46,7 +50,8 @@
   .display--xl { font-size: clamp(2.5rem, 7.6vw, 8.6rem); }
   .display mark { background: none; color: inherit; position: relative; isolation: isolate; white-space: nowrap; }
   .display mark::after { content: ""; position: absolute; left: -.04em; right: -.04em; bottom: .06em; height: .2em;
-                         border-radius: 99px; background: var(--color-xl-yellow); z-index: -1; }
+                         border-radius: 99px; background: var(--color-xl-yellow); z-index: -1;
+                         transform-origin: left; transform: scaleX(var(--mark, 1)); }
   .sheet--yellow .display mark::after { background: #fff; }
   .lead { font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.55; color: var(--color-lead-ink); max-width: 34em; }
   .kicker { display: inline-flex; align-items: center; gap: .6em; font-family: var(--font-mono); font-size: .82rem;
@@ -74,6 +79,11 @@
   @media (hover: hover) { .btn--ghost:hover { color: #fff; } .btn--ghost-light:hover { color: var(--color-xl-blue); } }
 
   .card { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-card); }
+  .field { display: block; width: 100%; min-height: 48px; padding-inline: 12px; border: 2px solid var(--color-line); border-radius: var(--radius-control);
+           background: #fff; color: var(--color-ink); font-size: 1rem; }
+  .field::placeholder { color: var(--color-muted); }
+  .field:focus { outline: none; border-color: var(--color-xl-blue); }
+  .field[aria-invalid="true"] { border-color: #b91c1c; }
 
   /* Switch: UI 52×30, large 88×48, inline (em-sized, decorative, in headings) */
   .switch { --w: 52px; --h: 30px; position: relative; flex: none; display: inline-block; width: var(--w); height: var(--h);
@@ -104,6 +114,17 @@
   .meter > i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: var(--color-xl-yellow); width: calc(var(--v, 0) * 100%); }
   .num { font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
   .outline-num { color: transparent; -webkit-text-stroke: 1.5px var(--color-xl-dark); }
+}
+
+/* Stacked "safe" cards (sticky on lg) and split headings (motion.js) */
+@layer components {
+  .stack-card { display: grid; align-content: space-between; gap: 32px; border-radius: clamp(28px, 3vw, 44px);
+                padding: clamp(24px, 4vw, 64px); color: var(--color-xl-dark); transform-origin: center top; }
+  @media (width >= 64rem) {
+    .stack-card { position: sticky; top: calc(var(--header-h) + 16px + var(--n, 0) * 18px); min-height: min(68vh, 600px); }
+  }
+  .split-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .18em; margin-bottom: -.18em; }
+  .split-word > span { display: inline-block; }
 }
 
 /* Menu panel (mobile) */

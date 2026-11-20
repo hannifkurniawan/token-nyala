@@ -19,6 +19,9 @@ ICONS = [
     # UI
     "arrow-right", "arrow-up-right", "menu", "x", "check", "chevron-down", "plus", "minus", "lock", "power",
     "wallet", "calendar-clock", "refresh-cw", "pause", "bell", "arrow-up-down", "receipt", "languages",
+    "workflow", "blocks", "newspaper", "book-open", "clock", "building-2", "search", "sliders-horizontal",
+    "rotate-ccw", "send", "copy", "message-square", "shield-check", "chevron-right", "users", "file-text", "landmark",
+    "gauge", "circle-pause",
 ]
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "v4" / "assets"

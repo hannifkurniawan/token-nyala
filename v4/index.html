@@ -20,6 +20,11 @@
   <script defer src="assets/js/icons.js"></script>
   <script defer src="assets/js/ui.js"></script>
   <script defer src="assets/js/landing.js"></script>
+  <script defer src="assets/js/nala.js"></script>
+  <script defer src="assets/vendor/gsap.min.js"></script>
+  <script defer src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script defer src="assets/vendor/lenis.min.js"></script>
+  <script defer src="assets/js/motion.js"></script>
 </head>
 <body>
   <a href="#main" class="sr-only z-[60] rounded-full bg-xl-yellow px-5 py-3 font-bold focus:not-sr-only focus:fixed focus:top-3 focus:left-3" data-i18n="skip">Lewati ke konten utama</a>
@@ -237,6 +242,164 @@
         <div data-wallet class="card border-0 p-5 shadow-[0_30px_60px_-30px_rgb(0_22_106/.45)] sm:p-8"></div>
       </div>
     </section>
+
+    <!-- ===== 7. Templates (sheet paper) ===== -->
+    <section id="template" class="sheet sheet--paper" aria-labelledby="tpl-title">
+      <div class="shell">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end">
+          <div>
+            <p class="kicker"><b>(04)</b><span data-i18n="tpl.kicker">Template siap pakai</span></p>
+            <h2 id="tpl-title" class="display mt-5" data-split data-i18n-html="tpl.title">Tinggal pilih, langsung jalan.</h2>
+          </div>
+          <p class="lead" data-i18n="tpl.lead"></p>
+        </div>
+        <ul data-templates class="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:mt-16 lg:grid-cols-6"></ul>
+      </div>
+    </section>
+
+    <!-- ===== 8. AI for your tools (sheet dark) ===== -->
+    <section id="ai" class="sheet sheet--dark" aria-labelledby="ai-title">
+      <div class="shell">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end">
+          <div>
+            <p class="kicker"><b>(05)</b><span data-i18n="ai.kicker">AI untuk tool-mu</span></p>
+            <h2 id="ai-title" class="display mt-5" data-split data-i18n-html="ai.title">Satu saldo untuk semua model.</h2>
+          </div>
+          <p class="lead text-white/80" data-i18n="ai.lead"></p>
+        </div>
+        <ul data-models class="mt-12 grid grid-cols-1 gap-3 md:grid-cols-2 lg:mt-16 lg:grid-cols-3" data-i18n-aria="ai.listAria" aria-label="Model pilihan"></ul>
+        <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+          <button type="button" class="btn btn--ghost-light w-full shrink-0 sm:w-auto" data-open-catalog><span data-i18n="ai.cta">Lihat semua model &amp; tarif</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+          <p class="max-w-xl text-[.85rem] text-white/70 sm:text-right" data-i18n="ai.note"></p>
+        </div>
+
+        <div id="pakai" class="mt-20 grid grid-cols-1 gap-10 border-t border-white/20 pt-12 lg:mt-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16 lg:pt-16">
+          <div>
+            <p class="kicker" data-i18n="guide.kicker">Panduan pasang</p>
+            <h3 class="mt-4 text-[clamp(1.9rem,4vw,3rem)] leading-[1.02] font-extrabold tracking-[-.04em]" data-i18n="guide.title">Pakai di tool favoritmu.</h3>
+            <ol class="mt-8 grid grid-cols-1 gap-6" data-i18n-aria="guide.stepsAria" aria-label="Langkah pemasangan">
+              <li class="flex gap-4"><span class="grid size-11 shrink-0 place-items-center rounded-full bg-xl-yellow font-mono text-xl-dark" aria-hidden="true">1</span><div class="pt-1.5"><h4 class="text-lg font-extrabold" data-i18n="guide.1.title"></h4><p class="mt-1 text-white/75" data-i18n="guide.1.body"></p></div></li>
+              <li class="flex gap-4"><span class="grid size-11 shrink-0 place-items-center rounded-full bg-xl-yellow font-mono text-xl-dark" aria-hidden="true">2</span><div class="pt-1.5"><h4 class="text-lg font-extrabold" data-i18n="guide.2.title"></h4><p class="mt-1 text-white/75" data-i18n="guide.2.body"></p></div></li>
+              <li class="flex gap-4"><span class="grid size-11 shrink-0 place-items-center rounded-full bg-xl-yellow font-mono text-xl-dark" aria-hidden="true">3</span><div class="pt-1.5"><h4 class="text-lg font-extrabold" data-i18n="guide.3.title"></h4><p class="mt-1 text-white/75" data-i18n="guide.3.body"></p></div></li>
+            </ol>
+          </div>
+          <figure class="card border-0 p-5 text-xl-dark sm:p-6" data-reveal>
+            <figcaption class="flex flex-wrap items-center justify-between gap-2">
+              <span class="font-extrabold" data-i18n="config.title">Contoh konfigurasi</span>
+              <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[.7rem] text-muted uppercase" data-i18n="board.note">Contoh</span>
+            </figcaption>
+            <dl class="mt-5 grid grid-cols-1 gap-4">
+              <div>
+                <dt class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase">Base URL</dt>
+                <dd class="mt-1.5 flex flex-col items-start gap-2 rounded-control bg-paper p-3 sm:flex-row sm:items-center sm:gap-3 sm:py-1.5 sm:pr-1.5">
+                  <code class="min-w-0 flex-1 font-mono text-[.92rem] text-xl-blue [overflow-wrap:anywhere]" data-api-url></code>
+                  <button type="button" class="btn btn--ghost min-h-11 shrink-0 px-4 text-[.9rem]" data-copy="" data-copy-url data-i18n-aria="copy.url" aria-label="Salin Base URL"><svg class="icon size-4" aria-hidden="true"><use href="#i-copy"/></svg><span data-copy-label data-i18n="copy.label">Salin</span></button>
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase">API key</dt>
+                <dd class="mt-1.5 flex flex-col items-start gap-2 rounded-control bg-paper p-3 sm:flex-row sm:items-center sm:gap-3 sm:py-1.5 sm:pr-1.5">
+                  <code class="min-w-0 flex-1 font-mono text-[.92rem] [overflow-wrap:anywhere]" data-api-key></code>
+                  <button type="button" class="btn btn--ghost min-h-11 shrink-0 px-4 text-[.9rem]" data-copy="" data-copy-key data-i18n-aria="copy.key" aria-label="Salin API key"><svg class="icon size-4" aria-hidden="true"><use href="#i-copy"/></svg><span data-copy-label data-i18n="copy.label">Salin</span></button>
+                </dd>
+              </div>
+            </dl>
+            <p class="mt-5 text-[.92rem] text-lead-ink" data-i18n="config.compat"></p>
+            <ul class="mt-2 flex flex-wrap gap-2 font-bold" data-i18n-aria="config.toolsAria" aria-label="Contoh tool">
+              <li class="rounded-full border border-line px-3 py-1">Cursor</li><li class="rounded-full border border-line px-3 py-1">Lovable</li><li class="rounded-full border border-line px-3 py-1">Cline</li><li class="rounded-full border border-line px-3 py-1">Continue</li>
+            </ul>
+            <p class="mt-4 text-[.82rem] text-muted" data-i18n="config.note"></p>
+            <div class="mt-5 flex flex-col gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <p class="font-bold" data-i18n="config.noKey"></p>
+              <a href="app.html#/ai?isi=1" class="btn btn--yellow shrink-0" data-i18n="recipe.aiOnlyCta">Ambil API key</a>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 9. Example project (sheet white) ===== -->
+    <section id="contoh" class="sheet sheet--white" aria-labelledby="ex-title">
+      <div class="shell grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center lg:gap-16">
+        <div>
+          <p class="kicker"><b>(06)</b><span data-i18n="ex.kicker">Contoh proyek</span></p>
+          <h2 id="ex-title" class="display mt-5" data-split data-i18n-html="ex.title">Satu landing page event, dari prompt sampai online.</h2>
+          <p class="lead mt-6" data-i18n="ex.lead"></p>
+        </div>
+        <figure class="card p-5 shadow-[0_30px_60px_-30px_rgb(0_22_106/.3)] sm:p-7" data-example data-reveal></figure>
+      </div>
+    </section>
+
+    <!-- ===== 10. Safe for beginners (stacked cards) ===== -->
+    <section id="aman" class="sheet sheet--paper" aria-labelledby="safe-title">
+      <div class="shell">
+        <p class="kicker"><b>(07)</b><span data-i18n="safe.kicker">Aman untuk pemula</span></p>
+        <h2 id="safe-title" class="display mt-5 max-w-[14ch]" data-split data-i18n-html="safe.title">Tidak ada kejutan di tagihan.</h2>
+        <ol data-safe class="mt-12 grid grid-cols-1 gap-4 lg:mt-16 lg:gap-6"></ol>
+      </div>
+    </section>
+
+    <!-- ===== 11. Learn (sheet white) ===== -->
+    <section id="belajar" class="sheet sheet--white" aria-labelledby="learn-title">
+      <div class="shell">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end">
+          <div>
+            <p class="kicker"><b>(08)</b><span data-i18n="learn.kicker">Belajar</span></p>
+            <h2 id="learn-title" class="display mt-5" data-split data-i18n="learn.title">Panduan singkat, per tujuan.</h2>
+          </div>
+          <p class="lead" data-i18n="learn.lead"></p>
+        </div>
+        <ul data-guides class="mt-12 grid grid-cols-1 gap-3 md:grid-cols-3 lg:mt-16"></ul>
+      </div>
+    </section>
+
+    <!-- ===== 12. Teams (sheet yellow) ===== -->
+    <section id="tim" class="sheet sheet--yellow on-yellow" aria-labelledby="team-title">
+      <div class="shell grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-16">
+        <div>
+          <p class="kicker"><b>(09)</b><span data-i18n="team.kicker">Untuk tim &amp; bisnis</span></p>
+          <h2 id="team-title" class="display mt-5" data-split data-i18n="team.title">Butuh untuk tim atau perusahaan?</h2>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <button type="button" class="btn btn--lg w-full sm:w-auto" data-open-consult><span data-i18n="team.cta">Konsultasi untuk tim</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+            <p class="text-[.92rem] text-lead-ink" data-i18n="team.reply">Kami balas dalam 1 hari kerja.</p>
+          </div>
+        </div>
+        <ul class="grid grid-cols-1 gap-2">
+          <li class="flex items-center gap-4 rounded-card bg-white/70 px-5 py-4 font-bold"><svg class="icon text-xl-blue" aria-hidden="true"><use href="#i-file-text"/></svg><span data-i18n="team.pt1"></span></li>
+          <li class="flex items-center gap-4 rounded-card bg-white/70 px-5 py-4 font-bold"><svg class="icon text-xl-blue" aria-hidden="true"><use href="#i-receipt"/></svg><span data-i18n="team.pt2"></span></li>
+          <li class="flex items-center gap-4 rounded-card bg-white/70 px-5 py-4 font-bold"><svg class="icon text-xl-blue" aria-hidden="true"><use href="#i-landmark"/></svg><span data-i18n="team.pt3"></span></li>
+          <li class="flex items-center gap-4 rounded-card bg-white/70 px-5 py-4 font-bold"><svg class="icon text-xl-blue" aria-hidden="true"><use href="#i-users"/></svg><span data-i18n="team.pt4"></span></li>
+          <li class="flex items-center gap-4 rounded-card bg-white/70 px-5 py-4 font-bold"><svg class="icon text-xl-blue" aria-hidden="true"><use href="#i-gauge"/></svg><span data-i18n="team.pt5"></span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== 13. FAQ (sheet paper) ===== -->
+    <section id="faq" class="sheet sheet--paper" aria-labelledby="faq-title">
+      <div class="shell grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="lg:sticky lg:top-[calc(var(--header-h)+32px)] lg:self-start">
+          <p class="kicker"><b>(10)</b><span data-i18n="faq.kicker">FAQ</span></p>
+          <h2 id="faq-title" class="display mt-5" data-split data-i18n="faq.title">Pertanyaan yang sering muncul.</h2>
+          <p class="lead mt-6" data-i18n="faq.lead"></p>
+          <button type="button" class="btn btn--ghost mt-8 w-full sm:w-auto" data-open-chat><svg class="icon size-5" aria-hidden="true"><use href="#i-message-square"/></svg><span data-i18n="faq.ask">Tanya Nala</span></button>
+        </div>
+        <div data-faq class="border-t-2 border-xl-dark"></div>
+      </div>
+    </section>
+
+    <!-- ===== 14. Final CTA (sheet blue) ===== -->
+    <section id="nyala" class="sheet sheet--blue" aria-labelledby="final-title">
+      <div class="shell grid justify-items-center text-center">
+        <span class="switch switch--lg scale-125" data-on data-final-switch aria-hidden="true"><i></i></span>
+        <h2 id="final-title" class="display display--xl mt-10" data-split data-i18n-html="final.title">Idemu nyala.</h2>
+        <p class="lead mt-6 text-white/80" data-i18n="final.body"></p>
+        <div class="mt-10 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+          <a href="app.html#/buat?resep=portofolio" data-start class="btn btn--yellow btn--lg w-full sm:w-auto"><span data-i18n="cta.start">Mulai bangun</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          <a href="harga.html" class="btn btn--ghost-light btn--lg w-full sm:w-auto" data-i18n="cta.pricing">Lihat harga</a>
+        </div>
+        <p class="mt-8 font-mono text-[.85rem] text-white/75" data-i18n="final.trust"></p>
+      </div>
+    </section>
   </main>
 
   <!-- ===== Footer ===== -->
@@ -272,5 +435,151 @@
       </div>
     </div>
   </footer>
+
+  <!-- ===== Model catalogue (dialog, v3) — mobile full screen, md+ centered ===== -->
+  <dialog id="catalog" aria-labelledby="cat-title"
+          class="m-0 h-dvh max-h-none w-full max-w-none flex-col overflow-hidden bg-paper p-0 text-xl-dark backdrop:bg-xl-dark/60 open:flex open:animate-dialog-in
+                 md:m-auto md:h-auto md:max-h-[85dvh] md:max-w-4xl md:rounded-card md:shadow-2xl">
+    <div class="relative shrink-0 border-b border-line bg-white px-4 pt-3 pb-3 sm:px-6 md:pt-5">
+      <div class="flex items-start gap-3">
+        <div class="min-w-0 flex-1">
+          <h2 id="cat-title" tabindex="-1" class="text-xl font-extrabold tracking-tight outline-none" data-i18n="cat.title">Model AI yang tersedia</h2>
+          <p class="mt-0.5 text-[.92rem] text-muted" data-i18n="cat.subtitle"></p>
+        </div>
+        <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-muted hover:bg-paper hover:text-xl-dark" data-i18n-aria="cat.close" aria-label="Tutup katalog model" data-cat-close><svg class="icon size-5" aria-hidden="true"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="mt-3 flex gap-2">
+        <label for="cat-search" class="sr-only" data-i18n="cat.search">Cari model</label>
+        <div class="relative min-w-0 flex-1">
+          <svg class="icon pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="cat-search" type="search" autocomplete="off" enterkeyhint="search" data-i18n-placeholder="cat.searchPh"
+                 class="block min-h-12 w-full rounded-control border-2 border-line bg-white pr-3 pl-10 text-base placeholder:text-muted focus:border-xl-blue focus:outline-none">
+        </div>
+        <button type="button" class="btn btn--ghost min-h-12 shrink-0 px-4 md:hidden" aria-expanded="false" aria-controls="cat-filters" data-filter-toggle><svg class="icon size-4" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg><span data-filter-toggle-label>Filter</span></button>
+      </div>
+      <div id="cat-filters" class="mt-3 hidden gap-3 data-[open=true]:grid md:grid md:grid-cols-[auto_minmax(0,1fr)] md:gap-x-6" data-open="false">
+        <div role="group" aria-labelledby="flt-use" class="min-w-0"><p id="flt-use" class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase" data-i18n="filter.use">Kegunaan</p><div class="no-scrollbar -mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-allow-bleed data-filter-group="use"></div></div>
+        <div role="group" aria-labelledby="flt-tier" class="min-w-0"><p id="flt-tier" class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase" data-i18n="filter.tier">Level biaya</p><div class="no-scrollbar -mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-allow-bleed data-filter-group="tier"></div></div>
+        <div role="group" aria-labelledby="flt-provider" class="min-w-0 md:col-span-2"><p id="flt-provider" class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase" data-i18n="filter.provider">Penyedia</p><div class="no-scrollbar -mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-allow-bleed data-filter-group="provider"></div></div>
+      </div>
+    </div>
+    <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
+      <p class="text-[.92rem] font-bold text-muted" aria-live="polite" data-cat-count></p>
+      <ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3" aria-labelledby="cat-title" data-cat-list></ul>
+      <div class="mt-6 hidden flex-col items-center gap-3 rounded-card border border-dashed border-line bg-white px-4 py-8 text-center data-[show=true]:flex" data-cat-empty data-show="false">
+        <p class="font-bold text-muted" data-i18n="cat.empty"></p>
+        <button type="button" class="btn btn--ghost" data-cat-clear data-i18n="cat.clear">Hapus filter</button>
+      </div>
+      <div class="mt-4 flex justify-center"><button type="button" class="btn btn--ghost hidden data-[show=true]:inline-flex" data-cat-more data-show="false" data-i18n="cat.more">Tampilkan lebih banyak</button></div>
+      <p class="mt-6 pb-[env(safe-area-inset-bottom)] text-[.82rem] text-muted" data-i18n="ai.note"></p>
+    </div>
+  </dialog>
+
+  <!-- ===== Team consultation (dialog, v3) — mobile bottom sheet, md+ centered ===== -->
+  <dialog id="consult" aria-labelledby="cs-title"
+          class="m-0 mt-auto max-h-[90dvh] w-full max-w-none flex-col overflow-hidden rounded-t-[28px] bg-white p-0 text-xl-dark backdrop:bg-xl-dark/60 open:flex open:animate-sheet-in
+                 md:m-auto md:max-h-[85dvh] md:max-w-[40rem] md:rounded-card md:open:animate-dialog-in">
+    <div class="relative shrink-0 border-b border-line px-4 pt-2 pb-3 sm:px-6 md:pt-4">
+      <div aria-hidden="true" class="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line md:hidden"></div>
+      <div class="flex items-start gap-3">
+        <div class="min-w-0 flex-1">
+          <h2 id="cs-title" tabindex="-1" class="text-xl font-extrabold tracking-tight outline-none" data-i18n="cs.title">Konsultasi untuk tim</h2>
+          <p class="mt-0.5 text-[.92rem] text-muted" data-i18n="cs.intro"></p>
+        </div>
+        <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-muted hover:bg-paper hover:text-xl-dark" data-i18n-aria="cs.close" aria-label="Tutup konsultasi" data-cs-close><svg class="icon size-5" aria-hidden="true"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+    <form data-cs-panel="form" class="flex min-h-0 flex-1 flex-col" novalidate>
+      <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div>
+            <label for="cs-name" class="block font-bold" data-i18n="cs.name">Nama</label>
+            <input id="cs-name" name="name" type="text" autocomplete="name" required aria-describedby="cs-name-error" class="field mt-2">
+            <p id="cs-name-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="name"></p>
+          </div>
+          <div>
+            <label for="cs-org" class="block font-bold" data-i18n="cs.org">Nama tim atau perusahaan</label>
+            <input id="cs-org" name="org" type="text" autocomplete="organization" required aria-describedby="cs-org-error" class="field mt-2">
+            <p id="cs-org-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="org"></p>
+          </div>
+          <div class="md:col-span-2">
+            <label for="cs-contact" class="block font-bold" data-i18n="cs.contact">Email atau nomor HP</label>
+            <input id="cs-contact" name="contact" type="text" inputmode="email" autocomplete="email" required aria-describedby="cs-contact-error" class="field mt-2" data-i18n-placeholder="cs.contactPh">
+            <p id="cs-contact-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="contact"></p>
+          </div>
+        </div>
+        <fieldset class="mt-5">
+          <legend class="font-bold" data-i18n="cs.size">Ukuran tim</legend>
+          <div class="mt-2 grid grid-cols-4 gap-2">
+            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="1–5" class="sr-only" aria-describedby="cs-teamSize-error">1–5</label>
+            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="6–20" class="sr-only" aria-describedby="cs-teamSize-error">6–20</label>
+            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="21–50" class="sr-only" aria-describedby="cs-teamSize-error">21–50</label>
+            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="50+" class="sr-only" aria-describedby="cs-teamSize-error">50+</label>
+          </div>
+          <p id="cs-teamSize-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="teamSize"></p>
+        </fieldset>
+        <div class="mt-5">
+          <label for="cs-need" class="block font-bold" data-i18n="cs.need">Ceritakan kebutuhanmu (opsional)</label>
+          <textarea id="cs-need" name="need" rows="3" maxlength="500" aria-describedby="cs-need-count" class="field mt-2 py-2.5"></textarea>
+          <p id="cs-need-count" class="mt-1 text-right font-mono text-[.75rem] text-muted" aria-hidden="true" data-cs-count>0/500</p>
+          <p class="sr-only" aria-live="polite" data-cs-count-live></p>
+        </div>
+        <div class="mt-3 grid grid-cols-1">
+          <label class="flex min-h-11 cursor-pointer items-start gap-3 py-2"><input type="checkbox" name="invoice" class="mt-0.5 size-5 shrink-0 accent-xl-blue"><span data-i18n="cs.invoice"></span></label>
+          <label class="flex min-h-11 cursor-pointer items-start gap-3 py-2"><input type="checkbox" name="consent" required class="mt-0.5 size-5 shrink-0 accent-xl-blue" aria-describedby="cs-consent-error"><span data-i18n="cs.consent"></span></label>
+          <p id="cs-consent-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="consent"></p>
+        </div>
+      </div>
+      <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
+        <button type="submit" class="btn btn--lg w-full" data-i18n="cs.submit">Kirim</button>
+      </div>
+    </form>
+    <section data-cs-panel="success" hidden class="flex min-h-0 flex-1 flex-col" aria-labelledby="cs-success-title">
+      <div class="relative min-h-0 flex-1 overflow-y-auto px-4 py-8 text-center sm:px-6">
+        <span class="switch switch--lg mx-auto" data-on aria-hidden="true"><i></i></span>
+        <h3 id="cs-success-title" tabindex="-1" class="mt-5 text-2xl font-extrabold outline-none" data-i18n="cs.successTitle">Terima kasih!</h3>
+        <p class="mt-2 text-lead-ink" data-cs-success-body></p>
+        <p class="mt-4 text-[.85rem] font-bold text-muted" data-i18n="cs.successNotice"></p>
+      </div>
+      <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
+        <button type="button" class="btn btn--ghost btn--lg w-full" data-cs-close data-i18n="cs.done">Selesai</button>
+      </div>
+    </section>
+  </dialog>
+
+  <!-- ===== Live chat Nala (v3 + recipe flow). Mobile: full screen modal. md+: 380×560 non-modal panel. ===== -->
+  <dialog id="chat" aria-labelledby="chat-title"
+          class="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none flex-col overflow-hidden bg-white p-0 text-xl-dark open:flex open:animate-dialog-in
+                 md:inset-auto md:right-4 md:bottom-[calc(1rem+env(safe-area-inset-bottom))] md:z-40 md:h-[580px] md:max-h-[calc(100dvh-2rem)] md:w-[392px] md:rounded-card md:border md:border-line md:shadow-[0_24px_60px_rgb(0_22_106/.25)]">
+    <div class="flex shrink-0 items-center gap-3 bg-xl-dark px-4 py-3 text-white">
+      <img src="assets/img/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10 rounded-full">
+      <div class="min-w-0 flex-1">
+        <h2 id="chat-title" class="font-extrabold" data-chat-title data-i18n="chat.name">Nala</h2>
+        <p class="truncate text-[.8rem] text-white/75" data-chat-status data-i18n="chat.status">Asisten otomatis</p>
+      </div>
+      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-white/80 hover:bg-white/10 hover:text-white" data-i18n-aria="chat.restart" aria-label="Mulai ulang percakapan" data-chat-restart><svg class="icon size-5" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
+      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-white/80 hover:bg-white/10 hover:text-white" data-i18n-aria="chat.close" aria-label="Tutup chat" data-chat-close><svg class="icon size-5" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <p class="hidden shrink-0 bg-xl-yellow/40 px-4 py-1.5 text-center text-[.8rem] font-bold data-[show=true]:block" data-chat-mode-label data-show="false"></p>
+    <div class="relative min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-paper px-4 py-4" role="log" aria-live="polite" data-i18n-aria="chat.logAria" aria-label="Percakapan" data-chat-log></div>
+    <div class="shrink-0 border-t border-line bg-white px-3 pt-2.5 pb-[max(.75rem,env(safe-area-inset-bottom))]">
+      <div class="no-scrollbar -mx-3 flex gap-2 overflow-x-auto px-3 pb-2.5 empty:hidden md:flex-wrap md:overflow-visible" data-allow-bleed data-chat-chips></div>
+      <form class="flex items-center gap-2" data-chat-form novalidate>
+        <label for="chat-input" class="sr-only" data-chat-input-label data-i18n="chat.input">Pesan</label>
+        <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send" class="field min-h-11 min-w-0 flex-1">
+        <button type="submit" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue text-white hover:bg-xl-dark" data-i18n-aria="chat.send" aria-label="Kirim pesan"><svg class="icon size-5" aria-hidden="true"><use href="#i-send"/></svg></button>
+      </form>
+      <p class="mt-2 text-[.75rem] leading-snug text-muted" data-i18n="chat.disclaimer"></p>
+    </div>
+  </dialog>
+
+  <button type="button" id="chat-launcher" aria-expanded="false" aria-controls="chat" data-open-chat
+          class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 inline-flex min-h-13 items-center gap-2 rounded-full bg-xl-dark p-1.5 font-bold text-white shadow-[0_12px_32px_rgb(0_22_106/.35)] transition-transform hover:-translate-y-0.5 aria-expanded:hidden sm:pr-5 [html.overflow-hidden_&]:hidden">
+    <span class="relative shrink-0" data-decor-overflow>
+      <img src="assets/img/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10 rounded-full">
+      <span aria-hidden="true" class="absolute -top-0.5 -right-0.5 size-3.5 rounded-full bg-xl-teal ring-2 ring-xl-dark"></span>
+    </span>
+    <span class="sr-only sm:not-sr-only" data-i18n="chat.launcher">Butuh bantuan?</span>
+  </button>
 </body>
 </html>

@@ -122,6 +122,48 @@ TN.data = (() => {
     }
   }
 
+  /* AI model catalogue (v3 mock, docs/technical-spec.md). Rates: Rupiah per 1M tokens (1 credit = Rp1). */
+  const MODELS = [
+    { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'DeepSeek', uses: ['coding', 'chat'], in: 4500, out: 18000, ctx: 128000 },
+    { id: 'gemini-flash', name: 'Gemini Flash', provider: 'Google', uses: ['chat', 'analysis'], in: 5000, out: 20000, ctx: 1000000 },
+    { id: 'qwen-plus', name: 'Qwen Plus', provider: 'Alibaba', uses: ['chat'], in: 6000, out: 24000, ctx: 128000 },
+    { id: 'gpt-mini', name: 'GPT Mini', provider: 'OpenAI', uses: ['chat'], in: 6500, out: 26000, ctx: 400000 },
+    { id: 'deepseek-reasoner', name: 'DeepSeek Reasoner', provider: 'DeepSeek', uses: ['analysis', 'coding'], in: 9000, out: 36000, ctx: 128000 },
+    { id: 'claude-haiku', name: 'Claude Haiku', provider: 'Anthropic', uses: ['chat', 'coding'], in: 15000, out: 75000, ctx: 200000 },
+    { id: 'qwen-max', name: 'Qwen Max', provider: 'Alibaba', uses: ['coding', 'chat'], in: 20000, out: 80000, ctx: 256000 },
+    { id: 'gpt', name: 'GPT', provider: 'OpenAI', uses: ['coding', 'chat'], in: 25000, out: 150000, ctx: 400000 },
+    { id: 'claude-sonnet', name: 'Claude Sonnet', provider: 'Anthropic', uses: ['coding', 'analysis'], in: 31500, out: 157500, ctx: 1000000 },
+    { id: 'gemini-pro', name: 'Gemini Pro', provider: 'Google', uses: ['coding', 'analysis'], in: 31500, out: 189000, ctx: 1000000 },
+    { id: 'claude-opus', name: 'Claude Opus', provider: 'Anthropic', uses: ['coding'], in: 78750, out: 393750, ctx: 1000000 },
+    { id: 'gpt-pro', name: 'GPT Pro', provider: 'OpenAI', uses: ['analysis'], in: 150000, out: 600000, ctx: 400000 },
+  ].map((m) => {
+    const session = unitCost(40000, 4000, m); // one small session on this model
+    const tier = session < 1000 ? 'hemat' : session <= 3000 ? 'seimbang' : 'premium';
+    return { ...m, session, tier, per10k: Math.floor(10000 / session) };
+  });
+  const PREVIEW_MODELS = ['claude-sonnet', 'gpt', 'gemini-pro', 'deepseek-chat', 'qwen-plus', 'claude-opus'];
+  const PROVIDER_ICON = { Anthropic: 'claude', OpenAI: 'openai', Google: 'gemini', DeepSeek: 'deepseek', Alibaba: 'qwen' };
+  const API = { baseUrl: 'https://api.tokennyala.example/v1', demoKey: 'tn-demo-7c41e09b5d2a8f6c13e43f9a' };
+
+  /** Template default monthly cost (§5.4): size + default AI usage. */
+  function templateCost(id) {
+    const d = TEMPLATES[id].def;
+    return SIZES[d.size].price + (d.unit ? usageCost(d.unit, d.qty) : 0);
+  }
+  /** Minimum size shown on the landing card: with AI when the template needs AI, else without. */
+  const templateMin = (id) => TEMPLATES[id].minNoAi || TEMPLATES[id].minAi;
+  const TEMPLATE_ICONS = { 'wa-bot': 'message-circle', n8n: 'workflow', agent: 'bot', dify: 'blocks', wordpress: 'newspaper' };
+
+  /* Beginner-safety rules (§2), used in copy */
+  const RULES = { pauseDays: 7, remindDays: 3, stopKeepDays: 7 };
+
+  /* Learn guides (microcopy §8) — minutes to read */
+  const GUIDES = [
+    { id: 'g-portofolio', recipe: 'portofolio', minutes: 3 },
+    { id: 'g-chatbot', recipe: 'chatbot-wa', minutes: 4 },
+    { id: 'g-ai-tool', recipe: 'ai-coding', minutes: 2 },
+  ];
+
   /* §6 Recipes (chip order = array order) */
   const RECIPES = [
     { id: 'portofolio', persona: 'ayu', items: [
@@ -183,7 +225,9 @@ TN.data = (() => {
   }
 
   /* §7 Example project (landing "Contoh") + the concrete hero / wallet scenario */
-  const EXAMPLE = { sessions: [11, 18], size: 'coba', ext: 'my.id', topup: TOPUPS[0] };
+  const EXAMPLE_TASKS = [[3, 5], [2, 4], [4, 6], [2, 3]]; // layout, mobile, form, copy & colour (v3)
+  const EXAMPLE = { tasks: EXAMPLE_TASKS, sessions: [0, 1].map((i) => EXAMPLE_TASKS.reduce((n, r) => n + r[i], 0)),
+    size: 'coba', ext: 'my.id', domain: 'eventku.my.id', topup: TOPUPS[0] };
   const HERO = { sessions: 12, size: 'coba', ext: 'my.id', domain: 'eventku.my.id', topup: TOPUPS[0] };
   function heroScenario() {
     const balance = HERO.topup.amount + HERO.topup.bonus;
@@ -196,10 +240,48 @@ TN.data = (() => {
     return { balance, lines, spent, left: balance - spent };
   }
 
+  /** §7 example: { sessions:[min,max], usage:[min,max], fixed, total:[min,max] } */
+  function exampleTotals() {
+    const ex = EXAMPLE, fixed = SIZES[ex.size].price + DOMAINS[ex.ext].first;
+    const usage = ex.sessions.map(sessionCost);
+    return { sessions: ex.sessions, usage, hosting: SIZES[ex.size].price, domain: DOMAINS[ex.ext].first, total: usage.map((u) => u + fixed),
+      balance: ex.topup.amount + ex.topup.bonus };
+  }
+
+  /* Nala "Bantu pilih resep" (§6 Aturan Nala): adjust a recipe from Q2 (code?) and Q3 (load). */
+  const LOAD_SIZE = { coba: null, rutin: 'rutin', ramai: 'ramai' };
+  function nalaItems(id, { hasCode = true, load = 'coba' } = {}) {
+    const r = recipe(id);
+    return r.items.map((it) => {
+      const c = { ...it };
+      if (c.svc === 'ai' && c.unit === 'sesi' && !hasCode) c.qty += 10;
+      if (c.svc === 'hosting' || c.svc === 'apps') {
+        const min = c.svc === 'apps' ? (TEMPLATES[c.tpl].minAi || TEMPLATES[c.tpl].minNoAi) : 'coba';
+        if (load === 'coba') c.size = min;
+        else if (SIZE_ORDER.indexOf(c.size) < SIZE_ORDER.indexOf(LOAD_SIZE[load])) c.size = LOAD_SIZE[load];
+        if (SIZE_ORDER.indexOf(c.size) < SIZE_ORDER.indexOf(min)) c.size = min;
+      }
+      return c;
+    });
+  }
+  /** Does Q2 ("is the code ready?") apply? Only recipes measured in small sessions. */
+  const askCode = (id) => (recipe(id).items || []).some((it) => it.svc === 'ai' && it.unit === 'sesi');
+
+  /** URL schema `s` (§6): hosting:coba,domain:my.id,ai:10 · apps use the template id (wa-bot:rutin). */
+  function serialize(items) {
+    return items.map((it) => {
+      if (it.svc === 'ai') return `${it.unit === 'sesi' ? 'ai' : it.unit}:${it.qty}`;
+      if (it.svc === 'domain') return `domain:${it.ext}`;
+      if (it.svc === 'apps') return `${it.tpl}:${it.size}`;
+      return `${it.svc}:${it.size}`;
+    }).join(',');
+  }
+
   return {
     TOPUPS, TOPUP_MIN, REMINDER_BELOW, UNITS, SIZES, SIZE_ORDER, GROUPS, ICONS, SERVER, DATABASE, STORAGE, DOMAINS,
-    EMAIL, PAYMENTS, TEMPLATES, FROM, RECIPES, AI_ONLY, EXAMPLE, HERO,
+    EMAIL, PAYMENTS, TEMPLATES, TEMPLATE_ICONS, FROM, RECIPES, AI_ONLY, EXAMPLE, HERO, MODELS, PREVIEW_MODELS,
+    PROVIDER_ICON, API, RULES, GUIDES,
     suggestTopup, usageCost, sessionCost, sessionsPer, itemCost, recipe, recipeTotals, coverMonths, roundK,
-    refund, prorata, balanceUntil, heroScenario,
+    refund, prorata, balanceUntil, heroScenario, exampleTotals, templateCost, templateMin, nalaItems, askCode, serialize,
   };
 })();

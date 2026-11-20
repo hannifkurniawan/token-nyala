@@ -47,5 +47,66 @@ TN.ui = (() => {
   /* ---------- Placeholder legal links (mock) ---------- */
   document.querySelectorAll('[data-mock-link]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
 
-  return { icon, esc, setMenu };
+  /* ---------- Shared modal (v3 setupModal): showModal + focus heading, scroll lock,
+     backdrop click (press must start and end on the backdrop), focus back to the opener when free. ---------- */
+  function focusIsFree(dlg) {
+    const a = document.activeElement;
+    return !a || a === document.body || dlg.contains(a);
+  }
+  function setupModal(dlg, { focus, onClose } = {}) {
+    let opener = null;
+    let skipFocus = false;
+    let pressedBackdrop = false;
+    const visible = (el) => el && document.contains(el) && el.getClientRects().length > 0;
+    dlg.addEventListener('pointerdown', (e) => { pressedBackdrop = e.target === dlg; });
+    dlg.addEventListener('click', (e) => { if (pressedBackdrop && e.target === dlg) dlg.close(); pressedBackdrop = false; });
+    dlg.addEventListener('close', () => {
+      document.documentElement.classList.remove('overflow-hidden');
+      onClose?.();
+      const target = skipFocus ? null : opener;
+      skipFocus = false;
+      if (!target || !focusIsFree(dlg)) return;
+      if (visible(target)) target.focus();
+      else if (visible(menuBtn)) menuBtn.focus();
+    });
+    return {
+      open(from = document.activeElement) {
+        if (menuOpen) setMenu(false);
+        document.querySelectorAll('dialog[open]').forEach((d) => { if (d !== dlg) d.close(); });
+        opener = from;
+        if (!dlg.open) dlg.showModal();
+        document.documentElement.classList.add('overflow-hidden');
+        dlg.querySelector(focus)?.focus();
+      },
+      close({ returnFocus = true } = {}) {
+        skipFocus = !returnFocus;
+        if (dlg.open) dlg.close();
+      },
+    };
+  }
+
+  /** Email or Indonesian mobile number (v3). Returns { ok, value, error } — error is an i18n key. */
+  function parseContact(raw) {
+    const value = raw.trim();
+    if (!value) return { ok: false, error: 'err.contactEmpty' };
+    if (value.includes('@')) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? { ok: true, value } : { ok: false, error: 'err.emailInvalid' };
+    }
+    const digits = value.replace(/[\s.-]/g, '');
+    if (!/^(\+62|62|0)8[1-9][0-9]{7,10}$/.test(digits)) return { ok: false, error: 'err.phoneInvalid' };
+    return { ok: true, value: '+62' + digits.replace(/^(\+62|62|0)/, '') };
+  }
+
+  /* ---------- Copy buttons: [data-copy="text"] — label switches to "Tersalin" for 1.6s ---------- */
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-copy]');
+    if (!b) return;
+    try { await navigator.clipboard.writeText(b.dataset.copy); } catch { /* clipboard blocked (file://): still confirm */ }
+    const label = b.querySelector('[data-copy-label]') || b;
+    label.textContent = t('copy.done');
+    clearTimeout(b._t);
+    b._t = setTimeout(() => { label.textContent = t('copy.label'); }, 1600);
+  });
+
+  return { icon, esc, setMenu, setupModal, parseContact, focusIsFree };
 })();

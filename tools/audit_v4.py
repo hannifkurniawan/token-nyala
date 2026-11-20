@@ -4,14 +4,14 @@
 Usage: python3 tools/audit_v4.py
 
 Accessibility — axe-core 4.14.0 (WCAG 2.1 AA + best practice) on every page in PAGES, ID + EN, 375 + 1440,
-  plus every overlay that exists so far (fase 1: mobile menu).
+  plus every overlay: mobile menu, model catalogue, team consultation (errors + success), Nala chat.
 Definition of Done extras:
   - DoD 1  every page opens from file:// without console errors (CSS applied, scripts ran)
-  - DoD 7  prefers-reduced-motion: no animation/transition longer than 0.01ms, scroll-behavior auto
+  - DoD 7  prefers-reduced-motion: no animation/transition longer than 0.01ms, scroll-behavior auto, GSAP/Lenis off
   - DoD 8  storage blocked (localStorage throws): page still renders and switches language
   - DoD 9  only the 4 loaded font faces render (Manrope 500/700/800, IBM Plex Mono 500)
   - DoD 10 assets/css/app.css equals a fresh `tailwindcss --minify` build of src/tailwind.css
-  - DoD 11 storage holds only tn-lang after using the page
+  - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact)
   - DoD 4  numbers: TN.data recomputes the values transcribed below from docs/v4/services-and-pricing.md
            (§3 units, §6 recipes, §7 example, §8 balance-until, §2 refund/prorata examples), and the landing
            renders them for every recipe in ID and EN
@@ -44,6 +44,14 @@ DOC = {
         "otomasi-tim": (145000, 140000, 0, 285000, 285000, 500000, 2, 285),
     },
     "example": {"min": 40790, "max": 54020},                                              # §7
+    "templates": {"wa-bot": 47000, "n8n": 15000, "agent": 63000, "dify": 47000, "wordpress": 15000},  # §5.4
+    "nala": [  # §6 Aturan Nala: (recipe, hasCode, load) → s
+        ("portofolio", False, "ramai", "hosting:ramai,domain:my.id,ai:20"),
+        ("portofolio", True, "coba", "hosting:coba,domain:my.id,ai:10"),
+        ("chatbot-wa", True, "coba", "wa-bot:rutin,pesan:1000"),
+        ("otomasi-tim", True, "coba", "n8n:rutin,database:sedang,email:2500,tugas:5000"),
+        ("web-klien", True, "rutin", "hosting:rutin,database:kecil,email:gratis,domain:com,ai:30"),
+    ],
     "hero": {"balance": 55000, "spent": 42680, "left": 12320},                            # §7
     "until": [  # §8 presets: (balance, fixed, domain renewals, usage 7 days) → date from 21 Nov 2026
         ("ayu", 31220, 15000, 25000, 3780, "2026-12-19"),
@@ -77,6 +85,10 @@ NUMBERS_JS = """
   for (const [price, days, v] of doc.refund) if (D.refund(price, days) !== v) out.push(`refund ${price}/${days} ${D.refund(price, days)} != ${v}`);
   for (const [a, b, days, v] of doc.prorata) if (D.prorata(a, b, days) !== v) out.push(`prorata ${a}->${b}/${days} ${D.prorata(a, b, days)} != ${v}`);
   for (const [need, v] of doc.suggest) if (D.suggestTopup(need).amount !== v) out.push(`suggest ${need} ${D.suggestTopup(need).amount} != ${v}`);
+  for (const [id, v] of Object.entries(doc.templates)) if (D.templateCost(id) !== v) out.push(`template ${id} ${D.templateCost(id)} != ${v}`);
+  const x = D.exampleTotals();
+  if (x.total[0] !== doc.example.min || x.total[1] !== doc.example.max) out.push(`exampleTotals ${x.total}`);
+  for (const [id, hasCode, load, want] of doc.nala) { const got = D.serialize(D.nalaItems(id, { hasCode, load })); if (got !== want) out.push(`nala ${id}/${hasCode}/${load} ${got} != ${want}`); }
   return out;
 }
 """
@@ -96,6 +108,12 @@ RENDERED_JS = """
   for (const v of [h.balance, h.left]) if (!wallet.includes(I.rp(v))) out.push(`${I.lang} wallet misses ${I.rp(v)}`);
   const svc = document.querySelector('[data-services]').textContent;
   for (const [id, f] of Object.entries(D.FROM)) if (f.price && !svc.includes(I.rp(f.price))) out.push(`${I.lang} services miss ${id} ${I.rp(f.price)}`);
+  const tpl = document.querySelector('[data-templates]').textContent;
+  for (const id of Object.keys(D.TEMPLATES)) if (!tpl.includes(I.rpK(D.templateCost(id)))) out.push(`${I.lang} templates miss ${id} ${I.rpK(D.templateCost(id))}`);
+  const ex = document.querySelector('[data-example]').textContent, x = D.exampleTotals();
+  for (const v of [I.rp(x.total[0]), I.num(x.total[1]), I.rp(x.hosting), I.rp(x.domain)]) if (!ex.includes(v)) out.push(`${I.lang} example misses ${v}`);
+  const safe = document.querySelector('[data-safe]').textContent;
+  for (const v of [I.rp(D.refund(D.SIZES.coba.price, 20)), I.rp(-D.prorata(D.SIZES.rutin.price, D.SIZES.coba.price, 20)), I.rp(D.TOPUP_MIN)]) if (!safe.includes(v)) out.push(`${I.lang} safe cards miss ${v}`);
   return out;
 }
 """
@@ -162,7 +180,8 @@ def main():
         for page_name in PAGES:
             for lang in ("id", "en"):
                 for w, h in ((375, 667), (1440, 900)):
-                    ctx = b.new_context(viewport={"width": w, "height": h})
+                    # reduced motion: axe measures the final appearance, not an element mid-fade (motion has its own QA check)
+                    ctx = b.new_context(viewport={"width": w, "height": h}, reduced_motion="reduce")
                     page = ctx.new_page()
                     page.add_init_script(f"localStorage.setItem('tn-lang', '{lang}')")
                     page.goto(base + page_name, wait_until="networkidle")
@@ -175,6 +194,23 @@ def main():
                             page.wait_for_timeout(450)  # header colour transition (300ms) settles first
                             problems += axe(page, f"mobile menu {tag}")
                             page.keyboard.press("Escape")
+                        # dialogs: catalogue, consultation (errors + success), Nala (modal on mobile, panel on desktop)
+                        page.evaluate("() => TN.landing.openCatalog()"); page.wait_for_timeout(350)
+                        problems += axe(page, f"catalog {tag}", "#catalog")
+                        page.keyboard.press("Escape")
+                        page.evaluate("() => TN.landing.openConsult()"); page.wait_for_timeout(350)
+                        page.locator("#consult [type=submit]").click()
+                        problems += axe(page, f"consult errors {tag}", "#consult")
+                        page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio"); page.fill("#cs-contact", "dimas@studio.id")
+                        page.locator("#consult label:has(input[name=teamSize])").first.click()
+                        page.locator("#consult input[name=consent]").check(); page.locator("#consult [type=submit]").click()
+                        problems += axe(page, f"consult success {tag}", "#consult")
+                        page.keyboard.press("Escape")
+                        page.evaluate("() => TN.nala.open()"); page.wait_for_timeout(250)
+                        page.locator("#chat [data-chat-chips] button").first.click(); page.wait_for_timeout(700)
+                        problems += axe(page, f"chat {tag}", "#chat")
+                        problems += fonts(page, f"chat {tag}")
+                        page.evaluate("() => TN.nala.close()")
                         if w == 1440:
                             if lang == "id":
                                 problems += [f"[numbers] {x}" for x in page.evaluate(NUMBERS_JS, DOC)]
@@ -205,6 +241,8 @@ def main():
             }).filter(Boolean).slice(0, 5)""")
             if slow:
                 problems.append(f"[dod] {page_name} reduced motion still animates: {slow}")
+            if page.evaluate("() => document.documentElement.classList.contains('motion-ok')"):
+                problems.append(f"[dod] {page_name} reduced motion still starts GSAP/Lenis")
             if page.evaluate("() => getComputedStyle(document.documentElement).scrollBehavior") != "auto":
                 problems.append(f"[dod] {page_name} reduced motion keeps smooth scrolling")
             ctx.close()
@@ -230,6 +268,15 @@ def main():
             page.goto(base + page_name, wait_until="networkidle")
             page.locator('header [data-lang="en"]').click()
             page.locator('[data-recipe-chips] [data-recipe="web-klien"]').click()
+            page.evaluate("() => TN.landing.openConsult()"); page.wait_for_timeout(300)
+            page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio"); page.fill("#cs-contact", "0812-3456-7890")
+            page.locator("#consult label:has(input[name=teamSize])").first.click()
+            page.locator("#consult input[name=consent]").check(); page.locator("#consult [type=submit]").click()
+            page.keyboard.press("Escape")
+            page.goto(base + page_name + "?chat=offline", wait_until="networkidle")
+            page.evaluate("() => TN.nala.open()")
+            page.locator("#chat [data-chat-chips] button").last.click(); page.wait_for_timeout(700)
+            page.fill("#chat-input", "ayu@mail.com"); page.keyboard.press("Enter"); page.wait_for_timeout(700)
             stored = page.evaluate("() => ({ local: {...localStorage}, session: {...sessionStorage}, cookie: document.cookie })")
             if stored != {"local": {"tn-lang": "en"}, "session": {}, "cookie": ""}:
                 problems.append(f"[dod] {page_name} storage holds more than the language: {stored}")
