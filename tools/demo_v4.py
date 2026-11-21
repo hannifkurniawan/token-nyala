@@ -63,18 +63,18 @@ def main():
         # 0:00 Landing — not a token shop: an AI cloud platform that starts from the goal
         page.goto(base + "index.html", wait_until="networkidle")
         shot("landing-hero", "dari prompt" in text("#hero-title"))
-        at("#resep"); shot("mau-bikin-apa", "Rp34 rb" in text("[data-recipe-card]"))
-        page.locator('[data-recipe="otomasi-tim"]').click(); shot("resep-otomasi-tim", "Rp285 rb" in text("[data-recipe-card]"))
+        at("#paket"); shot("mau-bikin-apa", "Rp34 rb" in text("[data-recipe-card]"))
+        page.locator('[data-recipe="otomasi-tim"]').click(); shot("paket-otomasi-tim", "Rp285 rb" in text("[data-recipe-card]"))
         # 1:00 All services + one balance
         at("#layanan"); shot("semua-layanan", page.locator("[data-services] li").count() == 10)
         at("#saldo"); shot("satu-saldo", "Rp12.320" in text("[data-wallet]"))
         # 2:00 Pricing calculator
-        page.goto(base + "harga.html?resep=portofolio#kalkulator", wait_until="networkidle")
+        page.goto(base + "harga.html?paket=portofolio#kalkulator", wait_until="networkidle")
         at("[data-calc-rows]")
         page.locator('[data-key="hosting"] [data-size="rutin"]').click()
         shot("kalkulator-rutin", "Rp54 rb" in text("[data-calc-total]"))
         # 3:00 Console: sign in → wizard (recipe prefilled) → summary short of balance → top-up → switch on
-        page.goto(base + "app.html?demo=reset#/buat?resep=portofolio", wait_until="networkidle")
+        page.goto(base + "app.html?demo=reset#/buat?paket=portofolio", wait_until="networkidle")
         shot("masuk", page.locator("#auth-contact").count() == 1)
         page.fill("#auth-contact", "ayu@mail.com"); page.locator("[data-auth-form] [type=submit]").click()
         page.fill("#auth-code", "123456"); page.locator("[data-auth-form] [type=submit]").click()

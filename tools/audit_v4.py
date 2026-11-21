@@ -44,7 +44,7 @@ PAGES = ["index.html", "harga.html"]  # fase 4+: app.html routes
 RENDERED_CHECK = {"index.html": "[data-recipe-card] h3", "harga.html": "[data-calc-rows] li"}
 APP_ROUTES = [("masuk", "app.html?demo=reset#/masuk"), ("beranda", "app.html?demo=ayu#/beranda"),
               ("jeda", "app.html?demo=ayu&state=jeda#/beranda"), ("saldo", "app.html?demo=raka#/saldo"),
-              ("buat-1", "app.html?demo=ayu#/buat"), ("buat-2", "app.html?demo=ayu#/buat?resep=web-klien"),
+              ("buat-1", "app.html?demo=ayu#/buat"), ("buat-2", "app.html?demo=ayu#/buat?paket=web-klien"),
               ("proyek", "app.html?demo=dimas#/proyek"), ("detail", "app.html?demo=raka#/proyek/klien-kopi"),
               ("ai", "app.html?demo=raka#/ai"), ("layanan", "app.html?demo=raka#/layanan/server?tambah=1"),
               ("layanan-kosong", "app.html?demo=ayu#/layanan/storage"), ("belajar", "app.html?demo=ayu#/belajar?panduan=g-chatbot"),
@@ -149,7 +149,7 @@ HARGA_JS = """
     const want = [I.rpK(tot.perMonth), I.rp(tot.fixed), I.rp(tot.usage), I.rp(tot.perMonth), I.rp(tot.suggest.amount)].concat(tot.yearly ? [I.rp(tot.firstMonth), I.rp(tot.yearly)] : []);
     for (const w of want) if (!sum.includes(w)) out.push(`${I.lang} summary ${r.id} misses ${w}`);
     const cta = document.querySelector('[data-calc-cta]').getAttribute('href');
-    if (cta !== `app.html#/buat?resep=${r.id}&s=${D.serialize(r.items)}`) out.push(`cta ${r.id} ${cta}`);
+    if (cta !== `app.html#/buat?paket=${r.id}&s=${D.serialize(r.items)}`) out.push(`cta ${r.id} ${cta}`);
   }
   const page = document.querySelector('main').textContent;
   const prices = [
@@ -436,7 +436,7 @@ def main():
         label_js = """(key) => { const want = TN.i18n.t(key); return [...document.querySelectorAll('body *')].some(el =>
             el.children.length === 0 && el.textContent.trim() === want && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden'); }"""
         for url, key in (("index.html", "footer.prototype"), ("harga.html", "footer.prototype"), ("app.html?demo=ayu#/beranda", "con.prototype"),
-                         ("app.html?demo=ayu#/buat?resep=portofolio", "con.prototype")):
+                         ("app.html?demo=ayu#/buat?paket=portofolio", "con.prototype")):
             page.goto(base + url, wait_until="networkidle")
             if not page.evaluate(label_js, key):
                 problems.append(f"[dod] simulation label {key} not visible on {url}")

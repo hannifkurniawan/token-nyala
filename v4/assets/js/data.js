@@ -249,7 +249,7 @@ TN.data = (() => {
       balance: ex.topup.amount + ex.topup.bonus };
   }
 
-  /* Nala "Bantu pilih resep" (§6 Aturan Nala): adjust a recipe from Q2 (code?) and Q3 (load). */
+  /* Nala "Bantu pilih paket" (§6 Aturan Nala): adjust a recipe from Q2 (code?) and Q3 (load). */
   const LOAD_SIZE = { coba: null, rutin: 'rutin', ramai: 'ramai' };
   function nalaItems(id, { hasCode = true, load = 'coba' } = {}) {
     const r = recipe(id);
@@ -316,7 +316,7 @@ TN.data = (() => {
     return { items, keys };
   }
 
-  /** Calculator/wizard state from ?resep= & s= : recipe defaults, overridden by `s` (missing → off, invalid → default). */
+  /** Calculator/wizard state from ?paket= (legacy ?resep=) & s= : recipe defaults, overridden by `s` (missing → off, invalid → default). */
   function itemsFromUrl(recipeId, s) {
     const r = recipe(recipeId);
     const base = (r && !r.aiOnly ? r.items : []).map((it) => ({ ...it, on: true }));

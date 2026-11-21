@@ -12,7 +12,7 @@
   const { h1, statusPill, toast, dateStr, serviceName } = C;
   const view = C.view;
   const IDS = ['server', 'database', 'storage', 'domain', 'email', 'payments'];
-  const EASIER = { server: '#/buat?resep=portofolio', database: '#/buat?resep=web-klien', domain: '#/proyek' };
+  const EASIER = { server: '#/buat?paket=portofolio', database: '#/buat?paket=web-klien', domain: '#/proyek' };
   const NAME_RE = /^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$/;
   const slug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30);
   const DEFAULT = { server: { size: 'kecil' }, database: { size: 'kecil' }, storage: { size: '10gb' }, domain: { ext: 'my.id' }, email: { size: 'gratis' }, payments: {} };

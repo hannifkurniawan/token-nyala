@@ -1,5 +1,6 @@
 /* TokenNyala v4 — pricing page (harga.html): recipe calculator + service details. Every number from TN.data.
-   URL schema (services-and-pricing §6): harga.html?resep=portofolio&s=hosting:coba,domain:my.id,ai:10#kalkulator */
+   URL schema (services-and-pricing §6): harga.html?paket=portofolio&s=hosting:coba,domain:my.id,ai:10#kalkulator
+   (legacy ?resep= is still read) */
 (() => {
   'use strict';
   const D = TN.data;
@@ -9,13 +10,14 @@
 
   /* ---------- State ---------- */
   const params = new URLSearchParams(location.search);
+  const paketParam = params.get('paket') ?? params.get('resep'); // ?resep= = legacy name
   const startRecipe = () => {
-    const r = params.get('resep');
+    const r = paketParam;
     if (r === null) return 'portofolio';
     return D.recipe(r) && !D.recipe(r).aiOnly ? r : '';
   };
   const state = { recipe: startRecipe(), items: [], open: false, bumped: [] };
-  state.items = D.recipe(params.get('resep'))?.aiOnly && !params.get('s')
+  state.items = D.recipe(paketParam)?.aiOnly && !params.get('s')
     ? [{ ...D.NEW_ITEM['ai:sesi'], on: true }]
     : D.itemsFromUrl(state.recipe, params.get('s'));
 
@@ -27,7 +29,7 @@
   /* ---------- Links ---------- */
   function query() {
     const s = D.serialize(state.items);
-    return [state.recipe ? `resep=${state.recipe}` : '', s ? `s=${s}` : ''].filter(Boolean).join('&');
+    return [state.recipe ? `paket=${state.recipe}` : '', s ? `s=${s}` : ''].filter(Boolean).join('&');
   }
   const wizardHref = () => `app.html#/buat${query() ? '?' + query() : ''}`;
   function syncUrl() {

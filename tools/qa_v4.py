@@ -221,14 +221,14 @@ def landing_recipe_flow(page, out, name):
             problems.append(f"RECIPE {r['id']} checked={r['checked']} tabbable={r['tabbable']}")
         if r["missing"]:
             problems.append(f"RECIPE {r['id']} card misses {r['missing']}")
-        want = "app.html#/ai?isi=1" if r["id"] == "ai-coding" else f"app.html#/buat?resep={r['id']}"
+        want = "app.html#/ai?isi=1" if r["id"] == "ai-coding" else f"app.html#/buat?paket={r['id']}"
         if set(r["start"]) != {want}:
             problems.append(f"RECIPE {r['id']} start links {set(r['start'])} != {want}")
         if r["id"] != "portofolio" and not r["live"]:
             problems.append(f"RECIPE {r['id']} not announced")
         if r["id"] != "portofolio" and r["focused"] != r["id"]:
             problems.append(f"RECIPE focus {r['focused']} != {r['id']}")
-        page.screenshot(path=str(out / f"index-{name}-recipe-{r['id']}.png"), clip=page.locator("#resep").bounding_box(), full_page=True)
+        page.screenshot(path=str(out / f"index-{name}-recipe-{r['id']}.png"), clip=page.locator("#paket").bounding_box(), full_page=True)
         rr = page.evaluate(CHECK_JS)
         if rr["spills"] or rr["escapes"] or rr["overflow"] > 0:
             problems.append(f"RECIPE {r['id']} spills={rr['spills']} escapes={rr['escapes']} overflow={rr['overflow']}")
@@ -340,12 +340,12 @@ def landing_chat_flow(page, out, name, base_url):
     if modal != (page.viewport_size["width"] < 768):
         problems.append(f"CHAT modal={modal} at width {page.viewport_size['width']}")
     chips = lambda: page.locator("#chat [data-chat-chips] button")
-    chips().first.click(); chat_wait(page)                       # Bantu pilih resep
+    chips().first.click(); chat_wait(page)                       # Bantu pilih paket
     chips().first.click(); chat_wait(page)                       # Landing page
     chips().nth(1).click(); chat_wait(page)                      # Belum, mau dibuat dengan AI
     chips().nth(2).click(); chat_wait(page)                      # Ramai
     links = page.evaluate("() => [...document.querySelectorAll('#chat [data-chat-log] a')].map(a => a.getAttribute('href'))")
-    want = ["app.html#/buat?resep=portofolio&s=hosting:ramai,domain:my.id,ai:20", "harga.html?resep=portofolio&s=hosting:ramai,domain:my.id,ai:20#kalkulator"]
+    want = ["app.html#/buat?paket=portofolio&s=hosting:ramai,domain:my.id,ai:20", "harga.html?paket=portofolio&s=hosting:ramai,domain:my.id,ai:20#kalkulator"]
     if links != want:
         problems.append(f"CHAT recipe links {links}")
     page.screenshot(path=str(out / f"index-{name}-chat.png"))
@@ -456,8 +456,8 @@ def harga_calc_flow(page, out, name, base):
     rk = lambda n: page.evaluate("(n) => '≈ ' + TN.i18n.rpK(n)", n)
     page.goto(base + "harga.html", wait_until="networkidle")
     s0 = st()
-    want_cta = "app.html#/buat?resep=portofolio&s=hosting:coba,domain:my.id,ai:10"
-    if s0["total"] != rk(33900) or s0["cta"] != want_cta or s0["search"] != "?resep=portofolio&s=hosting:coba,domain:my.id,ai:10":
+    want_cta = "app.html#/buat?paket=portofolio&s=hosting:coba,domain:my.id,ai:10"
+    if s0["total"] != rk(33900) or s0["cta"] != want_cta or s0["search"] != "?paket=portofolio&s=hosting:coba,domain:my.id,ai:10":
         problems.append(f"CALC default {s0}")
     row = lambda key: page.locator(f'[data-calc-rows] > li[data-key="{key}"]')
     row("ai:sesi").locator("[role=switch]").click()
@@ -511,7 +511,7 @@ def harga_calc_flow(page, out, name, base):
     if "n8n:rutin" not in s6["cta"] or "naik" not in s6["live"] and "moved up" not in s6["live"]:
         problems.append(f"CALC n8n bump on AI on {s6}")
     # link from Nala/landing
-    page.goto(base + "harga.html?resep=portofolio&s=hosting:ramai,domain:my.id,ai:20#kalkulator", wait_until="networkidle")
+    page.goto(base + "harga.html?paket=portofolio&s=hosting:ramai,domain:my.id,ai:20#kalkulator", wait_until="networkidle")
     if st()["total"] != rk(112800):
         problems.append(f"CALC from Nala link {st()['total']}")
     # mobile breakdown
@@ -776,7 +776,7 @@ def wizard_flow(page, out, name, base):
     """User journey 1 (Ayu): new account → recipe from the landing → summary short of balance → inline top-up →
     switch on → progress → Nyala; balance 55.000 → 35.000; project on at ayu.my.id."""
     problems = []
-    page.goto(base + "app.html?demo=reset#/buat?resep=portofolio", wait_until="networkidle")
+    page.goto(base + "app.html?demo=reset#/buat?resep=portofolio", wait_until="networkidle")  # legacy ?resep= still prefills the wizard
     page.fill("#auth-contact", "ayu@mail.com"); page.locator("[data-auth-form] [type=submit]").click()
     page.fill("#auth-code", "123456"); page.locator("[data-auth-form] [type=submit]").click()
     page.fill("#auth-name", "Ayu"); page.locator("[data-auth-form] [type=submit]").click()

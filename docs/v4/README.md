@@ -7,7 +7,7 @@ v4 mengubah TokenNyala dari *top-up saldo AI* menjadi **platform AI Cloud Servic
 | # | File | Isi | Berlaku untuk |
 |---|---|---|---|
 | 1 | `brief.md` | Masalah, user, janji, pembeda, cakupan, metrik | Arah produk |
-| 2 | `services-and-pricing.md` | **Sumber tunggal data**: layanan, ukuran, harga mock, satuan estimasi, resep, aturan saldo & tagihan | Semua angka |
+| 2 | `services-and-pricing.md` | **Sumber tunggal data**: layanan, ukuran, harga mock, satuan estimasi, paket, aturan saldo & tagihan | Semua angka |
 | 3 | `information-architecture.md` | Peta halaman landing, harga, console; navigasi; overlay | Struktur |
 | 4 | `user-journeys.md` | Skenario per persona + skrip demo | Alur |
 | 5 | `wireframes.md` | Wireframe mobile (utama) lalu desktop | Layout |

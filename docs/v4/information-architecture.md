@@ -4,11 +4,11 @@ Tiga halaman HTML yang berbagi header, token, i18n, data, dan saldo mock:
 
 | Halaman | File | Tujuan |
 |---|---|---|
-| Landing | `v4/index.html` | Meyakinkan & mengarahkan ke resep |
-| Harga | `v4/harga.html` | Semua harga + kalkulator resep |
+| Landing | `v4/index.html` | Meyakinkan & mengarahkan ke paket |
+| Harga | `v4/harga.html` | Semua harga + kalkulator paket |
 | Console (mock) | `v4/app.html` | Alur nyata: masuk → isi saldo → nyalakan → kelola |
 
-Prinsip: **tujuan dulu, layanan kemudian, detail teknis terakhir (bisa dibuka)**. Setiap CTA “Mulai bangun” membawa resep yang sedang dipilih ke console (`app.html#/buat?resep=portofolio`).
+Prinsip: **tujuan dulu, layanan kemudian, detail teknis terakhir (bisa dibuka)**. Setiap CTA “Mulai bangun” membawa paket yang sedang dipilih ke console (`app.html#/buat?paket=portofolio`).
 
 ---
 
@@ -32,7 +32,7 @@ Footer: Jelajahi (Layanan, Harga, Template, Belajar), Untuk tim, Bantuan & legal
 |---|---|---|---|---|
 | 1 | Hero | `top` | Kicker “Untuk ide, prototype, dan proyekmu” · H1 tagline dengan saklar · lead · board “dari prompt sampai online” (prompt → membangun → online di `eventku.my.id`) · 3 jaminan (Bayar Rupiah · Tanpa kartu kredit · Mulai Rp15 rb) | **Mulai bangun**, Lihat harga |
 | 2 | Cerita macet | `cerita` | Strip singkat: “Kode sudah jadi, tapi belum bisa dibuka orang lain.” → nyala. (evolusi “stall story” showcase v2) | — |
-| 3 | **Mau bikin apa?** | `resep` | Chip 5 resep → kartu resep: isi layanan (ikon + nama awam), biaya tetap, biaya pakai, total ≈ per bulan, top-up disarankan, “cukup ±N bulan” | **Nyalakan resep ini** → `app.html#/buat?resep=…`; Ubah di kalkulator → `harga.html?resep=…#kalkulator`. Kartu `ai-coding` → **Ambil API key** `app.html#/ai?isi=1` |
+| 3 | **Mau bikin apa?** | `paket` | Chip 5 paket → kartu paket: isi layanan (ikon + nama awam), biaya tetap, biaya pakai, total ≈ per bulan, top-up disarankan, “cukup ±N bulan” | **Nyalakan paket ini** → `app.html#/buat?paket=…`; Ubah di kalkulator → `harga.html?paket=…#kalkulator`. Kartu `ai-coding` → **Ambil API key** `app.html#/ai?isi=1` |
 | 4 | Cara kerja | `cara-kerja` | 3 langkah: Pilih tujuan → Isi saldo Rupiah → Nyala & online | — |
 | 5 | Semua layanan | `layanan` | 4 kelompok (Bangun dengan AI · Jalankan · Simpan · Hubungkan), 10 kartu: nama awam + label teknis kecil + “mulai dari” | Lihat semua harga |
 | 6 | Satu saldo Rupiah | `saldo` | Pembeda: satu saldo untuk semua, tanpa USD/kartu kredit, biaya tetap vs pakai, “cukup sampai tanggal”, aturan saldo (chip) + animasi saldo terpotong per layanan | Isi saldo |
@@ -54,7 +54,7 @@ Overlay landing: menu mobile, **katalog model** (v3), **konsultasi tim** (v3), *
 | # | Bagian | Isi |
 |---|---|---|
 | 1 | Kepala | “Satu saldo Rupiah. Bayar yang kamu pakai.” + 3 jaminan (termasuk PPN, tanpa kartu kredit, biaya tambahan Rp0) |
-| 2 | **Kalkulator resep** | Pilih resep → daftar layanan yang bisa diubah (ukuran, on/off, jumlah sesi/pesan/tugas) → ringkasan lengket: tetap / pakai / tahunan / per bulan / bulan pertama / top-up disarankan | CTA “Nyalakan” → console wizard dengan isi kalkulator |
+| 2 | **Kalkulator paket** | Pilih paket → daftar layanan yang bisa diubah (ukuran, on/off, jumlah sesi/pesan/tugas) → ringkasan lengket: tetap / pakai / tahunan / per bulan / bulan pertama / top-up disarankan | CTA “Nyalakan” → console wizard dengan isi kalkulator |
 | 3 | Ringkasan “mulai dari” | 10 kartu kecil, anchor ke detail |
 | 4 | Detail per layanan | Tabel ukuran awam (“cukup untuk”), spesifikasi di `<details>` |
 | 5 | AI | Tabel model (level, ≈ sesi/Rp10.000), Kredit/1 jt di `<details>`, tiga satuan estimasi |
@@ -79,7 +79,7 @@ Navigasi di halaman (mobile): bar chip horizontal lengket (Kalkulator · AI · J
 |---|---|---|
 | `#/masuk` | Masuk | Satu field email/HP (v3) → kode 6 digit mock → nama tampilan |
 | `#/beranda` | Beranda | Saldo besar + “cukup sampai ±tanggal”, biaya tetap bulan ini, proyek aktif (status nyala/dijeda), **langkah berikutnya** (kartu kontekstual), panduan singkat. Akun baru: empty state “Mau bikin apa?” |
-| `#/buat` | Wizard (4 langkah) | 1 Tujuan (resep / mulai kosong) → 2 Atur (ukuran awam per layanan, nama proyek, alamat web) → 3 **Ringkasan biaya** (tetap/pakai/tahunan, saldo setelahnya; kurang saldo → isi saldo inline) → 4 **Menyalakan** (progres bertahap) → selesai: link live + langkah berikutnya |
+| `#/buat` | Wizard (4 langkah) | 1 Tujuan (paket / mulai kosong) → 2 Atur (ukuran awam per layanan, nama proyek, alamat web) → 3 **Ringkasan biaya** (tetap/pakai/tahunan, saldo setelahnya; kurang saldo → isi saldo inline) → 4 **Menyalakan** (progres bertahap) → selesai: link live + langkah berikutnya |
 | `#/proyek` | Daftar proyek | Kartu per proyek: nama, layanan (ikon), status, biaya/bulan |
 | `#/proyek/:id` | Detail proyek | Tab: Ringkasan (link, status, pemakaian) · Layanan (per layanan: ganti ukuran, hentikan / matikan perpanjangan domain, nyalakan lagi) · AI (key proyek + limit) · Log · Pengaturan (alamat web, **Hentikan proyek**) |
 | `#/ai` | AI | Tab: Mulai cepat (Base URL + key) · Coba AI (chat) · Model · Pemakaian · API key |
@@ -99,13 +99,13 @@ Overlay console: **Isi saldo** (checkout v3: paket → bayar → sukses), konfir
 
 | Dari | Ke |
 |---|---|
-| Landing resep / contoh / template “Nyalakan” | `app.html#/buat?resep=…` (atau `?template=…`) |
+| Landing paket / contoh / template “Nyalakan” | `app.html#/buat?paket=…` (atau `?template=…`) |
 | Landing “Isi saldo” | `app.html#/saldo?isi=1` |
 | Landing AI “Ambil API key” | `app.html#/ai` |
-| Harga kalkulator “Nyalakan” | `app.html#/buat?resep=…&s=…` (skema `s`: `services-and-pricing.md` §6) |
+| Harga kalkulator “Nyalakan” | `app.html#/buat?paket=…&s=…` (skema `s`: `services-and-pricing.md` §6) |
 | Landing/Beranda chip “AI coding saja” | `app.html#/ai?isi=1` (bukan wizard) |
 | Console belum masuk | `#/masuk` lalu kembali ke rute tujuan |
-| Nala “pilih resep” | Kartu resep di chat → wizard |
+| Nala “pilih paket” | Kartu paket di chat → wizard |
 
 ## 6. Live Chat Nala
-Pill “Butuh bantuan?” di semua halaman (di console di atas tab bar). Alur baru: **“Bantu pilih resep”** (3 pertanyaan: mau bikin apa, sudah ada kodenya?, kira-kira berapa pengunjung/pesan) → kartu resep → wizard. Alur v3 (paket AI, tim online/offline, serah ke Sari) tetap.
+Pill “Butuh bantuan?” di semua halaman (di console di atas tab bar). Alur baru: **“Bantu pilih paket”** (3 pertanyaan: mau bikin apa, sudah ada kodenya?, kira-kira berapa pengunjung/pesan) → kartu paket → wizard. Alur v3 (paket AI, tim online/offline, serah ke Sari) tetap.

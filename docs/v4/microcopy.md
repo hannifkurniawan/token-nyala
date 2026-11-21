@@ -22,6 +22,7 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 | saldo | balance | kredit (kecuali “1 kredit = Rp1”), wallet, deposit |
 | isi saldo | top up | deposit, recharge |
 | proyek | project | app, workspace, pod |
+| paket (kumpulan layanan untuk satu tujuan, isinya bisa diubah) | bundle | resep, recipe (dipakai sampai 21 Nov 2026), template (itu untuk aplikasi siap pakai) |
 | nyalakan / nyala | switch on / on | deploy, provision, launch (boleh di Detail teknis) |
 | dijeda | paused | suspended, terminated |
 | berhenti | stop | delete, cancel subscription |
@@ -101,13 +102,13 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 | recipe.aiOnlyRow | Isi {Rp} → {range} sesi kecil | Top up {Rp} → {range} small sessions |
 | recipe.aiOnlyCta | Ambil API key | Get an API key |
 | recipe.suggest | Isi {Rp} → cukup ±{n} bulan | Top up {Rp} → lasts ±{n} months |
-| recipe.cta | Nyalakan resep ini | Switch on this recipe |
+| recipe.cta | Nyalakan paket ini | Switch on this bundle |
 | recipe.edit | Ubah di kalkulator | Adjust in the calculator |
 | recipe.note | Perkiraan. Pemakaian AI bergantung pada model, panjang prompt, dan jumlah pesan. | Estimate. AI usage depends on the model, prompt length, and message volume. |
 
 Nama pendek (chip, Nala Q1): portofolio **Landing page** / *Landing page* · chatbot-wa **Chatbot WA** / *WhatsApp bot* · web-klien **Web klien** / *Client site* · otomasi-tim **Otomasi tim** / *Team automation* · ai-coding **AI coding saja** / *AI for coding*.
 
-| Resep | Nama ID | Nama EN | Kalimat ID | Kalimat EN |
+| Paket | Nama ID | Nama EN | Kalimat ID | Kalimat EN |
 |---|---|---|---|---|
 | portofolio | Landing page / portofolio | Landing page / portfolio | Online dengan alamat sendiri, plus AI untuk terus memperbaikinya. | Online with your own address, plus AI to keep improving it. |
 | chatbot-wa | Chatbot WhatsApp | WhatsApp chatbot | Balas pesan pelanggan otomatis, 24 jam. | Reply to customers automatically, 24/7. |
@@ -118,7 +119,7 @@ Nama pendek (chip, Nala Q1): portofolio **Landing page** / *Landing page* · cha
 ### Cara kerja
 | # | ID judul / isi | EN |
 |---|---|---|
-| 1 | **Pilih tujuanmu** — Landing page, chatbot, atau otomasi. Kami siapkan resepnya. | **Pick your goal** — A landing page, chatbot, or automation. We prepare the recipe. |
+| 1 | **Pilih tujuanmu** — Landing page, chatbot, atau otomasi. Kami siapkan paketnya. | **Pick your goal** — A landing page, chatbot, or automation. We prepare the recipe. |
 | 2 | **Isi saldo Rupiah** — QRIS, e-wallet, atau virtual account. Total terlihat sebelum bayar. | **Top up in Rupiah** — QRIS, e-wallet, or virtual account. See the total before you pay. |
 | 3 | **Nyala & online** — Proyekmu jalan dengan alamat sendiri. Pantau saldo kapan saja. | **Switch on & go online** — Your project runs at its own address. Check your balance anytime. |
 
@@ -199,7 +200,7 @@ Aman kartu 1: `safe.1.q` Kalau berhenti di hari ke-10? · kartu 4: `safe.4.remin
 | price.title | Satu saldo Rupiah. Bayar yang kamu pakai. | One Rupiah balance. Pay for what you use. |
 | price.trust | Termasuk PPN · Tanpa kartu kredit · Biaya tambahan Rp0 | Tax included · No credit card · No extra fees |
 | calc.title | Kalkulator | Calculator |
-| calc.recipe | Resep | Recipe |
+| calc.recipe | Paket | Bundle |
 | calc.add | Tambah layanan | Add a service |
 | calc.fixed | Biaya tetap | Fixed cost |
 | calc.usage | Perkiraan pakai | Estimated usage |
@@ -207,7 +208,7 @@ Aman kartu 1: `safe.1.q` Kalau berhenti di hari ke-10? · kartu 4: `safe.4.remin
 | calc.monthly | Per bulan | Per month |
 | calc.first | Bulan pertama | First month |
 | calc.cta | Nyalakan | Switch on |
-| calc.empty | Belum ada layanan. Pilih resep atau tambah layanan. | No services yet. Pick a recipe or add a service. |
+| calc.empty | Belum ada layanan. Pilih paket atau tambah layanan. | No services yet. Pick a bundle or add a service. |
 | size.disabled | Belum cukup untuk {template} — pilih {size} | Not enough for {template} — choose {size} |
 
 | calc.details | Rincian | Details |
@@ -400,15 +401,15 @@ Baru (6):
 | **Bisa berhenti atau batal?** Bisa kapan saja. Sisa hari kembali ke saldo. Pembayaran isi saldo yang belum selesai bisa dibatalkan; saldo yang sudah masuk tidak bisa diuangkan. | **Can I stop or cancel?** Anytime. Unused days go back to your balance. Unfinished top-up payments can be cancelled; balance already added can't be cashed out. |
 | **Berapa biaya alamat web setelah tahun pertama?** `.my.id`, `.biz.id`, dan `.web.id` Rp5.000 tahun pertama, lalu Rp25.000 per tahun. Harga lain ada di halaman Harga. | **How much is a web address after the first year?** `.my.id`, `.biz.id`, and `.web.id` are Rp5,000 for the first year, then Rp25,000 a year. Other prices are on the Pricing page. |
 
-## 7. Nala — Alur “Bantu pilih resep”
+## 7. Nala — Alur “Bantu pilih paket”
 | Langkah | ID | EN |
 |---|---|---|
-| Pembuka (chip baru) | Bantu pilih resep | Help me pick a recipe |
-| Q1 | Mau bikin apa? — pilihan = nama pendek resep (§3) | What are you building? — options = short recipe names |
+| Pembuka (chip baru) | Bantu pilih paket | Help me pick a bundle |
+| Q1 | Mau bikin apa? — pilihan = nama pendek paket (§3) | What are you building? — options = short bundle names |
 | Q2 | Kodenya sudah ada? — *Sudah, dari Lovable/Bolt/GitHub* · *Belum, mau dibuat dengan AI* | Do you have the code already? — *Yes, from Lovable/Bolt/GitHub* · *Not yet, I'll build it with AI* |
 | Q3 | Kira-kira seramai apa? — *Baru coba* · *Rutin dipakai* · *Ramai* | How busy will it be? — *Just trying* · *Used regularly* · *Busy* |
-| Hasil | Ini resep yang pas: {recipe} — ≈ {Rp}/bulan. | Here's the right recipe: {recipe} — ≈ {Rp}/month. |
-| Aksi | Nyalakan resep ini · Ubah di kalkulator | Switch on this recipe · Adjust in the calculator |
+| Hasil | Ini paket yang pas: {bundle} — ≈ {Rp}/bulan. | Here's the right bundle: {bundle} — ≈ {Rp}/month. |
+| Aksi | Nyalakan paket ini · Ubah di kalkulator | Switch on this bundle · Adjust in the calculator |
 
 Aturan Q2/Q3: `services-and-pricing.md` §6 “Aturan Nala”.
 
@@ -523,11 +524,11 @@ Kartu “Satu saldo” **tidak** menampilkan tanggal “cukup sampai” (aturan 
 | faq.lead | Belum menemukan jawabannya? Tanya Nala, atau bicara dengan tim. | Still looking for an answer? Ask Nala, or talk to the team. |
 | faq.a13 (v3 diperbarui) | Nonaktifkan API key itu di console (AI → API key), lalu buat yang baru. Pasang batas belanja per proyek supaya pemakaian tidak melebihi rencana. | Disable that key in the console (AI → API key) and create a new one. Set a spending limit per project so usage never goes past your plan. |
 | final.trust | Bayar Rupiah · Tanpa kartu kredit · Saldo tidak kedaluwarsa | Pay in Rupiah · No credit card · Balance never expires |
-| chat.greeting | Hai, aku Nala! Mau dibantu pilih resep untuk proyekmu, atau ada pertanyaan lain? | Hi, I'm Nala! Want help picking a recipe for your project, or got another question? |
+| chat.greeting | Hai, aku Nala! Mau dibantu pilih paket untuk proyekmu, atau ada pertanyaan lain? | Hi, I'm Nala! Want help picking a bundle for your project, or got another question? |
 | nala.resultAi | Untuk AI di tool coding: isi {Rp} → {range} sesi kecil. Ambil API key-mu di console. | For AI in your coding tools: top up {Rp} → {range} small sessions. Get your API key in the console. |
 | agent.greeting | Halo, aku Sari dari tim TokenNyala. Ada yang bisa kubantu? (v3: “…soal top up?”) | Hi, I'm Sari from the TokenNyala team. How can I help? |
 
-Chip utama Nala: Bantu pilih resep · Cara pakai saldo di tool · Model apa saja? · Metode pembayaran · Bicara dengan tim. Alur v3 “Bantu pilih paket” **digantikan** “Bantu pilih resep”; kebutuhan AI-saja dijawab lewat pilihan “AI coding saja” (tabel nominal → sesi kecil v3).
+Chip utama Nala: Bantu pilih paket · Cara pakai saldo di tool · Model apa saja? · Metode pembayaran · Bicara dengan tim. Alur v3 “Bantu pilih paket” **digantikan** “Bantu pilih paket”; kebutuhan AI-saja dijawab lewat pilihan “AI coding saja” (tabel nominal → sesi kecil v3).
 
 ### Harga — tambahan Fase 3 (20 Nov 2026)
 Semua kunci ada di `v4/assets/js/i18n.js` (awalan `price.`, `pnav.`, `calc.`, `from.`, `det.`, `aip.`, `bal.`, `rule.`, `pfaq.`). Yang penting untuk review copy:
@@ -556,7 +557,7 @@ Kunci di `v4/assets/js/i18n.js` (awalan `con.`, `acct.`, `auth.`, `home.`, `next
 | auth.demoTitle | Atau langsung coba akun contoh (Ayu · Raka · Dimas → `?demo=`) | Or jump into a sample account |
 | home.untilPaused | Ada layanan yang dijeda. Isi saldo untuk menyalakannya lagi. (tanggal “cukup sampai” tidak ditampilkan saat ada yang dijeda) | A service is paused. Top up to switch it back on. |
 | banner.paused | …Isi minimal {Rp} — langsung menyala lagi. (ditambah ajakan) | …Top up at least {Rp} and it switches back on. |
-| next.* | 5 langkah berikutnya (isi saldo · resep pertama · QR WhatsApp · alamat web · API key) | — |
+| next.* | 5 langkah berikutnya (isi saldo · paket pertama · QR WhatsApp · alamat web · API key) | — |
 | co.afterResume | Saldo setelahnya {Rp} — sudah termasuk {proyek} menyala lagi untuk 30 hari. | Balance afterwards {Rp} — after {project} switches back on for 30 days. |
 | co.resumed | {proyek} menyala lagi — 30 hari baru sudah dipotong. | {project} is back on — a new 30 days has been charged. |
 | con.soonBody | Bagian ini dibangun di tahap berikutnya prototype. (rute Fase 5–6, sementara) | This part is built in the next stage of the prototype. |

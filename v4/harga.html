@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#F7F8FC">
-  <meta name="description" content="Harga TokenNyala: kalkulator resep, harga tiap layanan, model AI, dan aturan saldo. Satu saldo Rupiah, termasuk PPN.">
+  <meta name="description" content="Harga TokenNyala: kalkulator paket, harga tiap layanan, model AI, dan aturan saldo. Satu saldo Rupiah, termasuk PPN.">
   <meta property="og:title" content="Harga — TokenNyala">
   <meta property="og:description" content="Platform AI cloud untuk vibecoder: hosting, otomasi, data, alamat web, dan AI dengan satu saldo Rupiah.">
   <meta property="og:type" content="website">
@@ -48,7 +48,7 @@
           <button type="button" data-lang="en" aria-pressed="false" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">EN</button>
         </div>
         <a href="app.html#/masuk" class="hidden min-h-11 items-center px-3 font-bold lg:inline-flex" data-i18n="nav.signin">Masuk</a>
-        <a href="app.html#/buat?resep=portofolio" data-start class="btn hidden group-data-menu-open:hidden sm:inline-flex" data-i18n="cta.start">Mulai bangun</a>
+        <a href="app.html#/buat?paket=portofolio" data-start class="btn hidden group-data-menu-open:hidden sm:inline-flex" data-i18n="cta.start">Mulai bangun</a>
         <button type="button" id="menu-button" class="menu-btn lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Buka menu"><span class="menu-btn__bars" aria-hidden="true"><i></i><i></i></span></button>
       </div>
     </div>
@@ -70,7 +70,7 @@
         </div>
         <a href="app.html#/masuk" class="btn btn--ghost-light" data-i18n="nav.signin">Masuk</a>
       </div>
-      <a href="app.html#/buat?resep=portofolio" data-start class="btn btn--yellow btn--lg mt-4 w-full" data-i18n="cta.start">Mulai bangun</a>
+      <a href="app.html#/buat?paket=portofolio" data-start class="btn btn--yellow btn--lg mt-4 w-full" data-i18n="cta.start">Mulai bangun</a>
     </nav>
   </div>
 
@@ -117,10 +117,10 @@
           <div class="min-w-0">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
               <div class="min-w-0 flex-1">
-                <label for="calc-recipe" class="block font-bold" data-i18n="calc.recipe">Resep</label>
+                <label for="calc-recipe" class="block font-bold" data-i18n="calc.recipe">Paket</label>
                 <select id="calc-recipe" class="field mt-2 pr-8"></select>
               </div>
-              <button type="button" class="btn btn--ghost shrink-0" data-calc-reset><svg class="icon size-5" aria-hidden="true"><use href="#i-rotate-ccw"/></svg><span data-i18n="calc.reset">Kembalikan isi resep</span></button>
+              <button type="button" class="btn btn--ghost shrink-0" data-calc-reset><svg class="icon size-5" aria-hidden="true"><use href="#i-rotate-ccw"/></svg><span data-i18n="calc.reset">Kembalikan isi paket</span></button>
             </div>
             <p class="mt-6 hidden rounded-card border border-dashed border-line px-5 py-8 text-center font-bold text-muted" data-calc-empty data-i18n="calc.empty"></p>
             <ul class="mt-6 grid grid-cols-1 gap-3" data-calc-rows data-i18n-aria="calc.listAria" aria-label="Layanan di kalkulator"></ul>

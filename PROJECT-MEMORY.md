@@ -130,6 +130,8 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 21 Nov 2026 | Landing: loader + kursor custom dipakai; font 6 face (Manrope 500–800 + Plex Mono 500/600); copy statis ID/EN di HTML (`data-l`), kamus tetap untuk Harga/console/Nala dan teks dinamis | Disetujui user 21 Nov |
 | 21 Nov 2026 | Landing 12 section: Satu saldo jadi kartu 4 di stack Aman, Template digabung ke Layanan, Belajar ke FAQ | Ritme lembar showcase; halaman 35% lebih pendek |
 | 21 Nov 2026 | Harga akan ikut cara showcase (site.css + harga.css, tanpa loader); console tetap Tailwind | Rekomendasi diterima user |
+| 21 Nov 2026 | Istilah “resep” diganti **“paket”** (EN “bundle”); URL `?paket=` (lama `?resep=` tetap dibaca); anchor `#paket` | User terganggu dengan “resep”; “paket” paling akrab untuk pemula, nominal isi saldo tidak disebut paket |
+| 21 Nov 2026 | Narasi Layanan: “Mulai dari yang kamu butuhkan sekarang, tambah layanan lain kapan saja. Harganya terlihat sejak awal.” Kartu template: biaya + tombol di dasar kartu, label “Nyalakan →” | Pilihan user (opsi B; tombol sejajar) |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -195,6 +197,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
+### Sesi 5 (lanjutan) — 21 Nov 2026 (review landing)
+- resep → paket / bundle di kamus (14 teks), landing, harga, console, Nala (kata kunci chat juga mengenali “paket”/“bundle”), dokumen v4; `?paket=` dengan fallback `?resep=` (diuji QA wizard).
+- Narasi Layanan opsi B; kartu template sejajar + “Nyalakan →”.
+
 ### Sesi 5 (lanjutan) — 21 Nov 2026 (landing dibangun ulang cara showcase)
 - User: putaran pertama "jadi lebih aneh". Analisa kode + pengukuran: penyebab utama = tidak ada gerbang loader (halaman statis lalu berkedip saat GSAP menyembunyikan elemen), ritme 15 section, satuan/ukuran berbeda, weight 600 hilang.
 - Dibangun ulang: `index.html` baru (markup showcase, copy `data-l`), `assets/css/site.css` + `landing.css` (port `styles.css` showcase), `landing.js` baru (susunan `script.js` showcase), Nala diberi kelas semantik `chat__*`. Kunci kamus statis landing dihapus (108). CSS landing lama di `tailwind.css` dibuang (header Harga tetap).

@@ -18,8 +18,8 @@
      State + helpers
      --------------------------------------------------------- */
   const state = { recipe: D.RECIPES[0].id, hasPicked: false };
-  const startHref = (id) => (D.recipe(id).aiOnly ? 'app.html#/ai?isi=1' : `app.html#/buat?resep=${id}`);
-  const calcHref = (id) => `harga.html?resep=${id}#kalkulator`;
+  const startHref = (id) => (D.recipe(id).aiOnly ? 'app.html#/ai?isi=1' : `app.html#/buat?paket=${id}`);
+  const calcHref = (id) => `harga.html?paket=${id}#kalkulator`;
   /** 'Rp34 rb' → <small>Rp</small>34 rb (textContent stays 'Rp34 rb') */
   const bigK = (n) => `<small>≈ Rp</small>${esc(rpK(n).slice(2))}`;
 
@@ -273,7 +273,7 @@
         <p>${esc(t(`tpl.${id}.desc`))}</p>
         <p class="tpl-card__min">${esc(t('tpl.min', { size: t(`size.${D.templateMin(id)}`) }))}</p>
         <p class="tpl-card__cost">${esc(cost)}</p>
-        <a class="btn btn--sm btn--outline-dark" href="app.html#/buat?template=${id}" aria-label="${esc(t('tpl.ctaAria', { name }))}">${esc(t('tpl.cta'))}</a>
+        <a class="btn btn--sm btn--outline-dark tpl-card__cta" href="app.html#/buat?template=${id}" aria-label="${esc(t('tpl.ctaAria', { name }))}" data-cursor="Nyala">${esc(t('tpl.cta'))} <span class="btn__icon" aria-hidden="true">→</span></a>
       </li>`;
     }).join('');
   }
@@ -429,7 +429,7 @@
     if (!el) return;
     const x = D.exampleTotals();
     const range = (a, b) => `${rp(a)}–${num(b)}`;
-    const href = `app.html#/buat?resep=portofolio&s=${D.serialize([{ svc: 'hosting', size: D.EXAMPLE.size }, { svc: 'domain', ext: D.EXAMPLE.ext }, { svc: 'ai', unit: 'sesi', qty: D.HERO.sessions }])}`;
+    const href = `app.html#/buat?paket=portofolio&s=${D.serialize([{ svc: 'hosting', size: D.EXAMPLE.size }, { svc: 'domain', ext: D.EXAMPLE.ext }, { svc: 'ai', unit: 'sesi', qty: D.HERO.sessions }])}`;
     el.innerHTML = `
       <p class="mono receipt__head" id="receipt-title">${esc(t('ex.project'))}</p>
       <table class="receipt__table">

@@ -53,7 +53,7 @@ bukan dari menu.
 [Landing page] [Chatbot WA] [Web klien] → scroll horizontal chip (radiogroup / tablist),
 [Otomasi tim] [AI coding saja]           gutter kanan terlihat sebagian = bisa digeser
 
-┌───────────────────────────────┐ kartu resep (putih di atas biru)
+┌───────────────────────────────┐ kartu paket (putih di atas biru)
 │ LANDING PAGE / PORTOFOLIO     │
 │ ≈ Rp34 rb /bulan              │ angka besar
 │ Bulan pertama Rp38.900        │ termasuk alamat web 1 tahun
@@ -66,8 +66,8 @@ bukan dari menu.
 │   ±10 sesi kecil · ±Rp18.900  │ “perkiraan” (label kecil)
 │ ───────────────────────────── │
 │ Isi Rp50.000 → cukup ±1 bulan │ chip kuning
-│ [ Nyalakan resep ini      → ] │ primary
-│ Ubah di kalkulator →          │ link → harga.html?resep=…&s=…#kalkulator (skema URL: services-and-pricing §6)
+│ [ Nyalakan paket ini      → ] │ primary
+│ Ubah di kalkulator →          │ link → harga.html?paket=…&s=…#kalkulator (skema URL: services-and-pricing §6)
 └───────────────────────────────┘
 Perkiraan. Pemakaian AI bergantung pada model dan prompt.
 ```
@@ -121,7 +121,7 @@ Biaya tetap = dipotong per 30 hari · Biaya pakai = AI, sesuai pemakaian
 ### A12–14. Tim (v3) · FAQ (v3 pola `<details>`) · CTA akhir (sheet blue, saklar besar).
 
 ### Desktop (≥1024)
-Hero 2 kolom (judul kiri, board kanan). Resep: judul + chip kiri (sticky), kartu kanan. Layanan 4 kolom. Saldo 2 kolom (copy | dompet). Konten maks 1280px, gutter 16/24/40/64 (`visual-direction.md` §4).
+Hero 2 kolom (judul kiri, board kanan). Paket: judul + chip kiri (sticky), kartu kanan. Layanan 4 kolom. Saldo 2 kolom (copy | dompet). Konten maks 1280px, gutter 16/24/40/64 (`visual-direction.md` §4).
 
 ---
 
@@ -137,7 +137,7 @@ Bayar yang kamu pakai.
 [Kalkulator][AI][Jalankan][Simpan][Hubungkan][Saldo]   chip nav lengket (scroll-x)
 
 KALKULATOR
-Resep: [Landing page / portofolio ▾]   select
+Paket: [Landing page / portofolio ▾]   select
 
 ▣ Online-kan proyekmu        [on]      switch on/off per layanan
   ( Coba-coba | Rutin | Ramai )        segmented ukuran
@@ -183,7 +183,7 @@ Desktop: sidebar kiri 248px, konten maks 960px.
 ```text
 Hai, Ayu 👋
 Mau bikin apa hari ini?
-[ chip 5 resep ]                 → #/buat?resep= (AI coding saja → #/ai?isi=1)
+[ chip 5 paket ]                 → #/buat?paket= (AI coding saja → #/ai?isi=1)
 ┌ Saldo Rp0 ──────────────┐
 │ Isi saldo untuk mulai.  │
 │ [ Isi saldo ]           │

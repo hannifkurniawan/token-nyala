@@ -51,8 +51,8 @@
   function initWizard(r) {
     if (wz.key === r.raw) return; // same entry: keep progress (re-renders, back from a top-up, step 4 running)
     wz.key = r.raw; wz.project = null; wz.progress = []; wz.done = 0;
-    const resep = r.q.get('resep'), tpl = r.q.get('template');
-    if (resep && D.recipe(resep) && !D.recipe(resep).aiOnly) { setGoal(resep, r.q.get('s')); wz.step = 2; }
+    const paket = r.q.get('paket') ?? r.q.get('resep'), tpl = r.q.get('template'); // ?resep= = legacy name
+    if (paket && D.recipe(paket) && !D.recipe(paket).aiOnly) { setGoal(paket, r.q.get('s')); wz.step = 2; }
     else if (tpl && D.TEMPLATES[tpl]) { setGoal(`tpl:${tpl}`); wz.step = 2; }
     else if (r.q.get('s')) { wz.goal = 'kosong'; setGoal('kosong'); wz.items = D.itemsFromUrl('', r.q.get('s')); wz.step = 2; }
     else { wz.goal = null; wz.items = []; wz.step = 1; }

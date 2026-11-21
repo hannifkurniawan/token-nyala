@@ -8,7 +8,7 @@
   const { icon, esc } = TN.ui;
   const { h1 } = C;
   const STEPS = { 'g-portofolio': 4, 'g-chatbot': 4, 'g-ai-tool': 3 };
-  const TRY = { 'g-portofolio': '#/buat?resep=portofolio', 'g-chatbot': '#/buat?template=wa-bot', 'g-ai-tool': '#/ai' };
+  const TRY = { 'g-portofolio': '#/buat?paket=portofolio', 'g-chatbot': '#/buat?template=wa-bot', 'g-ai-tool': '#/ai' };
 
   C.ROUTES.belajar = {
     title: (r) => (STEPS[r.q.get('panduan')] ? t(`learn.${r.q.get('panduan')}`) : t('nav.learn')),

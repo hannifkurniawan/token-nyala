@@ -609,3 +609,6 @@
 .board__ready { color: #007A5E; }
 .intent__tab[aria-checked="true"] { color: var(--dark); }
 .tool-steps b { font-weight: 600; }
+/* Template cards: equal height, cost + button pinned to the bottom so every button lines up */
+.tpl-card { display: flex; flex-direction: column; }
+.tpl-card__cost { margin-top: auto; }

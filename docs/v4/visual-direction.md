@@ -57,7 +57,7 @@ Di console, display maksimum `clamp(2rem, 6vw, 3rem)`; angka saldo boleh lebih b
 
 ## 4. Layout
 
-- **Lembar (sheet):** latar penuh tepi ke tepi, sudut atas membulat `clamp(28px, 4vw, 64px)`, bertumpuk dengan margin negatif sebesar radiusnya. Urutan warna landing (wireframe mengikuti ini): paper (hero) → dark (cerita) → **blue (resep)** → paper (cara kerja) → white (layanan) → **yellow (saldo)** → paper (template) → dark (AI) → white (contoh) → stack 4 warna (aman) → paper (belajar) → yellow (tim) → paper (FAQ) → blue (CTA akhir).
+- **Lembar (sheet):** latar penuh tepi ke tepi, sudut atas membulat `clamp(28px, 4vw, 64px)`, bertumpuk dengan margin negatif sebesar radiusnya. Urutan warna landing (wireframe mengikuti ini): paper (hero) → dark (cerita) → **blue (paket)** → paper (cara kerja) → white (layanan) → **yellow (saldo)** → paper (template) → dark (AI) → white (contoh) → stack 4 warna (aman) → paper (belajar) → yellow (tim) → paper (FAQ) → blue (CTA akhir).
 - **Konten:** maks **1280px**; gutter **16px** (<640), **24px** (`sm:`), **40px** (`lg:`), **64px** (`xl:`). (v3: 1184/16/24; v2: 1600/fluid. Dipilih jalan tengah, satu aturan.)
 - Padding vertikal lembar: `clamp(72px, 12vw, 180px)` atas, sedikit lebih besar di bawah (untuk tumpukan lembar berikutnya).
 - Grid: selalu kolom eksplisit (`grid-cols-1`, `minmax(0,…)`) — aturan v3.
@@ -71,7 +71,7 @@ Di console, display maksimum `clamp(2rem, 6vw, 3rem)`; angka saldo boleh lebih b
 | **Tombol** | Pil, tinggi 48 (52 di hero mobile), 700. Primary biru → hover sapuan dark dari bawah; Yellow; Ghost (border dark); Ghost-light (di lembar gelap); Text link bergaris bawah kuning tebal 2px |
 | **Kicker bernomor** | `(01) MAU BIKIN APA?` mono |
 | **Mark** | Garis kuning tebal di bawah kata kunci judul (`semua`, `nyala`) |
-| **Kartu resep** | Putih di atas lembar biru, angka “≈ Rp34 rb” sangat besar, daftar layanan dengan ikon, chip kuning saran top-up |
+| **Kartu paket** | Putih di atas lembar biru, angka “≈ Rp34 rb” sangat besar, daftar layanan dengan ikon, chip kuning saran top-up |
 | **Kartu layanan** | Ikon garis 24px, nama awam 700, label teknis mono kecil, harga “mulai dari” |
 | **Stack card** | Kartu warna (sky, yellow, teal, blue) menumpuk sticky saat scroll di `lg:`; di mobile tersusun biasa |
 | **Meter saldo** | Bar 14px kuning; varian rentang bergaris biru untuk estimasi |

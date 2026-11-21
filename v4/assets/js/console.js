@@ -313,7 +313,7 @@
       const projects = s.projects.map((p) => S.projectView(p));
       const n = nextStep(s);
       const c = S.costs();
-      const chips = `<ul class="mt-4 flex flex-wrap gap-2" aria-label="${esc(t('home.recipesAria'))}">${D.RECIPES.map((r) => `<li><a href="${r.aiOnly ? '#/ai?isi=1' : `#/buat?resep=${r.id}`}" class="inline-flex min-h-11 items-center rounded-full border-[1.5px] border-xl-dark/20 bg-white px-4 font-bold hover:border-xl-blue">${esc(t(`recipe.short.${r.id}`))}</a></li>`).join('')}</ul>`;
+      const chips = `<ul class="mt-4 flex flex-wrap gap-2" aria-label="${esc(t('home.recipesAria'))}">${D.RECIPES.map((r) => `<li><a href="${r.aiOnly ? '#/ai?isi=1' : `#/buat?paket=${r.id}`}" class="inline-flex min-h-11 items-center rounded-full border-[1.5px] border-xl-dark/20 bg-white px-4 font-bold hover:border-xl-blue">${esc(t(`recipe.short.${r.id}`))}</a></li>`).join('')}</ul>`;
       return `${h1(t('home.hello', { name: s.user.name }), projects.length ? '' : t('home.empty'))}
         ${S.banners().map(bannerHtml).join('')}
         ${projects.length ? '' : chips}

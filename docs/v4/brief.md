@@ -29,7 +29,7 @@ Pesaing menjawab dengan menu dan satuan teknis:
 **Mulai dari tujuan, bukan dari menu.** Pilih “mau bikin apa?”, TokenNyala merangkai layanannya, menunjukkan **satu angka Rupiah per bulan**, lalu menyalakannya dalam beberapa ketukan.
 
 ## Pembeda
-1. **Resep berdasarkan tujuan** — “Landing page / portofolio”, “Chatbot WhatsApp”, “Website klien”, “Otomasi tim”, “AI untuk tool coding”.
+1. **Paket berdasarkan tujuan** — “Landing page / portofolio”, “Chatbot WhatsApp”, “Website klien”, “Otomasi tim”, “AI untuk tool coding”.
 2. **Satu saldo Rupiah** untuk semua layanan dan AI — tanpa kartu kredit, tanpa saldo kedua, tanpa kurs.
 3. **Bahasa awam dulu, detail teknis bisa dibuka** — ukuran *Coba-coba / Rutin / Ramai* dengan “cukup untuk …”; vCPU/RAM di bagian detail.
 4. **Biaya tetap vs biaya pakai** dipisah jelas, plus perkiraan “saldo cukup sampai tanggal …”.
@@ -38,7 +38,7 @@ Pesaing menjawab dengan menu dan satuan teknis:
 7. **Unique design taste** — bahasa visual showcase v2: lembar warna penuh, saklar “nyala”, angka besar.
 
 ## Aksi utama
-**Mulai bangun** (pilih tujuan → resep → nyalakan).
+**Mulai bangun** (pilih tujuan → paket → nyalakan).
 
 ## Aksi sekunder
 - Lihat harga semua layanan.
@@ -50,14 +50,14 @@ Pesaing menjawab dengan menu dan satuan teknis:
 ## Cakupan prototype
 | Bagian | Isi |
 |---|---|
-| Landing | Cerita “dari prompt sampai online”, pemilih tujuan + resep, semua layanan, satu saldo, template, AI, contoh, belajar, tim, FAQ, Nala |
-| Harga | Semua layanan dalam satu halaman + kalkulator resep |
+| Landing | Cerita “dari prompt sampai online”, pemilih tujuan + paket, semua layanan, satu saldo, template, AI, contoh, belajar, tim, FAQ, Nala |
+| Harga | Semua layanan dalam satu halaman + kalkulator paket |
 | Console (mock) | Masuk, Beranda, Buat baru (wizard), Proyek, AI, Saldo, Layanan lain, Belajar, Bantuan |
 
 Data, pembayaran, deploy, dan URL adalah **simulasi** yang diberi label jelas.
 
 ## Metrik keberhasilan (untuk produk nyata)
-- Klik “Mulai bangun” dan pemilihan resep.
+- Klik “Mulai bangun” dan pemilihan paket.
 - Penyelesaian wizard sampai “nyala” (deploy mock).
 - Waktu dari landing sampai layanan pertama nyala.
 - Top-up pertama dan top-up ulang.

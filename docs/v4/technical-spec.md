@@ -15,11 +15,11 @@ v4/
 ├── assets/
 │   ├── css/app.css     # hasil compile — DI-COMMIT agar file:// jalan tanpa build
 │   ├── js/
-│   │   ├── data.js     # layanan, ukuran, harga, resep, model, satuan + fungsi hitung murni
+│   │   ├── data.js     # layanan, ukuran, harga, paket, model, satuan + fungsi hitung murni
 │   │   ├── i18n.js     # kamus ID/EN + apply/format
 │   │   ├── store.js    # state demo console (localStorage) + preset ?demo=
 │   │   ├── ui.js       # header/menu, bahasa, setupModal, salin, toast, format Rp, ikon
-│   │   ├── nala.js     # live chat (v3 + alur resep)
+│   │   ├── nala.js     # live chat (v3 + alur paket)
 │   │   ├── landing.js · pricing.js · console.js
 │   │   └── motion.js   # GSAP/Lenis, landing & harga saja
 │   ├── vendor/         # gsap 3.12.5, ScrollTrigger, lenis 1.1.13 (dari showcase), lisensi
@@ -76,7 +76,7 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 
 ## 5. Router Console
 
-- Hash router (`#/beranda`, `#/buat?resep=…`, `#/proyek/:id`, …) — jalan di `file://`.
+- Hash router (`#/beranda`, `#/buat?paket=…`, `#/proyek/:id`, …) — jalan di `file://`.
 - Saat pindah rute: render, set `document.title`, **fokus ke `h1` rute** (`tabindex="-1"`), umumkan judul lewat region `aria-live` polite, scroll ke atas.
 - Belum “masuk” → `#/masuk?next=…`.
 - Tab bar `aria-current="page"`; sidebar desktop sama.
@@ -96,7 +96,7 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 11. **Jangan bawa CSS showcase v2**; bawa bahasa visualnya (`visual-direction.md`). Logika JS v3/showcase boleh dipakai ulang setelah dibaca.
 
 ## 7. Aksesibilitas (tambahan v4)
-- Chip resep = `radiogroup` (pilihan tunggal yang mengubah kartu) dengan panah kiri/kanan; segmented ukuran = `radiogroup`; switch layanan = `button[role=switch][aria-checked]`; stepper = tombol −/+ dengan `aria-label` + nilai `aria-live`.
+- Chip paket = `radiogroup` (pilihan tunggal yang mengubah kartu) dengan panah kiri/kanan; segmented ukuran = `radiogroup`; switch layanan = `button[role=switch][aria-checked]`; stepper = tombol −/+ dengan `aria-label` + nilai `aria-live`.
 - Wizard: judul langkah fokus saat pindah langkah; “Langkah n dari 4” terbaca; progres menyalakan di `aria-live="polite"`; tombol Nyalakan tidak di-disable tanpa alasan (validasi saat klik, aturan v3).
 - Ringkasan lengket mobile: tombol “Rincian” `aria-expanded`.
 - Grafik pemakaian mengikuti skill dataviz (v3).
@@ -105,7 +105,7 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 ## 8. Tools QA v4
 | Tool | Isi |
 |---|---|
-| `tools/qa_v4.py --interactive --out <dir>` | 6 viewport untuk `index.html`, `harga.html`, dan rute console utama (state kosong + `?demo=ayu`), cek v3 (overflow, escape shell, teks meluap, touch target, console error, above-the-fold) + alur: resep → wizard → isi saldo → nyala → beranda; kalkulator; berhenti/ganti ukuran; jam simulasi → dijeda |
+| `tools/qa_v4.py --interactive --out <dir>` | 6 viewport untuk `index.html`, `harga.html`, dan rute console utama (state kosong + `?demo=ayu`), cek v3 (overflow, escape shell, teks meluap, touch target, console error, above-the-fold) + alur: paket → wizard → isi saldo → nyala → beranda; kalkulator; berhenti/ganti ukuran; jam simulasi → dijeda |
 | `tools/i18n_check.py` | Diperluas dengan `--root v4` (semua halaman + kamus + template JS) |
 | `tools/audit_v4.py` | axe-core 4.14.0 per halaman/rute/dialog, face font (4), `file://`, reduced motion, storage diblokir, **CSS compile up to date**, **konsistensi angka** (`services-and-pricing.md` §9), label simulasi |
 | `tools/demo_v4.py` | Gladi skrip demo (21 langkah, screenshot bernomor) |
@@ -132,7 +132,7 @@ Skrip v3 tidak diubah perilakunya untuk v3.
 | 1 | `audit_v4.py` membuka `index.html`, `harga.html`, `app.html?demo=ayu` lewat `file://` tanpa error; QA lewat server lokal |
 | 2 | `qa_v4.py --interactive`: 12 halaman/rute × 6 viewport + 4 uji motion = 76 cek, screenshot ditinjau |
 | 3 | `demo_v4.py`: 21 langkah skrip demo di 375×812 lolos |
-| 4 | `audit_v4.py` [numbers]: unit AI, resep, contoh, template, Nala, preset (saldo, cukup sampai), riwayat = saldo, harga tiap tabel |
+| 4 | `audit_v4.py` [numbers]: unit AI, paket, contoh, template, Nala, preset (saldo, cukup sampai), riwayat = saldo, harga tiap tabel |
 | 5 | `i18n_check.py --root v4`: semua kunci [ID, EN], 0 hilang, 0 mati, 0 belum diterjemahkan (31 halaman/rute) |
 | 6 | axe 0 pelanggaran di semua halaman, rute console, dan dialog (katalog, konsultasi, Nala, tambah layanan, isi saldo, Lainnya, menu akun, konfirmasi, ganti ukuran) |
 | 7 | reduced motion: tidak ada animasi/transisi > 0,01 ms, GSAP/Lenis tidak berjalan, konten tampil |
@@ -145,8 +145,8 @@ Skrip v3 tidak diubah perilakunya untuk v3.
 ## 10. Urutan Build
 | Fase | Langkah |
 |---|---|
-| 1 | Setup `v4/` + CLI build + token + font + ikon · shell landing (header, menu, bahasa, footer) · `tools/qa_v4.py` dasar · hero · cerita macet · **Mau bikin apa?** (data.js + resep) · cara kerja · semua layanan · satu saldo |
-| 2 | Template · AI (port v3) · contoh · aman untuk pemula · belajar · tim (port v3) · FAQ · CTA akhir · motion · Nala (alur resep) |
+| 1 | Setup `v4/` + CLI build + token + font + ikon · shell landing (header, menu, bahasa, footer) · `tools/qa_v4.py` dasar · hero · cerita macet · **Mau bikin apa?** (data.js + paket) · cara kerja · semua layanan · satu saldo |
+| 2 | Template · AI (port v3) · contoh · aman untuk pemula · belajar · tim (port v3) · FAQ · CTA akhir · motion · Nala (alur paket) |
 | 3 | Harga: kalkulator + detail layanan + AI + saldo/tagihan + FAQ harga |
 | 4 | Console: kerangka (header, tab bar, sidebar, router) · store + preset · masuk · beranda (kosong/berisi/banner) · saldo + isi saldo (checkout v3) + riwayat |
 | 5 | Wizard 4 langkah · detail proyek (ringkasan, layanan: ganti ukuran/berhenti, AI key, log, pengaturan) · jam simulasi & dijeda |

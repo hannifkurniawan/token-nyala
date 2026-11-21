@@ -1,4 +1,4 @@
-# Layanan, Harga & Resep — Sumber Tunggal Data v4
+# Layanan, Harga & Paket — Sumber Tunggal Data v4
 
 Semua angka di landing, halaman Harga, console, dan chat Nala **dihitung dari data di dokumen ini** (di kode: satu file `data.js`). Jika ada angka lain di dokumen v4 yang berbeda, dokumen ini yang benar. Semua harga **ilustratif (mock)**, dalam Rupiah, **sudah termasuk PPN**, dan diberi label “Contoh — harga dapat berubah”.
 
@@ -24,12 +24,12 @@ Posisi harga: di antara Sumopod (paling murah) dan Helipod, dibulatkan ke angka 
 
 Metode: QRIS, e-wallet (DANA, GoPay, OVO), virtual account (mock, alur checkout v3). **Biaya tambahan Rp0 saat isi saldo** (klaim “Rp0” hanya untuk isi saldo; biaya penarikan di Terima pembayaran disebut terpisah).
 
-**Top-up yang disarankan** (resep, wizard, banner) — satu aturan:
+**Top-up yang disarankan** (paket, wizard, banner) — satu aturan:
 ```
 saran(kebutuhan) = nominal preset terkecil dengan (nominal + bonus) ≥ kebutuhan × 1,1   (ruang 10%)
                    jika tidak ada → Rp500.000
 ```
-- Resep: `kebutuhan = bulan_pertama`.
+- Paket: `kebutuhan = bulan_pertama`.
 - Wizard saat saldo kurang: `kebutuhan = kekurangan`; tombol “Isi saldo {saran}” + pilihan nominal lain di checkout.
 - Banner saldo kurang: teks “Isi minimal {max(kekurangan, 20.000)}”.
 
@@ -82,7 +82,7 @@ tanggal      = hari_ini_simulasi + hari_cukup
 | **Pesan chatbot** (baru) | ±1.500 token masuk + ±300 token keluar — satu balasan chatbot WhatsApp | Hemat (DeepSeek Chat mock: 4.500 / 18.000 per 1 jt) | **Rp12** (12,15 dibulatkan) |
 | **Tugas otomasi** (baru) | ±3.000 token masuk + ±800 token keluar — satu langkah AI di workflow (rangkum, klasifikasi, tulis balasan) | Hemat (DeepSeek Chat mock) | **Rp28** (27,9 dibulatkan) |
 
-**Pembulatan:** biaya per satuan dibulatkan ke Rupiah utuh (half-up) **lebih dulu** (Rp12, Rp28), lalu dikalikan jumlah. Semua total resep memakai nilai bulat ini.
+**Pembulatan:** biaya per satuan dibulatkan ke Rupiah utuh (half-up) **lebih dulu** (Rp12, Rp28), lalu dikalikan jumlah. Semua total paket memakai nilai bulat ini.
 
 Katalog 12 model, level biaya (Hemat < Rp1.000/sesi ≤ Seimbang ≤ Rp3.000 < Premium), dan “≈ N sesi / Rp10.000” tetap dari `docs/technical-spec.md`.
 
@@ -144,7 +144,7 @@ Chat di console untuk mencoba/membandingkan model; dipotong dari saldo yang sama
 | `dify` | Aplikasi AI tanpa kode | No-code AI app | Dify | — (AI wajib) | Rutin | Rutin + 1.000 pesan chatbot |
 | `wordpress` | Website WordPress | WordPress website | WordPress | Coba-coba | — (tanpa AI) | Coba-coba |
 
-- Id template **berbeda** dari id resep (resep `chatbot-wa` memakai template `wa-bot`).
+- Id template **berbeda** dari id paket (paket `chatbot-wa` memakai template `wa-bot`).
 - Ukuran di bawah minimum tampil nonaktif dengan alasan: “Belum cukup untuk {template} dengan AI — pilih Rutin”.
 - Menyalakan AI pada n8n yang berukuran Coba-coba otomatis menaikkan ke Rutin (dengan pemberitahuan dan selisih biaya).
 - Biaya template bawaan: `wa-bot` 35.000 + 12.000 = Rp47.000; `n8n` Rp15.000; `agent` 35.000 + 28.000 = Rp63.000; `dify` Rp47.000; `wordpress` Rp15.000 per bulan.
@@ -206,9 +206,9 @@ Termasuk: DNS, HTTPS, dan **sambung otomatis** ke proyek di TokenNyala (tanpa me
 
 ---
 
-## 6. Resep — “Mau bikin apa?”
+## 6. Paket — “Mau bikin apa?”
 
-Resep = rangkaian layanan + perkiraan pemakaian AI untuk satu tujuan. Ditampilkan dengan **biaya tetap**, **biaya pakai (perkiraan)**, **biaya tahunan**, total per bulan, dan **top-up yang disarankan**.
+Paket = rangkaian layanan + perkiraan pemakaian AI untuk satu tujuan. Ditampilkan dengan **biaya tetap**, **biaya pakai (perkiraan)**, **biaya tahunan**, total per bulan, dan **top-up yang disarankan**.
 
 Rumus:
 ```
@@ -229,31 +229,33 @@ Tampilan: “≈ Rp34 rb/bulan” (dibulatkan ke ribuan terdekat, ID “rb” / 
 
 Kolom “Top-up disarankan” dihasilkan oleh aturan `saran(bulan_pertama)` (§1) — bukan diisi manual.
 
-### Aturan tampilan resep
+### Aturan tampilan paket
 - “≈ Rp34 rb/bulan”: `per_bulan` dibulatkan ke ribuan terdekat, **half-up** (Rp101.700 → Rp102 rb; Rp33.900 → Rp34 rb).
 - Baris “Bulan pertama …” hanya tampil jika `bulan_pertama > per_bulan`, dengan keterangan “termasuk biaya tahunan (alamat web)”.
-- **Resep minimum** = ukuran minimum setiap layanan di resep (hosting: Coba-coba; template: kolom minimum §5.4).
+- **Paket minimum** = ukuran minimum setiap layanan di paket (hosting: Coba-coba; template: kolom minimum §5.4).
 
 ### `ai-coding` (kartu khusus)
 - Tidak punya “per bulan”. Kartu menampilkan tabel v3: Rp50.000 → 20–30 sesi kecil, Rp100.000 → 40–60, Rp250.000 → 100+, Rp500.000 → 300+.
 - CTA **tidak** ke wizard, tetapi ke `app.html#/ai?isi=1` (AI → Mulai cepat + sheet isi saldo).
 - Di wizard langkah 1 tidak muncul; di Beranda chip ini membuka `#/ai`.
 
-### Skema URL resep (kalkulator ⇄ wizard)
+### Skema URL paket (kalkulator ⇄ wizard)
 ```
-harga.html?resep=portofolio&s=hosting:coba,domain:my.id,ai:10#kalkulator
-app.html#/buat?resep=portofolio&s=hosting:coba,domain:my.id,ai:10
+harga.html?paket=portofolio&s=hosting:coba,domain:my.id,ai:10#kalkulator
+app.html#/buat?paket=portofolio&s=hosting:coba,domain:my.id,ai:10
 app.html#/buat?template=wa-bot
 ```
-`s` = daftar `layanan:nilai` dipisah koma; layanan yang mati tidak ditulis. Layanan **Asisten & otomasi** ditulis dengan id template sebagai kunci (`wa-bot:rutin`, `n8n:ramai`), bukan `apps:` — supaya template ikut terbawa (ditetapkan Fase 2). Nilai: ukuran (`coba|rutin|ramai`, `kecil|sedang|besar`, `10gb|100gb|1tb`, `gratis|2500|10000`), ekstensi domain (`my.id`, `com`, …), atau jumlah AI (`ai:<sesi>`, `pesan:<n>`, `tugas:<n>`). Tanpa `s` → isi bawaan resep. Nilai tidak valid diabaikan (pakai bawaan) tanpa error.
+Parameter lama `?resep=` (sebelum 21 Nov 2026) tetap dibaca kalkulator dan wizard; semua tautan baru memakai `?paket=`.
 
-### Aturan Nala “Bantu pilih resep”
-- Q1 memilih resep. Jika `ai-coding` → langsung kartu `ai-coding`.
-- Q2 (“kodenya sudah ada?”) **hanya untuk resep bersatuan sesi kecil** (`portofolio`, `web-klien`): “Belum” → AI +10 sesi kecil. Resep lain melewati Q2.
-- Q3: “Baru coba” → resep minimum; “Rutin dipakai” → layanan berukuran naik ke Rutin (bila di bawahnya); “Ramai” → naik ke Ramai. Ukuran database/email tidak diubah.
+`s` = daftar `layanan:nilai` dipisah koma; layanan yang mati tidak ditulis. Layanan **Asisten & otomasi** ditulis dengan id template sebagai kunci (`wa-bot:rutin`, `n8n:ramai`), bukan `apps:` — supaya template ikut terbawa (ditetapkan Fase 2). Nilai: ukuran (`coba|rutin|ramai`, `kecil|sedang|besar`, `10gb|100gb|1tb`, `gratis|2500|10000`), ekstensi domain (`my.id`, `com`, …), atau jumlah AI (`ai:<sesi>`, `pesan:<n>`, `tugas:<n>`). Tanpa `s` → isi bawaan paket. Nilai tidak valid diabaikan (pakai bawaan) tanpa error.
+
+### Aturan Nala “Bantu pilih paket”
+- Q1 memilih paket. Jika `ai-coding` → langsung kartu `ai-coding`.
+- Q2 (“kodenya sudah ada?”) **hanya untuk paket bersatuan sesi kecil** (`portofolio`, `web-klien`): “Belum” → AI +10 sesi kecil. Paket lain melewati Q2.
+- Q3: “Baru coba” → paket minimum; “Rutin dipakai” → layanan berukuran naik ke Rutin (bila di bawahnya); “Ramai” → naik ke Ramai. Ukuran database/email tidak diubah.
 
 Urutan chip di UI: `portofolio` (default), `chatbot-wa`, `web-klien`, `otomasi-tim`, `ai-coding`.
-Setiap resep bisa diubah di kalkulator Harga dan di wizard console (ganti ukuran, tambah/lepas layanan, ubah jumlah sesi/pesan/tugas).
+Setiap paket bisa diubah di kalkulator Harga dan di wizard console (ganti ukuran, tambah/lepas layanan, ubah jumlah sesi/pesan/tugas).
 
 ---
 
@@ -308,6 +310,6 @@ Cara kerja (Fase 5, `store.advance()`): hari demi hari — layanan jatuh tempo d
 
 `tools/` v4 menghitung ulang dan membandingkan dengan tabel di atas:
 1. Biaya sesi kecil, pesan chatbot, tugas otomasi.
-2. Per bulan, bulan pertama, dan “cukup ±N bulan” setiap resep.
+2. Per bulan, bulan pertama, dan “cukup ±N bulan” setiap paket.
 3. Total contoh landing page event.
 4. Harga yang dirender di landing, Harga, dan console sama dengan `data.js`.

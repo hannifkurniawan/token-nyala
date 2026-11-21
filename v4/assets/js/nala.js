@@ -1,5 +1,5 @@
 /* TokenNyala v4 — live chat Nala (port of v3: scripted, local only — no AI, no server).
-   New flow "Bantu pilih resep" (microcopy §7, services-and-pricing §6 Aturan Nala):
+   New flow "Bantu pilih paket" (microcopy §7, services-and-pricing §6 Aturan Nala):
    Q1 recipe → Q2 code ready? (session recipes only) → Q3 load → recipe card → wizard / calculator.
    Messages are stored as keys + params so the whole log re-translates on language change. */
 (() => {
@@ -30,7 +30,7 @@
   };
   const KEYWORDS = [ // free text → intent (ID + EN)
     ['team', /\b(tim|team|manusia|human|agen|agent|cs|admin|orang)\b/i],
-    ['recipe', /\b(resep|recipe|bikin|build|buat|landing|portofolio|portfolio|chatbot|otomasi|automation|website|web|harga|price|berapa|how much)\b/i],
+    ['recipe', /\b(paket|bundle|resep|recipe|bikin|build|buat|landing|portofolio|portfolio|chatbot|otomasi|automation|website|web|harga|price|berapa|how much)\b/i],
     ['howto', /\b(api|key|tool|pasang|setup|cursor|cline|lovable|cara pakai)\b/i],
     ['models', /\b(model|claude|gpt|gemini|deepseek|qwen)\b/i],
     ['pay', /\b(bayar|pay|payment|qris|e-?wallet|virtual account|va|dana|gopay|ovo|isi saldo|top ?up)\b/i],
@@ -154,8 +154,8 @@
     const per = D.recipeTotals(items).perMonth;
     reply({ from: 'nala', key: 'nala.result', params: { recipe: () => t(`recipe.name.${f.recipe}`), rp: () => rpK(per) },
       actions: [
-        { key: 'recipe.cta', href: `app.html#/buat?resep=${f.recipe}&s=${s}` },
-        { key: 'recipe.edit', href: `harga.html?resep=${f.recipe}&s=${s}#kalkulator` },
+        { key: 'recipe.cta', href: `app.html#/buat?paket=${f.recipe}&s=${s}` },
+        { key: 'recipe.edit', href: `harga.html?paket=${f.recipe}&s=${s}#kalkulator` },
       ] }, { chips: 'result' });
   }
 
