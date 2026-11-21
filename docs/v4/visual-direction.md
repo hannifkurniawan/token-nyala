@@ -40,7 +40,7 @@ Kontras wajib AA. Teks di lembar kuning memakai `xl-dark`; di lembar biru/gelap 
 | Berhenti | `stopped` (`#B4BCCF`) | `muted` | |
 
 ## 3. Tipografi
-Tetap **2 keluarga, 4 face** (aturan 20 Nov 2026): Manrope 500 (body), 700 (`font-bold`), 800 (`font-extrabold`); IBM Plex Mono 500 (`font-mono`, tanpa kelas weight). Showcase v2 memuat 400/600 — **tidak dibawa**.
+2 keluarga. **Harga & console: 4 face** (aturan 20 Nov 2026): Manrope 500/700/800 + IBM Plex Mono 500. **Landing: 6 face** (disetujui user 21 Nov 2026, mengikuti showcase v2): + Manrope 600 dan IBM Plex Mono 600.
 
 | Peran | Spesifikasi |
 |---|---|
@@ -80,10 +80,13 @@ Di console, display maksimum `clamp(2rem, 6vw, 3rem)`; angka saldo boleh lebih b
 | **Ringkasan lengket** | Kartu ringkasan biaya; mobile: bar bawah ringkas yang bisa dibuka; desktop: kolom kanan sticky |
 | **Progres menyalakan** | Daftar langkah dengan titik sky → teal; saklar besar ON di akhir |
 
-### Landing = bahasa visual showcase v2 (21 Nov 2026)
-User: konten v4 tetap, komponen & animasi mengikuti `showcase/v2`. Padanan per section:
-hero 3 baris + saklar inline (klik → percikan) + stiker berputar + papan proyek (prompt diketik) · cerita macet = pita `.stall` (persen raksasa, bar dengan penanda “belum online” di 80%, 4 tugas) · resep = kontrol tujuan dengan penanda kuning bergeser (md+, 5 tab; mobile pil geser) + `pkg-sheet` (harga raksasa, meter + percikan, daftar spesifikasi, CTA kuning) · cara kerja = kartu geser horizontal (drag, tombol 56px, rel) · layanan, model, panduan = baris indeks (`.irow`, hover isi biru dari bawah) · saldo = dashboard mini · pakai di tool = gelap + kabel digambar saat scroll + kartu konfigurasi miring · contoh = toggle sebelum/sesudah + struk kertas bergerigi · aman = stack card besar dengan seni (bubble, pil ukuran, status dijeda, dashboard pengingat) · tim = daftar besar berpeluru saklar · FAQ = nomor + lingkaran plus yang berputar · CTA akhir = 100svh, saklar raksasa (klik → percikan → wizard) · footer = wordmark raksasa. Header: sembunyi saat scroll turun, putih di atas lembar gelap, menu panel muncul melingkar dari tombol.
-Elemen miring diberi margin (board 10px, dash/konfigurasi 6px, struk 13px) agar kotak hasil rotasi tetap di dalam kolom (QA spill).
+### Landing dibangun dengan cara showcase v2 (21 Nov 2026)
+Keputusan user: konten v4 tetap; komponen, animasi, dan **cara kerjanya** mengikuti `showcase/v2`, tanpa memaksakan Tailwind.
+- **Tiga file:** `index.html` (markup + copy ID/EN statis `data-l="id|en"`, ditukar CSS), `assets/css/site.css` (dasar bersama: token, `--u`, gutter, tombol, header/menu, loader, kursor, footer, dialog, chat) + `assets/css/landing.css` (section), `assets/js/landing.js` (render bagian berbasis data, interaksi, boot). `site.css`/`landing.css` = port `styles.css` showcase; tambahan v4 di bagian "v4 additions".
+- **Boot:** script inline di `<head>` memasang `is-loading` sebelum halaman tergambar → loader 000→100% menutup layar → `initMotion()` menyiapkan semua posisi awal → loader terangkat → timeline hero diputar. Tanpa ini halaman tampil statis lalu "berkedip" saat GSAP menyembunyikan elemen (masalah putaran 20–21 Nov).
+- **12 section:** hero · pita cerita (scroll) · cara kerja (bukan lembar) · Mau bikin apa? (biru) · layanan + template (putih) · model AI (kertas) · pakai di tool (gelap) · aman + satu saldo (kertas, stack 4 kartu; kartu 4 = dashboard saldo) · contoh (putih) · tim (kuning) · FAQ + panduan belajar (kertas) · CTA saklar raksasa (biru) · footer gelap tanpa lengkung.
+- **Penyimpangan dari showcase (aturan v4):** target sentuh 44px (tombol bahasa, nav, footer, chip), kontras AA (teks pudar memakai warna, bukan `opacity`), pilihan tujuan 5 (kolom di HP, baris di md+), elemen miring diberi margin agar tidak keluar kolom.
+- Harga & console tetap Tailwind; Harga akan dipindah ke `site.css` + `harga.css` (tahap berikutnya).
 
 ## 6. Ikon
 - Set ikon garis tunggal, 24px, stroke 1.75: **Lucide** (lisensi ISC), disalin lokal sebagai sprite SVG + `SOURCE.md` (seperti logo model v3). Tidak memuat CDN ikon.
@@ -93,7 +96,7 @@ Elemen miring diberi margin (board 10px, dash/konfigurasi 6px, struk 13px) agar 
 ## 7. Motion
 - GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 (lokal, dari showcase) **hanya di landing & harga**. Console memakai transisi CSS ringan.
 - Pola yang dibawa (port `showcase/v2/script.js`): timeline hero (baris naik → copy → papan masuk dari kanan → stiker pop → saklar menyala + percikan), drift papan, cerita macet di-scrub scroll, kartu langkah masuk dari kanan, kontrol tujuan melebar, baris indeks naik, kabel digambar, kartu konfigurasi jatuh, stack card mengecil, struk tercetak, daftar tim & FAQ stagger, judul akhir + saklar raksasa otomatis menyala, wordmark footer naik, tombol magnetik (pointer halus saja), judul per kata.
-- **Tidak dibawa:** loader “000% Menyalakan momentum” (menunda konten, buruk untuk LCP dan demo), kursor custom (tidak berguna di mobile, menyulitkan aksesibilitas).
+- **Loader “000% → 100%” dan kursor custom dipakai di landing** (keputusan user 21 Nov 2026): loader menutupi persiapan animasi; kursor hanya untuk pointer halus, mati saat reduced motion. Harga tanpa loader.
 - `prefers-reduced-motion` atau GSAP gagal dimuat → semua tampil statis (gate `motion-ok` + failsafe 2,5 detik, pola showcase v2).
 - Durasi UI 180–450ms, easing `cubic-bezier(.22,1,.36,1)`.
 

@@ -1,217 +1,205 @@
-/* TokenNyala v4 — landing page rendering (showcase v2 components). Every number comes from TN.data (rule 9). */
+/* TokenNyala v4 — landing page, built the way showcase/v2/script.js works:
+   static copy lives in HTML (data-l="id|en", swapped by CSS); this file renders only data-driven parts
+   (every number from TN.data, dynamic strings from the TN.i18n dictionary), wires interactions, and runs
+   the boot sequence: loader covers the page → motion is prepared → loader leaves → hero timeline plays. */
 (() => {
   'use strict';
   const D = TN.data;
   const I = TN.i18n;
   const { t, rp, rpK, num } = I;
-  const { icon, esc, itemView, fromLine, burst } = TN.ui;
+  const { icon, esc, itemView, fromLine } = TN.ui;
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  const state = { recipe: D.RECIPES[0].id };
-
-  /* ---------- Links into the console (information-architecture §5) ---------- */
+  /* ---------------------------------------------------------
+     State + helpers
+     --------------------------------------------------------- */
+  const state = { recipe: D.RECIPES[0].id, hasPicked: false };
   const startHref = (id) => (D.recipe(id).aiOnly ? 'app.html#/ai?isi=1' : `app.html#/buat?resep=${id}`);
   const calcHref = (id) => `harga.html?resep=${id}#kalkulator`;
-  /** 'Rp34 rb' → '<small>pre Rp</small>34 rb' (big price; textContent stays 'Rp34 rb') */
-  const bigRp = (n, pre = '') => { const k = rpK(n); return `<small>${esc(pre)}Rp</small>${esc(k.slice(2))}`; };
+  /** 'Rp34 rb' → <small>Rp</small>34 rb (textContent stays 'Rp34 rb') */
+  const bigK = (n) => `<small>≈ Rp</small>${esc(rpK(n).slice(2))}`;
 
-  /* ---------- Hero: board numbers, typing prompt, inline switch ---------- */
+  /* ---------------------------------------------------------
+     Switches + sparks
+     --------------------------------------------------------- */
+  function burst(el, count = 16) {
+    if (!el || prefersReducedMotion) return;
+    TN.ui.burst(el, count, el.closest('.final') ? $('#sparks') : el.closest('section') || el);
+  }
+
+  /* ---------------------------------------------------------
+     Hero: trust line, board (reacts to the chosen goal), typing prompt
+     --------------------------------------------------------- */
   function renderHero() {
-    const s = D.heroScenario();
     $$('[data-trust-from]').forEach((el) => { el.textContent = t('hero.trust3', { rp: rpK(D.SIZES.coba.price) }); });
-    $$('[data-board-left]').forEach((el) => { el.textContent = rp(s.left); });
-    $$('[data-board-spent]').forEach((el) => { el.textContent = t('board.spent', { rp: rp(s.spent) }); });
-    $$('[data-board-meter]').forEach((el) => el.style.setProperty('--v', (s.left / s.balance).toFixed(3)));
     $$('[data-domain]').forEach((el) => { el.textContent = D.HERO.domain; });
+    const sticker = $('[data-sticker]');
+    if (sticker) sticker.textContent = t('hero.sticker');
+    updateBoard();
+  }
+
+  function updateBoard() {
+    const r = D.recipe(state.recipe);
+    const status = $('[data-board-status]');
+    $('[data-board-project]').textContent = t(`recipe.short.${r.id}`);
+    if (!state.hasPicked) {
+      $('[data-board-balance]').textContent = rp(0);
+      $('[data-board-meter]').style.setProperty('--v', 0);
+      $('[data-board-estimate]').textContent = t('board.pick');
+      $('[data-board-status-text]').textContent = t('board.standby');
+      status.classList.remove('is-on');
+      return;
+    }
+    if (r.aiOnly) {
+      const row = D.AI_ONLY[0];
+      $('[data-board-balance]').textContent = rp(row.amount);
+      $('[data-board-meter]').style.setProperty('--v', 0.4);
+      $('[data-board-estimate]').textContent = `≈ ${t('recipe.sessions', { range: row.range })}`;
+    } else {
+      const tot = D.recipeTotals(r.items);
+      const credits = tot.suggest.amount + tot.suggest.bonus;
+      $('[data-board-balance]').textContent = rp(credits);
+      $('[data-board-meter]').style.setProperty('--v', Math.min(1, tot.firstMonth / credits).toFixed(3));
+      $('[data-board-estimate]').textContent = t('board.estimate', { rp: rpK(tot.perMonth), n: tot.months });
+    }
+    $('[data-board-status-text]').textContent = t('status.on');
+    status.classList.add('is-on');
   }
 
   const PROMPTS = ['board.prompt', 'board.prompt2', 'board.prompt3'];
-  const typeEl = $('[data-type-prompt]');
-  if (typeEl && !reduced) { // type, pause, delete, next prompt (showcase v2)
-    let pi = 0, ci = 0, deleting = false;
-    const tick = () => {
-      const text = t(PROMPTS[pi % PROMPTS.length]);
-      if (!deleting) {
-        ci = Math.min(ci + 1, text.length);
-        typeEl.textContent = text.slice(0, ci);
-        if (ci >= text.length) { deleting = true; return setTimeout(tick, 2200); }
-        return setTimeout(tick, 45 + Math.random() * 50);
-      }
-      ci -= 1;
-      typeEl.textContent = text.slice(0, Math.max(ci, 0));
-      if (ci <= 0) { deleting = false; pi += 1; return setTimeout(tick, 350); }
-      return setTimeout(tick, 22);
-    };
-    setTimeout(() => { ci = 0; deleting = false; tick(); }, 1400);
-  }
-
-  const heroSwitch = $('[data-hero-switch]');
-  heroSwitch?.addEventListener('click', () => {
-    const on = !heroSwitch.hasAttribute('data-on');
-    heroSwitch.toggleAttribute('data-on', on);
-    if (on) burst(heroSwitch, 12, heroSwitch.closest('.hero'));
-  });
-  // Static ON without motion (reduced motion, or GSAP missing); motion.js switches it on with a burst.
-  if (reduced) heroSwitch?.setAttribute('data-on', '');
-  window.addEventListener('load', () => { if (!document.documentElement.classList.contains('motion-ok')) heroSwitch?.setAttribute('data-on', ''); });
-
-  /* ---------- Stall story: build to 80% → stuck on localhost → switch on → 100% online ---------- */
-  const stall = $('[data-stall]');
-  let stallWasOn = true;
-  function renderStall(p) {
-    if (!stall) return;
-    const fill = p < 0.5 ? (p / 0.5) * 0.8 : p < 0.74 ? 0.8 : 0.8 + Math.min(1, (p - 0.74) / 0.2) * 0.2;
-    const phase = p < 0.52 ? 'build' : p < 0.7 ? 'stall' : 'on';
-    if (stall.dataset.phase !== phase) stall.dataset.phase = phase;
-    $('[data-stall-fill]', stall).style.setProperty('--f', fill.toFixed(4));
-    $('[data-stall-pct]', stall).textContent = Math.round(fill * 100);
-    $$('[data-stall-tasks] li', stall).forEach((li) => li.toggleAttribute('data-done', fill + 0.001 >= parseFloat(li.dataset.at)));
-    const on = phase === 'on', sw = $('[data-stall-switch]', stall);
-    sw.toggleAttribute('data-on', on);
-    if (on && !stallWasOn) burst(sw, 12);
-    stallWasOn = on;
-  }
-  renderStall(1); // complete story at rest (no JS motion / reduced motion)
-
-  /* ---------- How it works: art + horizontal scroller (drag, wheel, buttons, rail) ---------- */
-  function renderHow() {
-    const chips = $('[data-how-chips]');
-    if (chips) chips.innerHTML = ['portofolio', 'chatbot-wa', 'otomasi-tim'].map((id, i) => `<span class="chip-art ${i === 0 ? 'chip-art--on' : ''}">${esc(t(`recipe.short.${id}`))}</span>`).join('');
-    const rc = $('[data-how-receipt]');
-    if (rc) {
-      const host = D.SIZES[D.HERO.size].price, dom = D.DOMAINS[D.HERO.ext].first;
-      rc.innerHTML = [[t('wallet.line.hosting'), rp(host)], [t('wallet.line.domain'), rp(dom)], [t('how.fee'), rp(0)], [t('ex.total'), rp(host + dom)]]
-        .map(([a, b]) => `<p><span>${esc(a)}</span><b>${esc(b)}</b></p>`).join('');
+  const typeEl = $('#type-prompt');
+  if (typeEl) {
+    if (prefersReducedMotion) {
+      typeEl.textContent = t(PROMPTS[0]);
+      I.onChange(() => { typeEl.textContent = t(PROMPTS[0]); });
+    } else {
+      let pi = 0, ci = 0, deleting = false;
+      const tick = () => {
+        const text = t(PROMPTS[pi % PROMPTS.length]);
+        if (!deleting) {
+          ci = Math.min(ci + 1, text.length);
+          typeEl.textContent = text.slice(0, ci);
+          if (ci >= text.length) { deleting = true; return setTimeout(tick, 2200); }
+          return setTimeout(tick, 45 + Math.random() * 50);
+        }
+        ci -= 1;
+        typeEl.textContent = text.slice(0, Math.max(ci, 0));
+        if (ci <= 0) { deleting = false; pi += 1; return setTimeout(tick, 350); }
+        return setTimeout(tick, 22);
+      };
+      typeEl.textContent = '';
+      setTimeout(tick, 1200);
     }
   }
-  (function initSteps() {
-    const track = $('[data-steps-track]');
-    if (!track) return;
-    const prev = $('[data-steps-prev]'), next = $('[data-steps-next]'), rail = $('[data-steps-rail]');
-    const maxScroll = () => track.scrollWidth - track.clientWidth;
-    const update = () => {
-      const max = maxScroll(), p = max > 0 ? track.scrollLeft / max : 0;
-      rail?.style.setProperty('--p', p.toFixed(3));
-      if (prev) prev.disabled = track.scrollLeft <= 4;
-      if (next) next.disabled = track.scrollLeft >= max - 4;
-    };
-    const stepWidth = () => { const s = $('.step', track); return s ? s.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 0) : track.clientWidth; };
-    const go = (dir) => track.scrollBy({ left: dir * stepWidth(), behavior: reduced ? 'auto' : 'smooth' });
-    prev?.addEventListener('click', () => go(-1));
-    next?.addEventListener('click', () => go(1));
-    track.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    track.addEventListener('keydown', (e) => {
-      if (maxScroll() <= 0) return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-    });
-    // Horizontal wheel / trackpad stays inside the track (smooth scroll must not swallow it)
-    track.addEventListener('wheel', (e) => {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
-        e.stopPropagation();
-        if (e.shiftKey && !e.deltaX && maxScroll() > 0) { e.preventDefault(); track.scrollLeft += e.deltaY; }
-      }
-    }, { passive: false });
-    // Mouse drag (touch swipes natively)
-    let startX = 0, startLeft = 0, dragging = false, moved = false;
-    track.addEventListener('pointerdown', (e) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0 || maxScroll() <= 0) return;
-      dragging = true; moved = false; startX = e.clientX; startLeft = track.scrollLeft;
-    });
-    window.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - startX;
-      if (!moved && Math.abs(dx) > 4) { moved = true; track.setAttribute('data-dragging', ''); }
-      if (moved) { e.preventDefault(); track.scrollLeft = startLeft - dx; }
-    });
-    const endDrag = () => {
-      if (!dragging) return;
-      dragging = false;
-      if (!moved) return;
-      const before = track.scrollLeft, w = stepWidth(), dx = startLeft - before;
-      track.removeAttribute('data-dragging');
-      track.scrollLeft = before; // re-enabling snap jumps; animate from where the drag ended instead
-      let idx = Math.round(before / w);
-      if (Math.abs(dx) > 60) idx = dx < 0 ? Math.floor(startLeft / w + 0.01) + 1 : Math.ceil(startLeft / w - 0.01) - 1;
-      track.scrollTo({ left: Math.max(0, Math.min(maxScroll(), idx * w)), behavior: reduced ? 'auto' : 'smooth' });
-    };
-    window.addEventListener('pointerup', endDrag);
-    window.addEventListener('pointercancel', endDrag);
-    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
-    track.addEventListener('dragstart', (e) => e.preventDefault());
-    update();
-  })();
 
-  /* ---------- Recipe: intent control (radiogroup, arrow keys; technical-spec §7) + package sheet ---------- */
-  const chipsRoot = $('[data-recipe-chips]');
+  $$('[data-hero-switch]').forEach((sw) => sw.addEventListener('click', () => {
+    const on = !sw.classList.contains('is-on');
+    $$('[data-hero-switch]').forEach((s) => s.classList.toggle('is-on', on));
+    if (on) burst(sw, 12);
+  }));
+
+  /* ---------------------------------------------------------
+     How it works: receipt art (numbers from TN.data)
+     --------------------------------------------------------- */
+  function renderHow() {
+    const rc = $('[data-how-receipt]');
+    if (!rc) return;
+    const host = D.SIZES[D.HERO.size].price, dom = D.DOMAINS[D.HERO.ext].first;
+    rc.innerHTML = [[t('wallet.line.hosting'), rp(host)], [t('wallet.line.domain'), rp(dom)], [t('how.fee'), rp(0)]]
+      .map(([a, b]) => `<p><span>${esc(a)}</span><b>${esc(b)}</b></p>`).join('')
+      + `<p class="receipt-art__total"><span>${esc(t('ex.total'))}</span><b>${esc(rp(host + dom))}</b></p>`;
+  }
+
+  /* ---------------------------------------------------------
+     Recipes — "Mau bikin apa?" (radiogroup + package sheet)
+     --------------------------------------------------------- */
+  const tabsRoot = $('[data-recipe-chips]');
   const card = $('[data-recipe-card]');
   const live = $('[data-recipe-live]');
-  const recipeHint = (r) => (r.aiOnly ? t('hero.trust3', { rp: rpK(D.AI_ONLY[0].amount) }) : `≈ ${rpK(D.recipeTotals(r.items).perMonth)}${t('label.perMonth')}`);
+  let shownPrice = null;
 
-  function renderChips() {
-    if (!chipsRoot) return;
-    chipsRoot.innerHTML = '<span class="intent__marker" aria-hidden="true"></span>' + D.RECIPES.map((r) => {
+  function renderTabs() {
+    if (!tabsRoot) return;
+    tabsRoot.innerHTML = '<span class="intent__marker" aria-hidden="true"></span>' + D.RECIPES.map((r) => {
       const on = r.id === state.recipe;
-      return `<button type="button" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-recipe="${r.id}" aria-controls="recipe-card" class="intent__tab">
-        <span class="intent__label">${esc(t(`recipe.short.${r.id}`))}</span><span class="intent__hint">${esc(recipeHint(r))}</span></button>`;
+      const hint = r.aiOnly ? t('hero.trust3', { rp: rpK(D.AI_ONLY[0].amount) }) : `≈ ${rpK(D.recipeTotals(r.items).perMonth)}${t('label.perMonth')}`;
+      return `<button type="button" class="intent__tab" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-recipe="${r.id}" aria-controls="recipe-card">
+        <span class="intent__label">${esc(t(`recipe.short.${r.id}`))}</span><span class="intent__hint mono">${esc(hint)}</span></button>`;
     }).join('');
-    syncMarker();
+    tabsRoot.style.setProperty('--i', D.RECIPES.findIndex((r) => r.id === state.recipe));
   }
-  function syncMarker() { chipsRoot?.style.setProperty('--i', D.RECIPES.findIndex((r) => r.id === state.recipe)); }
+
+  /** Price counts to the new value (showcase animatePrice); text stays e.g. 'Rp34 rb' */
+  function animatePrice(el, to) {
+    const from = shownPrice;
+    shownPrice = to;
+    if (from === null || from === to || prefersReducedMotion) { el.innerHTML = bigK(to); return; }
+    const t0 = performance.now(), dur = 420;
+    const step = (now) => {
+      if (shownPrice !== to) return;
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.innerHTML = bigK(p < 1 ? Math.round((from + (to - from) * e) / 1000) * 1000 : to);
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
 
   const spec = (dt, dd) => `<div><dt>${esc(dt)}</dt><dd>${dd}</dd></div>`;
-  const payCues = '<ul class="pay-cues text-white/80"><li>QRIS</li><li>E-wallet</li><li>Virtual account</li></ul>';
+  const PAY = '<ul class="pay-cues mono" role="list"><li>QRIS</li><li>E-wallet</li><li>Virtual account</li></ul>';
 
-  function renderCard() {
+  function renderCard(animate = false) {
     if (!card) return;
     const r = D.recipe(state.recipe);
     const name = t(`recipe.name.${r.id}`);
     if (r.aiOnly) {
+      shownPrice = null;
       card.innerHTML = `
         <div class="pkg-sheet__main">
-          <p class="pkg-sheet__kicker">${esc(t('recipe.aiOnlyTitle'))}</p>
-          <h3 id="recipe-name" class="pkg-sheet__name">${esc(name)}</h3>
-          <p class="pkg-sheet__price">${bigRp(D.AI_ONLY[0].amount, t('recipe.from') + ' ')}</p>
+          <p class="pkg-sheet__kicker mono">${esc(t('recipe.aiOnlyTitle'))}</p>
+          <h3 class="pkg-sheet__name" id="recipe-name">${esc(name)}</h3>
+          <p class="pkg-sheet__price"><small>${esc(t('recipe.from'))} Rp</small>${esc(rpK(D.AI_ONLY[0].amount).slice(2))}</p>
           <p class="pkg-sheet__line">${esc(t(`recipe.desc.${r.id}`))}</p>
         </div>
         <div class="pkg-sheet__side">
           <dl class="pkg-specs" aria-label="${esc(t('recipe.itemsAria'))}">${D.AI_ONLY.map((row) => spec(rp(row.amount), esc(t('recipe.sessions', { range: row.range })))).join('')}</dl>
-          <a class="btn btn--yellow btn--xl w-full" data-magnetic href="${startHref(r.id)}">${esc(t('recipe.aiOnlyCta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
-          ${payCues}
+          <a class="btn btn--yellow btn--lg btn--block magnetic" href="${startHref(r.id)}" data-cursor="Nyala">${esc(t('recipe.aiOnlyCta'))} <span class="btn__icon" aria-hidden="true">→</span></a>
+          ${PAY}
         </div>`;
-      return;
+    } else {
+      const tot = D.recipeTotals(r.items);
+      const credits = tot.suggest.amount + tot.suggest.bonus;
+      const v = Math.min(1, tot.firstMonth / credits);
+      const suggestKey = tot.months === 1 ? 'recipe.suggest.one' : 'recipe.suggest.many';
+      card.innerHTML = `
+        <div class="pkg-sheet__main">
+          <p class="pkg-sheet__kicker mono">${esc(t('recipe.approx'))} <span class="pkg-sheet__arrow" aria-hidden="true">→</span> <span class="pkg-sheet__fit">${esc(t(`recipe.short.${r.id}`))}</span></p>
+          <h3 class="pkg-sheet__name" id="recipe-name">${esc(name)}</h3>
+          <p class="pkg-sheet__price"><span>${bigK(shownPrice ?? tot.perMonth)}</span><em>${esc(t('label.perMonth'))}</em></p>
+          <p class="pkg-sheet__line">${esc(t(`recipe.desc.${r.id}`))}</p>
+          ${tot.firstMonth > tot.perMonth ? `<p class="pkg-sheet__note">${esc(t('recipe.firstMonth', { rp: rp(tot.firstMonth) }))}</p>` : ''}
+          <div class="pkg-sheet__meter">
+            <div class="meter meter--xl" aria-hidden="true"><span class="meter__fill" style="--v:${v.toFixed(3)}"></span><span class="meter__spark" style="left:${(v * 100).toFixed(1)}%"></span></div>
+            <p class="mono reco__credits">${esc(t(suggestKey, { rp: rp(tot.suggest.amount), n: tot.months }))} · ${esc(t('recipe.suggestNote', { rp: rp(credits) }))}</p>
+          </div>
+        </div>
+        <div class="pkg-sheet__side">
+          <dl class="pkg-specs" aria-label="${esc(t('recipe.itemsAria'))}">${r.items.map((it) => {
+            const iv = itemView(it);
+            return spec(iv.name, esc(iv.detail) + (iv.estimate ? ` <small>${esc(t('label.estimate'))}</small>` : ''));
+          }).join('')}</dl>
+          <dl class="pkg-specs pkg-specs--cost" aria-label="${esc(t('recipe.costsAria'))}">
+            ${spec(t('cost.fixed'), esc(rp(tot.fixed)))}${spec(t('cost.usage'), esc('±' + rp(tot.usage)))}${tot.yearly ? spec(t('cost.yearly'), esc(rp(tot.yearly))) : ''}
+          </dl>
+          <a class="btn btn--yellow btn--lg btn--block magnetic" href="${startHref(r.id)}" data-cursor="Nyala">${esc(t('recipe.cta'))} <span class="btn__icon" aria-hidden="true">→</span></a>
+          <div class="pkg-sheet__links"><a class="link-arrow link-arrow--light" href="${calcHref(r.id)}">${esc(t('recipe.edit'))} →</a>${PAY}</div>
+        </div>`;
+      animatePrice(card.querySelector('.pkg-sheet__price span'), tot.perMonth);
     }
-    const tot = D.recipeTotals(r.items);
-    const suggestKey = tot.months === 1 ? 'recipe.suggest.one' : 'recipe.suggest.many';
-    const cover = Math.min(1, tot.firstMonth / (tot.suggest.amount + tot.suggest.bonus));
-    card.innerHTML = `
-      <div class="pkg-sheet__main">
-        <p class="pkg-sheet__kicker">${esc(t('recipe.approx'))} <span aria-hidden="true">→</span> ${esc(t(`recipe.short.${r.id}`))}</p>
-        <h3 id="recipe-name" class="pkg-sheet__name">${esc(name)}</h3>
-        <p class="pkg-sheet__price">${bigRp(tot.perMonth, '≈ ')}<em>${esc(t('label.perMonth'))}</em></p>
-        <p class="pkg-sheet__line">${esc(t(`recipe.desc.${r.id}`))}</p>
-        ${tot.firstMonth > tot.perMonth ? `<p class="pkg-sheet__note">${esc(t('recipe.firstMonth', { rp: rp(tot.firstMonth) }))}</p>` : ''}
-        <div class="pkg-sheet__meter">
-          <div class="meter meter--xl" style="--v:${cover.toFixed(3)}" aria-hidden="true"><i></i><span class="meter__spark"></span></div>
-          <p><strong>${esc(t(suggestKey, { rp: rp(tot.suggest.amount), n: tot.months }))}</strong> · ${esc(t('recipe.suggestNote', { rp: rp(tot.suggest.amount + tot.suggest.bonus) }))}</p>
-        </div>
-      </div>
-      <div class="pkg-sheet__side">
-        <dl class="pkg-specs" aria-label="${esc(t('recipe.itemsAria'))}">${r.items.map((it) => {
-          const v = itemView(it);
-          return spec(v.name, esc(v.detail) + (v.estimate ? ` <span class="ml-1 rounded-full bg-white/15 px-2 py-0.5 font-mono text-[.7rem] font-medium uppercase">${esc(t('label.estimate'))}</span>` : ''));
-        }).join('')}</dl>
-        <dl class="pkg-specs pkg-specs--cost" aria-label="${esc(t('recipe.costsAria'))}">
-          ${spec(t('cost.fixed'), esc(rp(tot.fixed)))}${spec(t('cost.usage'), esc('±' + rp(tot.usage)))}${tot.yearly ? spec(t('cost.yearly'), esc(rp(tot.yearly))) : ''}
-        </dl>
-        <a class="btn btn--yellow btn--xl w-full" data-magnetic href="${startHref(r.id)}">${esc(t('recipe.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
-        <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
-          <a class="link-arrow" href="${calcHref(r.id)}">${esc(t('recipe.edit'))}${icon('arrow-up-right', 'icon size-4')}</a>${payCues}
-        </div>
-      </div>`;
+    if (animate) { card.classList.remove('is-swapping'); void card.offsetWidth; card.classList.add('is-swapping'); }
   }
 
   function announce() {
@@ -220,31 +208,25 @@
     const name = t(`recipe.name.${r.id}`);
     live.textContent = r.aiOnly ? name : t('recipe.announce', { name, rp: rpK(D.recipeTotals(r.items).perMonth) });
   }
-
-  function syncStartLinks() {
-    $$('[data-start]').forEach((a) => { a.href = startHref(state.recipe); });
-  }
+  function syncStartLinks() { $$('[data-start]').forEach((a) => { a.href = startHref(state.recipe); }); }
 
   function selectRecipe(id, { focus = false } = {}) {
     state.recipe = id;
-    chipsRoot?.querySelectorAll('[role=radio]').forEach((b) => {
+    state.hasPicked = true;
+    $$('[role=radio]', tabsRoot).forEach((b) => {
       const on = b.dataset.recipe === id;
       b.setAttribute('aria-checked', String(on));
       b.tabIndex = on ? 0 : -1;
-      if (on && focus) { b.focus(); b.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+      if (on && focus) b.focus();
     });
-    syncMarker();
-    renderCard();
-    if (card && !reduced) { card.removeAttribute('data-swap'); void card.offsetWidth; card.setAttribute('data-swap', ''); }
+    tabsRoot.style.setProperty('--i', D.RECIPES.findIndex((r) => r.id === id));
+    renderCard(true);
     announce();
     syncStartLinks();
+    updateBoard();
   }
-
-  chipsRoot?.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-recipe]');
-    if (b) selectRecipe(b.dataset.recipe);
-  });
-  chipsRoot?.addEventListener('keydown', (e) => {
+  tabsRoot?.addEventListener('click', (e) => { const b = e.target.closest('[data-recipe]'); if (b) selectRecipe(b.dataset.recipe); });
+  tabsRoot?.addEventListener('keydown', (e) => {
     const ids = D.RECIPES.map((r) => r.id);
     const i = ids.indexOf(state.recipe);
     const next = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: ids.length - 1 }[e.key];
@@ -253,137 +235,82 @@
     selectRecipe(ids[(next + ids.length) % ids.length], { focus: true });
   });
 
-  /* ---------- All services: index rows per group ---------- */
+  /* ---------------------------------------------------------
+     All services (4 groups) + templates
+     --------------------------------------------------------- */
   function renderServices() {
-    const root = $('[data-services]');
-    if (!root) return;
-    root.innerHTML = D.GROUPS.map((g, gi) => `
+    const el = $('[data-services]');
+    if (!el) return;
+    el.innerHTML = D.GROUPS.map((g, gi) => `
       <section class="svc-group" aria-labelledby="svc-g-${g.id}">
-        <h3 id="svc-g-${g.id}" class="svc-group__head"><span><span class="text-muted">(0${gi + 1})</span> ${esc(t(`svc.group.${g.id}`))}</span></h3>
-        <ul class="row-index">${g.services.map((id) => {
+        <h3 class="svc-group__head" id="svc-g-${g.id}"><span>0${gi + 1}</span> ${esc(t(`svc.group.${g.id}`))}</h3>
+        <ul role="list">${g.services.map((id) => {
           const [main, sub] = fromLine(id);
-          return `<li class="irow svc-row" id="svc-${id}"><div class="irow__in">
-            <span class="irow__icon" aria-hidden="true">${icon(D.ICONS[id])}</span>
-            <div class="min-w-0"><h4 class="irow__name text-[clamp(1.4rem,calc(2.8*var(--u)),2.6rem)]">${esc(t(`svc.${id}.name`))}</h4>
-              <p class="irow__small mt-1.5">${esc(t(`svc.${id}.tech`))}</p></div>
-            <p class="svc-row__desc irow__meta text-[1rem]">${esc(t(`svc.${id}.desc`))}</p>
-            <p class="svc-row__price"><span class="irow__big block text-[clamp(1.1rem,calc(1.7*var(--u)),1.5rem)] whitespace-normal tracking-[-.02em]">${esc(main)}</span>${sub ? `<span class="irow__small mt-1 block">${esc(sub)}</span>` : ''}</p>
-          </div></li>`;
+          return `<li class="svc-row" id="svc-${id}">
+            <span class="svc-row__icon" aria-hidden="true">${icon(D.ICONS[id])}</span>
+            <div><h4>${esc(t(`svc.${id}.name`))}</h4><p class="svc-row__tech">${esc(t(`svc.${id}.tech`))}</p></div>
+            <p class="svc-row__price">${esc(main)}${sub ? `<small>${esc(sub)}</small>` : ''}</p>
+            <p class="svc-row__desc">${esc(t(`svc.${id}.desc`))}</p>
+          </li>`;
         }).join('')}</ul>
       </section>`).join('');
   }
 
-  /* ---------- One balance: mini dashboard (services-and-pricing §7) ---------- */
-  function renderWallet() {
-    const root = $('[data-wallet]');
-    if (!root) return;
-    const s = D.heroScenario();
-    const label = { hosting: t('wallet.line.hosting'), domain: t('wallet.line.domain') };
-    root.innerHTML = `
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <span class="tier tier--premium">${esc(t('board.note'))}</span>
-        <span class="font-mono text-[.78rem] text-muted">${esc(t('wallet.card'))}</span></div>
-      <div class="grid gap-1.5">
-        <p class="font-mono text-[.78rem] text-muted">${esc(t('wallet.in', { rp: rp(D.HERO.topup.amount), bonus: rp(D.HERO.topup.bonus) }))}</p>
-        <p class="flex items-end justify-between gap-4"><span class="font-bold">${esc(t('wallet.balance'))}</span>
-          <strong class="num text-[clamp(2.2rem,calc(4*var(--u)),3.4rem)] leading-none font-extrabold">${esc(rp(s.balance))}</strong></p>
-        <div class="meter mt-2" style="--v:${(s.left / s.balance).toFixed(3)}" aria-hidden="true"><i></i></div>
-      </div>
-      <ul class="grid grid-cols-1">${s.lines.map((l) => `
-        <li class="flex items-center gap-3 border-t border-line py-3">
-          <span class="grid size-9 shrink-0 place-items-center rounded-full bg-paper text-xl-blue">${icon(D.ICONS[l.svc], 'icon size-5')}</span>
-          <span class="min-w-0 flex-1 font-bold">${esc(l.svc === 'ai' ? t('wallet.line.ai', { n: l.qty }) : label[l.svc])}</span>
-          <span class="num font-mono whitespace-nowrap">${esc(rp(-l.amount))}</span></li>`).join('')}
-      </ul>
-      <div class="flex items-baseline justify-between gap-4 border-t-2 border-xl-dark pt-4">
-        <span class="font-bold">${esc(t('wallet.left'))}</span>
-        <span class="num text-[1.8rem] leading-none font-extrabold text-teal-ink">${esc(rp(s.left))}</span></div>
-      <p class="text-[.88rem] text-muted">${esc(t('wallet.leftNote'))}</p>`;
-  }
-
-  /* ---------- Templates (services-and-pricing §5.4) ---------- */
   const TEMPLATE_ORDER = ['wa-bot', 'n8n', 'agent', 'dify', 'wordpress'];
   function renderTemplates() {
-    const root = $('[data-templates]');
-    if (!root) return;
-    root.innerHTML = TEMPLATE_ORDER.map((id, i) => {
+    const el = $('[data-templates]');
+    if (!el) return;
+    el.innerHTML = TEMPLATE_ORDER.map((id) => {
       const d = D.TEMPLATES[id].def;
       const name = t(`tpl.${id}.name`);
       const cost = d.unit
         ? t('tpl.costAi', { rp: rpK(D.templateCost(id)), qty: t(`unit.${d.unit}`, { n: num(d.qty) }) })
         : t('tpl.cost', { rp: rpK(D.templateCost(id)) });
-      return `<li class="tpl-card ${i < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}" data-reveal>
-        <div class="flex items-start justify-between gap-3">
-          <span class="grid size-14 place-items-center rounded-2xl ${['bg-xl-blue text-white', 'bg-xl-dark text-xl-yellow', 'bg-xl-sky', 'bg-xl-teal', 'bg-xl-yellow'][i]}">${icon(D.TEMPLATE_ICONS[id], 'icon size-7')}</span>
-          <span class="tpl-card__n" aria-hidden="true">0${i + 1} / 0${TEMPLATE_ORDER.length}</span>
-        </div>
-        <div><h3>${esc(name)}</h3><p class="mt-1.5 font-mono text-[.75rem] text-muted">${esc(t(`tpl.${id}.tech`))}</p></div>
-        <p class="text-lead-ink">${esc(t(`tpl.${id}.desc`))}</p>
-        <p class="w-fit rounded-full bg-paper px-3 py-1.5 font-mono text-[.72rem]">${esc(t('tpl.min', { size: t(`size.${D.templateMin(id)}`) }))}</p>
-        <p class="mt-auto border-t border-line pt-4 text-[1.1rem] font-extrabold tracking-[-.02em]">${esc(cost)}</p>
-        <a class="btn btn--outline-dark w-full" href="app.html#/buat?template=${id}" aria-label="${esc(t('tpl.ctaAria', { name }))}">${esc(t('tpl.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
+      return `<li class="tpl-card">
+        <span class="tpl-card__icon" aria-hidden="true">${icon(D.TEMPLATE_ICONS[id])}</span>
+        <h4>${esc(name)}</h4>
+        <p class="tpl-card__tech">${esc(t(`tpl.${id}.tech`))}</p>
+        <p>${esc(t(`tpl.${id}.desc`))}</p>
+        <p class="tpl-card__min">${esc(t('tpl.min', { size: t(`size.${D.templateMin(id)}`) }))}</p>
+        <p class="tpl-card__cost">${esc(cost)}</p>
+        <a class="btn btn--sm btn--outline-dark" href="app.html#/buat?template=${id}" aria-label="${esc(t('tpl.ctaAria', { name }))}">${esc(t('tpl.cta'))}</a>
       </li>`;
     }).join('');
   }
 
-  /* ---------- AI model index (showcase .mrow) ---------- */
-  function modelRow(m) {
-    return `<li class="irow mrow"><details>
-      <summary class="irow__in">
-        <span class="irow__icon" aria-hidden="true"><img src="assets/img/models/${D.PROVIDER_ICON[m.provider]}.svg" alt="" width="26" height="26" class="size-[26px]" loading="lazy" decoding="async"></span>
-        <span class="irow__name">${esc(m.name)}</span>
-        <span class="irow__meta">${esc([m.provider, ...m.uses.map((u) => t(`use.${u}`))].join(' · '))}</span>
-        <span class="mrow__tier tier tier--${m.tier}">${esc(t(`tier.${m.tier}`))}</span>
-        <span class="mrow__per"><strong class="irow__big block">≈ ${m.per10k}</strong><span class="irow__small">${esc(t('model.unit', { rp: rp(10000) }))}</span></span>
-        <span class="irow__more">${esc(t('model.rates'))}</span>
-      </summary>
-      <div class="irow__rates">
-        <p>${esc(t('rate.caption'))}</p>
-        <dl><div><dt>${esc(t('rate.input'))}</dt><dd>${esc(t('rate.unit', { n: num(m.in) }))}</dd></div>
-          <div><dt>${esc(t('rate.output'))}</dt><dd>${esc(t('rate.unit', { n: num(m.out) }))}</dd></div>
-          <div><dt>${esc(t('rate.context'))}</dt><dd>${esc(t('rate.ctx', { n: compact(m.ctx) }))}</dd></div></dl>
-      </div></details></li>`;
-  }
-  function renderModelRows() {
-    const root = $('[data-models]');
-    if (root) root.innerHTML = D.PREVIEW_MODELS.map((id) => modelRow(D.MODELS.find((m) => m.id === id))).join('');
-  }
-
-  /* ---------- Catalogue dialog (v3 model cards) + API config ---------- */
-  const TIER_STYLE = { hemat: 'bg-xl-teal text-xl-dark', seimbang: 'bg-xl-sky text-xl-dark', premium: 'bg-xl-yellow text-xl-dark' };
+  /* ---------------------------------------------------------
+     Models (index rows) + catalogue (cards) + API config
+     --------------------------------------------------------- */
+  const LEVEL_BADGE = { hemat: 'badge--teal', seimbang: 'badge--sky', premium: 'badge--yellow' };
   const compact = (n) => (n >= 1e6 ? num(n / 1e6) + (I.lang === 'en' ? 'M' : ' jt') : num(n / 1e3) + (I.lang === 'en' ? 'K' : ' rb'));
-  function modelCard(m, { dark = false, extra = false } = {}) {
-    const box = dark ? 'border-white/15 bg-white/[.06] text-white' : 'border-line bg-white text-xl-dark';
-    const sub = dark ? 'text-white/70' : 'text-muted';
-    return `<li class="${extra ? 'hidden md:block' : ''}"><article class="flex h-full flex-col rounded-card border p-5 ${box}" ${dark ? 'data-reveal' : ''}>
-      <div class="flex items-center gap-3">
-        <span class="grid size-11 shrink-0 place-items-center rounded-full bg-white ring-1 ring-line" aria-hidden="true"><img src="assets/img/models/${D.PROVIDER_ICON[m.provider]}.svg" alt="" width="24" height="24" class="size-6" loading="lazy" decoding="async"></span>
-        <h3 class="min-w-0 flex-1 text-[1.05rem] leading-snug font-extrabold">${esc(m.name)}</h3>
-        <span class="shrink-0 rounded-full px-2.5 py-1 font-mono text-[.72rem] ${TIER_STYLE[m.tier]}">${esc(t(`tier.${m.tier}`))}</span>
-      </div>
-      <p class="mt-3 text-[.9rem] ${sub}">${esc([m.provider, ...m.uses.map((u) => t(`use.${u}`))].join(' · '))}</p>
-      <p class="mt-4 flex flex-wrap items-baseline gap-x-2"><span class="num font-mono text-[1.6rem]">≈ ${m.per10k}</span>
-        <span class="text-[.9rem] font-bold ${sub}">${esc(t('model.unit', { rp: rp(10000) }))}</span></p>
-      <details class="group/d mt-2">
-        <summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 font-bold ${dark ? 'text-xl-yellow' : 'text-xl-blue'} [&::-webkit-details-marker]:hidden">
-          ${icon('chevron-right', 'icon size-4 transition-transform group-open/d:rotate-90')}<span>${esc(t('model.rates'))}</span></summary>
-        <div class="mt-1 rounded-control px-3 py-2.5 text-[.9rem] ${dark ? 'bg-white/10' : 'bg-paper'}">
-          <p class="font-mono text-[.7rem] tracking-[.08em] uppercase ${sub}">${esc(t('rate.caption'))}</p>
-          <dl class="mt-1.5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1">
-            <dt class="${sub}">${esc(t('rate.input'))}</dt><dd class="text-right font-mono">${esc(t('rate.unit', { n: num(m.in) }))}</dd>
-            <dt class="${sub}">${esc(t('rate.output'))}</dt><dd class="text-right font-mono">${esc(t('rate.unit', { n: num(m.out) }))}</dd>
-            <dt class="${sub}">${esc(t('rate.context'))}</dt><dd class="text-right font-mono">${esc(t('rate.ctx', { n: compact(m.ctx) }))}</dd>
-          </dl></div>
-      </details></article></li>`;
-  }
-  function renderApi() {
-    document.querySelectorAll('[data-api-url]').forEach((el) => { el.textContent = D.API.baseUrl; });
-    document.querySelectorAll('[data-api-key]').forEach((el) => { el.textContent = D.API.demoKey.slice(0, 8) + '••••••••' + D.API.demoKey.slice(-4); });
-    document.querySelectorAll('[data-copy-url]').forEach((b) => { b.dataset.copy = D.API.baseUrl; });
-    document.querySelectorAll('[data-copy-key]').forEach((b) => { b.dataset.copy = D.API.demoKey; });
+  const logo = (m) => `<img src="assets/img/models/${D.PROVIDER_ICON[m.provider]}.svg" alt="" width="26" height="26" loading="lazy" decoding="async">`;
+  const meta = (m) => [m.provider, ...m.uses.map((u) => t(`use.${u}`))].join(' · ');
+  const rates = (m) => `<p>${esc(t('rate.caption'))}</p><dl>
+      <div><dt>${esc(t('rate.input'))}</dt><dd>${esc(t('rate.unit', { n: num(m.in) }))}</dd></div>
+      <div><dt>${esc(t('rate.output'))}</dt><dd>${esc(t('rate.unit', { n: num(m.out) }))}</dd></div>
+      <div><dt>${esc(t('rate.context'))}</dt><dd>${esc(t('rate.ctx', { n: compact(m.ctx) }))}</dd></div></dl>`;
+
+  function renderModels() {
+    const el = $('[data-models]');
+    if (el) el.innerHTML = D.PREVIEW_MODELS.map((id) => D.MODELS.find((m) => m.id === id)).map((m) => `
+      <li><details class="mrow">
+        <summary>
+          <span class="mrow__icon" aria-hidden="true">${logo(m)}</span>
+          <span class="mrow__name">${esc(m.name)}</span>
+          <span class="mrow__meta">${esc(meta(m))}</span>
+          <span class="badge ${LEVEL_BADGE[m.tier]} mrow__badge">${esc(t(`tier.${m.tier}`))}</span>
+          <span class="mrow__per"><strong>≈ ${m.per10k}</strong><span>${esc(t('model.unit', { rp: rp(10000) }))}</span></span>
+          <span class="mrow__toggle">${esc(t('model.rates'))}</span>
+        </summary>
+        <div class="mrow__rates">${rates(m)}</div>
+      </details></li>`).join('');
+    $$('[data-api-url]').forEach((c) => { c.textContent = D.API.baseUrl; });
+    $$('[data-api-key]').forEach((c) => { c.textContent = D.API.demoKey.slice(0, 8) + '••••••••' + D.API.demoKey.slice(-4); });
+    $$('[data-copy-url]').forEach((b) => { b.dataset.copy = D.API.baseUrl; });
+    $$('[data-copy-key]').forEach((b) => { b.dataset.copy = D.API.demoKey; });
   }
 
-  const catDialog = document.getElementById('catalog');
+  const catDialog = $('#catalog');
   const CAT_STEP = 6;
   const cat = { query: '', filters: { use: new Set(), tier: new Set(), provider: new Set() }, visible: CAT_STEP };
   const FILTERS = {
@@ -399,19 +326,21 @@
   };
   function renderCatalog() {
     if (!catDialog) return;
-    catDialog.querySelectorAll('[data-filter-group]').forEach((g) => {
+    $$('[data-filter-group]', catDialog).forEach((g) => {
       const key = g.dataset.filterGroup;
-      g.innerHTML = FILTERS[key].map(([v, label]) => `<button type="button" aria-pressed="${cat.filters[key].has(v)}" data-filter="${key}" data-value="${esc(v)}"
-        class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-white px-4 font-bold text-lead-ink hover:border-xl-blue aria-pressed:border-xl-blue aria-pressed:bg-xl-blue aria-pressed:text-white">${esc(label())}</button>`).join('');
+      g.innerHTML = FILTERS[key].map(([v, label]) => `<button type="button" class="cat-chip" aria-pressed="${cat.filters[key].has(v)}" data-filter="${key}" data-value="${esc(v)}">${esc(label())}</button>`).join('');
     });
     const results = filtered();
     const shown = results.slice(0, cat.visible);
-    catDialog.querySelector('[data-cat-list]').innerHTML = shown.map((m) => modelCard(m)).join('');
-    catDialog.querySelector('[data-cat-count]').textContent = t('cat.count', { a: shown.length, b: results.length });
-    catDialog.querySelector('[data-cat-empty]').dataset.show = String(results.length === 0);
-    catDialog.querySelector('[data-cat-more]').dataset.show = String(results.length > shown.length);
-    const active = Object.values(cat.filters).reduce((n, s) => n + s.size, 0);
-    catDialog.querySelector('[data-filter-toggle-label]').textContent = t('cat.filter') + (active ? ` (${active})` : '');
+    $('[data-cat-list]', catDialog).innerHTML = shown.map((m) => `<li><article class="mcard">
+        <div class="mcard__top"><span class="mrow__icon" aria-hidden="true">${logo(m)}</span><h3>${esc(m.name)}</h3><span class="badge ${LEVEL_BADGE[m.tier]}">${esc(t(`tier.${m.tier}`))}</span></div>
+        <p class="mcard__meta">${esc(meta(m))}</p>
+        <p class="mcard__per"><strong>≈ ${m.per10k}</strong> <span>${esc(t('model.unit', { rp: rp(10000) }))}</span></p>
+        <details><summary>${esc(t('model.rates'))}</summary>${rates(m)}</details>
+      </article></li>`).join('');
+    $('[data-cat-count]', catDialog).textContent = t('cat.count', { a: shown.length, b: results.length });
+    $('[data-cat-empty]', catDialog).dataset.show = String(results.length === 0);
+    $('[data-cat-more]', catDialog).dataset.show = String(results.length > shown.length);
   }
   const catModal = catDialog && TN.ui.setupModal(catDialog, { focus: '#cat-title' });
   function openCatalog(opener = document.activeElement) {
@@ -420,8 +349,8 @@
     catModal?.open(opener);
   }
   if (catDialog) {
-    catDialog.querySelector('[data-cat-close]').addEventListener('click', () => catModal.close());
-    catDialog.querySelector('#cat-search').addEventListener('input', (e) => { cat.query = e.target.value; cat.visible = CAT_STEP; renderCatalog(); });
+    $('[data-cat-close]', catDialog).addEventListener('click', () => catModal.close());
+    $('#cat-search').addEventListener('input', (e) => { cat.query = e.target.value; cat.visible = CAT_STEP; renderCatalog(); });
     catDialog.addEventListener('click', (e) => {
       const chip = e.target.closest('[data-filter]');
       if (!chip) return;
@@ -429,124 +358,125 @@
       set.has(chip.dataset.value) ? set.delete(chip.dataset.value) : set.add(chip.dataset.value);
       cat.visible = CAT_STEP;
       renderCatalog();
-      catDialog.querySelector(`[data-filter="${chip.dataset.filter}"][data-value="${CSS.escape(chip.dataset.value)}"]`)?.focus();
+      $(`[data-filter="${chip.dataset.filter}"][data-value="${CSS.escape(chip.dataset.value)}"]`, catDialog)?.focus();
     });
-    catDialog.querySelector('[data-cat-more]').addEventListener('click', () => {
+    $('[data-cat-more]', catDialog).addEventListener('click', () => {
       const first = cat.visible;
       cat.visible += CAT_STEP;
       renderCatalog();
-      catDialog.querySelectorAll('[data-cat-list] summary')[first]?.focus();
+      $$('[data-cat-list] summary', catDialog)[first]?.focus();
     });
-    catDialog.querySelector('[data-cat-clear]').addEventListener('click', () => {
+    $('[data-cat-clear]', catDialog).addEventListener('click', () => {
       Object.values(cat.filters).forEach((s) => s.clear());
       cat.query = '';
-      const search = catDialog.querySelector('#cat-search');
+      const search = $('#cat-search');
       search.value = '';
       search.focus();
       renderCatalog();
     });
-    const toggle = catDialog.querySelector('[data-filter-toggle]');
-    toggle.addEventListener('click', () => {
-      const panel = document.getElementById('cat-filters');
-      const open = panel.dataset.open !== 'true';
-      panel.dataset.open = String(open);
-      toggle.setAttribute('aria-expanded', String(open));
-    });
   }
-  document.querySelectorAll('[data-open-catalog]').forEach((b) => b.addEventListener('click', () => openCatalog(b)));
+  $$('[data-open-catalog]').forEach((b) => b.addEventListener('click', () => openCatalog(b)));
 
-  /* ---------- Example project: receipt paper (services-and-pricing §7) + before/after ---------- */
+  /* ---------------------------------------------------------
+     Benefits stack: refund, resize, pause + reminder, one-balance dashboard
+     --------------------------------------------------------- */
+  function renderSafe() {
+    const price = D.SIZES.coba.price, daysLeft = 20;
+    const refund = $('[data-safe-refund]');
+    if (refund) refund.textContent = t('safe.1.art', { rp: rp(D.refund(price, daysLeft)) });
+    const resize = $('[data-safe-resize]');
+    if (resize) resize.innerHTML = `<span>${esc(t('size.rutin'))}</span><span class="stack-card__arrow">→</span><span class="is-on">${esc(t('size.coba'))}</span>
+      <p class="notice-art">${esc(t('safe.2.art', { from: t('size.rutin'), to: t('size.coba'), rp: rp(-D.prorata(D.SIZES.rutin.price, price, daysLeft)) }))}</p>`;
+    const body = $('[data-safe-pause-body]');
+    if (body) body.textContent = t('safe.pause.body', { n: D.RULES.pauseDays, m: D.RULES.remindDays });
+    const pause = $('[data-safe-pause]');
+    if (pause) pause.innerHTML = `<p class="notice-art"><span class="badge badge--yellow">${esc(t('status.paused'))}</span>${esc(t('safe.3.art', { n: D.RULES.pauseDays }))}</p>
+      <p class="notice-art"><span class="badge badge--sky">${icon('bell', 'icon icon--sm')}</span>${esc(t('safe.4.art', { n: D.RULES.remindDays, rp: rp(D.TOPUP_MIN) }))}</p>`;
+    renderWallet();
+  }
+
+  function renderWallet() {
+    const el = $('[data-wallet]');
+    if (!el) return;
+    const s = D.heroScenario();
+    const label = { hosting: t('wallet.line.hosting'), domain: t('wallet.line.domain') };
+    el.innerHTML = `
+      <div class="dash__head"><span class="badge badge--yellow">${esc(t('board.note'))}</span><span class="mono dash__pkg">${esc(t('wallet.card'))}</span></div>
+      <div class="dash__balance">
+        <span class="mono">${esc(t('wallet.in', { rp: rp(D.HERO.topup.amount), bonus: rp(D.HERO.topup.bonus) }))}</span>
+        <strong>${esc(rp(s.balance))}</strong>
+        <div class="meter meter--light" aria-hidden="true"><span class="meter__fill" style="--v:${(s.left / s.balance).toFixed(3)}"></span></div>
+      </div>
+      <ul class="dash__lines" role="list">${s.lines.map((l) => `<li><span>${esc(l.svc === 'ai' ? t('wallet.line.ai', { n: l.qty }) : label[l.svc])}</span><b>${esc(rp(-l.amount))}</b></li>`).join('')}</ul>
+      <p class="dash__left"><span>${esc(t('wallet.left'))}</span><strong>${esc(rp(s.left))}</strong></p>
+      <div class="dash__row"><span id="reminder-label">${esc(t('safe.4.remind'))}</span>
+        <button type="button" class="toggle" role="switch" aria-checked="${remindOn}" aria-labelledby="reminder-label" data-reminder><span></span></button></div>
+      <p class="dash__note">${esc(t('wallet.leftNote'))}</p>`;
+  }
+  let remindOn = true;
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-reminder]');
+    if (!b) return;
+    remindOn = !remindOn;
+    b.setAttribute('aria-checked', String(remindOn));
+  });
+
+  /* ---------------------------------------------------------
+     Example: before/after + receipt (services-and-pricing §7)
+     --------------------------------------------------------- */
   function renderExample() {
-    const root = $('[data-example]');
-    if (!root) return;
+    const el = $('[data-example]');
+    if (!el) return;
     const x = D.exampleTotals();
     const range = (a, b) => `${rp(a)}–${num(b)}`;
     const href = `app.html#/buat?resep=portofolio&s=${D.serialize([{ svc: 'hosting', size: D.EXAMPLE.size }, { svc: 'domain', ext: D.EXAMPLE.ext }, { svc: 'ai', unit: 'sesi', qty: D.HERO.sessions }])}`;
-    const line = (title, detail, cost, extra = '') => `<li class="border-b border-dashed border-line py-3">
-      <div class="flex items-baseline justify-between gap-3"><span class="font-bold">${esc(title)}</span><span class="num font-mono whitespace-nowrap">${esc(cost)}</span></div>
-      <p class="text-[.92rem] text-lead-ink">${esc(detail)}</p>${extra}</li>`;
-    const tasks = `<details class="group/d"><summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 text-[.92rem] font-bold text-xl-blue [&::-webkit-details-marker]:hidden">${icon('chevron-right', 'icon size-4 transition-transform group-open/d:rotate-90')}<span>${esc(t('ex.tasksSummary'))}</span></summary>
-      <dl class="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 pb-1 text-[.9rem]">${D.EXAMPLE.tasks.map((r, i) => `<dt>${esc(t(`ex.task${i + 1}`))}</dt><dd class="text-right font-mono">${r[0]}–${r[1]}</dd>`).join('')}</dl></details>`;
-    root.innerHTML = `
-      <p class="receipt__head"><span>${esc(t('ex.project'))}</span><span>${esc(t('board.note'))}</span></p>
-      <ol aria-label="${esc(t('ex.stagesAria'))}">
-        ${line(t('ex.build'), t('ex.buildDetail', { a: x.sessions[0], b: x.sessions[1] }), range(...x.usage), tasks)}
-        ${line(t('svc.hosting.name'), t('ex.online', { size: t(`size.${D.EXAMPLE.size}`) }), rp(x.hosting))}
-        ${line(t('svc.domain.name'), t('ex.domain', { domain: D.EXAMPLE.domain }), rp(x.domain))}
-      </ol>
-      <p class="receipt__total"><span>${esc(t('ex.total'))}</span><strong>${esc(range(...x.total))}</strong></p>
-      <div><div class="meter" aria-hidden="true"><span class="meter__range" style="--from:${(x.total[0] / x.balance).toFixed(3)};--to:${(x.total[1] / x.balance).toFixed(3)}"></span></div>
-        <p class="mt-2 font-mono text-[.75rem] text-muted">${esc(t('ex.left', { balance: rp(x.balance), a: rp(x.balance - x.total[1]), b: rp(x.balance - x.total[0]) }))}</p></div>
+    el.innerHTML = `
+      <p class="mono receipt__head" id="receipt-title">${esc(t('ex.project'))}</p>
+      <table class="receipt__table">
+        <caption class="sr-only">${esc(t('ex.tasksSummary'))}</caption>
+        <thead><tr><th scope="col">${esc(t('ex.task'))}</th><th scope="col">${esc(t('ex.sessionsCol'))}</th></tr></thead>
+        <tbody>${D.EXAMPLE.tasks.map((r, i) => `<tr><td>${esc(t(`ex.task${i + 1}`))}</td><td>${r[0]}–${r[1]}</td></tr>`).join('')}</tbody>
+        <tfoot><tr><th scope="row">${esc(t('ex.total'))}</th><td>${x.sessions[0]}–${x.sessions[1]}</td></tr></tfoot>
+      </table>
+      <dl class="receipt__lines" aria-label="${esc(t('ex.stagesAria'))}">
+        <div><dt>${esc(t('ex.build'))}</dt><dd>${esc(range(...x.usage))}</dd></div>
+        <div><dt>${esc(t('svc.hosting.name'))} · ${esc(t('ex.online', { size: t(`size.${D.EXAMPLE.size}`) }))}</dt><dd>${esc(rp(x.hosting))}</dd></div>
+        <div><dt>${esc(t('ex.domain', { domain: D.EXAMPLE.domain }))}</dt><dd>${esc(rp(x.domain))}</dd></div>
+      </dl>
+      <p class="receipt__cost">${esc(t('ex.total'))} <strong>${esc(range(...x.total))}</strong></p>
+      <div class="receipt__meter">
+        <div class="meter" aria-hidden="true"><span class="meter__fill meter__fill--range" style="--from:${(x.total[0] / x.balance).toFixed(3)};--v:${(x.total[1] / x.balance).toFixed(3)}"></span></div>
+        <p class="mono">${esc(t('ex.left', { balance: rp(x.balance), a: rp(x.balance - x.total[1]), b: rp(x.balance - x.total[0]) }))}</p>
+      </div>
       <p class="receipt__verdict">${esc(t('ex.verdict', { rp: rp(D.EXAMPLE.topup.amount) }))}</p>
-      <a class="btn btn--xl w-full" data-magnetic href="${href}">${esc(t('ex.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>`;
+      <a class="btn btn--primary btn--block" href="${href}" data-cursor="Nyala">${esc(t('ex.cta'))}</a>`;
   }
   const ba = $('[data-ba]');
   $('[data-ba-switch]')?.addEventListener('click', (e) => {
     const on = e.currentTarget.getAttribute('aria-checked') !== 'true';
     e.currentTarget.setAttribute('aria-checked', String(on));
     ba.dataset.state = on ? 'after' : 'before';
-    $$('.ba-b', ba).forEach((el) => el.toggleAttribute('aria-hidden', on));
-    $$('.ba-a', ba).forEach((el) => el.toggleAttribute('aria-hidden', !on));
+    $$('.ba-b', ba).forEach((s) => s.toggleAttribute('aria-hidden', on));
+    $$('.ba-a', ba).forEach((s) => s.toggleAttribute('aria-hidden', !on));
   });
 
-  /* ---------- Safe for beginners: sticky stack, numbers from billing rules ---------- */
-  function renderSafe() {
-    const root = $('[data-safe]');
-    if (!root) return;
-    const price = D.SIZES.coba.price, daysLeft = 20;
-    const art = [
-      `<span class="talk talk--q">${esc(t('safe.1.q'))}</span><span class="talk talk--a">${esc(t('safe.1.art', { rp: rp(D.refund(price, daysLeft)) }))}</span>`,
-      `<span class="pill-art">${esc(t('size.rutin'))}</span><span class="text-3xl font-extrabold" aria-hidden="true">→</span><span class="pill-art bg-xl-dark text-xl-yellow">${esc(t('size.coba'))}</span>
-       <span class="pill-art pill-art--solid basis-full sm:basis-auto">${esc(t('safe.2.art', { from: t('size.rutin'), to: t('size.coba'), rp: rp(-D.prorata(D.SIZES.rutin.price, price, daysLeft)) }))}</span>`,
-      `<span class="big-switch big-switch--xl" aria-hidden="true"><i></i></span><span class="pill-art pill-art--solid flex flex-wrap items-center gap-3"><span class="rounded-full bg-xl-yellow px-2.5 py-0.5 font-mono text-[.8rem] font-medium">${esc(t('status.paused'))}</span>${esc(t('safe.3.art', { n: D.RULES.pauseDays }))}</span>`,
-    ];
-    const bg = ['bg-xl-sky', 'bg-xl-yellow on-yellow', 'bg-xl-teal', 'bg-xl-blue text-white'];
-    const head = (i) => `<div><h3>${esc(t(`safe.${i + 1}.title`))}</h3><p class="stack-card__body">${esc(t(`safe.${i + 1}.body`, { n: i === 2 ? D.RULES.pauseDays : D.RULES.remindDays }))}</p></div>`;
-    const dash = `<div class="grid gap-4 rounded-3xl bg-paper p-5 text-xl-dark sm:p-6">
-        <div class="flex items-center justify-between gap-3"><span class="tier tier--premium">${esc(t('board.note'))}</span>${icon('bell', 'icon size-5 text-xl-blue')}</div>
-        <div class="flex items-center justify-between gap-4 border-b border-line pb-4 font-bold"><span>${esc(t('safe.4.remind'))}</span><span class="toggle" data-on aria-hidden="true"><i></i></span></div>
-        <p class="rounded-2xl bg-xl-yellow px-4 py-3 font-bold">${esc(t('safe.4.art', { n: D.RULES.remindDays, rp: rp(D.TOPUP_MIN) }))}</p></div>`;
-    root.innerHTML = bg.map((b, i) => `<li class="stack-card ${b}" style="--n:${i}" data-stack>
-      <p class="font-mono text-[.85rem]">0${i + 1} / 0${bg.length}</p>
-      ${i === 3 ? `<div class="stack-card__split">${head(i)}${dash}</div>` : `${head(i)}<div class="stack-card__art">${art[i]}</div>`}
-    </li>`).join('');
-  }
-
-  /* ---------- Learn guides: index rows ---------- */
+  /* ---------------------------------------------------------
+     Guides (Belajar) + FAQ
+     --------------------------------------------------------- */
   function renderGuides() {
-    const root = $('[data-guides]');
-    if (!root) return;
-    root.innerHTML = D.GUIDES.map((g) => {
-      const title = t(`learn.${g.id}`);
-      return `<li class="irow"><a class="irow__in guide-row" href="app.html#/belajar?panduan=${g.id}">
-        <span class="irow__icon" aria-hidden="true">${icon('book-open')}</span>
-        <span class="min-w-0"><span class="irow__small block">${esc(t(`recipe.short.${g.recipe}`))}</span><span class="irow__name mt-1 block text-[clamp(1.4rem,calc(2.8*var(--u)),2.6rem)]">${esc(title)}</span></span>
-        <span class="irow__meta inline-flex items-center gap-2">${icon('clock', 'icon size-4')}${esc(t('learn.read', { n: g.minutes }))}</span>
-        <span class="irow__more inline-flex items-center gap-1">${esc(t('learn.cta'))}${icon('arrow-right', 'icon size-4')}</span></a></li>`;
-    }).join('');
+    const el = $('[data-guides]');
+    if (el) el.innerHTML = D.GUIDES.map((g) => `<a href="app.html#/belajar?panduan=${g.id}">
+        <small>${esc(t(`recipe.short.${g.recipe}`))} · ${esc(t('learn.read', { n: g.minutes }))}</small><strong>${esc(t(`learn.${g.id}`))}</strong><span>${esc(t('learn.cta'))} →</span></a>`).join('');
   }
-
-  /* ---------- FAQ (13) ---------- */
   function renderFaq() {
-    const root = $('[data-faq]');
-    if (!root) return;
-    const open = new Set($$('details[open]', root).map((d) => d.dataset.q));
+    const el = $('[data-faq]');
+    if (!el) return;
+    const open = new Set($$('details[open]', el).map((d) => d.dataset.q));
     const vars = { pause: D.RULES.pauseDays, remind: D.RULES.remindDays, first: rp(D.DOMAINS['my.id'].first), renew: rp(D.DOMAINS['my.id'].renew) };
-    root.innerHTML = Array.from({ length: 13 }, (_, i) => i + 1).map((n) => `<details class="faq-item" data-q="${n}" ${open.has(String(n)) ? 'open' : ''}>
+    el.innerHTML = Array.from({ length: 13 }, (_, i) => i + 1).map((n) => `<details class="faq-item" data-q="${n}" ${open.has(String(n)) ? 'open' : ''}>
       <summary><span class="faq-item__n" aria-hidden="true">${String(n).padStart(2, '0')}</span><span>${esc(t(`faq.q${n}`))}</span><span class="faq-item__plus" aria-hidden="true"></span></summary>
       <p class="faq-item__a">${esc(t(`faq.a${n}`, vars))}</p></details>`).join('');
   }
-
-  /* ---------- Final CTA: mega switch → sparks → start building ---------- */
-  const mega = $('[data-final-switch]');
-  mega?.addEventListener('click', () => {
-    const wasOn = mega.hasAttribute('data-on');
-    mega.setAttribute('data-on', '');
-    if (!wasOn) burst(mega, 22, $('[data-sparks]'));
-    setTimeout(() => { location.href = startHref(state.recipe); }, reduced || wasOn ? 0 : 520);
-  });
-  if (reduced) mega?.setAttribute('data-on', '');
-  window.addEventListener('load', () => { if (!document.documentElement.classList.contains('motion-ok')) mega?.setAttribute('data-on', ''); });
 
   /* ---------- Team consultation dialog (v3) ---------- */
   const csDialog = document.getElementById('consult');
@@ -613,19 +543,35 @@
   }
   document.querySelectorAll('[data-open-consult]').forEach((b) => b.addEventListener('click', () => csModal?.open(b)));
 
+  /* ---------------------------------------------------------
+     Final CTA: mega switch → sparks → start building
+     --------------------------------------------------------- */
+  const mega = $('[data-final-switch]');
+  mega?.addEventListener('click', () => {
+    const wasOn = mega.getAttribute('aria-pressed') === 'true';
+    mega.setAttribute('aria-pressed', 'true');
+    if (!wasOn) burst(mega, 22);
+    setTimeout(() => { location.href = startHref(state.recipe); }, prefersReducedMotion || wasOn ? 0 : 520);
+  });
+
+  /* ---------------------------------------------------------
+     Language: static copy swaps by CSS; here only aria labels, cursor label and data-driven parts
+     --------------------------------------------------------- */
+  function syncAria() {
+    $$('[data-aria-id]').forEach((el) => el.setAttribute('aria-label', el.dataset[I.lang === 'en' ? 'ariaEn' : 'ariaId']));
+  }
   function render() {
+    syncAria();
     renderHero();
     renderHow();
-    renderChips();
+    renderTabs();
     renderCard();
     renderServices();
-    renderWallet();
     renderTemplates();
-    renderModelRows();
-    renderApi();
+    renderModels();
     renderCatalog();
-    renderExample();
     renderSafe();
+    renderExample();
     renderGuides();
     renderFaq();
     renderConsult();
@@ -633,7 +579,290 @@
     document.dispatchEvent(new CustomEvent('tn:render'));
   }
 
+  /* ---------------------------------------------------------
+     Phones: the chat launcher would cover the hero board, so it appears once the hero scrolls away
+     --------------------------------------------------------- */
+  const launcher = $('#chat-launcher');
+  const heroEl = $('#top');
+  if (launcher && heroEl && 'IntersectionObserver' in window) {
+    const phone = window.matchMedia('(max-width: 639px)');
+    let heroVisible = true;
+    const sync = () => { const hide = phone.matches && heroVisible; launcher.classList.toggle('is-away', hide); launcher.inert = hide; };
+    new IntersectionObserver(([entry]) => { heroVisible = entry.intersectionRatio > 0.35; sync(); }, { threshold: [0, 0.35, 1] }).observe(heroEl);
+    phone.addEventListener('change', sync);
+  }
+
+  /* ---------------------------------------------------------
+     Custom cursor + magnetic buttons (fine pointers only)
+     --------------------------------------------------------- */
+  if (finePointer && !prefersReducedMotion) {
+    root.classList.add('has-cursor');
+    const cursor = $('#cursor'), label = $('#cursor-label');
+    let mx = -100, my = -100, cx = -100, cy = -100;
+    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    const loop = () => {
+      cx += (mx - cx) * 0.22; cy += (my - cy) * 0.22;
+      cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+      requestAnimationFrame(loop);
+    };
+    loop();
+    document.addEventListener('pointerover', (e) => {
+      const target = e.target.closest('[data-cursor]');
+      if (target) { label.textContent = (I.lang === 'en' && target.dataset.cursorEn) || target.dataset.cursor; cursor.classList.add('is-active'); }
+      else cursor.classList.remove('is-active');
+      cursor.classList.toggle('is-hidden', !!e.target.closest('dialog, input, textarea'));
+    });
+    document.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
+    document.addEventListener('pointerenter', () => cursor.classList.remove('is-hidden'));
+    document.addEventListener('pointermove', (e) => {
+      const el = e.target.closest?.('.magnetic');
+      $$('.magnetic[data-pulled]').forEach((m) => { if (m !== el) { m.style.transform = ''; m.removeAttribute('data-pulled'); } });
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - (r.left + r.width / 2)) * 0.22}px, ${(e.clientY - (r.top + r.height / 2)) * 0.32}px)`;
+      el.setAttribute('data-pulled', '');
+    }, { passive: true });
+  }
+
+  /* ---------------------------------------------------------
+     Stall story: build to 80% → stuck on localhost → switch on → 100% online
+     --------------------------------------------------------- */
+  const stall = $('[data-stall]');
+  let stallWasOn = true;
+  function renderStall(p) {
+    if (!stall) return;
+    const fill = p < 0.5 ? (p / 0.5) * 0.8 : p < 0.74 ? 0.8 : 0.8 + Math.min(1, (p - 0.74) / 0.2) * 0.2;
+    const phase = p < 0.52 ? 'build' : p < 0.7 ? 'stall' : 'on';
+    if (stall.dataset.phase !== phase) stall.dataset.phase = phase;
+    $('[data-stall-fill]').style.setProperty('--f', fill.toFixed(4));
+    $('[data-stall-pct]').textContent = Math.round(fill * 100);
+    $$('[data-stall-tasks] li').forEach((li) => li.classList.toggle('is-done', fill + 0.001 >= parseFloat(li.dataset.at)));
+    const on = phase === 'on', sw = $('[data-stall-switch]');
+    sw.classList.toggle('big-switch--on', on);
+    if (on && !stallWasOn) burst(sw, 12);
+    stallWasOn = on;
+  }
+  renderStall(1); // complete story at rest (no JS motion / reduced motion)
+
+  /* ---------------------------------------------------------
+     "Cara kerja" horizontal scroller: drag, wheel, buttons, rail
+     --------------------------------------------------------- */
+  (function initStepsScroller() {
+    const track = $('[data-steps-track]');
+    if (!track) return;
+    const prev = $('[data-steps-prev]'), next = $('[data-steps-next]'), rail = $('[data-steps-rail]');
+    const maxScroll = () => track.scrollWidth - track.clientWidth;
+    const update = () => {
+      const max = maxScroll(), p = max > 0 ? track.scrollLeft / max : 0;
+      rail.style.setProperty('--p', p.toFixed(3));
+      prev.disabled = track.scrollLeft <= 4;
+      next.disabled = track.scrollLeft >= max - 4;
+    };
+    const stepWidth = () => { const s = $('.step', track); return s ? s.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 0) : track.clientWidth; };
+    const go = (dir) => track.scrollBy({ left: dir * stepWidth(), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    prev.addEventListener('click', () => go(-1));
+    next.addEventListener('click', () => go(1));
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    track.addEventListener('keydown', (e) => {
+      if (maxScroll() <= 0) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    });
+    track.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
+        e.stopPropagation();
+        if (e.shiftKey && !e.deltaX) { e.preventDefault(); track.scrollLeft += e.deltaY; }
+      }
+    }, { passive: false });
+    let startX = 0, startLeft = 0, dragging = false, moved = false;
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || maxScroll() <= 0) return;
+      dragging = true; moved = false; startX = e.clientX; startLeft = track.scrollLeft;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (!moved && Math.abs(dx) > 4) { moved = true; track.classList.add('is-dragging'); }
+      if (moved) { e.preventDefault(); track.scrollLeft = startLeft - dx; }
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (!moved) return;
+      const before = track.scrollLeft;
+      track.classList.remove('is-dragging');
+      track.scrollLeft = before; // re-enabling snap jumps instantly; animate from where the drag ended instead
+      const w = stepWidth(), dx = startLeft - before;
+      let idx = Math.round(before / w);
+      if (Math.abs(dx) > 60) idx = dx < 0 ? Math.floor(startLeft / w + 0.01) + 1 : Math.ceil(startLeft / w - 0.01) - 1;
+      track.scrollTo({ left: Math.max(0, Math.min(maxScroll(), idx * w)), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+    track.addEventListener('dragstart', (e) => e.preventDefault());
+    update();
+  })();
+
+  /* ---------------------------------------------------------
+     Preloader + scroll motion (GSAP + ScrollTrigger + Lenis)
+     --------------------------------------------------------- */
+  const loader = $('#loader');
+  function runLoader() {
+    return new Promise((resolve) => {
+      if (!root.classList.contains('is-loading')) return resolve();
+      const countEl = $('#loader-count');
+      const start = performance.now(), dur = 1100;
+      const step = (now) => {
+        const p = Math.min(1, (now - start) / dur);
+        countEl.textContent = String(Math.round((1 - Math.pow(1 - p, 3)) * 100)).padStart(3, '0');
+        if (p < 1) return requestAnimationFrame(step);
+        loader.classList.add('is-on');
+        setTimeout(() => {
+          const finish = () => { root.classList.remove('is-loading'); loader.remove(); resolve(); };
+          if (window.gsap) window.gsap.to(loader, { yPercent: -100, duration: 0.8, ease: 'expo.inOut', onComplete: finish });
+          else finish();
+        }, 420);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  function splitWords(span) {
+    const nodes = [...span.childNodes];
+    span.innerHTML = '';
+    nodes.forEach((node) => {
+      const parts = node.nodeType === 3 ? node.textContent.split(/(\s+)/) : [node];
+      parts.forEach((part) => {
+        if (part === '') return;
+        if (typeof part === 'string' && /^\s+$/.test(part)) { span.append(document.createTextNode(' ')); return; }
+        const prev = span.lastChild; // text glued to the previous word ("semua" + ",") stays in it
+        if (typeof part === 'string' && prev?.classList?.contains('split-word')) { prev.firstChild.append(part); return; }
+        const w = document.createElement('span'); w.className = 'split-word';
+        const inner = document.createElement('span'); inner.append(part);
+        w.append(inner); span.append(w);
+      });
+    });
+  }
+
+  let lenis = null;
+  function initMotion() {
+    const gsap = window.gsap, ScrollTrigger = window.ScrollTrigger;
+    if (!gsap || !ScrollTrigger || prefersReducedMotion) return false;
+    gsap.registerPlugin(ScrollTrigger);
+    root.classList.add('has-gsap', 'motion-ok');
+    const EASE = 'expo.out';
+
+    // Smooth scroll; stops while a menu or modal locks the page
+    if (window.Lenis) {
+      lenis = new window.Lenis({ duration: 1.15, smoothWheel: true });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+      new MutationObserver(() => { if (root.classList.contains('overflow-hidden') || root.classList.contains('is-loading')) lenis.stop(); else lenis.start(); })
+        .observe(root, { attributes: true, attributeFilter: ['class'] });
+      if (root.classList.contains('is-loading')) lenis.stop();
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        const id = a?.getAttribute('href');
+        if (!id || id.length < 2) return;
+        const target = $(id);
+        if (!target) return;
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: id === '#top' || id === '#main' ? 0 : -10 });
+        if (id === '#main') target.focus({ preventScroll: true });
+      });
+    }
+
+    // Split [data-split] headings into words (per language span)
+    $$('[data-split] > [data-l]').forEach(splitWords);
+    $$('[data-split]').forEach((h) => gsap.from($$('.split-word > span', h), {
+      yPercent: 110, duration: 1, ease: EASE, stagger: 0.035, scrollTrigger: { trigger: h, start: 'top 85%' },
+    }));
+
+    // Hero entrance (plays when the loader leaves)
+    const heroTl = gsap.timeline({ paused: true });
+    heroTl
+      .from('.hero__title .ln > span', { yPercent: 110, duration: 1.1, ease: EASE, stagger: 0.08 })
+      .from('.hero__eyebrow, .hero__copy', { y: 30, opacity: 0, duration: 0.8, ease: EASE, stagger: 0.1 }, '-=0.8')
+      .from('.board', { x: 80, opacity: 0, rotate: 4, duration: 0.9, ease: EASE }, '-=0.9')
+      .from('.sticker', { scale: 0, rotate: -90, duration: 0.8, ease: 'back.out(1.7)' }, '-=0.6')
+      .add(() => {
+        $$('[data-hero-switch]').forEach((s) => s.classList.add('is-on'));
+        burst($(`[data-l="${I.lang}"] [data-hero-switch]`), 10);
+      }, '-=0.3');
+    gsap.to('.hero__visual', { yPercent: -8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+
+    // Stall story: progress scrubbed by scroll
+    renderStall(0);
+    ScrollTrigger.create({ trigger: stall, start: 'top 90%', end: 'bottom 40%', scrub: 0.4, onUpdate: (self) => renderStall(self.progress) });
+
+    // Steps slide in; intent + package sheet
+    gsap.from('.step', { x: 80, opacity: 0, duration: 1, ease: EASE, stagger: 0.1, scrollTrigger: { trigger: '[data-steps-track]', start: 'top 85%' } });
+    gsap.from('.intent', { scaleX: 0.85, opacity: 0, duration: 0.9, ease: EASE, scrollTrigger: { trigger: '.intent', start: 'top 90%' } });
+    gsap.from('.pkg-sheet__main > *, .pkg-specs > div', { y: 40, opacity: 0, duration: 0.9, ease: EASE, stagger: 0.05, scrollTrigger: { trigger: '.pkg-sheet', start: 'top 85%' } });
+
+    // Services groups, model rows
+    gsap.from('.svc-group', { y: 40, opacity: 0, duration: 0.8, ease: EASE, stagger: 0.08, scrollTrigger: { trigger: '[data-services]', start: 'top 85%' } });
+    gsap.from('.mrow', { y: 40, opacity: 0, duration: 0.8, ease: EASE, stagger: 0.06, scrollTrigger: { trigger: '[data-models]', start: 'top 85%' } });
+    $$('.display mark').forEach((m) => gsap.fromTo(m, { '--mark': 0 }, { '--mark': 1, duration: 0.8, ease: EASE, scrollTrigger: { trigger: m, start: 'top 80%' } }));
+
+    // Cable draw, tool steps, config card
+    const cable = $('#cable-path');
+    if (cable) {
+      const len = cable.getTotalLength();
+      gsap.fromTo(cable, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '.tools', start: 'top 70%', end: 'center center', scrub: true } });
+    }
+    gsap.from('.tool-steps li', { x: -40, opacity: 0, duration: 0.8, ease: EASE, stagger: 0.1, scrollTrigger: { trigger: '.tool-steps', start: 'top 85%' } });
+    gsap.from('.config-card', { y: 60, rotate: 6, opacity: 0, duration: 1, ease: EASE, scrollTrigger: { trigger: '.config-card', start: 'top 85%' } });
+
+    // Benefit stack: earlier cards shrink as the next arrives
+    const cards = $$('.stack-card');
+    cards.forEach((c, i) => {
+      if (i === cards.length - 1) return;
+      gsap.to(c, { scale: 0.92 + i * 0.015, ease: 'none', scrollTrigger: { trigger: cards[i + 1], start: 'top bottom', end: 'top 20%', scrub: true } });
+    });
+
+    // Receipt print-in, teams, FAQ
+    gsap.from('.receipt__paper', { yPercent: -18, opacity: 0, rotate: -3, duration: 1.1, ease: EASE, scrollTrigger: { trigger: '.receipt', start: 'top 80%' } });
+    gsap.from('.teams__list li', { x: 60, opacity: 0, duration: 0.8, ease: EASE, stagger: 0.08, scrollTrigger: { trigger: '.teams__list', start: 'top 85%' } });
+    gsap.from('.faq-item', { y: 30, opacity: 0, duration: 0.7, ease: EASE, stagger: 0.04, scrollTrigger: { trigger: '[data-faq]', start: 'top 85%' } });
+
+    // Final CTA
+    gsap.from('.final__title .ln > span', { yPercent: 110, duration: 1.1, ease: EASE, stagger: 0.1, scrollTrigger: { trigger: '.final', start: 'top 60%' } });
+    gsap.from('.mega-switch', { scale: 0.6, opacity: 0, duration: 0.9, ease: 'back.out(1.6)', scrollTrigger: { trigger: '.final', start: 'top 55%' } });
+    ScrollTrigger.create({
+      trigger: '.final', start: 'top 30%', once: true,
+      onEnter: () => { if (mega.getAttribute('aria-pressed') !== 'true') { mega.setAttribute('aria-pressed', 'true'); burst(mega, 18); } },
+    });
+
+    // Footer giant wordmark
+    gsap.from('.footer__giant span', { yPercent: 100, duration: 1.2, ease: EASE, stagger: 0.1, scrollTrigger: { trigger: '.footer__giant', start: 'top 95%' } });
+
+    if (document.fonts?.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+    I.onChange(() => requestAnimationFrame(() => ScrollTrigger.refresh()));
+    window.__heroTl = heroTl;
+    TN.motion = { lenis, ScrollTrigger };
+    return true;
+  }
+
+  function staticOn() {
+    $$('[data-hero-switch]').forEach((s) => s.classList.add('is-on'));
+    mega?.setAttribute('aria-pressed', 'true');
+  }
+
   I.onChange(render);
   I.init();
   window.TN.landing = { selectRecipe, openCatalog, renderStall, openConsult: (from) => csModal?.open(from), get recipe() { return state.recipe; } };
+
+  function start() {
+    const motion = initMotion();
+    runLoader().then(() => {
+      if (motion && window.__heroTl) window.__heroTl.play();
+      else staticOn();
+    });
+  }
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
 })();

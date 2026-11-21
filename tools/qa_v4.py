@@ -245,11 +245,13 @@ def landing_lang_flow(page, out, name):
     if name.startswith("1440"):
         page.locator('header [data-lang="en"]').click()
     else:
+        page.evaluate("() => scrollTo(0, 0)")  # the header hides while scrolling down (showcase); back at the top it shows
+        page.wait_for_timeout(300)
         page.locator("#menu-button").click()
         page.locator('#mobile-menu [data-lang="en"]').click()
         page.keyboard.press("Escape")
     lang = page.evaluate("() => document.documentElement.lang")
-    cta = page.locator("#hero-cta").text_content().strip()
+    cta = " ".join(page.locator("#hero-cta").inner_text().split()).replace(" →", "")
     page.reload(wait_until="networkidle")
     persisted = page.evaluate("() => document.documentElement.lang")
     if not (lang == "en" and cta == "Start building" and persisted == "en"):
@@ -329,6 +331,9 @@ def chat_wait(page):
 def landing_chat_flow(page, out, name, base_url):
     """Recipe flow: portofolio → code not ready → Ramai gives hosting:ramai + 20 sessions; offline team collects a contact."""
     problems = []
+    page.evaluate("() => document.getElementById('cara-kerja')?.scrollIntoView()")  # phones: the launcher appears once the hero scrolls away (showcase)
+    page.wait_for_timeout(250)
+    page.wait_for_function("() => !document.getElementById('chat-launcher').inert", timeout=5000)
     page.locator("#chat-launcher").click()
     page.wait_for_timeout(200)
     modal = page.evaluate("() => document.getElementById('chat').matches(':modal')")
@@ -353,6 +358,8 @@ def landing_chat_flow(page, out, name, base_url):
         problems.append("CHAT Escape did not close or return focus to the launcher")
     # team offline → contact collected (never stored)
     page.goto(base_url + "?chat=offline", wait_until="networkidle")
+    page.evaluate("() => document.getElementById('cara-kerja')?.scrollIntoView()")
+    page.wait_for_function("() => !document.getElementById('chat-launcher').inert", timeout=5000)
     page.locator("#chat-launcher").click()
     page.locator("#chat [data-chat-chips] button").last.click(); chat_wait(page)
     page.fill("#chat-input", "ayu@mail.com"); page.keyboard.press("Enter"); chat_wait(page)
@@ -396,7 +403,7 @@ MOTION_JS = r"""
     }
   }
   return { motion: document.documentElement.classList.contains('motion-ok'), hidden,
-           switches: [...document.querySelectorAll('[data-final-switch], [data-stall-switch]')].map(s => s.hasAttribute('data-on')) };
+           switches: [document.querySelector('[data-final-switch]')?.getAttribute('aria-pressed') === 'true', !!document.querySelector('[data-stall-switch]')?.classList.contains('big-switch--on')] };
 }
 """
 
@@ -408,6 +415,8 @@ def motion_flow(browser, base, out, name, w, h, page_name="index.html"):
     errors = []
     page.on("pageerror", lambda e: errors.append(str(e)))
     page.goto(base + page_name, wait_until="networkidle")
+    page.wait_for_function("() => !document.documentElement.classList.contains('is-loading')", timeout=8000)  # landing loader
+    page.wait_for_timeout(1500)
     height = page.evaluate("() => document.documentElement.scrollHeight")
     y = 0
     while y < height:  # step through the page like a reader (via Lenis when it runs)
@@ -997,7 +1006,7 @@ def main():
                     status.append(f"BROKEN IMAGES: {r['broken']}")
                 if r["escapes"]:
                     status.append(f"ESCAPES SHELL: {r['escapes']}")
-                if r["headerPosition"] != "sticky":
+                if r["headerPosition"] not in ("sticky", "fixed"):
                     status.append(f"CSS not applied? header position={r['headerPosition']}")
                 if e["missingIcons"]:
                     status.append(f"MISSING ICONS: {e['missingIcons']}")

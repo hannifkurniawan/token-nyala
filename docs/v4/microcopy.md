@@ -62,6 +62,8 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 
 ## 3. Landing
 
+> **21 Nov 2026:** copy statis landing kini ditulis langsung di `v4/index.html` sebagai pasangan `data-l="id|en"` (cara showcase v2); tabel di bawah tetap acuan isi. Kunci `hero.*`, `story.*`, `how.*`, dll. sudah dihapus dari kamus. Teks dinamis baru: `board.pick` (Pilih tujuan di bawah ↓), `board.standby` (Menunggu), `board.estimate` (≈ {rp}/bln · cukup ±{n} bln), `safe.pause.body`, `ex.task`, `ex.sessionsCol`. Pesan pita cerita: “Prompt demi prompt, kodenya jadi.” → “Belum online. Cuma jalan di laptopmu.” → “Nyala. Siapa saja bisa membukanya.” Loader: “Menyalakan idemu”.
+
 ### Hero
 | Kunci | ID | EN |
 |---|---|---|

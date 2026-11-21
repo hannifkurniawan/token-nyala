@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" class="no-js">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F7F8FC">
+  <meta name="theme-color" content="#002DBB">
   <meta name="description" content="TokenNyala — AI untuk membangun, cloud untuk menjalankan. Pilih tujuanmu, dibayar dari satu saldo Rupiah.">
   <meta property="og:title" content="TokenNyala — Idemu nyala, dari prompt sampai online.">
   <meta property="og:description" content="Platform AI cloud untuk vibecoder: hosting, otomasi, data, alamat web, dan AI dengan satu saldo Rupiah.">
@@ -12,621 +12,723 @@
   <link rel="icon" href="assets/img/tokennyala-mark.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- 2 families / 4 faces (docs/v4/visual-direction.md §3) -->
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/app.css">
+  <!-- 2 families / 6 faces (showcase v2): Manrope 500–800 + IBM Plex Mono 500/600 -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/landing.css">
+  <script>
+    /* Before first paint (showcase v2): language + loader gate, so motion is prepared behind the loader. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.remove('no-js'); d.classList.add('js');
+      try { var l = localStorage.getItem('tn-lang'); if (l === 'en' || l === 'id') d.lang = l; } catch (e) {}
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('is-loading');
+    })();
+  </script>
   <script defer src="assets/js/data.js"></script>
   <script defer src="assets/js/i18n.js"></script>
   <script defer src="assets/js/icons.js"></script>
   <script defer src="assets/js/ui.js"></script>
-  <script defer src="assets/js/landing.js"></script>
-  <script defer src="assets/js/nala.js"></script>
   <script defer src="assets/vendor/gsap.min.js"></script>
   <script defer src="assets/vendor/ScrollTrigger.min.js"></script>
   <script defer src="assets/vendor/lenis.min.js"></script>
-  <script defer src="assets/js/motion.js"></script>
+  <script defer src="assets/js/landing.js"></script>
+  <script defer src="assets/js/nala.js"></script>
 </head>
 <body>
-  <a href="#main" class="sr-only z-[60] rounded-full bg-xl-yellow px-5 py-3 font-bold focus:not-sr-only focus:fixed focus:top-3 focus:left-3" data-i18n="skip">Lewati ke konten utama</a>
+  <a class="skip-link" href="#main"><span data-l="id">Lewati ke konten utama</span><span data-l="en">Skip to main content</span></a>
 
-  <!-- ===== Header (information-architecture §1) ===== -->
-  <header data-header class="site-header group sticky top-0 z-50 h-(--header-h)">
-    <div class="shell flex h-full items-center gap-4">
-      <a href="#top" class="flex min-h-11 items-center gap-2.5 text-[1.2rem] font-extrabold tracking-[-.03em]" data-i18n-aria="brand.home" aria-label="TokenNyala — ke atas">
-        <img src="assets/img/tokennyala-mark.svg" alt="" width="34" height="34" class="size-[34px] rounded-[9px] group-data-menu-open:ring-2 group-data-menu-open:ring-white">TokenNyala
-      </a>
-      <nav class="ml-6 hidden gap-1 font-bold lg:flex" data-i18n-aria="nav.aria" aria-label="Navigasi utama">
-        <a class="nav-link inline-flex min-h-11 min-w-11 items-center justify-center px-3" href="#layanan" data-i18n="nav.services">Layanan</a>
-        <a class="nav-link inline-flex min-h-11 min-w-11 items-center justify-center px-3" href="harga.html" data-i18n="nav.pricing">Harga</a>
-        <a class="nav-link inline-flex min-h-11 min-w-11 items-center justify-center px-3" href="#template" data-i18n="nav.templates">Template</a>
-        <a class="nav-link inline-flex min-h-11 min-w-11 items-center justify-center px-3" href="#belajar" data-i18n="nav.learn">Belajar</a>
-        <a class="nav-link inline-flex min-h-11 min-w-11 items-center justify-center px-3" href="#faq" data-i18n="nav.faq">FAQ</a>
-      </nav>
-      <div class="ml-auto flex items-center gap-2">
-        <div class="hidden rounded-full border-[1.5px] border-current p-[3px] lg:inline-flex" role="group" data-i18n-aria="lang.aria" aria-label="Pilih bahasa">
-          <button type="button" data-lang="id" aria-pressed="true" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">ID</button>
-          <button type="button" data-lang="en" aria-pressed="false" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">EN</button>
-        </div>
-        <a href="app.html#/masuk" class="hidden min-h-11 items-center px-3 font-bold lg:inline-flex" data-i18n="nav.signin">Masuk</a>
-        <a href="app.html#/buat?resep=portofolio" data-start class="btn hidden group-data-menu-open:hidden sm:inline-flex" data-i18n="cta.start">Mulai bangun</a>
-        <button type="button" id="menu-button" class="menu-btn lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Buka menu"><span class="menu-btn__bars" aria-hidden="true"><i></i><i></i></span></button>
+  <!-- ============ PRELOADER: the switch turns on ============ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <div class="loader__switch"><span class="loader__knob"></span></div>
+      <p class="loader__count"><span id="loader-count">000</span>%</p>
+      <p class="loader__label"><span data-l="id">Menyalakan idemu</span><span data-l="en">Switching your idea on</span></p>
+    </div>
+  </div>
+
+  <!-- ============ CURSOR (fine pointer only) ============ -->
+  <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label" id="cursor-label"></span></div>
+
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" data-aria-id="TokenNyala — ke atas" data-aria-en="TokenNyala — back to top" aria-label="TokenNyala — ke atas">
+      <img src="assets/img/tokennyala-mark.svg" alt="" width="34" height="34"><span class="brand__word">TokenNyala</span>
+    </a>
+    <nav class="nav-desktop" data-aria-id="Navigasi utama" data-aria-en="Main navigation" aria-label="Navigasi utama">
+      <a href="#layanan" data-cursor="↓"><span data-l="id">Layanan</span><span data-l="en">Services</span></a>
+      <a href="harga.html" data-cursor="→"><span data-l="id">Harga</span><span data-l="en">Pricing</span></a>
+      <a href="#template" data-cursor="↓"><span data-l="id">Template</span><span data-l="en">Templates</span></a>
+      <a href="#belajar" data-cursor="↓"><span data-l="id">Belajar</span><span data-l="en">Learn</span></a>
+      <a href="#faq" data-cursor="↓">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" data-aria-id="Pilih bahasa" data-aria-en="Choose language" aria-label="Pilih bahasa">
+        <button type="button" class="lang-switch__btn" data-lang="id" aria-pressed="true">ID</button>
+        <button type="button" class="lang-switch__btn" data-lang="en" aria-pressed="false">EN</button>
       </div>
+      <a class="header-signin" href="app.html#/masuk"><span data-l="id">Masuk</span><span data-l="en">Sign in</span></a>
+      <a class="btn btn--primary btn--sm header-cta" href="app.html#/buat?resep=portofolio" data-start data-cursor="Nyala"><span data-l="id">Mulai bangun</span><span data-l="en">Start building</span></a>
+      <button type="button" class="menu-btn" id="menu-button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Buka menu">
+        <span class="menu-btn__bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
     </div>
   </header>
 
-  <div id="mobile-menu" class="menu-panel lg:hidden" hidden>
-    <nav class="shell !px-0" data-i18n-aria="nav.aria" aria-label="Navigasi utama">
-      <ol class="menu-panel__list grid grid-cols-1">
-        <li><a href="#layanan"><small>01</small><span data-i18n="nav.services">Layanan</span></a></li>
-        <li><a href="harga.html"><small>02</small><span data-i18n="nav.pricing">Harga</span></a></li>
-        <li><a href="#template"><small>03</small><span data-i18n="nav.templates">Template</span></a></li>
-        <li><a href="#belajar"><small>04</small><span data-i18n="nav.learn">Belajar</span></a></li>
-        <li><a href="#faq"><small>05</small><span data-i18n="nav.faq">FAQ</span></a></li>
+  <!-- Full-screen menu -->
+  <div class="menu-panel" id="mobile-menu" hidden>
+    <nav data-aria-id="Menu navigasi" data-aria-en="Navigation menu" aria-label="Menu navigasi">
+      <ol class="menu-panel__list">
+        <li><a href="#layanan"><small>01</small><span data-l="id">Layanan</span><span data-l="en">Services</span></a></li>
+        <li><a href="harga.html"><small>02</small><span data-l="id">Harga</span><span data-l="en">Pricing</span></a></li>
+        <li><a href="#template"><small>03</small><span data-l="id">Template</span><span data-l="en">Templates</span></a></li>
+        <li><a href="#belajar"><small>04</small><span data-l="id">Belajar</span><span data-l="en">Learn</span></a></li>
+        <li><a href="#faq"><small>05</small>FAQ</a></li>
       </ol>
-      <div class="mt-8 flex flex-wrap items-center gap-3">
-        <div class="inline-flex rounded-full border-[1.5px] border-white/70 p-[3px]" role="group" data-i18n-aria="lang.aria" aria-label="Pilih bahasa">
-          <button type="button" data-lang="id" aria-pressed="true" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">ID</button>
-          <button type="button" data-lang="en" aria-pressed="false" class="min-h-11 min-w-11 rounded-full font-mono text-[.8rem] aria-pressed:bg-xl-yellow aria-pressed:text-xl-dark">EN</button>
-        </div>
-        <a href="app.html#/masuk" class="btn btn--ghost-light" data-i18n="nav.signin">Masuk</a>
+    <div class="menu-panel__foot">
+      <div class="lang-switch" role="group" data-aria-id="Pilih bahasa" data-aria-en="Choose language" aria-label="Pilih bahasa">
+        <button type="button" class="lang-switch__btn" data-lang="id" aria-pressed="true">ID</button>
+        <button type="button" class="lang-switch__btn" data-lang="en" aria-pressed="false">EN</button>
       </div>
-      <a href="app.html#/buat?resep=portofolio" data-start class="btn btn--yellow btn--lg mt-4 w-full" data-i18n="cta.start">Mulai bangun</a>
+      <a class="btn btn--ghost-light" href="app.html#/masuk"><span data-l="id">Masuk</span><span data-l="en">Sign in</span></a>
+      <a class="btn btn--yellow" href="app.html#/buat?resep=portofolio" data-start><span data-l="id">Mulai bangun</span><span data-l="en">Start building</span></a>
+    </div>
     </nav>
   </div>
 
-  <main id="main" tabindex="-1" class="focus:outline-none">
-    <!-- ===== 1. Hero (paper) — showcase v2: 3-line title, sticker, project board ===== -->
-    <section id="top" class="hero" aria-labelledby="hero-title">
-      <div class="shell">
-        <p class="kicker" data-hero-fade><span class="dot dot--on"></span><span data-i18n="hero.kicker">Untuk ide, prototype, dan proyekmu</span></p>
-        <h1 id="hero-title" class="hero-title mt-5 sm:mt-7">
-          <span class="ln"><span><span data-i18n="hero.t1a">Idemu</span> <span class="inline-switch" data-hero-switch aria-hidden="true"><i></i></span> <span data-i18n="hero.t1b">nyala,</span></span></span>
-          <span class="ln"><span class="t-blue" data-i18n="hero.t2">dari prompt</span></span>
-          <span class="ln"><span class="t-blue" data-i18n="hero.t3">sampai online.</span></span>
-        </h1>
-        <div class="hero__grid">
-          <div class="hero__copy" data-hero-fade>
-            <p class="lead" data-i18n="hero.lead">AI untuk membangun, cloud untuk menjalankan.</p>
-            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <a href="app.html#/buat?resep=portofolio" id="hero-cta" data-start data-magnetic class="btn btn--xl w-full sm:w-auto"><span data-i18n="cta.start">Mulai bangun</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
-              <a href="harga.html" class="btn btn--ghost btn--xl w-full sm:w-auto" data-i18n="cta.pricing">Lihat harga</a>
-            </div>
-            <ul class="trust flex flex-wrap gap-x-5 gap-y-2 font-mono text-[.85rem] text-muted" data-i18n-aria="hero.trustAria" aria-label="Keunggulan">
-              <li data-i18n="hero.trust1">Bayar Rupiah</li>
-              <li data-i18n="hero.trust2">Tanpa kartu kredit</li>
-              <li data-trust-from>Mulai Rp15 rb</li>
-            </ul>
+  <main id="main" tabindex="-1">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <p class="eyebrow hero__eyebrow" data-fade>
+        <span class="eyebrow__dot"></span>
+        <span data-l="id">Untuk ide, prototype, dan proyekmu</span><span data-l="en">For your ideas, prototypes, and projects</span>
+      </p>
+      <h1 class="hero__title" id="hero-title">
+        <span data-l="id">
+          <span class="ln"><span>Idemu <span class="inline-switch" data-hero-switch aria-hidden="true" data-cursor="Klik" data-cursor-en="Click"><span class="inline-switch__knob"></span></span> nyala,</span></span>
+          <span class="ln"><span class="t-blue">dari prompt</span></span>
+          <span class="ln"><span class="t-blue">sampai online.</span></span>
+        </span>
+        <span data-l="en">
+          <span class="ln"><span>Your idea <span class="inline-switch" data-hero-switch aria-hidden="true" data-cursor="Klik" data-cursor-en="Click"><span class="inline-switch__knob"></span></span> on,</span></span>
+          <span class="ln"><span class="t-blue">from prompt</span></span>
+          <span class="ln"><span class="t-blue">to online.</span></span>
+        </span>
+      </h1>
+
+      <div class="hero__grid">
+        <div class="hero__copy" data-fade>
+          <p class="lead">
+            <span data-l="id">AI untuk membangun, cloud untuk menjalankan. Pilih tujuanmu, kami rangkai layanannya — dibayar dari satu saldo Rupiah.</span>
+            <span data-l="en">AI to build it, cloud to run it. Pick your goal and we'll put the services together — all paid from one Rupiah balance.</span>
+          </p>
+          <div class="btn-row">
+            <a class="btn btn--primary btn--lg magnetic" id="hero-cta" href="app.html#/buat?resep=portofolio" data-start data-cursor="Nyala">
+              <span data-l="id">Mulai bangun</span><span data-l="en">Start building</span> <span class="btn__icon" aria-hidden="true">→</span>
+            </a>
+            <a class="btn btn--ghost btn--lg" href="harga.html"><span data-l="id">Lihat harga</span><span data-l="en">See pricing</span></a>
+          </div>
+          <ul class="trust-row" role="list">
+            <li><span data-l="id">Bayar Rupiah</span><span data-l="en">Pay in Rupiah</span></li>
+            <li><span data-l="id">Tanpa kartu kredit</span><span data-l="en">No credit card</span></li>
+            <li data-trust-from>Mulai Rp15 rb</li>
+          </ul>
+        </div>
+
+        <div class="hero__visual">
+          <div class="sticker" aria-hidden="true">
+            <svg viewBox="0 0 200 200" class="sticker__ring">
+              <defs><path id="sticker-path" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
+              <text><textPath href="#sticker-path" textLength="458" lengthAdjust="spacing" data-sticker>PROMPT · BANGUN · ONLINE · NYALA · </textPath></text>
+            </svg>
+            <img src="assets/img/tokennyala-mark.svg" alt="" class="sticker__mark">
           </div>
 
-          <div class="hero__visual" data-hero-visual>
-            <div class="sticker" aria-hidden="true">
-              <svg viewBox="0 0 200 200" class="sticker__ring"><defs><path id="sticker-path" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
-                <text><textPath href="#sticker-path" textLength="458" lengthAdjust="spacing" data-i18n="hero.sticker">PROMPT · BANGUN · ONLINE · NYALA · </textPath></text></svg>
-              <img src="assets/img/tokennyala-mark.svg" alt="" class="sticker__mark">
+          <figure class="board" id="hero-board">
+            <figcaption class="sr-only"><span data-l="id">Ilustrasi papan proyek: prompt, kode, pratinjau, dan saldo</span><span data-l="en">Illustration of a project board: prompt, code, preview, and balance</span></figcaption>
+            <div class="board__bar" aria-hidden="true">
+              <span class="board__dots"><i></i><i></i><i></i></span>
+              <span class="mono board__project"><span data-l="id">Proyek:</span><span data-l="en">Project:</span> <b data-board-project>Landing page</b></span>
             </div>
-            <!-- Board: prompt → code → preview → balance (decorative copy is real text; caption names it) -->
-            <figure class="board" data-board>
-              <figcaption class="sr-only" data-i18n="board.aria">Ilustrasi: satu proyek dari prompt sampai online</figcaption>
-              <div class="board__bar" aria-hidden="true">
-                <span class="board__dots"><i></i><i></i><i></i></span>
-                <span class="truncate font-mono text-[.8rem] text-muted" data-i18n="ex.project">Proyek: landing page event</span>
-              </div>
-              <div class="board__prompt">
-                <span class="board__tag" data-i18n="board.step1">Prompt</span>
-                <p class="board__prompt-text"><span data-type-prompt data-i18n="board.prompt">Buat landing page event yang hangat dan simpel</span><span class="caret" aria-hidden="true"></span></p>
-              </div>
-              <div class="board__cols" aria-hidden="true">
-                <div class="board__code">
-                  <span class="board__tag board__tag--light" data-i18n="board.building">Membangun komponen…</span>
-                  <div class="code-lines">
-                    <i style="--w:62%;--c:var(--color-xl-sky)"></i><i style="--w:40%;--c:var(--color-xl-yellow);--x:12%"></i>
-                    <i style="--w:72%;--c:#ffffff55;--x:12%"></i><i style="--w:30%;--c:var(--color-xl-teal);--x:24%"></i>
-                    <i style="--w:54%;--c:#ffffff55;--x:24%"></i><i style="--w:46%;--c:var(--color-xl-sky);--x:12%"></i><i style="--w:20%;--c:var(--color-xl-yellow)"></i>
-                  </div>
-                </div>
-                <div class="board__preview">
-                  <span class="board__tag" data-i18n="board.preview">Pratinjau</span>
-                  <div class="mini-page"><div class="mini-page__sun"></div><i class="mini-page__h"></i><i class="mini-page__p"></i><i class="mini-page__s"></i><i class="mini-page__btn"></i></div>
-                  <p class="inline-flex min-w-0 items-center gap-1.5 font-mono text-[.75rem] text-teal-ink"><svg class="icon size-3.5" aria-hidden="true"><use href="#i-lock"/></svg><span class="truncate" data-domain>eventku.my.id</span></p>
+            <div class="board__prompt" aria-hidden="true">
+              <span class="mono board__tag">Prompt</span>
+              <p class="board__prompt-text"><span id="type-prompt"></span><span class="caret"></span></p>
+            </div>
+            <div class="board__cols" aria-hidden="true">
+              <div class="board__code">
+                <span class="mono board__tag board__tag--light"><span data-l="id">Membangun komponen…</span><span data-l="en">Building components…</span></span>
+                <div class="code-lines">
+                  <i style="--w:62%;--c:var(--sky)"></i>
+                  <i style="--w:40%;--c:var(--yellow);--x:12%"></i>
+                  <i style="--w:72%;--c:#ffffff55;--x:12%"></i>
+                  <i style="--w:30%;--c:var(--teal);--x:24%"></i>
+                  <i style="--w:54%;--c:#ffffff55;--x:24%"></i>
+                  <i style="--w:46%;--c:var(--sky);--x:12%"></i>
+                  <i style="--w:20%;--c:var(--yellow)"></i>
                 </div>
               </div>
-              <div class="board__meter">
-                <div class="board__row"><span data-i18n="wallet.left">Sisa saldo</span><strong class="num" data-board-left>Rp12.320</strong></div>
-                <div class="meter" aria-hidden="true" data-board-meter><i></i></div>
-                <div class="board__row"><span class="text-muted" data-board-spent>Terpakai Rp42.680</span><span class="status text-teal-ink"><span class="dot dot--on"></span><span data-i18n="status.on">Nyala</span></span></div>
+              <div class="board__preview">
+                <span class="mono board__tag"><span data-l="id">Pratinjau</span><span data-l="en">Preview</span></span>
+                <div class="mini-page">
+                  <div class="mini-page__sun"></div>
+                  <i class="mini-page__h"></i><i class="mini-page__p"></i><i class="mini-page__p mini-page__p--s"></i><i class="mini-page__btn"></i>
+                </div>
+                <p class="mono board__ready" data-domain>eventku.my.id</p>
               </div>
-            </figure>
-          </div>
+            </div>
+            <div class="board__meter" aria-hidden="true">
+              <div class="board__meter-row">
+                <span class="mono"><span data-l="id">Saldo masuk</span><span data-l="en">Balance added</span></span>
+                <strong class="mono" data-board-balance>Rp0</strong>
+              </div>
+              <div class="meter"><span class="meter__fill" data-board-meter></span></div>
+              <div class="board__meter-row">
+                <span class="mono board__estimate" data-board-estimate>—</span>
+                <span class="status" data-board-status><i></i><span data-board-status-text>Standby</span></span>
+              </div>
+            </div>
+          </figure>
         </div>
       </div>
-      <p class="hero__scroll" aria-hidden="true"><span data-i18n="hero.scroll">Gulir</span> ↓</p>
+      <p class="hero__scroll mono" aria-hidden="true"><span data-l="id">Gulir</span><span data-l="en">Scroll</span> ↓</p>
     </section>
 
-    <!-- ===== 2. Stall story (dark band, scroll-scrubbed): code done → stuck on localhost → switch on → online ===== -->
-    <section id="cerita" class="stall" data-stall data-phase="on" aria-labelledby="story-title">
-      <h2 id="story-title" class="sr-only"><span data-i18n="story.kicker">Kode sudah jadi.</span> <span data-i18n="story.title">Tapi belum bisa dibuka orang lain.</span> <span data-i18n="story.body">Di TokenNyala, proyekmu online dalam beberapa ketukan.</span></h2>
-      <div class="shell stall__inner" aria-hidden="true">
+    <!-- ============ STALL STORY (scroll-scrubbed): code done → stuck on localhost → switch on → online ============ -->
+    <section class="stall" id="cerita" data-stall data-phase="on" aria-labelledby="stall-title">
+      <h2 class="sr-only" id="stall-title">
+        <span data-l="id">Kode sudah jadi, tapi belum bisa dibuka orang lain. Di TokenNyala, proyekmu online dalam beberapa ketukan — lengkap dengan alamat sendiri.</span>
+        <span data-l="en">The code is done, but nobody else can open it yet. On TokenNyala, your project goes online in a few taps — with its own address.</span>
+      </h2>
+      <div class="stall__inner" aria-hidden="true">
         <div class="stall__top">
-          <p class="stall__project" data-i18n="ex.project">Proyek: landing page event</p>
-          <p class="stall__status"><i></i>
-            <span class="ph ph--build" data-i18n="board.step2">Membangun</span>
-            <span class="ph ph--stall">localhost:5173 · <span data-i18n="status.off">Belum online</span></span>
-            <span class="ph ph--on"><span data-domain>eventku.my.id</span> · <span data-i18n="status.on">Nyala</span></span></p>
+          <p class="mono stall__project"><span data-l="id">Proyek: landing page event</span><span data-l="en">Project: event landing page</span></p>
+          <p class="mono stall__status">
+            <i></i>
+            <span class="ph ph--build"><span data-l="id">Membangun</span><span data-l="en">Building</span></span>
+            <span class="ph ph--stall">localhost:5173</span>
+            <span class="ph ph--on"><span data-domain>eventku.my.id</span> · <span data-l="id">Nyala</span><span data-l="en">On</span></span>
+          </p>
         </div>
         <div class="stall__row">
           <p class="stall__pct"><span data-stall-pct>100</span><small>%</small></p>
           <div class="stall__bottom">
             <p class="stall__msg">
-              <span class="ph ph--build" data-i18n="story.msgBuild">Prompt demi prompt, kodenya mulai jadi.</span>
-              <span class="ph ph--stall"><span data-i18n="story.kicker">Kode sudah jadi.</span> <span data-i18n="story.title">Tapi belum bisa dibuka orang lain.</span></span>
-              <span class="ph ph--on" data-i18n="story.body">Di TokenNyala, proyekmu online dalam beberapa ketukan.</span></p>
-            <span class="big-switch big-switch--xl" data-stall-switch data-on><i></i></span>
+              <span class="ph ph--build"><span data-l="id">Prompt demi prompt, kodenya jadi.</span><span data-l="en">Prompt by prompt, the code is done.</span></span>
+              <span class="ph ph--stall"><span data-l="id">Belum online. Cuma jalan di laptopmu.</span><span data-l="en">Not online. It only runs on your laptop.</span></span>
+              <span class="ph ph--on"><span data-l="id">Nyala. Siapa saja bisa membukanya.</span><span data-l="en">Switched on. Anyone can open it.</span></span>
+            </p>
+            <div class="big-switch stall__switch big-switch--on" data-stall-switch><span></span></div>
           </div>
         </div>
-        <div class="stall__bar"><span class="stall__fill" data-stall-fill></span><span class="stall__cut"><span data-i18n="status.off">Belum online</span></span></div>
-        <ol class="stall__tasks" data-stall-tasks>
-          <li data-at=".2" data-done data-i18n="ex.task1">Buat layout awal halaman</li>
-          <li data-at=".45" data-done data-i18n="ex.task2">Rapikan tampilan mobile</li>
-          <li data-at=".7" data-done data-i18n="ex.task3">Tambah form pendaftaran</li>
-          <li data-at="1" data-done data-i18n="story.taskOnline">Online dengan alamat sendiri</li>
+        <div class="stall__bar">
+          <span class="stall__fill" data-stall-fill></span>
+          <span class="stall__cut"><span data-l="id">belum online</span><span data-l="en">not online</span></span>
+        </div>
+        <ol class="stall__tasks mono" data-stall-tasks>
+          <li data-at=".2" class="is-done"><span data-l="id">Layout awal</span><span data-l="en">First layout</span></li>
+          <li data-at=".45" class="is-done"><span data-l="id">Tampilan mobile</span><span data-l="en">Mobile view</span></li>
+          <li data-at=".7" class="is-done"><span data-l="id">Form pendaftaran</span><span data-l="en">Sign-up form</span></li>
+          <li data-at="1" class="is-done"><span data-l="id">Online + alamat sendiri</span><span data-l="en">Online + own address</span></li>
         </ol>
       </div>
     </section>
 
-    <!-- ===== 3. What are you building? (sheet blue) — intent control + package sheet ===== -->
-    <section id="resep" class="sheet sheet--blue" aria-labelledby="recipe-title">
-      <div class="shell">
-        <div class="section-head section-head--split">
-          <div>
-            <p class="kicker"><b>(01)</b><span data-i18n="recipe.kicker">Mau bikin apa?</span></p>
-            <h2 id="recipe-title" class="display mt-5" data-split data-i18n-html="recipe.title">Mulai dari tujuanmu, bukan dari menu.</h2>
+    <!-- ============ CARA KERJA ============ -->
+    <section class="steps" id="cara-kerja" aria-labelledby="steps-title">
+      <div class="section-head">
+        <p class="kicker"><span class="kicker__num">(01)</span> <span data-l="id">Cara kerja</span><span data-l="en">How it works</span></p>
+        <h2 class="display" id="steps-title" data-split>
+          <span data-l="id">Tiga langkah, dari tujuan sampai online.</span>
+          <span data-l="en">Three steps, from goal to online.</span>
+        </h2>
+      </div>
+      <div class="steps__pin">
+        <div class="steps__controls">
+          <p class="mono steps__hint" aria-hidden="true"><span data-l="id">Geser atau drag kartu →</span><span data-l="en">Swipe or drag the cards →</span></p>
+          <div class="steps__btns">
+            <button type="button" class="steps__btn" data-steps-prev data-aria-id="Langkah sebelumnya" data-aria-en="Previous step" aria-label="Langkah sebelumnya">←</button>
+            <button type="button" class="steps__btn" data-steps-next data-aria-id="Langkah berikutnya" data-aria-en="Next step" aria-label="Langkah berikutnya">→</button>
           </div>
-          <p class="section-head__aside" data-i18n="recipe.lead">Pilih tujuan.</p>
         </div>
-        <div data-recipe-chips data-allow-bleed role="radiogroup" data-i18n-aria="recipe.chipsAria" aria-label="Pilih tujuan" class="intent -mx-(--gutter) px-(--gutter) md:mx-0 md:px-1.5"></div>
-        <article id="recipe-card" data-recipe-card class="pkg-sheet" aria-labelledby="recipe-name"></article>
+        <div class="steps__rail" aria-hidden="true">
+          <span class="steps__rail-fill" data-steps-rail></span>
+          <span class="steps__rail-dot" style="--p:0"><span data-l="id">Tujuan</span><span data-l="en">Goal</span></span>
+          <span class="steps__rail-dot" style="--p:.5"><span data-l="id">Saldo</span><span data-l="en">Balance</span></span>
+          <span class="steps__rail-dot" style="--p:1"><span data-l="id">Nyala</span><span data-l="en">On</span></span>
+        </div>
+        <ol class="steps__track" data-steps-track data-allow-bleed tabindex="0" data-aria-id="Tiga langkah cara kerja" data-aria-en="Three steps, how it works" aria-label="Tiga langkah cara kerja" data-cursor="Drag">
+          <li class="step step--sky">
+            <span class="step__num" aria-hidden="true">01</span>
+            <div class="step__body">
+              <h3><span data-l="id">Pilih tujuanmu</span><span data-l="en">Pick your goal</span></h3>
+              <p><span data-l="id">Landing page, chatbot, atau otomasi. Kami siapkan resepnya.</span><span data-l="en">A landing page, chatbot, or automation. We prepare the recipe.</span></p>
+            </div>
+            <div class="step__art" aria-hidden="true">
+              <span class="chip-art chip-art--on">Landing page</span>
+              <span class="chip-art"><span data-l="id">Chatbot WA</span><span data-l="en">WhatsApp bot</span></span>
+              <span class="chip-art"><span data-l="id">Otomasi tim</span><span data-l="en">Team automation</span></span>
+            </div>
+          </li>
+          <li class="step step--yellow">
+            <span class="step__num" aria-hidden="true">02</span>
+            <div class="step__body">
+              <h3><span data-l="id">Isi saldo Rupiah</span><span data-l="en">Top up in Rupiah</span></h3>
+              <p><span data-l="id">QRIS, e-wallet, atau virtual account. Total terlihat sebelum bayar.</span><span data-l="en">QRIS, e-wallet, or virtual account. See the total before you pay.</span></p>
+            </div>
+            <div class="step__art step__art--receipt" aria-hidden="true"><div class="receipt-art" data-how-receipt></div></div>
+          </li>
+          <li class="step step--teal">
+            <span class="step__num" aria-hidden="true">03</span>
+            <div class="step__body">
+              <h3><span data-l="id">Nyala &amp; online</span><span data-l="en">Switch on &amp; go online</span></h3>
+              <p><span data-l="id">Proyekmu jalan dengan alamat sendiri. Pantau saldo kapan saja.</span><span data-l="en">Your project runs at its own address. Check your balance anytime.</span></p>
+            </div>
+            <div class="step__art" aria-hidden="true">
+              <div class="big-switch big-switch--on"><span></span></div>
+              <p class="mono step__ready">STATUS: <span data-l="id">NYALA</span><span data-l="en">ON</span> · <span data-domain>eventku.my.id</span></p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ MAU BIKIN APA? (recipes) ============ -->
+    <section class="packages sheet sheet--blue" id="resep" aria-labelledby="recipe-title">
+      <div class="section-head section-head--split">
+        <div>
+          <p class="kicker kicker--light"><span class="kicker__num">(02)</span> <span data-l="id">Mau bikin apa?</span><span data-l="en">What are you building?</span></p>
+          <h2 class="display" id="recipe-title" data-split>
+            <span data-l="id">Mulai dari tujuanmu, bukan dari menu.</span>
+            <span data-l="en">Start from your goal, not a menu.</span>
+          </h2>
+        </div>
+        <p class="section-head__aside">
+          <span data-l="id">Pilih tujuan. Kami tunjukkan layanan yang dibutuhkan dan total per bulannya.</span>
+          <span data-l="en">Pick a goal. We'll show the services you need and the monthly total.</span>
+        </p>
+      </div>
+
+      <div class="intent" role="radiogroup" data-recipe-chips data-aria-id="Pilih tujuan" data-aria-en="Choose a goal" aria-label="Pilih tujuan"></div>
+
+      <div class="pkg-panel">
+        <article class="pkg-sheet" id="recipe-card" data-recipe-card aria-labelledby="recipe-name"></article>
         <div class="pkg-foot">
-          <ul class="rules-list" data-i18n-aria="wallet.chipsAria" aria-label="Aturan saldo">
-            <li data-i18n="wallet.chip1">1 kredit = Rp1</li><li data-i18n="wallet.chip2">Termasuk PPN</li><li data-i18n="wallet.chip3">Tidak kedaluwarsa</li>
+          <ul class="rules-list mono" role="list">
+            <li><span data-l="id">1 kredit = Rp1</span><span data-l="en">1 credit = Rp1</span></li>
+            <li><span data-l="id">Sudah termasuk PPN</span><span data-l="en">Tax included</span></li>
+            <li><span data-l="id">Tidak kedaluwarsa</span><span data-l="en">Never expires</span></li>
           </ul>
-          <p data-i18n="recipe.note">Perkiraan.</p>
+          <p class="disclaimer"><span data-l="id">Perkiraan. Pemakaian AI bergantung pada model, panjang prompt, dan jumlah pesan.</span><span data-l="en">Estimate. AI usage depends on the model, prompt length, and message volume.</span></p>
         </div>
         <p class="sr-only" aria-live="polite" data-recipe-live></p>
       </div>
     </section>
 
-    <!-- ===== 4. How it works (paper) — horizontal step cards ===== -->
-    <section id="cara-kerja" class="sheet sheet--paper" aria-labelledby="how-title">
-      <div class="shell">
-        <div class="section-head max-w-[1100px]">
-          <div>
-            <p class="kicker"><b>(02)</b><span data-i18n="how.kicker">Cara kerja</span></p>
-            <h2 id="how-title" class="display mt-5" data-split data-i18n="how.title">Tiga langkah, dari tujuan sampai online.</h2>
-          </div>
-        </div>
-        <div class="steps__controls">
-          <p class="steps__hint" aria-hidden="true" data-i18n="how.hint">Geser atau drag kartu →</p>
-          <div class="flex gap-2.5">
-            <button type="button" class="steps__btn" data-steps-prev data-i18n-aria="how.prev" aria-label="Langkah sebelumnya"><svg class="icon size-5 rotate-180" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
-            <button type="button" class="steps__btn" data-steps-next data-i18n-aria="how.next" aria-label="Langkah berikutnya"><svg class="icon size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
-          </div>
-        </div>
-        <div class="steps__rail" aria-hidden="true">
-          <span class="steps__rail-fill" data-steps-rail></span>
-          <span class="steps__rail-dot" style="--p:0" data-i18n="how.rail1">Tujuan</span>
-          <span class="steps__rail-dot" style="--p:.5" data-i18n="how.rail2">Saldo</span>
-          <span class="steps__rail-dot" style="--p:1" data-i18n="how.rail3">Nyala</span>
-        </div>
-        <ol class="steps__track" data-steps-track data-allow-bleed tabindex="0" data-i18n-aria="how.trackAria" aria-label="Tiga langkah cara kerja">
-          <li class="step bg-xl-sky">
-            <span class="step__num" aria-hidden="true">01</span>
-            <div class="step__body"><h3 data-i18n="how.1.title">Pilih tujuanmu</h3><p data-i18n="how.1.body"></p></div>
-            <div class="step__art" aria-hidden="true" data-how-chips></div>
-          </li>
-          <li class="step bg-xl-yellow on-yellow">
-            <span class="step__num" aria-hidden="true">02</span>
-            <div class="step__body"><h3 data-i18n="how.2.title">Isi saldo Rupiah</h3><p data-i18n="how.2.body"></p></div>
-            <div class="step__art" aria-hidden="true"><div class="receipt-art" data-how-receipt></div></div>
-          </li>
-          <li class="step bg-xl-teal">
-            <span class="step__num" aria-hidden="true">03</span>
-            <div class="step__body"><h3 data-i18n="how.3.title">Nyala &amp; online</h3><p data-i18n="how.3.body"></p></div>
-            <div class="step__art" aria-hidden="true">
-              <span class="big-switch big-switch--xl big-switch--dark" data-on><i></i></span>
-              <p class="font-mono text-[.9rem] uppercase"><span data-i18n="how.status">Status: nyala</span><br><span class="normal-case" data-domain>eventku.my.id</span></p>
-            </div>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- ===== 5. All services (white) — index rows ===== -->
-    <section id="layanan" class="sheet sheet--white" aria-labelledby="svc-title">
-      <div class="shell">
-        <div class="section-head section-head--split">
-          <div>
-            <p class="kicker"><b>(03)</b><span data-i18n="svc.kicker">Semua layanan</span></p>
-            <h2 id="svc-title" class="display mt-5" data-split data-i18n-html="svc.title">Semua yang dibutuhkan proyekmu, di satu tempat.</h2>
-          </div>
-          <p class="section-head__aside" data-i18n="svc.lead"></p>
-        </div>
-        <div data-services></div>
-        <a href="harga.html" class="btn btn--dark btn--xl mt-12 w-full sm:w-auto" data-magnetic><span data-i18n="svc.cta">Lihat semua harga</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
-      </div>
-    </section>
-
-    <!-- ===== 6. One balance (yellow) — mini dashboard ===== -->
-    <section id="saldo" class="sheet sheet--yellow on-yellow" aria-labelledby="wallet-title">
-      <div class="shell grid grid-cols-1 gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-[calc(6*var(--u))]">
+    <!-- ============ SEMUA LAYANAN + TEMPLATE ============ -->
+    <section class="services sheet sheet--white" id="layanan" aria-labelledby="svc-title">
+      <div class="section-head section-head--split">
         <div>
-          <p class="kicker"><b>(04)</b><span data-i18n="wallet.kicker">Satu saldo</span></p>
-          <h2 id="wallet-title" class="display mt-5" data-split data-i18n-html="wallet.title">Satu saldo Rupiah untuk semuanya.</h2>
-          <p class="lead mt-6" data-i18n="wallet.lead"></p>
-          <ul class="mt-8 grid grid-cols-1 border-t-2 border-xl-dark text-[1.05rem]">
-            <li class="flex gap-3 border-b-2 border-xl-dark py-4"><svg class="icon mt-0.5" aria-hidden="true"><use href="#i-calendar-clock"/></svg><span data-i18n-html="wallet.fixed"></span></li>
-            <li class="flex gap-3 border-b-2 border-xl-dark py-4"><svg class="icon mt-0.5" aria-hidden="true"><use href="#i-sparkles"/></svg><span data-i18n-html="wallet.usage"></span></li>
-            <li class="flex gap-3 border-b-2 border-xl-dark py-4"><svg class="icon mt-0.5" aria-hidden="true"><use href="#i-bell"/></svg><span data-i18n="wallet.until"></span></li>
-          </ul>
-          <ul class="rules-list mt-8" data-i18n-aria="wallet.chipsAria" aria-label="Aturan saldo">
-            <li data-i18n="wallet.chip1">1 kredit = Rp1</li><li data-i18n="wallet.chip2">Termasuk PPN</li><li data-i18n="wallet.chip3">Tidak kedaluwarsa</li><li data-i18n="wallet.chip4">Tanpa USD</li>
-          </ul>
-          <a href="app.html#/saldo?isi=1" class="btn btn--dark btn--xl mt-8 w-full sm:w-auto" data-magnetic><span data-i18n="cta.topup">Isi saldo</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          <p class="kicker"><span class="kicker__num">(03)</span> <span data-l="id">Semua layanan</span><span data-l="en">All services</span></p>
+          <h2 class="display" id="svc-title" data-split>
+            <span data-l="id">Semua yang dibutuhkan proyekmu, di satu tempat.</span>
+            <span data-l="en">Everything your project needs, in one place.</span>
+          </h2>
         </div>
-        <div data-wallet class="dash" data-reveal></div>
+        <p class="section-head__aside">
+          <span data-l="id">Nama yang mudah dipahami lebih dulu. Istilah teknisnya tetap ada, kecil di bawahnya.</span>
+          <span data-l="en">Plain names first. The technical term is still there, in small print below.</span>
+        </p>
+      </div>
+      <div class="svc-groups" data-services></div>
+      <div class="svc__foot">
+        <a class="btn btn--dark btn--lg magnetic" href="harga.html" data-cursor="→"><span data-l="id">Lihat semua harga</span><span data-l="en">See all prices</span> <span class="btn__icon" aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="tpl" id="template" data-allow-bleed data-decor-overflow aria-labelledby="tpl-title">
+        <div class="tpl__head">
+          <h3 id="tpl-title"><span data-l="id">Atau mulai dari template.</span><span data-l="en">Or start from a template.</span></h3>
+          <p class="section-head__aside">
+            <span data-l="id">Asisten dan otomasi populer, sudah dirakit. Kamu cukup pilih ukuran — AI tersambung ke saldo yang sama.</span>
+            <span data-l="en">Popular assistants and automations, already put together. Just pick a size — AI connects to the same balance.</span>
+          </p>
+        </div>
+        <ul class="tpl__list" data-templates data-allow-bleed role="list"></ul>
       </div>
     </section>
 
-    <!-- ===== 7. Templates (paper) ===== -->
-    <section id="template" class="sheet sheet--paper" aria-labelledby="tpl-title">
-      <div class="shell">
-        <div class="section-head section-head--split">
-          <div>
-            <p class="kicker"><b>(05)</b><span data-i18n="tpl.kicker">Template siap pakai</span></p>
-            <h2 id="tpl-title" class="display mt-5" data-split data-i18n-html="tpl.title">Tinggal pilih, langsung jalan.</h2>
-          </div>
-          <p class="section-head__aside" data-i18n="tpl.lead"></p>
-        </div>
-        <ul data-templates class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6"></ul>
-      </div>
-    </section>
-
-    <!-- ===== 8. AI models (white) — model index ===== -->
-    <section id="ai" class="sheet sheet--white" aria-labelledby="ai-title">
-      <div class="shell">
-        <div class="section-head section-head--split">
-          <div>
-            <p class="kicker"><b>(06)</b><span data-i18n="ai.kicker">AI untuk tool-mu</span></p>
-            <h2 id="ai-title" class="display mt-5" data-split data-i18n-html="ai.title">Satu saldo untuk semua model.</h2>
-          </div>
-          <p class="section-head__aside" data-i18n="ai.lead"></p>
-        </div>
-        <ul data-models class="row-index" data-i18n-aria="ai.listAria" aria-label="Model pilihan"></ul>
-        <div class="mt-12 grid grid-cols-1 justify-items-start gap-5 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center lg:gap-10">
-          <button type="button" class="btn btn--dark btn--xl w-full sm:w-auto" data-open-catalog data-magnetic><span data-i18n="ai.cta">Lihat semua model &amp; tarif</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
-          <p class="max-w-[48em] text-[.88rem] text-muted" data-i18n="ai.note"></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 9. Use it in your tool (dark) — steps, cable, config card ===== -->
-    <section id="pakai" class="sheet sheet--dark" aria-labelledby="guide-title">
-      <div class="shell tools__grid">
+    <!-- ============ MODEL AI ============ -->
+    <section class="models sheet sheet--paper" id="ai" aria-labelledby="model-title">
+      <div class="section-head section-head--split">
         <div>
-          <p class="kicker"><b>(07)</b><span data-i18n="guide.kicker">Panduan pasang</span></p>
-          <h2 id="guide-title" class="display mt-5" data-split data-i18n="guide.title">Pakai di tool favoritmu.</h2>
-          <ol class="tool-steps" data-i18n-aria="guide.stepsAria" aria-label="Langkah pemasangan">
-            <li><b aria-hidden="true">1</b><div><h3 data-i18n="guide.1.title"></h3><p data-i18n="guide.1.body"></p></div></li>
-            <li><b aria-hidden="true">2</b><div><h3 data-i18n="guide.2.title"></h3><p data-i18n="guide.2.body"></p></div></li>
-            <li><b aria-hidden="true">3</b><div><h3 data-i18n="guide.3.title"></h3><p data-i18n="guide.3.body"></p></div></li>
+          <p class="kicker"><span class="kicker__num">(04)</span> <span data-l="id">Model AI</span><span data-l="en">AI models</span></p>
+          <h2 class="display" id="model-title" data-split>
+            <span data-l="id">Satu saldo untuk <mark>semua</mark> model.</span>
+            <span data-l="en">One balance for <mark>every</mark> model.</span>
+          </h2>
+        </div>
+        <p class="section-head__aside">
+          <span data-l="id">Pakai Claude, GPT, Gemini, DeepSeek, dan Qwen di Cursor, Lovable, atau Cline. Model hemat untuk tugas ringan, model premium untuk pekerjaan rumit.</span>
+          <span data-l="en">Use Claude, GPT, Gemini, DeepSeek, and Qwen in Cursor, Lovable, or Cline. Budget models for light tasks, premium models for hard problems.</span>
+        </p>
+      </div>
+      <ul class="model-index" role="list" data-models></ul>
+      <div class="models__foot">
+        <button type="button" class="btn btn--dark btn--lg" data-open-catalog data-cursor="→"><span data-l="id">Lihat semua model &amp; tarif</span><span data-l="en">See all models &amp; rates</span></button>
+        <p class="note"><span data-l="id">1 sesi kecil ≈ satu permintaan perbaikan komponen di tool coding (±40 rb token masuk, ±4 rb token keluar). Contoh — daftar dan tarif dapat berubah.</span><span data-l="en">1 small session ≈ one component fix request in a coding tool (~40K tokens in, ~4K out). Example only — models and rates may change.</span></p>
+      </div>
+    </section>
+
+    <!-- ============ PAKAI DI TOOL ============ -->
+    <section class="tools sheet sheet--dark" id="pakai" aria-labelledby="tools-title">
+      <div class="tools__grid">
+        <div class="tools__left">
+          <p class="kicker kicker--light"><span class="kicker__num">(05)</span> <span data-l="id">Panduan pasang</span><span data-l="en">Setup guide</span></p>
+          <h2 class="display" id="tools-title" data-split>
+            <span data-l="id">Pakai di tool favoritmu.</span>
+            <span data-l="en">Use it in your favorite tool.</span>
+          </h2>
+          <p class="lead lead--light">
+            <span data-l="id">API key adalah kunci yang menghubungkan tool-mu ke saldo TokenNyala.</span>
+            <span data-l="en">An API key connects your tools to your TokenNyala balance.</span>
+          </p>
+          <ol class="tool-steps">
+            <li><b aria-hidden="true">1</b><div><h3><span data-l="id">Ambil API key proyek</span><span data-l="en">Get your project API key</span></h3><p><span data-l="id">Ada di console → AI setelah isi saldo.</span><span data-l="en">It's in the console → AI after you top up.</span></p></div></li>
+            <li><b aria-hidden="true">2</b><div><h3><span data-l="id">Tempel di tool</span><span data-l="en">Paste it into your tool</span></h3><p><span data-l="id">Isi Base URL dan API key di pengaturan tool.</span><span data-l="en">Fill in the Base URL and API key in its settings.</span></p></div></li>
+            <li><b aria-hidden="true">3</b><div><h3><span data-l="id">Pilih model &amp; mulai</span><span data-l="en">Pick a model &amp; build</span></h3><p><span data-l="id">Semua model memakai saldo yang sama.</span><span data-l="en">Every model uses the same balance.</span></p></div></li>
           </ol>
         </div>
         <div class="tools__right">
-          <svg class="cable" viewBox="0 0 400 220" aria-hidden="true" preserveAspectRatio="none"><path data-cable d="M10 210 C 120 210, 90 40, 210 60 S 330 170, 390 10" fill="none" stroke="#FFC93C" stroke-width="5" stroke-linecap="round"/></svg>
-          <figure class="config-card" data-config-card>
-            <figcaption class="mb-3 flex flex-wrap items-center justify-between gap-2 text-[.85rem] text-muted">
-              <span class="font-mono" data-i18n="config.title">Contoh konfigurasi</span>
-              <span class="tier tier--seimbang" data-i18n="board.note">Contoh</span>
-            </figcaption>
-            <div class="config-row">
-              <span>Base URL</span><code class="text-xl-blue" data-api-url></code>
-              <button type="button" class="btn btn--outline-dark min-h-11 px-4 text-[.9rem]" data-copy="" data-copy-url data-i18n-aria="copy.url" aria-label="Salin Base URL"><svg class="icon size-4" aria-hidden="true"><use href="#i-copy"/></svg><span data-copy-label data-i18n="copy.label">Salin</span></button>
+          <svg class="cable" viewBox="0 0 400 220" aria-hidden="true" preserveAspectRatio="none">
+            <path id="cable-path" d="M10 210 C 120 210, 90 40, 210 60 S 330 170, 390 10" fill="none" stroke="#FFC93C" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <div class="config-card">
+            <div class="config-card__head">
+              <span class="mono"><span data-l="id">Contoh konfigurasi</span><span data-l="en">Sample configuration</span></span>
+              <span class="badge badge--sky"><span data-l="id">Contoh</span><span data-l="en">Example</span></span>
             </div>
             <div class="config-row">
-              <span>API key</span><code data-api-key></code>
-              <button type="button" class="btn btn--outline-dark min-h-11 px-4 text-[.9rem]" data-copy="" data-copy-key data-i18n-aria="copy.key" aria-label="Salin API key"><svg class="icon size-4" aria-hidden="true"><use href="#i-copy"/></svg><span data-copy-label data-i18n="copy.label">Salin</span></button>
+              <span class="config-row__label mono">Base URL</span>
+              <code class="config-row__value" data-api-url></code>
+              <button type="button" class="btn btn--sm btn--outline" data-copy="" data-copy-url data-i18n-aria="copy.url" aria-label="Salin Base URL"><span data-copy-label data-i18n="copy.label">Salin</span></button>
             </div>
-            <div class="border-t border-line pt-4 text-[.92rem] text-lead-ink">
-              <p data-i18n="config.compat"></p>
-              <ul class="mt-2 flex flex-wrap gap-2 font-bold text-xl-dark" data-i18n-aria="config.toolsAria" aria-label="Contoh tool">
-                <li class="rounded-full border border-line bg-white px-3 py-1">Cursor</li><li class="rounded-full border border-line bg-white px-3 py-1">Lovable</li><li class="rounded-full border border-line bg-white px-3 py-1">Cline</li><li class="rounded-full border border-line bg-white px-3 py-1">Continue</li>
-              </ul>
-              <p class="mt-3 text-[.82rem] text-muted" data-i18n="config.note"></p>
+            <div class="config-row">
+              <span class="config-row__label mono">API key</span>
+              <code class="config-row__value" data-api-key></code>
+              <button type="button" class="btn btn--sm btn--outline" data-copy="" data-copy-key data-i18n-aria="copy.key" aria-label="Salin API key"><span data-copy-label data-i18n="copy.label">Salin</span></button>
             </div>
-          </figure>
-          <p class="max-w-[30em] text-white/80" data-i18n="config.noKey"></p>
-          <a href="app.html#/ai?isi=1" class="btn btn--yellow btn--xl w-full sm:w-auto" data-magnetic><span data-i18n="recipe.aiOnlyCta">Ambil API key</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <p class="config-card__compat">
+              <span data-l="id">Bisa dipakai di tool yang mendukung OpenAI API, contoh: Cursor, Lovable, Cline, Continue. Contoh — bukan endpoint atau kunci asli.</span>
+              <span data-l="en">Works with tools that support the OpenAI API, e.g. Cursor, Lovable, Cline, Continue. Example only — not a real endpoint or key.</span>
+            </p>
+          </div>
+          <a class="link-arrow link-arrow--light" href="app.html#/ai?isi=1">
+            <span data-l="id">Belum punya API key? Isi saldo dulu</span><span data-l="en">No API key yet? Top up first</span> →
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- ===== 10. Example project (white) — before/after + receipt paper ===== -->
-    <section id="contoh" class="sheet sheet--white" aria-labelledby="ex-title">
-      <div class="shell grid grid-cols-1 gap-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center lg:gap-[calc(6*var(--u))]">
-        <div class="grid content-start gap-6">
-          <p class="kicker"><b>(08)</b><span data-i18n="ex.kicker">Contoh proyek</span></p>
-          <h2 id="ex-title" class="display" data-split data-i18n-html="ex.title">Satu landing page event, dari prompt sampai online.</h2>
-          <p class="lead" data-i18n="ex.lead"></p>
+    <!-- ============ AMAN + SATU SALDO (sticky stack) ============ -->
+    <section class="benefits sheet sheet--paper" id="aman" aria-labelledby="safe-title">
+      <div class="section-head">
+        <p class="kicker"><span class="kicker__num">(06)</span> <span data-l="id">Aman untuk pemula</span><span data-l="en">Safe for beginners</span></p>
+        <h2 class="display display--xl" id="safe-title" data-split>
+          <span data-l="id">Tidak ada kejutan di tagihan.</span>
+          <span data-l="en">No surprises on your bill.</span>
+        </h2>
+      </div>
+      <ol class="stack" data-safe>
+        <li class="stack-card stack-card--sky">
+          <span class="stack-card__num mono">01 / 04</span>
+          <div>
+            <h3><span data-l="id">Berhenti kapan saja.</span><span data-l="en">Stop anytime.</span></h3>
+            <p><span data-l="id">Sisa hari kembali ke saldo.</span><span data-l="en">Unused days go back to your balance.</span></p>
+          </div>
+          <div class="stack-card__art" aria-hidden="true">
+            <span class="talk talk--q"><span data-l="id">Kalau berhenti di hari ke-10?</span><span data-l="en">What if I stop on day 10?</span></span>
+            <span class="talk talk--a" data-safe-refund></span>
+          </div>
+        </li>
+        <li class="stack-card stack-card--yellow">
+          <span class="stack-card__num mono">02 / 04</span>
+          <div>
+            <h3><span data-l="id">Ganti ukuran naik atau turun.</span><span data-l="en">Size up or down.</span></h3>
+            <p><span data-l="id">Selisihnya dihitung otomatis.</span><span data-l="en">We work out the difference for you.</span></p>
+          </div>
+          <div class="stack-card__art stack-card__art--orbit" aria-hidden="true" data-safe-resize></div>
+        </li>
+        <li class="stack-card stack-card--teal">
+          <span class="stack-card__num mono">03 / 04</span>
+          <div>
+            <h3><span data-l="id">Dijeda, bukan dihapus. Dan diingatkan sebelumnya.</span><span data-l="en">Paused, not deleted. And reminded first.</span></h3>
+            <p data-safe-pause-body></p>
+          </div>
+          <div class="stack-card__art" aria-hidden="true" data-safe-pause></div>
+        </li>
+        <li class="stack-card stack-card--white" id="saldo">
+          <span class="stack-card__num mono">04 / 04</span>
+          <div class="stack-card__split">
+            <div>
+              <h3><span data-l="id">Satu saldo Rupiah untuk semuanya.</span><span data-l="en">One Rupiah balance for everything.</span></h3>
+              <p><span data-l="id">Isi sekali, pakai untuk hosting, otomasi, data, alamat web, dan AI. Biaya tetap dipotong per 30 hari, biaya pakai sesuai pemakaian. Tanpa kartu kredit, tanpa dolar.</span><span data-l="en">Top up once and use it for hosting, automations, data, web addresses, and AI. Fixed costs are charged every 30 days, usage as you go. No credit card, no dollars.</span></p>
+              <ul class="stack-card__chips mono" role="list">
+                <li><span data-l="id">1 kredit = Rp1</span><span data-l="en">1 credit = Rp1</span></li>
+                <li><span data-l="id">Termasuk PPN</span><span data-l="en">Tax included</span></li>
+                <li><span data-l="id">Tidak kedaluwarsa</span><span data-l="en">Never expires</span></li>
+                <li><span data-l="id">Tanpa USD</span><span data-l="en">No USD</span></li>
+              </ul>
+            </div>
+            <div class="dash" data-wallet></div>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ CONTOH ============ -->
+    <section class="example sheet sheet--white" id="contoh" aria-labelledby="example-title">
+      <div class="example__grid">
+        <div class="example__copy">
+          <p class="kicker"><span class="kicker__num">(07)</span> <span data-l="id">Contoh proyek</span><span data-l="en">Example project</span></p>
+          <h2 class="display" id="example-title" data-split>
+            <span data-l="id">Satu landing page event, kira-kira butuh berapa?</span>
+            <span data-l="en">One event landing page — how much does it take?</span>
+          </h2>
+          <p class="lead">
+            <span data-l="id">Perkiraan biaya membangun dengan AI (model Seimbang), lalu online dengan alamat sendiri.</span>
+            <span data-l="en">An estimate for building it with AI (a Balanced model), then putting it online at its own address.</span>
+          </p>
           <div class="beforeafter" data-ba data-state="before">
             <div class="beforeafter__switch">
-              <span aria-hidden="true" data-i18n="story.before">Sebelum</span>
-              <button type="button" class="toggle toggle--lg" role="switch" aria-checked="false" data-ba-switch><i></i><span class="sr-only" data-i18n="ex.baToggle">Tampilkan kondisi sesudah</span></button>
-              <span aria-hidden="true" data-i18n="story.after">Sesudah</span>
+              <span class="mono" aria-hidden="true"><span data-l="id">Sebelum</span><span data-l="en">Before</span></span>
+              <button type="button" class="toggle toggle--lg" role="switch" aria-checked="false" data-ba-switch data-cursor="Nyala"><span></span><span class="sr-only"><span data-l="id">Tampilkan kondisi sesudah</span><span data-l="en">Show the after state</span></span></button>
+              <span class="mono" aria-hidden="true"><span data-l="id">Sesudah</span><span data-l="en">After</span></span>
             </div>
-            <ul class="beforeafter__list">
-              <li><span class="ba-b" data-i18n="ex.b1"></span><span class="ba-a" aria-hidden="true" data-i18n="ex.a1"></span></li>
-              <li><span class="ba-b" data-i18n="ex.b2"></span><span class="ba-a" aria-hidden="true" data-i18n="ex.a2"></span></li>
-              <li><span class="ba-b" data-i18n="ex.b3"></span><span class="ba-a" aria-hidden="true" data-i18n="ex.a3"></span></li>
+            <ul class="beforeafter__list" role="list">
+              <li><span class="ba-b"><span data-l="id">Macet di localhost</span><span data-l="en">Stuck on localhost</span></span><span class="ba-a" aria-hidden="true"><span data-l="id">Online dengan alamat sendiri</span><span data-l="en">Online at its own address</span></span></li>
+              <li><span class="ba-b"><span data-l="id">Tagihan dalam dolar</span><span data-l="en">Billed in dollars</span></span><span class="ba-a" aria-hidden="true"><span data-l="id">Satu saldo Rupiah</span><span data-l="en">One Rupiah balance</span></span></li>
+              <li><span class="ba-b"><span data-l="id">Tebak-tebak biaya</span><span data-l="en">Guessing the cost</span></span><span class="ba-a" aria-hidden="true"><span data-l="id">Total terlihat di depan</span><span data-l="en">Total shown up front</span></span></li>
             </ul>
           </div>
         </div>
-        <figure class="receipt" data-receipt><div class="receipt__paper" data-example></div></figure>
+        <div class="receipt" aria-labelledby="receipt-title">
+          <div class="receipt__paper" data-example></div>
+        </div>
       </div>
     </section>
 
-    <!-- ===== 11. Safe for beginners (paper) — sticky stack ===== -->
-    <section id="aman" class="sheet sheet--paper" aria-labelledby="safe-title">
-      <div class="shell">
-        <div class="section-head">
-          <div>
-            <p class="kicker"><b>(09)</b><span data-i18n="safe.kicker">Aman untuk pemula</span></p>
-            <h2 id="safe-title" class="display display--xl mt-5 max-w-[14ch]" data-split data-i18n-html="safe.title">Tidak ada kejutan di tagihan.</h2>
+    <!-- ============ TIM & BISNIS ============ -->
+    <section class="teams sheet sheet--yellow" id="tim" aria-labelledby="team-title">
+      <p class="kicker"><span class="kicker__num">(08)</span> <span data-l="id">Untuk tim &amp; bisnis</span><span data-l="en">For teams &amp; business</span></p>
+      <h2 class="display display--xl" id="team-title" data-split>
+        <span data-l="id">Butuh untuk tim atau perusahaan?</span>
+        <span data-l="en">Buying for a team or company?</span>
+      </h2>
+      <div class="teams__grid">
+        <ul class="teams__list" role="list">
+          <li><span data-l="id">Invoice atas nama perusahaan</span><span data-l="en">Invoices in your company's name</span></li>
+          <li><span data-l="id">Faktur pajak</span><span data-l="en">Tax invoices</span></li>
+          <li><span data-l="id">Bayar lewat transfer bank</span><span data-l="en">Pay by bank transfer</span></li>
+          <li><span data-l="id">Pantau pemakaian tiap anggota</span><span data-l="en">Track each member's usage</span></li>
+          <li><span data-l="id">Batas belanja per proyek</span><span data-l="en">Spending limits per project</span></li>
+        </ul>
+        <div class="teams__cta">
+          <p><span data-l="id">Ceritakan kebutuhan timmu. Kami balas dalam 1 hari kerja.</span><span data-l="en">Tell us what your team needs. We reply within 1 business day.</span></p>
+          <button type="button" class="btn btn--dark btn--lg magnetic" data-open-consult data-cursor="Tulis" data-cursor-en="Write">
+            <span data-l="id">Konsultasi untuk tim</span><span data-l="en">Talk to us about your team</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ + BELAJAR ============ -->
+    <section class="faq sheet sheet--paper" id="faq" aria-labelledby="faq-title">
+      <div class="faq__grid">
+        <div class="faq__head">
+          <p class="kicker"><span class="kicker__num">(09)</span> FAQ</p>
+          <h2 class="display" id="faq-title" data-split>
+            <span data-l="id">Yang sering ditanyakan.</span>
+            <span data-l="en">Questions people ask.</span>
+          </h2>
+          <button type="button" class="btn btn--outline-dark faq__ask" data-open-chat><span data-l="id">Tanya Nala</span><span data-l="en">Ask Nala</span></button>
+          <div class="guides" id="belajar">
+            <p class="guides__title"><span data-l="id">Belajar · panduan singkat per tujuan</span><span data-l="en">Learn · short guides by goal</span></p>
+            <div data-guides></div>
           </div>
         </div>
-        <ol data-safe class="stack"></ol>
+        <div class="faq__list" data-faq></div>
       </div>
     </section>
 
-    <!-- ===== 12. Learn (white) — guide index ===== -->
-    <section id="belajar" class="sheet sheet--white" aria-labelledby="learn-title">
-      <div class="shell">
-        <div class="section-head section-head--split">
-          <div>
-            <p class="kicker"><b>(10)</b><span data-i18n="learn.kicker">Belajar</span></p>
-            <h2 id="learn-title" class="display mt-5" data-split data-i18n="learn.title">Panduan singkat, per tujuan.</h2>
-          </div>
-          <p class="section-head__aside" data-i18n="learn.lead"></p>
+    <!-- ============ FINAL CTA ============ -->
+    <section class="final" id="nyala" aria-labelledby="final-title">
+      <div class="final__inner">
+        <button type="button" class="mega-switch" aria-pressed="false" data-final-switch data-cursor="Nyala">
+          <span class="sr-only"><span data-l="id">Nyalakan dan mulai bangun</span><span data-l="en">Switch on and start building</span></span>
+          <span class="mega-switch__knob" aria-hidden="true"></span>
+        </button>
+        <h2 class="final__title" id="final-title">
+          <span data-l="id"><span class="ln"><span>Idemu</span></span><span class="ln"><span>nyala.</span></span></span>
+          <span data-l="en"><span class="ln"><span>Your idea,</span></span><span class="ln"><span>on.</span></span></span>
+        </h2>
+        <p class="lead lead--light final__body">
+          <span data-l="id">Mulai dari tujuan, online dalam beberapa menit.</span>
+          <span data-l="en">Start from a goal, go online in minutes.</span>
+        </p>
+        <div class="btn-row btn-row--center">
+          <a class="btn btn--yellow btn--lg magnetic" href="app.html#/buat?resep=portofolio" data-start data-cursor="Nyala"><span data-l="id">Mulai bangun</span><span data-l="en">Start building</span> <span class="btn__icon" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost-light btn--lg" href="harga.html"><span data-l="id">Lihat harga</span><span data-l="en">See pricing</span></a>
         </div>
-        <ul data-guides class="row-index"></ul>
+        <p class="mono final__trust"><span data-l="id">Bayar Rupiah · Tanpa kartu kredit · Saldo tidak kedaluwarsa</span><span data-l="en">Pay in Rupiah · No credit card · Balance never expires</span></p>
       </div>
-    </section>
-
-    <!-- ===== 13. Teams (yellow) ===== -->
-    <section id="tim" class="sheet sheet--yellow on-yellow" aria-labelledby="team-title">
-      <div class="shell">
-        <p class="kicker"><b>(11)</b><span data-i18n="team.kicker">Untuk tim &amp; bisnis</span></p>
-        <h2 id="team-title" class="display display--xl mt-5 max-w-[11em]" data-split data-i18n="team.title">Butuh untuk tim atau perusahaan?</h2>
-        <div class="teams__grid">
-          <ul class="teams__list">
-            <li data-i18n="team.pt1"></li><li data-i18n="team.pt2"></li><li data-i18n="team.pt3"></li><li data-i18n="team.pt4"></li><li data-i18n="team.pt5"></li>
-          </ul>
-          <div class="teams__cta">
-            <p data-i18n="team.reply">Kami balas dalam 1 hari kerja.</p>
-            <button type="button" class="btn btn--dark btn--xl w-full sm:w-auto" data-open-consult data-magnetic><span data-i18n="team.cta">Konsultasi untuk tim</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 14. FAQ (paper) ===== -->
-    <section id="faq" class="sheet sheet--paper" aria-labelledby="faq-title">
-      <div class="shell grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-[calc(6*var(--u))]">
-        <div class="lg:sticky lg:top-[calc(var(--header-h)+32px)] lg:self-start">
-          <p class="kicker"><b>(12)</b><span data-i18n="faq.kicker">FAQ</span></p>
-          <h2 id="faq-title" class="display mt-5" data-split data-i18n="faq.title">Pertanyaan yang sering muncul.</h2>
-          <p class="lead mt-6" data-i18n="faq.lead"></p>
-          <button type="button" class="btn btn--outline-dark mt-8 w-full sm:w-auto" data-open-chat><svg class="icon size-5" aria-hidden="true"><use href="#i-message-square"/></svg><span data-i18n="faq.ask">Tanya Nala</span></button>
-        </div>
-        <div data-faq></div>
-      </div>
-    </section>
-
-    <!-- ===== 15. Final CTA (blue, full height) — mega switch ===== -->
-    <section id="nyala" class="final" aria-labelledby="final-title">
-      <div class="shell final__inner">
-        <button type="button" class="mega-switch" data-final-switch><i aria-hidden="true"></i><span class="sr-only" data-i18n="final.switch">Nyalakan dan mulai bangun</span></button>
-        <h2 id="final-title" class="final__title"><span class="ln"><span data-i18n="final.l1">Idemu</span></span><span class="ln"><span data-i18n="final.l2">nyala.</span></span></h2>
-        <p class="lead max-w-[30em] text-white/85" data-i18n="final.body"></p>
-        <div class="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
-          <a href="app.html#/buat?resep=portofolio" data-start data-magnetic class="btn btn--yellow btn--xl w-full sm:w-auto"><span data-i18n="cta.start">Mulai bangun</span><svg class="icon icon-go size-5" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
-          <a href="harga.html" class="btn btn--ghost-light btn--xl w-full sm:w-auto" data-i18n="cta.pricing">Lihat harga</a>
-        </div>
-        <p class="font-mono text-[.85rem] text-white/80" data-i18n="final.trust"></p>
-      </div>
-      <div class="sparks" data-sparks aria-hidden="true"></div>
+      <div class="sparks" id="sparks" aria-hidden="true"></div>
     </section>
   </main>
 
-  <!-- ===== Footer — giant wordmark ===== -->
-  <footer class="footer" aria-labelledby="footer-brand">
-    <div class="shell">
-      <div class="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer__top">
+      <div>
+        <p class="footer__promise"><span data-l="id">Idemu nyala, dari prompt sampai online.</span><span data-l="en">Your idea, switched on — from prompt to online.</span></p>
+        <p class="mono footer__eco"><span data-l="id">AI untuk membangun, cloud untuk menjalankan.</span><span data-l="en">AI to build it, cloud to run it.</span></p>
+      </div>
+      <nav class="footer__nav" data-aria-id="Kaki halaman" data-aria-en="Footer" aria-label="Kaki halaman">
         <div>
-          <p id="footer-brand" class="flex items-center gap-3 text-xl font-extrabold tracking-[-.03em]"><img src="assets/img/tokennyala-mark.svg" alt="" width="36" height="36" class="size-9">TokenNyala</p>
-          <p class="footer__promise mt-5" data-i18n="footer.tagline">Idemu nyala, dari prompt sampai online.</p>
+          <p class="mono"><span data-l="id">Jelajahi</span><span data-l="en">Explore</span></p>
+          <a href="#layanan"><span data-l="id">Layanan</span><span data-l="en">Services</span></a>
+          <a href="harga.html"><span data-l="id">Harga</span><span data-l="en">Pricing</span></a>
+          <a href="#template"><span data-l="id">Template</span><span data-l="en">Templates</span></a>
+          <a href="#belajar"><span data-l="id">Belajar</span><span data-l="en">Learn</span></a>
         </div>
-        <div class="grid grid-cols-2 gap-6">
-          <nav aria-labelledby="footer-explore">
-            <h2 id="footer-explore" class="font-mono text-[.75rem] tracking-[.1em] text-xl-yellow uppercase" data-i18n="footer.explore">Jelajahi</h2>
-            <ul class="mt-2 grid grid-cols-1">
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#layanan" data-i18n="nav.services">Layanan</a></li>
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="harga.html" data-i18n="nav.pricing">Harga</a></li>
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#template" data-i18n="nav.templates">Template</a></li>
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#belajar" data-i18n="nav.learn">Belajar</a></li>
-            </ul>
-          </nav>
-          <nav aria-labelledby="footer-help">
-            <h2 id="footer-help" class="font-mono text-[.75rem] tracking-[.1em] text-xl-yellow uppercase" data-i18n="footer.help">Bantuan &amp; legal</h2>
-            <ul class="mt-2 grid grid-cols-1">
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#faq" data-i18n="nav.faq">FAQ</a></li>
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#tim" data-i18n="footer.team">Untuk tim</a></li>
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#" data-mock-link data-i18n="footer.terms">Syarat &amp; Ketentuan</a></li>
-              <li><a class="inline-flex min-h-11 min-w-11 items-center font-bold hover:text-xl-yellow" href="#" data-mock-link data-i18n="footer.privacy">Kebijakan Privasi</a></li>
-            </ul>
-          </nav>
+        <div>
+          <p class="mono"><span data-l="id">Bantuan</span><span data-l="en">Help</span></p>
+          <a href="#faq">FAQ</a>
+          <a href="#tim"><span data-l="id">Untuk tim</span><span data-l="en">For teams</span></a>
+          <a href="#pakai"><span data-l="id">Panduan pasang</span><span data-l="en">Setup guide</span></a>
         </div>
-      </div>
-      <p class="footer__giant" aria-hidden="true"><span>Token</span><span>Nyala</span></p>
-      <div class="flex flex-col gap-3 border-t border-white/20 pt-5 text-[.85rem] text-white/75 sm:flex-row sm:justify-between">
-        <p data-i18n="footer.prototype">Prototype interaktif — tidak ada transaksi, layanan, atau data nyata.</p>
-        <p class="shrink-0 font-mono">© 2026 TokenNyala</p>
-      </div>
+      </nav>
+    </div>
+    <p class="footer__giant" aria-hidden="true"><span>Token</span><span>Nyala</span></p>
+    <div class="footer__bottom">
+      <p class="mono">© 2026 TokenNyala · <span data-l="id">Prototype interaktif — tidak ada transaksi, layanan, atau data nyata. Semua harga adalah contoh.</span><span data-l="en">Interactive prototype — no real transactions, services, or data. All prices are examples.</span></p>
+      <p class="footer__legal">
+        <a href="#" data-mock-link><span data-l="id">Syarat &amp; Ketentuan</span><span data-l="en">Terms &amp; Conditions</span></a>
+        <a href="#" data-mock-link><span data-l="id">Kebijakan Privasi</span><span data-l="en">Privacy Policy</span></a>
+      </p>
     </div>
   </footer>
 
-  <!-- ===== Model catalogue (dialog, v3) — mobile full screen, md+ centered ===== -->
-  <dialog id="catalog" aria-labelledby="cat-title"
-          class="m-0 h-dvh max-h-none w-full max-w-none flex-col overflow-hidden bg-paper p-0 text-xl-dark backdrop:bg-xl-dark/60 open:flex open:animate-dialog-in
-                 md:m-auto md:h-auto md:max-h-[85dvh] md:max-w-4xl md:rounded-card md:shadow-2xl">
-    <div class="relative shrink-0 border-b border-line bg-white px-4 pt-3 pb-3 sm:px-6 md:pt-5">
-      <div class="flex items-start gap-3">
-        <div class="min-w-0 flex-1">
-          <h2 id="cat-title" tabindex="-1" class="text-xl font-extrabold tracking-tight outline-none" data-i18n="cat.title">Model AI yang tersedia</h2>
-          <p class="mt-0.5 text-[.92rem] text-muted" data-i18n="cat.subtitle"></p>
-        </div>
-        <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-muted hover:bg-paper hover:text-xl-dark" data-i18n-aria="cat.close" aria-label="Tutup katalog model" data-cat-close><svg class="icon size-5" aria-hidden="true"><use href="#i-x"/></svg></button>
+  <!-- ============ MODEL CATALOGUE ============ -->
+  <dialog data-lenis-prevent class="sheet-dialog sheet-dialog--wide" id="catalog" aria-labelledby="cat-title">
+    <div class="sheet-dialog__handle" aria-hidden="true"></div>
+    <div class="sheet-dialog__head">
+      <div>
+        <h2 id="cat-title" tabindex="-1" data-i18n="cat.title">Model AI yang tersedia</h2>
+        <p class="sheet-dialog__sub" data-i18n="cat.subtitle"></p>
       </div>
-      <div class="mt-3 flex gap-2">
-        <label for="cat-search" class="sr-only" data-i18n="cat.search">Cari model</label>
-        <div class="relative min-w-0 flex-1">
-          <svg class="icon pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted" aria-hidden="true"><use href="#i-search"/></svg>
-          <input id="cat-search" type="search" autocomplete="off" enterkeyhint="search" data-i18n-placeholder="cat.searchPh"
-                 class="block min-h-12 w-full rounded-control border-2 border-line bg-white pr-3 pl-10 text-base placeholder:text-muted focus:border-xl-blue focus:outline-none">
-        </div>
-        <button type="button" class="btn btn--ghost min-h-12 shrink-0 px-4 md:hidden" aria-expanded="false" aria-controls="cat-filters" data-filter-toggle><svg class="icon size-4" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg><span data-filter-toggle-label>Filter</span></button>
-      </div>
-      <div id="cat-filters" class="mt-3 hidden gap-3 data-[open=true]:grid md:grid md:grid-cols-[auto_minmax(0,1fr)] md:gap-x-6" data-open="false">
-        <div role="group" aria-labelledby="flt-use" class="min-w-0"><p id="flt-use" class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase" data-i18n="filter.use">Kegunaan</p><div class="no-scrollbar -mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-allow-bleed data-filter-group="use"></div></div>
-        <div role="group" aria-labelledby="flt-tier" class="min-w-0"><p id="flt-tier" class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase" data-i18n="filter.tier">Level biaya</p><div class="no-scrollbar -mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-allow-bleed data-filter-group="tier"></div></div>
-        <div role="group" aria-labelledby="flt-provider" class="min-w-0 md:col-span-2"><p id="flt-provider" class="font-mono text-[.72rem] tracking-[.08em] text-muted uppercase" data-i18n="filter.provider">Penyedia</p><div class="no-scrollbar -mx-4 mt-1.5 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-allow-bleed data-filter-group="provider"></div></div>
+      <button type="button" class="icon-btn" data-cat-close data-i18n-aria="cat.close" aria-label="Tutup katalog model">✕</button>
+    </div>
+    <div class="cat-tools">
+      <label for="cat-search" class="sr-only" data-i18n="cat.search">Cari model</label>
+      <input id="cat-search" class="cat-search" type="search" autocomplete="off" enterkeyhint="search" data-i18n-placeholder="cat.searchPh">
+      <div class="cat-filters">
+        <div class="cat-group" role="group" aria-labelledby="flt-use" data-allow-bleed><span id="flt-use" data-i18n="filter.use">Kegunaan</span><div class="cat-group__chips" data-filter-group="use"></div></div>
+        <div class="cat-group" role="group" aria-labelledby="flt-tier" data-allow-bleed><span id="flt-tier" data-i18n="filter.tier">Level biaya</span><div class="cat-group__chips" data-filter-group="tier"></div></div>
+        <div class="cat-group" role="group" aria-labelledby="flt-provider" data-allow-bleed><span id="flt-provider" data-i18n="filter.provider">Penyedia</span><div class="cat-group__chips" data-filter-group="provider"></div></div>
       </div>
     </div>
-    <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
-      <p class="text-[.92rem] font-bold text-muted" aria-live="polite" data-cat-count></p>
-      <ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3" aria-labelledby="cat-title" data-cat-list></ul>
-      <div class="mt-6 hidden flex-col items-center gap-3 rounded-card border border-dashed border-line bg-white px-4 py-8 text-center data-[show=true]:flex" data-cat-empty data-show="false">
-        <p class="font-bold text-muted" data-i18n="cat.empty"></p>
-        <button type="button" class="btn btn--ghost" data-cat-clear data-i18n="cat.clear">Hapus filter</button>
-      </div>
-      <div class="mt-4 flex justify-center"><button type="button" class="btn btn--ghost hidden data-[show=true]:inline-flex" data-cat-more data-show="false" data-i18n="cat.more">Tampilkan lebih banyak</button></div>
-      <p class="mt-6 pb-[env(safe-area-inset-bottom)] text-[.82rem] text-muted" data-i18n="ai.note"></p>
+    <p class="cat-count" aria-live="polite" data-cat-count></p>
+    <ul class="cat-grid" aria-labelledby="cat-title" data-cat-list></ul>
+    <div class="cat-empty" data-cat-empty data-show="false">
+      <p data-i18n="cat.empty"></p>
+      <button type="button" class="btn btn--outline-dark" data-cat-clear data-i18n="cat.clear">Hapus filter</button>
     </div>
+    <button type="button" class="btn btn--outline-dark cat-more" data-cat-more data-show="false" data-i18n="cat.more">Tampilkan lebih banyak</button>
+    <p class="note cat-note" data-i18n="ai.note"></p>
   </dialog>
 
-  <!-- ===== Team consultation (dialog, v3) — mobile bottom sheet, md+ centered ===== -->
-  <dialog id="consult" aria-labelledby="cs-title"
-          class="m-0 mt-auto max-h-[90dvh] w-full max-w-none flex-col overflow-hidden rounded-t-[28px] bg-white p-0 text-xl-dark backdrop:bg-xl-dark/60 open:flex open:animate-sheet-in
-                 md:m-auto md:max-h-[85dvh] md:max-w-[40rem] md:rounded-card md:open:animate-dialog-in">
-    <div class="relative shrink-0 border-b border-line px-4 pt-2 pb-3 sm:px-6 md:pt-4">
-      <div aria-hidden="true" class="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line md:hidden"></div>
-      <div class="flex items-start gap-3">
-        <div class="min-w-0 flex-1">
-          <h2 id="cs-title" tabindex="-1" class="text-xl font-extrabold tracking-tight outline-none" data-i18n="cs.title">Konsultasi untuk tim</h2>
-          <p class="mt-0.5 text-[.92rem] text-muted" data-i18n="cs.intro"></p>
-        </div>
-        <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-muted hover:bg-paper hover:text-xl-dark" data-i18n-aria="cs.close" aria-label="Tutup konsultasi" data-cs-close><svg class="icon size-5" aria-hidden="true"><use href="#i-x"/></svg></button>
+  <!-- ============ TEAM CONSULTATION ============ -->
+  <dialog data-lenis-prevent class="sheet-dialog" id="consult" aria-labelledby="cs-title">
+    <div class="sheet-dialog__handle" aria-hidden="true"></div>
+    <div class="sheet-dialog__head">
+      <div>
+        <h2 id="cs-title" tabindex="-1" data-i18n="cs.title">Konsultasi untuk tim</h2>
+        <p class="sheet-dialog__sub" data-i18n="cs.intro"></p>
       </div>
+      <button type="button" class="icon-btn" data-cs-close data-i18n-aria="cs.close" aria-label="Tutup konsultasi">✕</button>
     </div>
-    <form data-cs-panel="form" class="flex min-h-0 flex-1 flex-col" novalidate>
-      <div class="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6">
-        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div>
-            <label for="cs-name" class="block font-bold" data-i18n="cs.name">Nama</label>
-            <input id="cs-name" name="name" type="text" autocomplete="name" required aria-describedby="cs-name-error" class="field mt-2">
-            <p id="cs-name-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="name"></p>
-          </div>
-          <div>
-            <label for="cs-org" class="block font-bold" data-i18n="cs.org">Nama tim atau perusahaan</label>
-            <input id="cs-org" name="org" type="text" autocomplete="organization" required aria-describedby="cs-org-error" class="field mt-2">
-            <p id="cs-org-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="org"></p>
-          </div>
-          <div class="md:col-span-2">
-            <label for="cs-contact" class="block font-bold" data-i18n="cs.contact">Email atau nomor HP</label>
-            <input id="cs-contact" name="contact" type="text" inputmode="email" autocomplete="email" required aria-describedby="cs-contact-error" class="field mt-2" data-i18n-placeholder="cs.contactPh">
-            <p id="cs-contact-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="contact"></p>
-          </div>
-        </div>
-        <fieldset class="mt-5">
-          <legend class="font-bold" data-i18n="cs.size">Ukuran tim</legend>
-          <div class="mt-2 grid grid-cols-4 gap-2">
-            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="1–5" class="sr-only" aria-describedby="cs-teamSize-error">1–5</label>
-            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="6–20" class="sr-only" aria-describedby="cs-teamSize-error">6–20</label>
-            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="21–50" class="sr-only" aria-describedby="cs-teamSize-error">21–50</label>
-            <label class="relative flex min-h-11 cursor-pointer items-center justify-center rounded-control border-2 border-line px-2 font-bold has-checked:border-xl-blue has-checked:bg-xl-blue has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-xl-yellow"><input type="radio" name="teamSize" value="50+" class="sr-only" aria-describedby="cs-teamSize-error">50+</label>
-          </div>
-          <p id="cs-teamSize-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="teamSize"></p>
-        </fieldset>
-        <div class="mt-5">
-          <label for="cs-need" class="block font-bold" data-i18n="cs.need">Ceritakan kebutuhanmu (opsional)</label>
-          <textarea id="cs-need" name="need" rows="3" maxlength="500" aria-describedby="cs-need-count" class="field mt-2 py-2.5"></textarea>
-          <p id="cs-need-count" class="mt-1 text-right font-mono text-[.75rem] text-muted" aria-hidden="true" data-cs-count>0/500</p>
-          <p class="sr-only" aria-live="polite" data-cs-count-live></p>
-        </div>
-        <div class="mt-3 grid grid-cols-1">
-          <label class="flex min-h-11 cursor-pointer items-start gap-3 py-2"><input type="checkbox" name="invoice" class="mt-0.5 size-5 shrink-0 accent-xl-blue"><span data-i18n="cs.invoice"></span></label>
-          <label class="flex min-h-11 cursor-pointer items-start gap-3 py-2"><input type="checkbox" name="consent" required class="mt-0.5 size-5 shrink-0 accent-xl-blue" aria-describedby="cs-consent-error"><span data-i18n="cs.consent"></span></label>
-          <p id="cs-consent-error" class="mt-1.5 hidden text-[.92rem] font-bold text-red-700" data-cerr="consent"></p>
-        </div>
+    <form class="co-step" data-cs-panel="form" novalidate>
+      <div class="field">
+        <label for="cs-name" data-i18n="cs.name">Nama</label>
+        <input id="cs-name" name="name" type="text" autocomplete="name" required aria-describedby="cs-name-error">
+        <p id="cs-name-error" class="field__error hidden" data-cerr="name"></p>
       </div>
-      <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
-        <button type="submit" class="btn btn--lg w-full" data-i18n="cs.submit">Kirim</button>
+      <div class="field">
+        <label for="cs-org" data-i18n="cs.org">Nama tim atau perusahaan</label>
+        <input id="cs-org" name="org" type="text" autocomplete="organization" required aria-describedby="cs-org-error">
+        <p id="cs-org-error" class="field__error hidden" data-cerr="org"></p>
       </div>
+      <div class="field">
+        <label for="cs-contact" data-i18n="cs.contact">Email atau nomor HP</label>
+        <input id="cs-contact" name="contact" type="text" inputmode="email" autocomplete="email" required aria-describedby="cs-contact-error" data-i18n-placeholder="cs.contactPh">
+        <p id="cs-contact-error" class="field__error hidden" data-cerr="contact"></p>
+      </div>
+      <fieldset class="field">
+        <legend data-i18n="cs.size">Ukuran tim</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="teamSize" value="1–5" aria-describedby="cs-teamSize-error"><span>1–5</span></label>
+          <label class="chip"><input type="radio" name="teamSize" value="6–20" aria-describedby="cs-teamSize-error"><span>6–20</span></label>
+          <label class="chip"><input type="radio" name="teamSize" value="21–50" aria-describedby="cs-teamSize-error"><span>21–50</span></label>
+          <label class="chip"><input type="radio" name="teamSize" value="50+" aria-describedby="cs-teamSize-error"><span>50+</span></label>
+        </div>
+        <p id="cs-teamSize-error" class="field__error hidden" data-cerr="teamSize"></p>
+      </fieldset>
+      <div class="field">
+        <label for="cs-need" data-i18n="cs.need">Ceritakan kebutuhanmu (opsional)</label>
+        <textarea id="cs-need" name="need" rows="3" maxlength="500" aria-describedby="cs-need-count"></textarea>
+        <p id="cs-need-count" class="field__help field__count" aria-hidden="true" data-cs-count>0/500</p>
+        <p class="sr-only" aria-live="polite" data-cs-count-live></p>
+      </div>
+      <label class="check"><input type="checkbox" name="invoice"><span data-i18n="cs.invoice"></span></label>
+      <label class="check"><input type="checkbox" name="consent" required aria-describedby="cs-consent-error"><span data-i18n="cs.consent"></span></label>
+      <p id="cs-consent-error" class="field__error hidden" data-cerr="consent"></p>
+      <div class="sheet-dialog__foot"><button type="submit" class="btn btn--primary btn--block btn--lg" data-i18n="cs.submit">Kirim</button></div>
     </form>
-    <section data-cs-panel="success" hidden class="flex min-h-0 flex-1 flex-col" aria-labelledby="cs-success-title">
-      <div class="relative min-h-0 flex-1 overflow-y-auto px-4 py-8 text-center sm:px-6">
-        <span class="switch switch--lg mx-auto" data-on aria-hidden="true"><i></i></span>
-        <h3 id="cs-success-title" tabindex="-1" class="mt-5 text-2xl font-extrabold outline-none" data-i18n="cs.successTitle">Terima kasih!</h3>
-        <p class="mt-2 text-lead-ink" data-cs-success-body></p>
-        <p class="mt-4 text-[.85rem] font-bold text-muted" data-i18n="cs.successNotice"></p>
-      </div>
-      <div class="shrink-0 border-t border-line bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
-        <button type="button" class="btn btn--ghost btn--lg w-full" data-cs-close data-i18n="cs.done">Selesai</button>
-      </div>
+    <section class="co-step co-success" data-cs-panel="success" hidden aria-labelledby="cs-success-title">
+      <div class="big-switch big-switch--on" aria-hidden="true"><span></span></div>
+      <h3 id="cs-success-title" tabindex="-1" data-i18n="cs.successTitle">Terima kasih!</h3>
+      <p data-cs-success-body></p>
+      <p class="note" data-i18n="cs.successNotice"></p>
+      <div class="sheet-dialog__foot"><button type="button" class="btn btn--outline-dark btn--block btn--lg" data-cs-close data-i18n="cs.done">Selesai</button></div>
     </section>
   </dialog>
 
-  <!-- ===== Live chat Nala (v3 + recipe flow). Mobile: full screen modal. md+: 380×560 non-modal panel. ===== -->
-  <dialog id="chat" aria-labelledby="chat-title"
-          class="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none flex-col overflow-hidden bg-white p-0 text-xl-dark open:flex open:animate-dialog-in
-                 md:inset-auto md:right-4 md:bottom-[calc(1rem+env(safe-area-inset-bottom))] md:z-40 md:h-[580px] md:max-h-[calc(100dvh-2rem)] md:w-[392px] md:rounded-card md:border md:border-line md:shadow-[0_24px_60px_rgb(0_22_106/.25)]">
-    <div class="flex shrink-0 items-center gap-3 bg-xl-dark px-4 py-3 text-white">
-      <img src="assets/img/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10 rounded-full">
-      <div class="min-w-0 flex-1">
-        <h2 id="chat-title" class="font-extrabold" data-chat-title data-i18n="chat.name">Nala</h2>
-        <p class="truncate text-[.8rem] text-white/75" data-chat-status data-i18n="chat.status">Asisten otomatis</p>
+  <!-- ============ LIVE CHAT NALA ============ -->
+  <dialog data-lenis-prevent class="chat" id="chat" aria-labelledby="chat-title">
+    <div class="chat__head">
+      <img class="chat__avatar" src="assets/img/tokennyala-mark.svg" alt="" width="40" height="40">
+      <div class="chat__who">
+        <h2 id="chat-title" data-chat-title data-i18n="chat.name">Nala</h2>
+        <p data-chat-status data-i18n="chat.status">Asisten otomatis</p>
       </div>
-      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-white/80 hover:bg-white/10 hover:text-white" data-i18n-aria="chat.restart" aria-label="Mulai ulang percakapan" data-chat-restart><svg class="icon size-5" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
-      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-control text-white/80 hover:bg-white/10 hover:text-white" data-i18n-aria="chat.close" aria-label="Tutup chat" data-chat-close><svg class="icon size-5" aria-hidden="true"><use href="#i-x"/></svg></button>
+      <button type="button" class="chat__icon" data-chat-restart data-i18n-aria="chat.restart" aria-label="Mulai ulang percakapan"><svg class="icon" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
+      <button type="button" class="chat__icon" data-chat-close data-i18n-aria="chat.close" aria-label="Tutup chat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
     </div>
-    <p class="hidden shrink-0 bg-xl-yellow/40 px-4 py-1.5 text-center text-[.8rem] font-bold data-[show=true]:block" data-chat-mode-label data-show="false"></p>
-    <div class="relative min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-paper px-4 py-4" role="log" aria-live="polite" data-i18n-aria="chat.logAria" aria-label="Percakapan" data-chat-log></div>
-    <div class="shrink-0 border-t border-line bg-white px-3 pt-2.5 pb-[max(.75rem,env(safe-area-inset-bottom))]">
-      <div class="no-scrollbar -mx-3 flex gap-2 overflow-x-auto px-3 pb-2.5 empty:hidden md:flex-wrap md:overflow-visible" data-allow-bleed data-chat-chips></div>
-      <form class="flex items-center gap-2" data-chat-form novalidate>
+    <p class="chat__mode" data-chat-mode-label data-show="false"></p>
+    <div class="chat__log" role="log" aria-live="polite" data-i18n-aria="chat.logAria" aria-label="Percakapan" data-chat-log></div>
+    <div class="chat__foot">
+      <div class="chat__chips" data-allow-bleed data-chat-chips></div>
+      <form class="chat__form" data-chat-form novalidate>
         <label for="chat-input" class="sr-only" data-chat-input-label data-i18n="chat.input">Pesan</label>
-        <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send" class="field min-h-11 min-w-0 flex-1">
-        <button type="submit" class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-blue text-white hover:bg-xl-dark" data-i18n-aria="chat.send" aria-label="Kirim pesan"><svg class="icon size-5" aria-hidden="true"><use href="#i-send"/></svg></button>
+        <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send">
+        <button type="submit" class="chat__send" data-i18n-aria="chat.send" aria-label="Kirim pesan"><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg></button>
       </form>
-      <p class="mt-2 text-[.75rem] leading-snug text-muted" data-i18n="chat.disclaimer"></p>
+      <p class="chat__note" data-i18n="chat.disclaimer"></p>
     </div>
   </dialog>
 
-  <button type="button" id="chat-launcher" aria-expanded="false" aria-controls="chat" data-open-chat
-          class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 inline-flex min-h-13 items-center gap-2 rounded-full bg-xl-dark p-1.5 font-bold text-white shadow-[0_12px_32px_rgb(0_22_106/.35)] transition-transform hover:-translate-y-0.5 aria-expanded:hidden sm:pr-5 [html.overflow-hidden_&]:hidden">
-    <span class="relative shrink-0" data-decor-overflow>
-      <img src="assets/img/tokennyala-mark.svg" alt="" width="40" height="40" class="size-10 rounded-full">
-      <span aria-hidden="true" class="absolute -top-0.5 -right-0.5 size-3.5 rounded-full bg-xl-teal ring-2 ring-xl-dark"></span>
-    </span>
-    <span class="sr-only sm:not-sr-only" data-i18n="chat.launcher">Butuh bantuan?</span>
+  <button type="button" class="chat-launcher" id="chat-launcher" aria-expanded="false" aria-controls="chat" data-open-chat>
+    <span class="chat-launcher__mark" aria-hidden="true"><img src="assets/img/tokennyala-mark.svg" alt="" width="40" height="40"><i></i></span>
+    <span class="chat-launcher__label" data-i18n="chat.launcher">Butuh bantuan?</span>
   </button>
 </body>
 </html>

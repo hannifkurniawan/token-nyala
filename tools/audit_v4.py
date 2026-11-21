@@ -10,7 +10,8 @@ Definition of Done extras:
   - DoD 1  every page opens from file:// without console errors (CSS applied, scripts ran)
   - DoD 7  prefers-reduced-motion: no animation/transition longer than 0.01ms, scroll-behavior auto, GSAP/Lenis off
   - DoD 8  storage blocked (localStorage throws): page still renders and switches language
-  - DoD 9  only the 4 loaded font faces render (Manrope 500/700/800, IBM Plex Mono 500)
+  - DoD 9  only loaded font faces render: 4 on harga/console (Manrope 500/700/800, Plex Mono 500);
+           the landing (showcase v2 build) also loads Manrope 600 + Plex Mono 600
   - DoD 10 assets/css/app.css equals a fresh `tailwindcss --minify` build of src/tailwind.css
   - DoD 12 the simulation label is visible on landing, harga, console (home + wizard) and in the top-up sheet
   - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact);
@@ -38,6 +39,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent / "v4"
 AXE = "https://cdn.jsdelivr.net/npm/axe-core@4.14.0/axe.min.js"
 TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"]
 FACES = ["Manrope 500", "Manrope 700", "Manrope 800", "IBM Plex Mono 500"]
+FACES_LANDING = FACES + ["Manrope 600", "IBM Plex Mono 600"]  # index.html loads 6 faces (approved 21 Nov 2026)
 PAGES = ["index.html", "harga.html"]  # fase 4+: app.html routes
 RENDERED_CHECK = {"index.html": "[data-recipe-card] h3", "harga.html": "[data-calc-rows] li"}
 APP_ROUTES = [("masuk", "app.html?demo=reset#/masuk"), ("beranda", "app.html?demo=ayu#/beranda"),
@@ -199,7 +201,7 @@ def fonts(page, label):
             if (!ok.has(k)) bad.add(`${k} :: ${el.tagName.toLowerCase()}.${[...el.classList].slice(0, 4).join('.')} "${el.textContent.trim().slice(0, 30)}"`);
         }
         return [...bad].slice(0, 6);
-    }""", FACES)
+    }""", FACES_LANDING if "index" in label else FACES)
     return [f"[font] {label}: {b}" for b in bad]
 
 
@@ -278,7 +280,7 @@ def main():
             page.on("console", lambda m: errors.append(m.text) if m.type in ("error", "warning") else None)
             page.on("pageerror", lambda e: errors.append(str(e)))
             page.goto((ROOT / page_name).as_uri(), wait_until="networkidle")
-            ok = page.evaluate("() => getComputedStyle(document.querySelector('header')).position === 'sticky' && !!window.TN?.data && !!document.querySelector('#i-globe')")
+            ok = page.evaluate("() => ['sticky', 'fixed'].includes(getComputedStyle(document.querySelector('header')).position) && !!window.TN?.data && !!document.querySelector('#i-globe')")
             if errors or not ok:
                 problems.append(f"[dod] {page_name} file:// errors={errors} styled+scripted={ok}")
             page.close()
@@ -488,7 +490,7 @@ def main():
     httpd.shutdown()
 
     print("\n".join(problems) if problems else
-          "ok — axe 0 violations, 4 font faces, file://, reduced motion, storage blocked, CSS up to date, numbers match services-and-pricing.md")
+          "ok — axe 0 violations, font faces (4; landing 6), file://, reduced motion, storage blocked, CSS up to date, numbers match services-and-pricing.md")
     sys.exit(1 if problems else 0)
 
 

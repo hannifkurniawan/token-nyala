@@ -56,7 +56,7 @@ COLLECT_JS = r"""
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     for (let n = walker.nextNode(); n; n = walker.nextNode()) {
       const p = n.parentElement;
-      if (!p || ['SCRIPT', 'STYLE'].includes(p.tagName) || p.closest('code')) continue;
+      if (!p || ['SCRIPT', 'STYLE'].includes(p.tagName) || p.closest('code') || p.closest('[data-l]')) continue;  // data-l pairs: checked below
       const v = n.textContent.replace(/\s+/g, ' ').trim();
       if (v) out['text ' + path(p) + ' #' + [...p.childNodes].indexOf(n)] = v;
     }
@@ -112,12 +112,29 @@ V4_ALLOW = {
     "Cursor", "Lovable", "Cline", "Continue", "n8n", "OpenClaw", "Dify", "WordPress",
     "model.", "online",  # loanwords that end a heading in both languages
     "Data", "Email", "Log", "QRIS", "Ubuntu 24.04", "GPT Pro · Premium", "Claude Opus · Premium", "E-wallet", "Virtual account", "DANA", "GoPay", "OVO", "DANA, GoPay, OVO",  # console
-    "ayu.my.id", "localhost:5173 ·", "Token", "Nyala",  # landing: stall status, footer wordmark
+    "ayu.my.id", "localhost:5173 ·", "Token", "Nyala", "←", "→", "✕", "STATUS:", "© 2026 TokenNyala ·",  # landing: stall status, footer wordmark
     "AI", "vCPU", "RAM", "1 GB", "5 GB", "20 GB", "10 GB", "100 GB", "1 TB", "2 TB", "4 TB", "512 MB", "2 GB", "4 GB", "8 GB",
     "40 GB", "80 GB", "160 GB", "0,5", ".my.id", ".biz.id", ".web.id", ".id", ".com", ".co.id", "Template", "Bonus", "Model",
 }
 # user data in the console: project names (klien-kopi), avatar initials (A)
 V4_NAMES = re.compile(r"^([a-z0-9]+(-[a-z0-9]+)+|[A-Z]|[a-z0-9-]+(\.[a-z]{2,})+)$")  # + domain names (kopikita.com)
+DATA_L_JS = r"""
+() => {  // landing (showcase v2 way): static copy as <x data-l="id">…</x><x data-l="en">…</x> sibling pairs
+  const bad = [];
+  const norm = (el) => el.textContent.replace(/\s+/g, ' ').trim();
+  for (const id of document.querySelectorAll('[data-l="id"]')) {
+    const en = id.nextElementSibling;
+    if (!en || en.dataset.l !== 'en') { bad.push(`data-l="id" without a following data-l="en": ${norm(id).slice(0, 60)}`); continue; }
+    if (!norm(id) || !norm(en)) bad.push(`empty data-l text near: ${(norm(id) || norm(en)).slice(0, 60)}`);
+    else if (norm(id) === norm(en)) bad.push(`same in ID and EN (data-l): ${norm(id).slice(0, 60)}`);
+  }
+  for (const en of document.querySelectorAll('[data-l="en"]'))
+    if (en.previousElementSibling?.dataset.l !== 'id') bad.push(`data-l="en" without a preceding data-l="id": ${norm(en).slice(0, 60)}`);
+  for (const el of document.querySelectorAll('[data-aria-id]'))
+    if (!el.dataset.ariaEn) bad.push(`data-aria-id without data-aria-en: ${el.dataset.ariaId}`);
+  return bad;
+}
+"""
 V4_KEYS_JS = r"""
 () => {
   const used = new Set();
@@ -145,6 +162,7 @@ def main_v4():
                 page.goto(base + page_name, wait_until="networkidle")
                 snaps[lang] = page.evaluate(COLLECT_JS)
                 if lang == "id":
+                    problems += [f"{page_name}: {x}" for x in page.evaluate(DATA_L_JS)]
                     k = page.evaluate(V4_KEYS_JS)
                     keys |= set(k["keys"])
                     used_html |= set(k["used"])

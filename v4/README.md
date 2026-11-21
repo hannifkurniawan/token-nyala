@@ -44,17 +44,18 @@ python3 -P tools/demo_v4.py --out /tmp/demo-v4             # gladi skrip demo 21
 ## Struktur
 | File | Isi |
 |---|---|
-| `src/tailwind.css` | Satu-satunya tempat token (`@theme`) + komponen (`.shell`, `.sheet`, `.btn`, `.display`, `.kicker`, `.switch`, `.card`, `.field`, `.stack-card`) |
+| `src/tailwind.css` | Token (`@theme`) + komponen harga & console (Tailwind) |
+| `assets/css/site.css` · `landing.css` | Landing, CSS tulisan tangan port `showcase/v2/styles.css` (dasar bersama · section) — tanpa build |
 | `assets/js/data.js` | **Semua angka** + fungsi hitung murni: resep, `recipeTotals`, `suggestTopup`, `coverMonths`, `refund`, `prorata`, `balanceUntil`, URL `s` (`parseS`/`itemsFromUrl`/`serialize`), ukuran minimum template, model AI |
 | `assets/js/i18n.js` | Kamus `'kunci': [ID, EN]` + `t()`, `rp()`, `rpK()`, `date()` |
 | `assets/js/icons.js` | Sprite Lucide (hasil `tools/build_icons_v4.py`, jangan diedit) |
 | `assets/js/ui.js` | Header + menu, bahasa, `setupModal()`, `parseContact()`, salin, `itemView()`, `fromLine()`, pemilih ukuran bersama |
-| `assets/js/landing.js` · `pricing.js` | Landing (+ katalog model, konsultasi tim) · Harga (kalkulator, tabel) |
+| `assets/js/landing.js` · `pricing.js` | Landing ala `showcase/v2/script.js`: render data, interaksi, loader → motion GSAP/Lenis, kursor · Harga (kalkulator, tabel) |
 | `assets/js/store.js` | State console `tn-v4-demo` (tanpa data kontak), preset, `charge()`/`topup()` → riwayat, tagihan (perpanjang/jeda/berhenti, prorata, refund), `advance()` |
 | `assets/js/console.js` | Router hash (fokus `h1`, judul, pengumuman, guard masuk), kerangka, masuk, beranda, saldo, isi saldo |
 | `assets/js/projects.js` · `ai.js` · `services.js` · `learn.js` | Wizard + proyek · AI · layanan lain · belajar + bantuan |
 | `assets/js/nala.js` | Chat Nala (lokal, tanpa server): bantu pilih resep, cara pakai, model, bayar, tim online/offline |
-| `assets/js/motion.js` | GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 (landing & harga); mati saat reduced motion |
+| `assets/js/motion.js` | GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 untuk harga (landing punya motion sendiri di `landing.js`); mati saat reduced motion |
 
 Script klasik `defer` dengan namespace `window.TN`. Urutan muat: data → i18n → icons → ui → (halaman) → nala → vendor → motion.
 

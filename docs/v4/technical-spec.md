@@ -86,7 +86,7 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 1. **Mobile first sungguhan** — v3 #1 (tanpa `max-*:`/`@media (max-width)`).
 2. **Tinggi ditentukan konten; grid selalu kolom eksplisit** — v3 #2.
 3. **Token hanya di `src/tailwind.css` `@theme`** — tidak ada hex di HTML/JS.
-4. **Utility dulu.** `@layer components` hanya untuk: `.shell`, `.btn` + varian, `.sheet` + varian, `.display`, `.kicker`, `.switch`, `.card`. CSS custom lain (ilustrasi, keyframe) di `@layer components`/`utilities` file yang sama, target < 250 baris total.
+4. **Utility dulu** (harga & console). **Pengecualian landing (21 Nov 2026):** `index.html` memakai CSS tulisan tangan `assets/css/site.css` + `landing.css` (port showcase v2) dan copy statis `data-l` — lihat `visual-direction.md` §5. `@layer components` hanya untuk: `.shell`, `.btn` + varian, `.sheet` + varian, `.display`, `.kicker`, `.switch`, `.card`. CSS custom lain (ilustrasi, keyframe) di `@layer components`/`utilities` file yang sama, target < 250 baris total.
 5. **Tipografi fluid** dengan `clamp()`; body ≥16px — v3 #5.
 6. **Overlay = `<dialog>`** + `setupModal()` (v3 #6), termasuk aturan `sr-only` butuh ancestor `relative`. Mobile: bottom sheet; `md:`: dialog tengah.
 7. **QA per section/layar**, bukan di akhir — v3 #7, untuk **setiap halaman dan setiap rute console**, termasuk EN di 320px.
@@ -121,7 +121,7 @@ Skrip v3 tidak diubah perilakunya untuk v3.
 6. axe 0 pelanggaran (halaman, rute, dialog).
 7. Reduced motion: semua konten tampil, tanpa animasi.
 8. Storage diblokir: semua halaman jalan; console dalam memori.
-9. Hanya 4 face font dirender.
+9. Hanya face font yang dimuat yang dirender: 4 (harga, console), 6 di landing (+ Manrope 600, Plex Mono 600).
 10. `app.css` hasil build terbaru.
 11. Data kontak tidak tersimpan di storage.
 12. Label simulasi terlihat di footer, checkout, wizard, dan console.

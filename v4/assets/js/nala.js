@@ -58,21 +58,21 @@
     const row = document.createElement('div');
     const text = msg.text ?? t(msg.key, resolve(msg.params));
     if (msg.from === 'system') {
-      row.className = 'text-center text-[.8rem] font-bold text-muted';
+      row.className = 'chat__system text-center text-[.8rem] font-bold text-muted';
       row.textContent = text;
       return row;
     }
     const mine = msg.from === 'user';
-    row.className = `flex ${mine ? 'justify-end' : 'items-end gap-2'}`;
+    row.className = `chat__msg ${mine ? 'chat__msg--user justify-end' : 'items-end gap-2'} flex`;
     if (!mine) {
       row.insertAdjacentHTML('beforeend', msg.from === 'sari'
-        ? '<span aria-hidden="true" class="grid size-7 shrink-0 place-items-center rounded-full bg-xl-teal text-[.75rem] font-extrabold text-xl-dark">S</span>'
+        ? '<span aria-hidden="true" class="chat__agent grid size-7 shrink-0 place-items-center rounded-full bg-xl-teal text-[.75rem] font-extrabold text-xl-dark">S</span>'
         : '<img src="assets/img/tokennyala-mark.svg" alt="" width="28" height="28" class="size-7 shrink-0 rounded-full">');
     }
     const box = document.createElement('div');
-    box.className = `max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[.95rem] leading-relaxed ${mine ? 'rounded-br-md bg-xl-blue text-white' : 'rounded-bl-md border border-line bg-white text-ink'}`;
+    box.className = `chat__bubble max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[.95rem] leading-relaxed ${mine ? 'rounded-br-md bg-xl-blue text-white' : 'rounded-bl-md border border-line bg-white text-ink'}`;
     if (msg.from === 'sari') {
-      box.insertAdjacentHTML('beforeend', `<span class="mb-1 flex items-center gap-1.5 text-[.8rem] font-extrabold text-xl-dark">${t('agent.name')}<span class="rounded-full bg-xl-teal/20 px-1.5 py-px text-[.7rem] text-teal-ink">${t('agent.badge')}</span></span>`);
+      box.insertAdjacentHTML('beforeend', `<span class="chat__tag mb-1 flex items-center gap-1.5 text-[.8rem] font-extrabold text-xl-dark">${t('agent.name')}<span class="rounded-full bg-xl-teal/20 px-1.5 py-px text-[.7rem] text-teal-ink">${t('agent.badge')}</span></span>`);
     }
     const p = document.createElement('p');
     p.textContent = text;
@@ -84,7 +84,7 @@
     (msg.actions || []).forEach((a, i) => {
       const el = document.createElement(a.href ? 'a' : 'button');
       if (a.href) el.href = typeof a.href === 'function' ? a.href() : a.href; else el.type = 'button';
-      el.className = `btn mt-2.5 w-full text-[.92rem] ${i ? 'btn--ghost' : ''}`;
+      el.className = `btn mt-2.5 w-full text-[.92rem] ${i ? 'btn--ghost btn--outline-dark' : 'btn--primary'}`;
       el.textContent = t(a.key);
       if (a.run) el.addEventListener('click', a.run);
       box.append(el);
@@ -97,7 +97,7 @@
     const items = chat.messages.map(bubble);
     if (chat.typing) {
       const el = document.createElement('div');
-      el.className = 'text-[.8rem] font-bold text-muted';
+      el.className = 'chat__typing text-[.8rem] font-bold text-muted';
       el.textContent = t(chat.typing);
       items.push(el);
     }
@@ -106,7 +106,7 @@
     chips.replaceChildren(...CHIP_SETS[chat.chips].map((key) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full border border-xl-blue/40 bg-white px-3.5 text-[.92rem] font-bold text-xl-blue hover:bg-xl-blue hover:text-white';
+      b.className = 'chat__chip inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full border border-xl-blue/40 bg-white px-3.5 text-[.92rem] font-bold text-xl-blue hover:bg-xl-blue hover:text-white';
       b.textContent = t(key);
       b.addEventListener('click', () => handle(t(key), key));
       return b;
