@@ -22,6 +22,8 @@ TN.ui = (() => {
     if (!menuBtn || !menu) return;
     menuOpen = open;
     menu.hidden = !open;
+    // Showcase reveal: the blue panel grows as a circle from the button (instant when closing)
+    if (open) { void menu.offsetWidth; menu.setAttribute('data-open', ''); } else menu.removeAttribute('data-open');
     menuBtn.setAttribute('aria-expanded', String(open));
     document.documentElement.classList.toggle('overflow-hidden', open);
     document.querySelector('[data-header]')?.toggleAttribute('data-menu-open', open);
@@ -34,11 +36,49 @@ TN.ui = (() => {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuOpen) setMenu(false, { returnFocus: true }); });
   desktop.addEventListener('change', (e) => { if (e.matches && menuOpen) setMenu(false); });
 
-  /* ---------- Header: solid background once the page scrolls ---------- */
+  /* ---------- Header (showcase v2): solid once scrolled, hides while scrolling down,
+     turns light over dark sheets (probe the element under the header's middle) ---------- */
   const header = document.querySelector('[data-header]');
-  const onScroll = () => header?.toggleAttribute('data-scrolled', window.scrollY > 8);
-  window.addEventListener('scroll', onScroll, { passive: true });
+  const DARK = '.sheet--blue, .sheet--dark, .stall, .final, .footer, [data-dark]';
+  let lastY = window.scrollY, ticking = false;
+  function onScroll() {
+    ticking = false;
+    if (!header) return;
+    const y = window.scrollY;
+    header.toggleAttribute('data-scrolled', y > 8);
+    const keep = menuOpen || header.contains(document.activeElement);
+    header.toggleAttribute('data-hidden', !keep && y > lastY + 2 && y > 400);
+    if (y < lastY - 2) header.removeAttribute('data-hidden');
+    lastY = y;
+    const probe = header.offsetHeight / 2;
+    const under = document.elementsFromPoint(window.innerWidth / 2, probe).find((el) => !header.contains(el));
+    header.toggleAttribute('data-on-dark', Boolean(under?.closest(DARK)) && y > 8);
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  header?.addEventListener('focusin', () => header.removeAttribute('data-hidden'));
   onScroll();
+
+  /* ---------- Sparks: a short burst from the centre of `el` (decorative; skipped for reduced motion) ---------- */
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function burst(el, count = 16, host = el) {
+    if (!el || reducedMotion.matches || !Element.prototype.animate) return;
+    const h = host.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2 - h.left, cy = r.top + r.height / 2 - h.top;
+    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement('i');
+      s.setAttribute('aria-hidden', 'true');
+      const size = 10 + Math.random() * 18;
+      Object.assign(s.style, { position: 'absolute', left: `${cx}px`, top: `${cy}px`, width: `${size}px`, height: `${size}px`, pointerEvents: 'none', zIndex: 5,
+        background: 'url("assets/img/spark.svg") center / contain no-repeat' });
+      host.append(s);
+      const a = (Math.PI * 2 * i) / count + Math.random() * 0.4, d = 80 + Math.random() * 160;
+      s.animate([
+        { transform: 'translate(-50%,-50%) scale(.2) rotate(0deg)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${Math.cos(a) * d}px), calc(-50% + ${Math.sin(a) * d}px)) scale(1) rotate(${Math.random() * 180}deg)`, opacity: 0 },
+      ], { duration: 700 + Math.random() * 400, easing: 'cubic-bezier(.22,1,.36,1)' }).onfinish = () => s.remove();
+    }
+  }
 
   /* ---------- Language ---------- */
   // Delegated: language buttons can be rendered later (console account menu)
@@ -198,5 +238,5 @@ TN.ui = (() => {
     return target;
   }
 
-  return { icon, esc, setMenu, setupModal, parseContact, focusIsFree, itemView, fromLine, segmented, radioKeys };
+  return { icon, esc, setMenu, setupModal, parseContact, focusIsFree, itemView, fromLine, segmented, radioKeys, burst };
 })();

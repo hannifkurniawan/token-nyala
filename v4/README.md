@@ -12,7 +12,7 @@ semua angka: [`docs/v4/services-and-pricing.md`](../docs/v4/services-and-pricing
 
 | Halaman | Isi |
 |---|---|
-| `index.html` | Landing 14 section: hero, cerita macet, **Mau bikin apa?** (5 resep), cara kerja, semua layanan, satu saldo, template, AI + katalog, contoh, aman untuk pemula, belajar, tim + konsultasi, FAQ, CTA · chat Nala · motion GSAP/Lenis |
+| `index.html` | Landing 15 section bergaya showcase v2: hero, cerita macet (scroll), **Mau bikin apa?** (5 resep), cara kerja (kartu geser), semua layanan, satu saldo, template, model AI + katalog, pakai di tool, contoh, aman untuk pemula, belajar, tim + konsultasi, FAQ, CTA saklar raksasa · chat Nala · motion GSAP/Lenis |
 | `harga.html` | Kalkulator resep (state di `?resep=&s=`), mulai dari, AI (12 model + 3 satuan), detail tiap layanan, saldo & tagihan, FAQ harga |
 | `app.html` | Console mock: masuk, beranda, **wizard Buat** (4 langkah), proyek (ganti ukuran, hentikan, log…), AI (coba AI, pemakaian, API key), saldo + isi saldo, layanan lain, belajar, bantuan, jam simulasi |
 

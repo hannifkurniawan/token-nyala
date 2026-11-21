@@ -66,21 +66,27 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 | Kunci | ID | EN |
 |---|---|---|
 | hero.kicker | Untuk ide, prototype, dan proyekmu | For your ideas, prototypes, and projects |
-| hero.title | Idemu **nyala**, dari prompt sampai online. | Your idea, switched **on** — from prompt to online. |
+| hero.t1a · hero.t1b (baris 1, saklar di tengah) | Idemu ⏻ nyala, | Your idea ⏻ on, |
+| hero.t2 · hero.t3 (baris 2–3, biru) | dari prompt / sampai online. | from prompt / to online. |
 | hero.lead | AI untuk membangun, cloud untuk menjalankan. Pilih tujuanmu, kami rangkai layanannya — dibayar dari satu saldo Rupiah. | AI to build it, cloud to run it. Pick your goal and we'll put the services together — all paid from one Rupiah balance. |
 | hero.trust1 | Bayar Rupiah | Pay in Rupiah |
 | hero.trust2 | Tanpa kartu kredit | No credit card |
 | hero.trust3 | Mulai Rp15 rb | From Rp15K |
 | board.prompt | Buat landing page event yang hangat dan simpel | Make a warm, simple event landing page |
 | board.building | Membangun komponen… | Building components… |
-| board.online | Online | Online |
-| board.balance | Saldo Rp55.000 → sisa Rp12.320 | Balance Rp55,000 → Rp12,320 left |
+| board.prompt2 · board.prompt3 (diketik bergantian) | Tambah form pendaftaran peserta · Rapikan tampilan mobile | Add an attendee sign-up form · Polish the mobile view |
+| board.preview | Pratinjau | Preview |
+| board.spent | Terpakai Rp42.680 | Spent Rp42,680 |
+| hero.sticker (cincin berputar, dekor) | PROMPT · BANGUN · ONLINE · NYALA · | PROMPT · BUILD · ONLINE · SWITCH ON · |
+| hero.scroll | Gulir ↓ | Scroll ↓ |
 
-### Cerita macet
-| ID | EN |
-|---|---|
-| **Kode sudah jadi.** Tapi belum bisa dibuka orang lain. | **The code is done.** But nobody else can open it yet. |
-| Di TokenNyala, proyekmu online dalam beberapa ketukan — lengkap dengan alamat sendiri. | On TokenNyala, your project goes online in a few taps — with its own address. |
+### Cerita macet (pita gelap, digerakkan scroll: 0→80% → macet → nyala 100%)
+| Fase | ID | EN |
+|---|---|---|
+| Membangun (story.msgBuild) | Prompt demi prompt, kodenya mulai jadi. | Prompt by prompt, the code takes shape. |
+| Macet di 80% · localhost:5173 · Belum online | **Kode sudah jadi.** Tapi belum bisa dibuka orang lain. | **The code is done.** But nobody else can open it yet. |
+| Nyala 100% · eventku.my.id | Di TokenNyala, proyekmu online dalam beberapa ketukan — lengkap dengan alamat sendiri. | On TokenNyala, your project goes online in a few taps — with its own address. |
+| Tugas (centang) | Buat layout awal halaman · Rapikan tampilan mobile · Tambah form pendaftaran · Online dengan alamat sendiri (story.taskOnline) | First layout · Mobile view · Sign-up form · Online at its own address |
 
 ### Mau bikin apa?
 | Kunci | ID | EN |
@@ -166,6 +172,16 @@ Template: Chatbot WhatsApp — “Balas pesan pelanggan pakai AI.” / “Answer
 | **Ganti ukuran naik atau turun.** Selisihnya dihitung otomatis. | **Size up or down.** We work out the difference for you. |
 | **Saldo habis? Dijeda, bukan dihapus.** Datamu aman 7 hari. | **Out of balance? Paused, not deleted.** Your data is safe for 7 days. |
 | **Diingatkan sebelum habis.** 3 hari sebelum jatuh tempo. | **Reminded before it runs out.** 3 days before renewal. |
+
+### Contoh proyek — sebelum/sesudah (toggle)
+| Sebelum (dicoret) | Sesudah | EN |
+|---|---|---|
+| Macet di localhost | Online dengan alamat sendiri | Stuck on localhost → Online at its own address |
+| Tagihan dalam dolar | Satu saldo Rupiah | Billed in dollars → One Rupiah balance |
+| Tebak-tebak biaya | Total terlihat di depan | Guessing the cost → Total shown up front |
+
+Cara kerja (kartu geser): `how.hint` Geser atau drag kartu → · rel Tujuan / Saldo / Nyala · struk Online-kan Rp15.000 + Alamat web Rp5.000 + Biaya tambahan Rp0 = Rp20.000 · `how.status` Status: nyala.
+Aman kartu 1: `safe.1.q` Kalau berhenti di hari ke-10? · kartu 4: `safe.4.remind` Ingatkan sebelum saldo kurang.
 
 ### CTA akhir
 | ID | EN |

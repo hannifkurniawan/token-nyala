@@ -112,7 +112,7 @@ V4_ALLOW = {
     "Cursor", "Lovable", "Cline", "Continue", "n8n", "OpenClaw", "Dify", "WordPress",
     "model.", "online",  # loanwords that end a heading in both languages
     "Data", "Email", "Log", "QRIS", "Ubuntu 24.04", "GPT Pro · Premium", "Claude Opus · Premium", "E-wallet", "Virtual account", "DANA", "GoPay", "OVO", "DANA, GoPay, OVO",  # console
-    "ayu.my.id",
+    "ayu.my.id", "localhost:5173 ·", "Token", "Nyala",  # landing: stall status, footer wordmark
     "AI", "vCPU", "RAM", "1 GB", "5 GB", "20 GB", "10 GB", "100 GB", "1 TB", "2 TB", "4 TB", "512 MB", "2 GB", "4 GB", "8 GB",
     "40 GB", "80 GB", "160 GB", "0,5", ".my.id", ".biz.id", ".web.id", ".id", ".com", ".co.id", "Template", "Bonus", "Model",
 }

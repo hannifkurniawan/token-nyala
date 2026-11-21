@@ -1,93 +1,215 @@
-/* TokenNyala v4 — landing page rendering. Every number comes from TN.data (rule 9). */
+/* TokenNyala v4 — landing page rendering (showcase v2 components). Every number comes from TN.data (rule 9). */
 (() => {
   'use strict';
   const D = TN.data;
   const I = TN.i18n;
   const { t, rp, rpK, num } = I;
-  const { icon, esc, itemView, fromLine } = TN.ui;
+  const { icon, esc, itemView, fromLine, burst } = TN.ui;
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const state = { recipe: D.RECIPES[0].id };
 
   /* ---------- Links into the console (information-architecture §5) ---------- */
   const startHref = (id) => (D.recipe(id).aiOnly ? 'app.html#/ai?isi=1' : `app.html#/buat?resep=${id}`);
   const calcHref = (id) => `harga.html?resep=${id}#kalkulator`;
+  /** 'Rp34 rb' → '<small>pre Rp</small>34 rb' (big price; textContent stays 'Rp34 rb') */
+  const bigRp = (n, pre = '') => { const k = rpK(n); return `<small>${esc(pre)}Rp</small>${esc(k.slice(2))}`; };
 
-  /* ---------- Hero, story, board ---------- */
+  /* ---------- Hero: board numbers, typing prompt, inline switch ---------- */
   function renderHero() {
     const s = D.heroScenario();
-    document.querySelectorAll('[data-trust-from]').forEach((el) => { el.textContent = t('hero.trust3', { rp: rpK(D.SIZES.coba.price) }); });
-    document.querySelectorAll('[data-board-balance]').forEach((el) => { el.textContent = t('board.balance', { a: rp(s.balance), b: rp(s.left) }); });
-    document.querySelectorAll('[data-domain]').forEach((el) => { el.textContent = D.HERO.domain; });
+    $$('[data-trust-from]').forEach((el) => { el.textContent = t('hero.trust3', { rp: rpK(D.SIZES.coba.price) }); });
+    $$('[data-board-left]').forEach((el) => { el.textContent = rp(s.left); });
+    $$('[data-board-spent]').forEach((el) => { el.textContent = t('board.spent', { rp: rp(s.spent) }); });
+    $$('[data-board-meter]').forEach((el) => el.style.setProperty('--v', (s.left / s.balance).toFixed(3)));
+    $$('[data-domain]').forEach((el) => { el.textContent = D.HERO.domain; });
   }
 
-  /* ---------- Recipe chips (radiogroup, arrow keys; docs/v4/technical-spec.md §7) ---------- */
-  const chipsRoot = document.querySelector('[data-recipe-chips]');
-  const card = document.querySelector('[data-recipe-card]');
-  const live = document.querySelector('[data-recipe-live]');
+  const PROMPTS = ['board.prompt', 'board.prompt2', 'board.prompt3'];
+  const typeEl = $('[data-type-prompt]');
+  if (typeEl && !reduced) { // type, pause, delete, next prompt (showcase v2)
+    let pi = 0, ci = 0, deleting = false;
+    const tick = () => {
+      const text = t(PROMPTS[pi % PROMPTS.length]);
+      if (!deleting) {
+        ci = Math.min(ci + 1, text.length);
+        typeEl.textContent = text.slice(0, ci);
+        if (ci >= text.length) { deleting = true; return setTimeout(tick, 2200); }
+        return setTimeout(tick, 45 + Math.random() * 50);
+      }
+      ci -= 1;
+      typeEl.textContent = text.slice(0, Math.max(ci, 0));
+      if (ci <= 0) { deleting = false; pi += 1; return setTimeout(tick, 350); }
+      return setTimeout(tick, 22);
+    };
+    setTimeout(() => { ci = 0; deleting = false; tick(); }, 1400);
+  }
+
+  const heroSwitch = $('[data-hero-switch]');
+  heroSwitch?.addEventListener('click', () => {
+    const on = !heroSwitch.hasAttribute('data-on');
+    heroSwitch.toggleAttribute('data-on', on);
+    if (on) burst(heroSwitch, 12, heroSwitch.closest('.hero'));
+  });
+  // Static ON without motion (reduced motion, or GSAP missing); motion.js switches it on with a burst.
+  if (reduced) heroSwitch?.setAttribute('data-on', '');
+  window.addEventListener('load', () => { if (!document.documentElement.classList.contains('motion-ok')) heroSwitch?.setAttribute('data-on', ''); });
+
+  /* ---------- Stall story: build to 80% → stuck on localhost → switch on → 100% online ---------- */
+  const stall = $('[data-stall]');
+  let stallWasOn = true;
+  function renderStall(p) {
+    if (!stall) return;
+    const fill = p < 0.5 ? (p / 0.5) * 0.8 : p < 0.74 ? 0.8 : 0.8 + Math.min(1, (p - 0.74) / 0.2) * 0.2;
+    const phase = p < 0.52 ? 'build' : p < 0.7 ? 'stall' : 'on';
+    if (stall.dataset.phase !== phase) stall.dataset.phase = phase;
+    $('[data-stall-fill]', stall).style.setProperty('--f', fill.toFixed(4));
+    $('[data-stall-pct]', stall).textContent = Math.round(fill * 100);
+    $$('[data-stall-tasks] li', stall).forEach((li) => li.toggleAttribute('data-done', fill + 0.001 >= parseFloat(li.dataset.at)));
+    const on = phase === 'on', sw = $('[data-stall-switch]', stall);
+    sw.toggleAttribute('data-on', on);
+    if (on && !stallWasOn) burst(sw, 12);
+    stallWasOn = on;
+  }
+  renderStall(1); // complete story at rest (no JS motion / reduced motion)
+
+  /* ---------- How it works: art + horizontal scroller (drag, wheel, buttons, rail) ---------- */
+  function renderHow() {
+    const chips = $('[data-how-chips]');
+    if (chips) chips.innerHTML = ['portofolio', 'chatbot-wa', 'otomasi-tim'].map((id, i) => `<span class="chip-art ${i === 0 ? 'chip-art--on' : ''}">${esc(t(`recipe.short.${id}`))}</span>`).join('');
+    const rc = $('[data-how-receipt]');
+    if (rc) {
+      const host = D.SIZES[D.HERO.size].price, dom = D.DOMAINS[D.HERO.ext].first;
+      rc.innerHTML = [[t('wallet.line.hosting'), rp(host)], [t('wallet.line.domain'), rp(dom)], [t('how.fee'), rp(0)], [t('ex.total'), rp(host + dom)]]
+        .map(([a, b]) => `<p><span>${esc(a)}</span><b>${esc(b)}</b></p>`).join('');
+    }
+  }
+  (function initSteps() {
+    const track = $('[data-steps-track]');
+    if (!track) return;
+    const prev = $('[data-steps-prev]'), next = $('[data-steps-next]'), rail = $('[data-steps-rail]');
+    const maxScroll = () => track.scrollWidth - track.clientWidth;
+    const update = () => {
+      const max = maxScroll(), p = max > 0 ? track.scrollLeft / max : 0;
+      rail?.style.setProperty('--p', p.toFixed(3));
+      if (prev) prev.disabled = track.scrollLeft <= 4;
+      if (next) next.disabled = track.scrollLeft >= max - 4;
+    };
+    const stepWidth = () => { const s = $('.step', track); return s ? s.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 0) : track.clientWidth; };
+    const go = (dir) => track.scrollBy({ left: dir * stepWidth(), behavior: reduced ? 'auto' : 'smooth' });
+    prev?.addEventListener('click', () => go(-1));
+    next?.addEventListener('click', () => go(1));
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    track.addEventListener('keydown', (e) => {
+      if (maxScroll() <= 0) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    });
+    // Horizontal wheel / trackpad stays inside the track (smooth scroll must not swallow it)
+    track.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
+        e.stopPropagation();
+        if (e.shiftKey && !e.deltaX && maxScroll() > 0) { e.preventDefault(); track.scrollLeft += e.deltaY; }
+      }
+    }, { passive: false });
+    // Mouse drag (touch swipes natively)
+    let startX = 0, startLeft = 0, dragging = false, moved = false;
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || maxScroll() <= 0) return;
+      dragging = true; moved = false; startX = e.clientX; startLeft = track.scrollLeft;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (!moved && Math.abs(dx) > 4) { moved = true; track.setAttribute('data-dragging', ''); }
+      if (moved) { e.preventDefault(); track.scrollLeft = startLeft - dx; }
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (!moved) return;
+      const before = track.scrollLeft, w = stepWidth(), dx = startLeft - before;
+      track.removeAttribute('data-dragging');
+      track.scrollLeft = before; // re-enabling snap jumps; animate from where the drag ended instead
+      let idx = Math.round(before / w);
+      if (Math.abs(dx) > 60) idx = dx < 0 ? Math.floor(startLeft / w + 0.01) + 1 : Math.ceil(startLeft / w - 0.01) - 1;
+      track.scrollTo({ left: Math.max(0, Math.min(maxScroll(), idx * w)), behavior: reduced ? 'auto' : 'smooth' });
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+    track.addEventListener('dragstart', (e) => e.preventDefault());
+    update();
+  })();
+
+  /* ---------- Recipe: intent control (radiogroup, arrow keys; technical-spec §7) + package sheet ---------- */
+  const chipsRoot = $('[data-recipe-chips]');
+  const card = $('[data-recipe-card]');
+  const live = $('[data-recipe-live]');
+  const recipeHint = (r) => (r.aiOnly ? t('hero.trust3', { rp: rpK(D.AI_ONLY[0].amount) }) : `≈ ${rpK(D.recipeTotals(r.items).perMonth)}${t('label.perMonth')}`);
 
   function renderChips() {
     if (!chipsRoot) return;
-    chipsRoot.innerHTML = D.RECIPES.map((r) => {
+    chipsRoot.innerHTML = '<span class="intent__marker" aria-hidden="true"></span>' + D.RECIPES.map((r) => {
       const on = r.id === state.recipe;
-      return `<button type="button" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-recipe="${r.id}" aria-controls="recipe-card"
-        class="min-h-11 shrink-0 rounded-full border-[1.5px] border-white/45 px-4 font-bold whitespace-nowrap transition-colors hover:border-white aria-checked:border-xl-yellow aria-checked:bg-xl-yellow aria-checked:text-xl-dark">${esc(t(`recipe.short.${r.id}`))}</button>`;
+      return `<button type="button" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-recipe="${r.id}" aria-controls="recipe-card" class="intent__tab">
+        <span class="intent__label">${esc(t(`recipe.short.${r.id}`))}</span><span class="intent__hint">${esc(recipeHint(r))}</span></button>`;
     }).join('');
+    syncMarker();
   }
+  function syncMarker() { chipsRoot?.style.setProperty('--i', D.RECIPES.findIndex((r) => r.id === state.recipe)); }
 
-  function costRow(label, value) {
-    return `<div class="flex items-baseline justify-between gap-4"><dt class="text-muted">${esc(label)}</dt><dd class="num font-bold">${esc(value)}</dd></div>`;
-  }
+  const spec = (dt, dd) => `<div><dt>${esc(dt)}</dt><dd>${dd}</dd></div>`;
+  const payCues = '<ul class="pay-cues text-white/80"><li>QRIS</li><li>E-wallet</li><li>Virtual account</li></ul>';
 
   function renderCard() {
     if (!card) return;
     const r = D.recipe(state.recipe);
     const name = t(`recipe.name.${r.id}`);
-    const head = `
-      <h3 id="recipe-name" class="text-[1.35rem] leading-tight font-extrabold tracking-tight">${esc(name)}</h3>
-      <p class="mt-1.5 text-lead-ink">${esc(t(`recipe.desc.${r.id}`))}</p>`;
-
     if (r.aiOnly) {
       card.innerHTML = `
-        <div class="p-5 sm:p-8">${head}
-          <p class="mt-6 font-mono text-[.75rem] tracking-[.1em] text-muted uppercase">${esc(t('recipe.aiOnlyTitle'))}</p>
-          <ul class="mt-3 grid grid-cols-1 gap-2">${D.AI_ONLY.map((row) => `
-            <li class="flex items-center gap-3 rounded-control bg-paper px-4 py-3 font-bold">
-              ${icon('sparkles', 'icon text-xl-blue')}<span>${esc(t('recipe.aiOnlyRow', { rp: rp(row.amount), range: row.range }))}</span></li>`).join('')}
-          </ul>
-          <a class="btn btn--lg mt-6 w-full sm:w-auto" href="${startHref(r.id)}">${esc(t('recipe.aiOnlyCta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
+        <div class="pkg-sheet__main">
+          <p class="pkg-sheet__kicker">${esc(t('recipe.aiOnlyTitle'))}</p>
+          <h3 id="recipe-name" class="pkg-sheet__name">${esc(name)}</h3>
+          <p class="pkg-sheet__price">${bigRp(D.AI_ONLY[0].amount, t('recipe.from') + ' ')}</p>
+          <p class="pkg-sheet__line">${esc(t(`recipe.desc.${r.id}`))}</p>
+        </div>
+        <div class="pkg-sheet__side">
+          <dl class="pkg-specs" aria-label="${esc(t('recipe.itemsAria'))}">${D.AI_ONLY.map((row) => spec(rp(row.amount), esc(t('recipe.sessions', { range: row.range })))).join('')}</dl>
+          <a class="btn btn--yellow btn--xl w-full" data-magnetic href="${startHref(r.id)}">${esc(t('recipe.aiOnlyCta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
+          ${payCues}
         </div>`;
       return;
     }
-
     const tot = D.recipeTotals(r.items);
     const suggestKey = tot.months === 1 ? 'recipe.suggest.one' : 'recipe.suggest.many';
+    const cover = Math.min(1, tot.firstMonth / (tot.suggest.amount + tot.suggest.bonus));
     card.innerHTML = `
-      <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-1">
-        <div class="@container p-5 sm:p-8">${head}
-          <p class="mt-7 font-mono text-[.75rem] tracking-[.1em] text-muted uppercase">${esc(t('recipe.approx'))}</p>
-          <p class="mt-1 flex flex-wrap items-baseline gap-x-2 leading-none">
-            <span class="num text-[clamp(2.75rem,15cqi,4.75rem)] font-extrabold whitespace-nowrap">≈ ${esc(rpK(tot.perMonth))}</span>
-            <span class="text-lg font-bold text-muted">${esc(t('label.perMonth'))}</span></p>
-          ${tot.firstMonth > tot.perMonth ? `<p class="mt-3 text-[.95rem] text-lead-ink">${esc(t('recipe.firstMonth', { rp: rp(tot.firstMonth) }))}</p>` : ''}
-          <dl class="mt-6 grid grid-cols-1 gap-2 border-t border-line pt-4 text-[.95rem]" aria-label="${esc(t('recipe.costsAria'))}">
-            ${costRow(t('cost.fixed'), rp(tot.fixed))}
-            ${costRow(t('cost.usage'), '±' + rp(tot.usage))}
-            ${tot.yearly ? costRow(t('cost.yearly'), rp(tot.yearly)) : ''}
-          </dl>
+      <div class="pkg-sheet__main">
+        <p class="pkg-sheet__kicker">${esc(t('recipe.approx'))} <span aria-hidden="true">→</span> ${esc(t(`recipe.short.${r.id}`))}</p>
+        <h3 id="recipe-name" class="pkg-sheet__name">${esc(name)}</h3>
+        <p class="pkg-sheet__price">${bigRp(tot.perMonth, '≈ ')}<em>${esc(t('label.perMonth'))}</em></p>
+        <p class="pkg-sheet__line">${esc(t(`recipe.desc.${r.id}`))}</p>
+        ${tot.firstMonth > tot.perMonth ? `<p class="pkg-sheet__note">${esc(t('recipe.firstMonth', { rp: rp(tot.firstMonth) }))}</p>` : ''}
+        <div class="pkg-sheet__meter">
+          <div class="meter meter--xl" style="--v:${cover.toFixed(3)}" aria-hidden="true"><i></i><span class="meter__spark"></span></div>
+          <p><strong>${esc(t(suggestKey, { rp: rp(tot.suggest.amount), n: tot.months }))}</strong> · ${esc(t('recipe.suggestNote', { rp: rp(tot.suggest.amount + tot.suggest.bonus) }))}</p>
         </div>
-        <div class="border-t border-line bg-paper p-5 sm:p-8 md:border-t-0 md:border-l lg:border-t lg:border-l-0">
-          <ul class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-x-6" aria-label="${esc(t('recipe.itemsAria'))}">${r.items.map((it) => {
-            const v = itemView(it);
-            return `<li class="flex gap-3">
-              <span class="grid size-10 shrink-0 place-items-center rounded-control bg-white text-xl-blue ring-1 ring-line">${icon(v.icon, 'icon size-5')}</span>
-              <span class="min-w-0"><span class="block font-bold leading-snug">${esc(v.name)}</span>
-                <span class="block text-[.92rem] text-lead-ink">${esc(v.detail)}${v.estimate ? ` <span class="ml-1 rounded-full bg-xl-sky/25 px-2 py-0.5 font-mono text-[.7rem] text-xl-dark uppercase">${esc(t('label.estimate'))}</span>` : ''}</span></span>
-            </li>`;
-          }).join('')}</ul>
-          <p class="mt-6 inline-flex rounded-2xl bg-xl-yellow px-4 py-2 font-bold">${esc(t(suggestKey, { rp: rp(tot.suggest.amount), n: tot.months }))}</p>
-          <p class="mt-2 text-[.88rem] text-muted">${esc(t('recipe.suggestNote', { rp: rp(tot.suggest.amount + tot.suggest.bonus) }))}</p>
-          <a class="btn btn--lg mt-6 w-full" href="${startHref(r.id)}">${esc(t('recipe.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
-          <a class="mt-2 inline-flex min-h-11 items-center gap-1 font-bold text-xl-blue underline decoration-xl-yellow decoration-2 underline-offset-4" href="${calcHref(r.id)}">${esc(t('recipe.edit'))}${icon('arrow-up-right', 'icon size-4')}</a>
+      </div>
+      <div class="pkg-sheet__side">
+        <dl class="pkg-specs" aria-label="${esc(t('recipe.itemsAria'))}">${r.items.map((it) => {
+          const v = itemView(it);
+          return spec(v.name, esc(v.detail) + (v.estimate ? ` <span class="ml-1 rounded-full bg-white/15 px-2 py-0.5 font-mono text-[.7rem] font-medium uppercase">${esc(t('label.estimate'))}</span>` : ''));
+        }).join('')}</dl>
+        <dl class="pkg-specs pkg-specs--cost" aria-label="${esc(t('recipe.costsAria'))}">
+          ${spec(t('cost.fixed'), esc(rp(tot.fixed)))}${spec(t('cost.usage'), esc('±' + rp(tot.usage)))}${tot.yearly ? spec(t('cost.yearly'), esc(rp(tot.yearly))) : ''}
+        </dl>
+        <a class="btn btn--yellow btn--xl w-full" data-magnetic href="${startHref(r.id)}">${esc(t('recipe.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
+        <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+          <a class="link-arrow" href="${calcHref(r.id)}">${esc(t('recipe.edit'))}${icon('arrow-up-right', 'icon size-4')}</a>${payCues}
         </div>
       </div>`;
   }
@@ -100,7 +222,7 @@
   }
 
   function syncStartLinks() {
-    document.querySelectorAll('[data-start]').forEach((a) => { a.href = startHref(state.recipe); });
+    $$('[data-start]').forEach((a) => { a.href = startHref(state.recipe); });
   }
 
   function selectRecipe(id, { focus = false } = {}) {
@@ -111,7 +233,9 @@
       b.tabIndex = on ? 0 : -1;
       if (on && focus) { b.focus(); b.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
     });
+    syncMarker();
     renderCard();
+    if (card && !reduced) { card.removeAttribute('data-swap'); void card.offsetWidth; card.setAttribute('data-swap', ''); }
     announce();
     syncStartLinks();
   }
@@ -129,57 +253,58 @@
     selectRecipe(ids[(next + ids.length) % ids.length], { focus: true });
   });
 
-  /* ---------- All services ---------- */
+  /* ---------- All services: index rows per group ---------- */
   function renderServices() {
-    const root = document.querySelector('[data-services]');
+    const root = $('[data-services]');
     if (!root) return;
-    root.innerHTML = D.GROUPS.map((g) => `
-      <section class="grid grid-cols-1 gap-4 border-t-2 border-xl-dark pt-5 lg:grid-cols-4 lg:gap-6" aria-labelledby="svc-g-${g.id}">
-        <h3 id="svc-g-${g.id}" class="font-mono text-[.82rem] tracking-[.1em] text-xl-dark uppercase">${esc(t(`svc.group.${g.id}`))}</h3>
-        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-3 lg:grid-cols-3">${g.services.map((id) => {
+    root.innerHTML = D.GROUPS.map((g, gi) => `
+      <section class="svc-group" aria-labelledby="svc-g-${g.id}">
+        <h3 id="svc-g-${g.id}" class="svc-group__head"><span><span class="text-muted">(0${gi + 1})</span> ${esc(t(`svc.group.${g.id}`))}</span></h3>
+        <ul class="row-index">${g.services.map((id) => {
           const [main, sub] = fromLine(id);
-          return `<li class="card flex gap-4 p-4 sm:flex-col sm:gap-3 sm:p-5" id="svc-${id}">
-            <span class="grid size-11 shrink-0 place-items-center rounded-control bg-paper text-xl-blue">${icon(D.ICONS[id])}</span>
-            <div class="flex min-w-0 flex-1 flex-col gap-2 sm:gap-3">
-              <div><h4 class="text-[1.12rem] leading-snug font-extrabold tracking-tight">${esc(t(`svc.${id}.name`))}</h4>
-                <p class="mt-0.5 font-mono text-[.75rem] text-muted">${esc(t(`svc.${id}.tech`))}</p></div>
-              <p class="text-[.95rem] text-lead-ink">${esc(t(`svc.${id}.desc`))}</p>
-              <p class="mt-auto font-bold sm:border-t sm:border-line sm:pt-3">${esc(main)}${sub ? `<span class="block text-[.88rem] font-medium text-muted">${esc(sub)}</span>` : ''}</p>
-            </div>
-          </li>`;
+          return `<li class="irow svc-row" id="svc-${id}"><div class="irow__in">
+            <span class="irow__icon" aria-hidden="true">${icon(D.ICONS[id])}</span>
+            <div class="min-w-0"><h4 class="irow__name text-[clamp(1.4rem,calc(2.8*var(--u)),2.6rem)]">${esc(t(`svc.${id}.name`))}</h4>
+              <p class="irow__small mt-1.5">${esc(t(`svc.${id}.tech`))}</p></div>
+            <p class="svc-row__desc irow__meta text-[1rem]">${esc(t(`svc.${id}.desc`))}</p>
+            <p class="svc-row__price"><span class="irow__big block text-[clamp(1.1rem,calc(1.7*var(--u)),1.5rem)] whitespace-normal tracking-[-.02em]">${esc(main)}</span>${sub ? `<span class="irow__small mt-1 block">${esc(sub)}</span>` : ''}</p>
+          </div></li>`;
         }).join('')}</ul>
       </section>`).join('');
   }
 
-  /* ---------- One balance: example wallet (services-and-pricing §7) ---------- */
+  /* ---------- One balance: mini dashboard (services-and-pricing §7) ---------- */
   function renderWallet() {
-    const root = document.querySelector('[data-wallet]');
+    const root = $('[data-wallet]');
     if (!root) return;
     const s = D.heroScenario();
     const label = { hosting: t('wallet.line.hosting'), domain: t('wallet.line.domain') };
     root.innerHTML = `
-      <p class="font-mono text-[.75rem] tracking-[.1em] text-muted uppercase">${esc(t('wallet.card'))}</p>
-      <p class="mt-1 font-bold">${esc(t('wallet.in', { rp: rp(D.HERO.topup.amount), bonus: rp(D.HERO.topup.bonus) }))}</p>
-      <div class="mt-5 flex items-end justify-between gap-4">
-        <span class="text-muted">${esc(t('wallet.balance'))}</span>
-        <span class="num text-[clamp(2.25rem,6vw,3.25rem)] leading-none font-extrabold">${esc(rp(s.balance))}</span></div>
-      <div class="meter mt-4" style="--v:${(s.left / s.balance).toFixed(3)}" aria-hidden="true"><i></i></div>
-      <ul class="mt-5 grid grid-cols-1 gap-3">${s.lines.map((l) => `
-        <li class="flex items-center gap-3">
-          <span class="grid size-9 shrink-0 place-items-center rounded-control bg-paper text-xl-blue">${icon(D.ICONS[l.svc], 'icon size-5')}</span>
-          <span class="min-w-0 flex-1">${esc(l.svc === 'ai' ? t('wallet.line.ai', { n: l.qty }) : label[l.svc])}</span>
-          <span class="num font-bold whitespace-nowrap">${esc(rp(-l.amount))}</span></li>`).join('')}
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <span class="tier tier--premium">${esc(t('board.note'))}</span>
+        <span class="font-mono text-[.78rem] text-muted">${esc(t('wallet.card'))}</span></div>
+      <div class="grid gap-1.5">
+        <p class="font-mono text-[.78rem] text-muted">${esc(t('wallet.in', { rp: rp(D.HERO.topup.amount), bonus: rp(D.HERO.topup.bonus) }))}</p>
+        <p class="flex items-end justify-between gap-4"><span class="font-bold">${esc(t('wallet.balance'))}</span>
+          <strong class="num text-[clamp(2.2rem,calc(4*var(--u)),3.4rem)] leading-none font-extrabold">${esc(rp(s.balance))}</strong></p>
+        <div class="meter mt-2" style="--v:${(s.left / s.balance).toFixed(3)}" aria-hidden="true"><i></i></div>
+      </div>
+      <ul class="grid grid-cols-1">${s.lines.map((l) => `
+        <li class="flex items-center gap-3 border-t border-line py-3">
+          <span class="grid size-9 shrink-0 place-items-center rounded-full bg-paper text-xl-blue">${icon(D.ICONS[l.svc], 'icon size-5')}</span>
+          <span class="min-w-0 flex-1 font-bold">${esc(l.svc === 'ai' ? t('wallet.line.ai', { n: l.qty }) : label[l.svc])}</span>
+          <span class="num font-mono whitespace-nowrap">${esc(rp(-l.amount))}</span></li>`).join('')}
       </ul>
-      <div class="mt-5 flex items-baseline justify-between gap-4 border-t-2 border-xl-dark pt-4">
+      <div class="flex items-baseline justify-between gap-4 border-t-2 border-xl-dark pt-4">
         <span class="font-bold">${esc(t('wallet.left'))}</span>
-        <span class="num text-2xl font-extrabold text-teal-ink">${esc(rp(s.left))}</span></div>
-      <p class="mt-2 text-[.88rem] text-muted">${esc(t('wallet.leftNote'))}</p>`;
+        <span class="num text-[1.8rem] leading-none font-extrabold text-teal-ink">${esc(rp(s.left))}</span></div>
+      <p class="text-[.88rem] text-muted">${esc(t('wallet.leftNote'))}</p>`;
   }
 
   /* ---------- Templates (services-and-pricing §5.4) ---------- */
   const TEMPLATE_ORDER = ['wa-bot', 'n8n', 'agent', 'dify', 'wordpress'];
   function renderTemplates() {
-    const root = document.querySelector('[data-templates]');
+    const root = $('[data-templates]');
     if (!root) return;
     root.innerHTML = TEMPLATE_ORDER.map((id, i) => {
       const d = D.TEMPLATES[id].def;
@@ -187,21 +312,44 @@
       const cost = d.unit
         ? t('tpl.costAi', { rp: rpK(D.templateCost(id)), qty: t(`unit.${d.unit}`, { n: num(d.qty) }) })
         : t('tpl.cost', { rp: rpK(D.templateCost(id)) });
-      return `<li class="card flex flex-col gap-4 p-5 sm:p-6 ${i < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}" data-reveal>
+      return `<li class="tpl-card ${i < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}" data-reveal>
         <div class="flex items-start justify-between gap-3">
-          <span class="grid size-12 place-items-center rounded-control bg-xl-blue text-white">${icon(D.TEMPLATE_ICONS[id])}</span>
-          <span class="rounded-full bg-paper px-3 py-1.5 font-mono text-[.72rem] text-xl-dark">${esc(t('tpl.min', { size: t(`size.${D.templateMin(id)}`) }))}</span>
+          <span class="grid size-14 place-items-center rounded-2xl ${['bg-xl-blue text-white', 'bg-xl-dark text-xl-yellow', 'bg-xl-sky', 'bg-xl-teal', 'bg-xl-yellow'][i]}">${icon(D.TEMPLATE_ICONS[id], 'icon size-7')}</span>
+          <span class="tpl-card__n" aria-hidden="true">0${i + 1} / 0${TEMPLATE_ORDER.length}</span>
         </div>
-        <div><h3 class="text-[1.3rem] leading-tight font-extrabold tracking-tight">${esc(name)}</h3>
-          <p class="mt-0.5 font-mono text-[.75rem] text-muted">${esc(t(`tpl.${id}.tech`))}</p></div>
+        <div><h3>${esc(name)}</h3><p class="mt-1.5 font-mono text-[.75rem] text-muted">${esc(t(`tpl.${id}.tech`))}</p></div>
         <p class="text-lead-ink">${esc(t(`tpl.${id}.desc`))}</p>
-        <p class="mt-auto border-t border-line pt-3 font-bold">${esc(cost)}</p>
-        <a class="btn btn--ghost w-full" href="app.html#/buat?template=${id}" aria-label="${esc(t('tpl.ctaAria', { name }))}">${esc(t('tpl.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
+        <p class="w-fit rounded-full bg-paper px-3 py-1.5 font-mono text-[.72rem]">${esc(t('tpl.min', { size: t(`size.${D.templateMin(id)}`) }))}</p>
+        <p class="mt-auto border-t border-line pt-4 text-[1.1rem] font-extrabold tracking-[-.02em]">${esc(cost)}</p>
+        <a class="btn btn--outline-dark w-full" href="app.html#/buat?template=${id}" aria-label="${esc(t('tpl.ctaAria', { name }))}">${esc(t('tpl.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>
       </li>`;
     }).join('');
   }
 
-  /* ---------- AI models (v3 cards) + catalogue dialog ---------- */
+  /* ---------- AI model index (showcase .mrow) ---------- */
+  function modelRow(m) {
+    return `<li class="irow mrow"><details>
+      <summary class="irow__in">
+        <span class="irow__icon" aria-hidden="true"><img src="assets/img/models/${D.PROVIDER_ICON[m.provider]}.svg" alt="" width="26" height="26" class="size-[26px]" loading="lazy" decoding="async"></span>
+        <span class="irow__name">${esc(m.name)}</span>
+        <span class="irow__meta">${esc([m.provider, ...m.uses.map((u) => t(`use.${u}`))].join(' · '))}</span>
+        <span class="mrow__tier tier tier--${m.tier}">${esc(t(`tier.${m.tier}`))}</span>
+        <span class="mrow__per"><strong class="irow__big block">≈ ${m.per10k}</strong><span class="irow__small">${esc(t('model.unit', { rp: rp(10000) }))}</span></span>
+        <span class="irow__more">${esc(t('model.rates'))}</span>
+      </summary>
+      <div class="irow__rates">
+        <p>${esc(t('rate.caption'))}</p>
+        <dl><div><dt>${esc(t('rate.input'))}</dt><dd>${esc(t('rate.unit', { n: num(m.in) }))}</dd></div>
+          <div><dt>${esc(t('rate.output'))}</dt><dd>${esc(t('rate.unit', { n: num(m.out) }))}</dd></div>
+          <div><dt>${esc(t('rate.context'))}</dt><dd>${esc(t('rate.ctx', { n: compact(m.ctx) }))}</dd></div></dl>
+      </div></details></li>`;
+  }
+  function renderModelRows() {
+    const root = $('[data-models]');
+    if (root) root.innerHTML = D.PREVIEW_MODELS.map((id) => modelRow(D.MODELS.find((m) => m.id === id))).join('');
+  }
+
+  /* ---------- Catalogue dialog (v3 model cards) + API config ---------- */
   const TIER_STYLE = { hemat: 'bg-xl-teal text-xl-dark', seimbang: 'bg-xl-sky text-xl-dark', premium: 'bg-xl-yellow text-xl-dark' };
   const compact = (n) => (n >= 1e6 ? num(n / 1e6) + (I.lang === 'en' ? 'M' : ' jt') : num(n / 1e3) + (I.lang === 'en' ? 'K' : ' rb'));
   function modelCard(m, { dark = false, extra = false } = {}) {
@@ -228,9 +376,7 @@
           </dl></div>
       </details></article></li>`;
   }
-  function renderModels() {
-    const root = document.querySelector('[data-models]');
-    if (root) root.innerHTML = D.PREVIEW_MODELS.map((id, i) => modelCard(D.MODELS.find((m) => m.id === id), { dark: true, extra: i >= 3 })).join('');
+  function renderApi() {
     document.querySelectorAll('[data-api-url]').forEach((el) => { el.textContent = D.API.baseUrl; });
     document.querySelectorAll('[data-api-key]').forEach((el) => { el.textContent = D.API.demoKey.slice(0, 8) + '••••••••' + D.API.demoKey.slice(-4); });
     document.querySelectorAll('[data-copy-url]').forEach((b) => { b.dataset.copy = D.API.baseUrl; });
@@ -309,82 +455,98 @@
   }
   document.querySelectorAll('[data-open-catalog]').forEach((b) => b.addEventListener('click', () => openCatalog(b)));
 
-  /* ---------- Example project (services-and-pricing §7) ---------- */
+  /* ---------- Example project: receipt paper (services-and-pricing §7) + before/after ---------- */
   function renderExample() {
-    const root = document.querySelector('[data-example]');
+    const root = $('[data-example]');
     if (!root) return;
     const x = D.exampleTotals();
     const range = (a, b) => `${rp(a)}–${num(b)}`;
     const href = `app.html#/buat?resep=portofolio&s=${D.serialize([{ svc: 'hosting', size: D.EXAMPLE.size }, { svc: 'domain', ext: D.EXAMPLE.ext }, { svc: 'ai', unit: 'sesi', qty: D.HERO.sessions }])}`;
-    const stage = (ic, title, detail, cost, extra = '') => `<li class="flex gap-3 border-b border-line py-4">
-      <span class="grid size-10 shrink-0 place-items-center rounded-control bg-paper text-xl-blue">${icon(ic, 'icon size-5')}</span>
-      <div class="grid min-w-0 flex-1 grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-x-3">
-        <p class="font-bold">${esc(title)}</p><p class="num font-bold whitespace-nowrap sm:text-right">${esc(cost)}</p>
-        <p class="text-[.92rem] text-lead-ink sm:col-span-2">${esc(detail)}</p><div class="sm:col-span-2">${extra}</div></div></li>`;
-    const tasks = `<details class="group/d mt-1"><summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 text-[.92rem] font-bold text-xl-blue [&::-webkit-details-marker]:hidden">${icon('chevron-right', 'icon size-4 transition-transform group-open/d:rotate-90')}<span>${esc(t('ex.tasksSummary'))}</span></summary>
-      <dl class="mt-1 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 rounded-control bg-paper px-3 py-2.5 text-[.9rem]">${D.EXAMPLE.tasks.map((r, i) => `<dt>${esc(t(`ex.task${i + 1}`))}</dt><dd class="text-right font-mono">${r[0]}–${r[1]}</dd>`).join('')}</dl></details>`;
+    const line = (title, detail, cost, extra = '') => `<li class="border-b border-dashed border-line py-3">
+      <div class="flex items-baseline justify-between gap-3"><span class="font-bold">${esc(title)}</span><span class="num font-mono whitespace-nowrap">${esc(cost)}</span></div>
+      <p class="text-[.92rem] text-lead-ink">${esc(detail)}</p>${extra}</li>`;
+    const tasks = `<details class="group/d"><summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 text-[.92rem] font-bold text-xl-blue [&::-webkit-details-marker]:hidden">${icon('chevron-right', 'icon size-4 transition-transform group-open/d:rotate-90')}<span>${esc(t('ex.tasksSummary'))}</span></summary>
+      <dl class="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 pb-1 text-[.9rem]">${D.EXAMPLE.tasks.map((r, i) => `<dt>${esc(t(`ex.task${i + 1}`))}</dt><dd class="text-right font-mono">${r[0]}–${r[1]}</dd>`).join('')}</dl></details>`;
     root.innerHTML = `
-      <figcaption class="flex flex-wrap items-center justify-between gap-2"><span class="font-extrabold">${esc(t('ex.project'))}</span>
-        <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[.7rem] text-muted uppercase">${esc(t('board.note'))}</span></figcaption>
-      <ol class="mt-2" aria-label="${esc(t('ex.stagesAria'))}">
-        ${stage('sparkles', t('ex.build'), t('ex.buildDetail', { a: x.sessions[0], b: x.sessions[1] }), range(...x.usage), tasks)}
-        ${stage('globe', t('svc.hosting.name'), t('ex.online', { size: t(`size.${D.EXAMPLE.size}`) }), rp(x.hosting))}
-        ${stage('at-sign', t('svc.domain.name'), t('ex.domain', { domain: D.EXAMPLE.domain }), rp(x.domain))}
+      <p class="receipt__head"><span>${esc(t('ex.project'))}</span><span>${esc(t('board.note'))}</span></p>
+      <ol aria-label="${esc(t('ex.stagesAria'))}">
+        ${line(t('ex.build'), t('ex.buildDetail', { a: x.sessions[0], b: x.sessions[1] }), range(...x.usage), tasks)}
+        ${line(t('svc.hosting.name'), t('ex.online', { size: t(`size.${D.EXAMPLE.size}`) }), rp(x.hosting))}
+        ${line(t('svc.domain.name'), t('ex.domain', { domain: D.EXAMPLE.domain }), rp(x.domain))}
       </ol>
-      <div class="mt-4 flex flex-wrap items-baseline justify-between gap-x-4"><span class="text-lg font-extrabold">${esc(t('ex.total'))}</span>
-        <span class="num text-[clamp(1.5rem,4.5vw,2.25rem)] font-extrabold whitespace-nowrap">${esc(range(...x.total))}</span></div>
-      <p class="mt-4 rounded-2xl bg-xl-yellow px-4 py-3 font-bold">${esc(t('ex.verdict', { rp: rp(D.EXAMPLE.topup.amount) }))}</p>
-      <p class="mt-2 text-[.9rem] text-muted">${esc(t('ex.left', { balance: rp(x.balance), a: rp(x.balance - x.total[1]), b: rp(x.balance - x.total[0]) }))}</p>
-      <a class="btn btn--lg mt-5 w-full sm:w-auto" href="${href}">${esc(t('ex.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>`;
+      <p class="receipt__total"><span>${esc(t('ex.total'))}</span><strong>${esc(range(...x.total))}</strong></p>
+      <div><div class="meter" aria-hidden="true"><span class="meter__range" style="--from:${(x.total[0] / x.balance).toFixed(3)};--to:${(x.total[1] / x.balance).toFixed(3)}"></span></div>
+        <p class="mt-2 font-mono text-[.75rem] text-muted">${esc(t('ex.left', { balance: rp(x.balance), a: rp(x.balance - x.total[1]), b: rp(x.balance - x.total[0]) }))}</p></div>
+      <p class="receipt__verdict">${esc(t('ex.verdict', { rp: rp(D.EXAMPLE.topup.amount) }))}</p>
+      <a class="btn btn--xl w-full" data-magnetic href="${href}">${esc(t('ex.cta'))}${icon('arrow-right', 'icon icon-go size-5')}</a>`;
   }
+  const ba = $('[data-ba]');
+  $('[data-ba-switch]')?.addEventListener('click', (e) => {
+    const on = e.currentTarget.getAttribute('aria-checked') !== 'true';
+    e.currentTarget.setAttribute('aria-checked', String(on));
+    ba.dataset.state = on ? 'after' : 'before';
+    $$('.ba-b', ba).forEach((el) => el.toggleAttribute('aria-hidden', on));
+    $$('.ba-a', ba).forEach((el) => el.toggleAttribute('aria-hidden', !on));
+  });
 
-  /* ---------- Safe for beginners: stacked cards, numbers from billing rules ---------- */
+  /* ---------- Safe for beginners: sticky stack, numbers from billing rules ---------- */
   function renderSafe() {
-    const root = document.querySelector('[data-safe]');
+    const root = $('[data-safe]');
     if (!root) return;
     const price = D.SIZES.coba.price, daysLeft = 20;
-    const cards = [
-      { bg: 'bg-xl-sky', ic: 'power', art: t('safe.1.art', { rp: rp(D.refund(price, daysLeft)) }), body: t('safe.1.body') },
-      { bg: 'bg-xl-yellow on-yellow', ic: 'arrow-up-down', art: t('safe.2.art', { from: t('size.rutin'), to: t('size.coba'), rp: rp(-D.prorata(D.SIZES.rutin.price, price, daysLeft)) }), body: t('safe.2.body') },
-      { bg: 'bg-xl-teal', ic: 'circle-pause', art: t('safe.3.art', { n: D.RULES.pauseDays }), body: t('safe.3.body', { n: D.RULES.pauseDays }), status: true },
-      { bg: 'bg-xl-blue text-white', ic: 'bell', art: t('safe.4.art', { n: D.RULES.remindDays, rp: rp(D.TOPUP_MIN) }), body: t('safe.4.body', { n: D.RULES.remindDays }) },
+    const art = [
+      `<span class="talk talk--q">${esc(t('safe.1.q'))}</span><span class="talk talk--a">${esc(t('safe.1.art', { rp: rp(D.refund(price, daysLeft)) }))}</span>`,
+      `<span class="pill-art">${esc(t('size.rutin'))}</span><span class="text-3xl font-extrabold" aria-hidden="true">→</span><span class="pill-art bg-xl-dark text-xl-yellow">${esc(t('size.coba'))}</span>
+       <span class="pill-art pill-art--solid basis-full sm:basis-auto">${esc(t('safe.2.art', { from: t('size.rutin'), to: t('size.coba'), rp: rp(-D.prorata(D.SIZES.rutin.price, price, daysLeft)) }))}</span>`,
+      `<span class="big-switch big-switch--xl" aria-hidden="true"><i></i></span><span class="pill-art pill-art--solid flex flex-wrap items-center gap-3"><span class="rounded-full bg-xl-yellow px-2.5 py-0.5 font-mono text-[.8rem] font-medium">${esc(t('status.paused'))}</span>${esc(t('safe.3.art', { n: D.RULES.pauseDays }))}</span>`,
     ];
-    root.innerHTML = cards.map((c, i) => `<li class="stack-card ${c.bg}" style="--n:${i}" data-stack>
-      <p class="font-mono text-[.85rem]">0${i + 1} / 0${cards.length}</p>
-      <div><h3 class="text-[clamp(2rem,5vw,4.5rem)] leading-[.95] font-extrabold tracking-[-.05em] [text-wrap:balance]">${esc(t(`safe.${i + 1}.title`))}</h3>
-        <p class="mt-4 max-w-[30em] text-[clamp(1.05rem,1.4vw,1.3rem)]">${esc(c.body)}</p></div>
-      <p class="flex w-fit max-w-full flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl ${i === 3 ? 'bg-white text-xl-dark' : 'bg-white/80'} px-4 py-3 font-bold">
-        ${icon(c.ic, 'icon size-5 shrink-0')}${c.status ? `<span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-xl-yellow px-2 py-0.5 font-mono text-[.75rem] font-medium">${esc(t('status.paused'))}</span>` : ''}<span class="min-w-0 basis-[14rem] grow">${esc(c.art)}</span></p>
+    const bg = ['bg-xl-sky', 'bg-xl-yellow on-yellow', 'bg-xl-teal', 'bg-xl-blue text-white'];
+    const head = (i) => `<div><h3>${esc(t(`safe.${i + 1}.title`))}</h3><p class="stack-card__body">${esc(t(`safe.${i + 1}.body`, { n: i === 2 ? D.RULES.pauseDays : D.RULES.remindDays }))}</p></div>`;
+    const dash = `<div class="grid gap-4 rounded-3xl bg-paper p-5 text-xl-dark sm:p-6">
+        <div class="flex items-center justify-between gap-3"><span class="tier tier--premium">${esc(t('board.note'))}</span>${icon('bell', 'icon size-5 text-xl-blue')}</div>
+        <div class="flex items-center justify-between gap-4 border-b border-line pb-4 font-bold"><span>${esc(t('safe.4.remind'))}</span><span class="toggle" data-on aria-hidden="true"><i></i></span></div>
+        <p class="rounded-2xl bg-xl-yellow px-4 py-3 font-bold">${esc(t('safe.4.art', { n: D.RULES.remindDays, rp: rp(D.TOPUP_MIN) }))}</p></div>`;
+    root.innerHTML = bg.map((b, i) => `<li class="stack-card ${b}" style="--n:${i}" data-stack>
+      <p class="font-mono text-[.85rem]">0${i + 1} / 0${bg.length}</p>
+      ${i === 3 ? `<div class="stack-card__split">${head(i)}${dash}</div>` : `${head(i)}<div class="stack-card__art">${art[i]}</div>`}
     </li>`).join('');
   }
 
-  /* ---------- Learn guides ---------- */
+  /* ---------- Learn guides: index rows ---------- */
   function renderGuides() {
-    const root = document.querySelector('[data-guides]');
+    const root = $('[data-guides]');
     if (!root) return;
     root.innerHTML = D.GUIDES.map((g) => {
       const title = t(`learn.${g.id}`);
-      return `<li class="card flex flex-col gap-4 p-5 sm:p-6" data-reveal>
-        <span class="grid size-12 place-items-center rounded-control bg-xl-yellow text-xl-dark">${icon('book-open')}</span>
-        <p class="font-mono text-[.75rem] tracking-[.08em] text-muted uppercase">${esc(t(`recipe.short.${g.recipe}`))}</p>
-        <h3 class="text-[1.3rem] leading-tight font-extrabold tracking-tight">${esc(title)}</h3>
-        <p class="mt-auto inline-flex items-center gap-2 text-[.92rem] text-muted">${icon('clock', 'icon size-4')}${esc(t('learn.read', { n: g.minutes }))}</p>
-        <a class="inline-flex min-h-11 items-center gap-1 font-bold text-xl-blue underline decoration-xl-yellow decoration-2 underline-offset-4" href="app.html#/belajar?panduan=${g.id}" aria-label="${esc(t('learn.ctaAria', { title }))}">${esc(t('learn.cta'))}${icon('arrow-right', 'icon size-4')}</a>
-      </li>`;
+      return `<li class="irow"><a class="irow__in guide-row" href="app.html#/belajar?panduan=${g.id}">
+        <span class="irow__icon" aria-hidden="true">${icon('book-open')}</span>
+        <span class="min-w-0"><span class="irow__small block">${esc(t(`recipe.short.${g.recipe}`))}</span><span class="irow__name mt-1 block text-[clamp(1.4rem,calc(2.8*var(--u)),2.6rem)]">${esc(title)}</span></span>
+        <span class="irow__meta inline-flex items-center gap-2">${icon('clock', 'icon size-4')}${esc(t('learn.read', { n: g.minutes }))}</span>
+        <span class="irow__more inline-flex items-center gap-1">${esc(t('learn.cta'))}${icon('arrow-right', 'icon size-4')}</span></a></li>`;
     }).join('');
   }
 
   /* ---------- FAQ (13) ---------- */
   function renderFaq() {
-    const root = document.querySelector('[data-faq]');
+    const root = $('[data-faq]');
     if (!root) return;
-    const open = new Set([...root.querySelectorAll('details[open]')].map((d) => d.dataset.q));
+    const open = new Set($$('details[open]', root).map((d) => d.dataset.q));
     const vars = { pause: D.RULES.pauseDays, remind: D.RULES.remindDays, first: rp(D.DOMAINS['my.id'].first), renew: rp(D.DOMAINS['my.id'].renew) };
-    root.innerHTML = Array.from({ length: 13 }, (_, i) => i + 1).map((n) => `<details class="group/f border-b border-line" data-q="${n}" ${open.has(String(n)) ? 'open' : ''}>
-      <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-[1.08rem] font-bold [&::-webkit-details-marker]:hidden">
-        <span>${esc(t(`faq.q${n}`))}</span><span class="grid size-9 shrink-0 place-items-center rounded-full bg-white ring-1 ring-line">${icon('plus', 'icon size-5 transition-transform group-open/f:rotate-45')}</span></summary>
-      <p class="max-w-[42em] pb-5 text-lead-ink">${esc(t(`faq.a${n}`, vars))}</p></details>`).join('');
+    root.innerHTML = Array.from({ length: 13 }, (_, i) => i + 1).map((n) => `<details class="faq-item" data-q="${n}" ${open.has(String(n)) ? 'open' : ''}>
+      <summary><span class="faq-item__n" aria-hidden="true">${String(n).padStart(2, '0')}</span><span>${esc(t(`faq.q${n}`))}</span><span class="faq-item__plus" aria-hidden="true"></span></summary>
+      <p class="faq-item__a">${esc(t(`faq.a${n}`, vars))}</p></details>`).join('');
   }
+
+  /* ---------- Final CTA: mega switch → sparks → start building ---------- */
+  const mega = $('[data-final-switch]');
+  mega?.addEventListener('click', () => {
+    const wasOn = mega.hasAttribute('data-on');
+    mega.setAttribute('data-on', '');
+    if (!wasOn) burst(mega, 22, $('[data-sparks]'));
+    setTimeout(() => { location.href = startHref(state.recipe); }, reduced || wasOn ? 0 : 520);
+  });
+  if (reduced) mega?.setAttribute('data-on', '');
+  window.addEventListener('load', () => { if (!document.documentElement.classList.contains('motion-ok')) mega?.setAttribute('data-on', ''); });
 
   /* ---------- Team consultation dialog (v3) ---------- */
   const csDialog = document.getElementById('consult');
@@ -453,12 +615,14 @@
 
   function render() {
     renderHero();
+    renderHow();
     renderChips();
     renderCard();
     renderServices();
     renderWallet();
     renderTemplates();
-    renderModels();
+    renderModelRows();
+    renderApi();
     renderCatalog();
     renderExample();
     renderSafe();
@@ -471,5 +635,5 @@
 
   I.onChange(render);
   I.init();
-  window.TN.landing = { selectRecipe, openCatalog, openConsult: (from) => csModal?.open(from), get recipe() { return state.recipe; } };
+  window.TN.landing = { selectRecipe, openCatalog, renderStall, openConsult: (from) => csModal?.open(from), get recipe() { return state.recipe; } };
 })();

@@ -80,6 +80,11 @@ Di console, display maksimum `clamp(2rem, 6vw, 3rem)`; angka saldo boleh lebih b
 | **Ringkasan lengket** | Kartu ringkasan biaya; mobile: bar bawah ringkas yang bisa dibuka; desktop: kolom kanan sticky |
 | **Progres menyalakan** | Daftar langkah dengan titik sky → teal; saklar besar ON di akhir |
 
+### Landing = bahasa visual showcase v2 (21 Nov 2026)
+User: konten v4 tetap, komponen & animasi mengikuti `showcase/v2`. Padanan per section:
+hero 3 baris + saklar inline (klik → percikan) + stiker berputar + papan proyek (prompt diketik) · cerita macet = pita `.stall` (persen raksasa, bar dengan penanda “belum online” di 80%, 4 tugas) · resep = kontrol tujuan dengan penanda kuning bergeser (md+, 5 tab; mobile pil geser) + `pkg-sheet` (harga raksasa, meter + percikan, daftar spesifikasi, CTA kuning) · cara kerja = kartu geser horizontal (drag, tombol 56px, rel) · layanan, model, panduan = baris indeks (`.irow`, hover isi biru dari bawah) · saldo = dashboard mini · pakai di tool = gelap + kabel digambar saat scroll + kartu konfigurasi miring · contoh = toggle sebelum/sesudah + struk kertas bergerigi · aman = stack card besar dengan seni (bubble, pil ukuran, status dijeda, dashboard pengingat) · tim = daftar besar berpeluru saklar · FAQ = nomor + lingkaran plus yang berputar · CTA akhir = 100svh, saklar raksasa (klik → percikan → wizard) · footer = wordmark raksasa. Header: sembunyi saat scroll turun, putih di atas lembar gelap, menu panel muncul melingkar dari tombol.
+Elemen miring diberi margin (board 10px, dash/konfigurasi 6px, struk 13px) agar kotak hasil rotasi tetap di dalam kolom (QA spill).
+
 ## 6. Ikon
 - Set ikon garis tunggal, 24px, stroke 1.75: **Lucide** (lisensi ISC), disalin lokal sebagai sprite SVG + `SOURCE.md` (seperti logo model v3). Tidak memuat CDN ikon.
 - Ikon layanan: ai `sparkles`, chat `message-circle`, hosting `globe`, apps `bot`, server `server`, database `database`, storage `folder`, domain `at-sign`, email `mail`, payments `qr-code`.
@@ -87,7 +92,7 @@ Di console, display maksimum `clamp(2rem, 6vw, 3rem)`; angka saldo boleh lebih b
 
 ## 7. Motion
 - GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 (lokal, dari showcase) **hanya di landing & harga**. Console memakai transisi CSS ringan.
-- Pola yang dibawa: judul masuk per kata, kartu stagger, lembar unmask, stack card sticky, count-up angka, saklar menyala.
+- Pola yang dibawa (port `showcase/v2/script.js`): timeline hero (baris naik → copy → papan masuk dari kanan → stiker pop → saklar menyala + percikan), drift papan, cerita macet di-scrub scroll, kartu langkah masuk dari kanan, kontrol tujuan melebar, baris indeks naik, kabel digambar, kartu konfigurasi jatuh, stack card mengecil, struk tercetak, daftar tim & FAQ stagger, judul akhir + saklar raksasa otomatis menyala, wordmark footer naik, tombol magnetik (pointer halus saja), judul per kata.
 - **Tidak dibawa:** loader “000% Menyalakan momentum” (menunda konten, buruk untuk LCP dan demo), kursor custom (tidak berguna di mobile, menyulitkan aksesibilitas).
 - `prefers-reduced-motion` atau GSAP gagal dimuat → semua tampil statis (gate `motion-ok` + failsafe 2,5 detik, pola showcase v2).
 - Durasi UI 180–450ms, easing `cubic-bezier(.22,1,.36,1)`.

@@ -396,7 +396,7 @@ MOTION_JS = r"""
     }
   }
   return { motion: document.documentElement.classList.contains('motion-ok'), hidden,
-           switches: [...document.querySelectorAll('[data-final-switch], #cerita li:last-child .switch--lg')].map(s => s.hasAttribute('data-on')) };
+           switches: [...document.querySelectorAll('[data-final-switch], [data-stall-switch]')].map(s => s.hasAttribute('data-on')) };
 }
 """
 

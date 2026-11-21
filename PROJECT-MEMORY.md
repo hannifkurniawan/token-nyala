@@ -2,11 +2,11 @@
 
 Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perbarui bagian *Status*, *Keputusan*, dan *Log Sesi* di akhir sesi.
 
-## Status Saat Ini (per 20 Nov 2026)
+## Status Saat Ini (per 21 Nov 2026)
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
 - **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 0–7 selesai (20 Nov 2026)** — v4 lengkap: landing, harga, console. DoD 12/12 terpenuhi (bukti di `docs/v4/technical-spec.md` §9). Gladi demo: `python3 -P tools/demo_v4.py`. **Menunggu:** persetujuan user untuk PR `v4-cloud` → `main`; review Pak Ferry; validasi finance/legal aturan tagihan & harga contoh. User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 0–7 selesai (20 Nov 2026)** — v4 lengkap: landing, harga, console. DoD 12/12 terpenuhi (bukti di `docs/v4/technical-spec.md` §9). Gladi demo: `python3 -P tools/demo_v4.py`. **21 Nov:** landing v4 dirombak ke komponen & animasi showcase v2 (konten tetap). **Menunggu:** persetujuan user untuk PR `v4-cloud` → `main`; keputusan user soal loader & kursor custom showcase; review Pak Ferry; validasi finance/legal aturan tagihan & harga contoh. User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
 - **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
 - **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
@@ -121,6 +121,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Grafik pemakaian AI: satu area fokus (←/→ antar hari) + hover per kolom + tabel, bukan 7 tombol | Tombol per batang < 44px di mobile; tooltip saat fokus wajib (skill dataviz) |
 | 20 Nov 2026 | Coba AI memotong saldo per balasan sesuai tarif model (min Rp1), riwayat “Coba AI · {model}” | Menunjukkan biaya pakai nyata di demo |
 | 20 Nov 2026 | Layanan lain bisa ditambahkan ke proyek baru; server: password sekali tampil + salin | Alur Sumopod tetapi tanpa merancang password sendiri (§5.5) |
+| 21 Nov 2026 | Landing v4 memakai komponen & animasi showcase v2; konten (copy, angka, urutan section) tetap v4 | Permintaan user: showcase v2 “jauh lebih rapi” |
+| 21 Nov 2026 | Cerita macet v4 = pita scroll “macet di localhost 80% → nyala 100% eventku.my.id” | Padanan stall showcase (saldo habis) untuk masalah v4 (belum online) |
+| 21 Nov 2026 | Saklar inline hero = dekor `aria-hidden` yang bisa diklik (bukan tombol di dalam H1) | Nama aksesibel H1 tetap “Idemu nyala, dari prompt sampai online.” |
+| 21 Nov 2026 | Saklar raksasa CTA akhir: klik → percikan → buka wizard resep terpilih | Pola showcase (buka checkout), versi v4 |
+| 21 Nov 2026 | AI dipisah: `#ai` model (putih, baris indeks) + `#pakai` panduan (gelap) | Urutan lembar showcase: model terang, tools gelap |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -176,9 +181,19 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **QA yang memuat ulang `?demo=` me-reset state.** Navigasi lanjutan dalam satu skenario lewat `location.hash`.
 - **Tombol per elemen grafik gagal target sentuh di mobile.** 7 batang di 320px = 28px per batang. Grafik = satu elemen fokus dengan panah + hover, dan tabel untuk nilai lengkap.
 - **`<dl>` hanya boleh berisi `dt`/`dd` (atau `div` berisi itu).** Peringatan di dalam daftar detail koneksi gagal axe — letakkan di luar daftar.
+- **Elemen yang diputar memperbesar kotak pembungkus.** Board/struk/kartu miring melewati kolom 5–12px → QA spill. Beri margin sebesar ±tinggi×sin(sudut)/2.
+- **`opacity` untuk warna teks gagal cek motion QA** (dianggap konten tersembunyi). Pakai warna rgba, bukan opacity; state tersembunyi (sebelum/sesudah) diberi `aria-hidden`.
+- **`::before` area sentuh negatif ikut menambah scrollWidth** → spill. Toggle ≥44px tidak perlu, toggle dekor tidak perlu.
+- **Pemisahan kata per `<span>` memutus tanda baca** (“tujuanmu ,”) → teks yang menempel ke kata sebelumnya digabung ke span itu.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
+### Sesi 5 — 21 Nov 2026 (landing → gaya showcase v2)
+- Permintaan user: konten landing v4 disetujui, komponen & animasi disamakan dengan `showcase/v2`.
+- Ditulis ulang: `v4/index.html` (main + footer), `landing.js` (render semua section baru; katalog & konsultasi tetap), `motion.js` (port timeline showcase), komponen baru di `src/tailwind.css`, header bersama (index + harga) + `ui.js` (sembunyi saat scroll, on-dark, menu melingkar, `burst()`), `assets/img/spark.svg` (dari showcase).
+- i18n: +36 kunci, 9 kunci lama dihapus (hero.title, final.title, board.*, story.*Note, recipe.aiOnlyRow, learn.ctaAria). `i18n_check` V4_ALLOW + “localhost:5173 ·”, “Token”, “Nyala”. QA motion memeriksa `[data-stall-switch]`.
+- Hasil: QA interaktif lolos, i18n lolos, audit (axe 0) lolos, demo 21/21.
+
 
 ### Sesi 1 — 18 Nov 2026
 - Mendiagnosis kenapa v1/v2 terus ditambal (lihat *Pelajaran*).

@@ -1,6 +1,6 @@
 /* TokenNyala v4 — ID/EN dictionary + apply/format (docs/v4/microcopy.md is the copy source).
    Every entry is [ID, EN]. {name} = variable. Keys used through data-i18n* attributes or TN.i18n.t('key').
-   data-i18n-html is only for trusted dictionary markup (<mark>, <strong>, {switch}). */
+   data-i18n-html is only for trusted dictionary markup (<mark>, <strong>). */
 window.TN = window.TN || {};
 TN.i18n = (() => {
   'use strict';
@@ -37,30 +37,36 @@ TN.i18n = (() => {
 
     /* ---- hero ---- */
     'hero.kicker': ['Untuk ide, prototype, dan proyekmu', 'For your ideas, prototypes, and projects'],
-    'hero.title': ['Idemu {switch} <mark>nyala</mark>, dari prompt sampai online.', 'Your idea, {switch} switched <mark>on</mark> — from prompt to online.'],
+    'hero.t1a': ['Idemu', 'Your idea'],
+    'hero.t1b': ['nyala,', 'on,'],
+    'hero.t2': ['dari prompt', 'from prompt'],
+    'hero.t3': ['sampai online.', 'to online.'],
+    'hero.scroll': ['Gulir', 'Scroll'],
+    'hero.sticker': ['PROMPT · BANGUN · ONLINE · NYALA · ', 'PROMPT · BUILD · ONLINE · SWITCH ON · '],
     'hero.lead': ['AI untuk membangun, cloud untuk menjalankan. Pilih tujuanmu, kami rangkai layanannya — dibayar dari satu saldo Rupiah.', "AI to build it, cloud to run it. Pick your goal and we'll put the services together — all paid from one Rupiah balance."],
     'hero.trustAria': ['Keunggulan', 'Highlights'],
     'hero.trust1': ['Bayar Rupiah', 'Pay in Rupiah'],
     'hero.trust2': ['Tanpa kartu kredit', 'No credit card'],
     'hero.trust3': ['Mulai {rp}', 'From {rp}'],
     'board.aria': ['Ilustrasi: satu proyek dari prompt sampai online', 'Illustration: one project from prompt to online'],
-    'board.title': ['Dari prompt sampai online', 'From prompt to online'],
     'board.step1': ['Prompt', 'Prompt'],
     'board.prompt': ['Buat landing page event yang hangat dan simpel', 'Make a warm, simple event landing page'],
+    'board.prompt2': ['Tambah form pendaftaran peserta', 'Add an attendee sign-up form'],
+    'board.prompt3': ['Rapikan tampilan mobile', 'Polish the mobile view'],
+    'board.preview': ['Pratinjau', 'Preview'],
+    'board.spent': ['Terpakai {rp}', 'Spent {rp}'],
     'board.step2': ['Membangun', 'Building'],
     'board.building': ['Membangun komponen…', 'Building components…'],
-    'board.step3': ['Online', 'Online'],
-    'board.balance': ['Saldo {a} → sisa {b}', 'Balance {a} → {b} left'],
     'board.note': ['Contoh', 'Example'],
 
     /* ---- story ---- */
     'story.kicker': ['Kode sudah jadi.', 'The code is done.'],
     'story.title': ['Tapi belum bisa dibuka orang lain.', 'But nobody else can open it yet.'],
     'story.body': ['Di TokenNyala, proyekmu online dalam beberapa ketukan — lengkap dengan alamat sendiri.', 'On TokenNyala, your project goes online in a few taps — with its own address.'],
+    'story.msgBuild': ['Prompt demi prompt, kodenya mulai jadi.', 'Prompt by prompt, the code takes shape.'],
+    'story.taskOnline': ['Online dengan alamat sendiri', 'Online at its own address'],
     'story.before': ['Sebelum', 'Before'],
-    'story.beforeNote': ['Hanya bisa dibuka di laptopmu.', 'Only opens on your laptop.'],
     'story.after': ['Sesudah', 'After'],
-    'story.afterNote': ['Bisa dibuka siapa saja, dari HP mana saja.', 'Anyone can open it, from any phone.'],
 
     /* ---- recipes ---- */
     'recipe.kicker': ['Mau bikin apa?', 'What are you building?'],
@@ -93,8 +99,9 @@ TN.i18n = (() => {
     'recipe.edit': ['Ubah di kalkulator', 'Adjust in the calculator'],
     'recipe.note': ['Perkiraan. Pemakaian AI bergantung pada model, panjang prompt, dan jumlah pesan.', 'Estimate. AI usage depends on the model, prompt length, and message volume.'],
     'recipe.aiOnlyTitle': ['Isi saldo, pakai di tool coding-mu', 'Top up, use it in your coding tools'],
-    'recipe.aiOnlyRow': ['Isi {rp} → {range} sesi kecil', 'Top up {rp} → {range} small sessions'],
     'recipe.aiOnlyCta': ['Ambil API key', 'Get an API key'],
+    'recipe.from': ['mulai', 'from'],
+    'recipe.sessions': ['{range} sesi kecil', '{range} small sessions'],
     'recipe.announce': ['{name}: perkiraan {rp} per bulan', '{name}: about {rp} per month'],
     'cost.fixed': ['Biaya tetap', 'Fixed cost'],
     'cost.usage': ['Perkiraan pakai', 'Estimated usage'],
@@ -132,6 +139,15 @@ TN.i18n = (() => {
     'how.2.body': ['QRIS, e-wallet, atau virtual account. Total terlihat sebelum bayar.', 'QRIS, e-wallet, or virtual account. See the total before you pay.'],
     'how.3.title': ['Nyala & online', 'Switch on & go online'],
     'how.3.body': ['Proyekmu jalan dengan alamat sendiri. Pantau saldo kapan saja.', 'Your project runs at its own address. Check your balance anytime.'],
+    'how.hint': ['Geser atau drag kartu →', 'Swipe or drag the cards →'],
+    'how.prev': ['Langkah sebelumnya', 'Previous step'],
+    'how.next': ['Langkah berikutnya', 'Next step'],
+    'how.trackAria': ['Tiga langkah cara kerja', 'Three steps, how it works'],
+    'how.rail1': ['Tujuan', 'Goal'],
+    'how.rail2': ['Saldo', 'Balance'],
+    'how.rail3': ['Nyala', 'Switched on'],
+    'how.fee': ['Biaya tambahan', 'Extra fees'],
+    'how.status': ['Status: nyala', 'Status: on'],
 
     /* ---- services ---- */
     'svc.kicker': ['Semua layanan', 'All services'],
@@ -298,6 +314,13 @@ TN.i18n = (() => {
     'ex.verdict': ['Isi {rp} sudah cukup sampai online.', 'A {rp} top-up gets you all the way online.'],
     'ex.left': ['Saldo {balance} dengan bonus, sisa {a}–{b} untuk iterasi berikutnya.', 'With the bonus you get {balance}, leaving {a}–{b} for more iterations.'],
     'ex.cta': ['Nyalakan contoh ini', 'Switch on this example'],
+    'ex.baToggle': ['Tampilkan kondisi sesudah', 'Show the after state'],
+    'ex.b1': ['Macet di localhost', 'Stuck on localhost'],
+    'ex.b2': ['Tagihan dalam dolar', 'Billed in dollars'],
+    'ex.b3': ['Tebak-tebak biaya', 'Guessing the cost'],
+    'ex.a1': ['Online dengan alamat sendiri', 'Online at its own address'],
+    'ex.a2': ['Satu saldo Rupiah', 'One Rupiah balance'],
+    'ex.a3': ['Total terlihat di depan', 'Total shown up front'],
 
     /* ---- safe for beginners ---- */
     'safe.kicker': ['Aman untuk pemula', 'Safe for beginners'],
@@ -305,6 +328,7 @@ TN.i18n = (() => {
     'safe.1.title': ['Berhenti kapan saja.', 'Stop anytime.'],
     'safe.1.body': ['Sisa hari kembali ke saldo.', 'Unused days go back to your balance.'],
     'safe.1.art': ['Berhenti di hari ke-10 → {rp} kembali ke saldo', 'Stop on day 10 → {rp} back to your balance'],
+    'safe.1.q': ['Kalau berhenti di hari ke-10?', 'What if I stop on day 10?'],
     'safe.2.title': ['Ganti ukuran naik atau turun.', 'Size up or down.'],
     'safe.2.body': ['Selisihnya dihitung otomatis.', 'We work out the difference for you.'],
     'safe.2.art': ['{from} → {to} di hari ke-10 → {rp} kembali ke saldo', '{from} → {to} on day 10 → {rp} back to your balance'],
@@ -314,6 +338,7 @@ TN.i18n = (() => {
     'safe.4.title': ['Diingatkan sebelum habis.', 'Reminded before it runs out.'],
     'safe.4.body': ['{n} hari sebelum jatuh tempo.', '{n} days before renewal.'],
     'safe.4.art': ['Saldo kurang untuk perpanjangan dalam {n} hari. Isi minimal {rp}.', 'Not enough balance to renew in {n} days. Top up at least {rp}.'],
+    'safe.4.remind': ['Ingatkan sebelum saldo kurang', 'Remind me before the balance runs short'],
     'status.paused': ['Dijeda', 'Paused'],
 
     /* ---- learn ---- */
@@ -325,7 +350,6 @@ TN.i18n = (() => {
     'learn.g-ai-tool': ['Pakai saldo di Cursor & Lovable', 'Use your balance in Cursor & Lovable'],
     'learn.read': ['{n} menit baca', '{n}-min read'],
     'learn.cta': ['Buka panduan', 'Open guide'],
-    'learn.ctaAria': ['Buka panduan: {title}', 'Open guide: {title}'],
 
     /* ---- teams ---- */
     'team.kicker': ['Untuk tim & bisnis', 'For teams & business'],
@@ -395,8 +419,10 @@ TN.i18n = (() => {
     'faq.a13': ['Nonaktifkan API key itu di console (AI → API key), lalu buat yang baru. Pasang batas belanja per proyek supaya pemakaian tidak melebihi rencana.', 'Disable that key in the console (AI → API key) and create a new one. Set a spending limit per project so usage never goes past your plan.'],
 
     /* ---- final CTA ---- */
-    'final.title': ['Idemu <mark>nyala</mark>.', 'Your idea, <mark>on</mark>.'],
     'final.body': ['Mulai dari tujuan, online dalam beberapa menit.', 'Start from a goal, go online in minutes.'],
+    'final.l1': ['Idemu', 'Your idea,'],
+    'final.l2': ['nyala.', 'on.'],
+    'final.switch': ['Nyalakan dan mulai bangun', 'Switch on and start building'],
     'final.trust': ['Bayar Rupiah · Tanpa kartu kredit · Saldo tidak kedaluwarsa', 'Pay in Rupiah · No credit card · Balance never expires'],
 
     /* ---- Nala chat (v3 + recipe flow, microcopy §7) ---- */
@@ -1035,7 +1061,7 @@ TN.i18n = (() => {
   function apply(root = document) {
     root.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     root.querySelectorAll('[data-i18n-html]').forEach((el) => {
-      el.innerHTML = t(el.dataset.i18nHtml).replace('{switch}', '<span class="switch switch--inline" data-on aria-hidden="true"><i></i></span>');
+      el.innerHTML = t(el.dataset.i18nHtml);
     });
     root.querySelectorAll('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
     root.querySelectorAll('[data-i18n-placeholder]').forEach((el) => el.setAttribute('placeholder', t(el.dataset.i18nPlaceholder)));
