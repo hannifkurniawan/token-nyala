@@ -554,3 +554,5 @@
 /* Template cards: equal height, cost + button pinned to the bottom so every button lines up */
 .tpl-card { display: flex; flex-direction: column; }
 .tpl-card__cost { margin-top: auto; }
+/* AI models foot: two notes (attachments, session size) stacked next to the catalogue button */
+.models__notes { display: grid; gap: 8px; }

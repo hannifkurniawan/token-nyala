@@ -70,6 +70,7 @@
         <h2 class="min-w-0 flex-1 font-extrabold">${esc(m.name)}</h2><span class="shrink-0 rounded-full px-2.5 py-1 font-mono text-[.72rem] font-medium ${TIER_STYLE[m.tier]}">${esc(t(`tier.${m.tier}`))}</span></div>
       <p class="text-[.88rem] text-muted">${esc([m.provider, ...m.uses.map((u) => t(`use.${u}`))].join(' · '))}</p>
       <p class="flex flex-wrap items-baseline gap-x-2"><span class="num font-mono text-xl">≈ ${m.per10k}</span><span class="text-[.88rem] font-bold text-muted">${esc(t('model.unit', { rp: rp(10000) }))}</span></p>
+      <p class="text-[.88rem] font-bold text-lead-ink">${esc(t('chatp.reads', { list: m.reads.length ? [t('chatp.text'), ...m.reads.map((k) => t(`chatp.kind.${k}`))].join(' · ') : t('chatp.textOnly') }))}</p>
       <p class="font-mono text-[.78rem] text-muted">${esc(t('rate.input'))} ${esc(t('rate.unit', { n: num(m.in) }))} · ${esc(t('rate.output'))} ${esc(t('rate.unit', { n: num(m.out) }))}</p></li>`).join('')}</ul>
       <p class="mt-4 text-[.85rem] text-muted">${esc(t('ai.note'))}</p>`;
   }

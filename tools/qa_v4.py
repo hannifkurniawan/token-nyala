@@ -911,6 +911,21 @@ def ai_flow(page, out, name, base):
     stored = page.evaluate("() => JSON.stringify(localStorage)")
     if "Halo" in stored:
         problems.append("CHAT prompts written to localStorage")
+    # attachments: an image on a text-only model → warning + cheapest model that reads it; .txt refused; cost = tokens × rate
+    png = bytes.fromhex("89504e470d0a1a0a0000000d4948445200000001000000010806000000" "1f15c4890000000d4944415478da6364f8cf00000301010018dd8db00000000049454e44ae426082")
+    page.select_option("#try-model", "deepseek-chat"); page.wait_for_timeout(100)
+    page.set_input_files("[data-chat-file]", files=[{"name": "poster.png", "mimeType": "image/png", "buffer": png}, {"name": "catatan.txt", "mimeType": "text/plain", "buffer": b"x"}])
+    page.wait_for_timeout(300)
+    a = page.evaluate("() => ({ n: document.querySelectorAll('[data-pending] li').length, cant: !!document.querySelector('[data-cant-read]'), note: !!document.querySelector('[data-attach-note]'), sw: document.querySelector('[data-switch-model]')?.dataset.switchModel })")
+    if a != {"n": 1, "cant": True, "note": True, "sw": "gemini-flash"}:
+        problems.append(f"CHAT attachment checks {a}")
+    page.locator("[data-switch-model]").click(); page.wait_for_timeout(150)
+    b0 = page.evaluate("() => TN.store.state.balance")
+    page.locator("[data-try-form] [type=submit]").click(); page.wait_for_timeout(900)
+    want = page.evaluate("() => TN.store.chatCost(TN.data.MODELS.find(m => m.id === 'gemini-flash'), 400 + TN.data.ATTACH.image.tokens, 350)")
+    if b0 - page.evaluate("() => TN.store.state.balance") != want or page.locator("[data-pending]").count():
+        problems.append(f"CHAT attachment cost want={want}")
+    page.screenshot(path=str(out / f"app-{name}-chat-attach.png"), full_page=True)
     page.screenshot(path=str(out / f"app-{name}-chat.png"), full_page=True)
     page.goto(base + "app.html?demo=raka#/ai", wait_until="networkidle")
     page.evaluate("() => { location.hash = '#/ai?tab=pemakaian'; }"); page.wait_for_timeout(150)

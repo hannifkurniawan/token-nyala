@@ -24,6 +24,8 @@ ICONS = [
     "gauge", "circle-pause",
     # console: NAT server, SSH, app usage, chat export, password show/hide, app connections (22 Nov 2026)
     "network", "terminal", "activity", "download", "eye", "eye-off", "plug",
+    # Chat AI attachments (22 Nov 2026)
+    "paperclip", "image", "mic", "video",
 ]
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "v4" / "assets"

@@ -82,6 +82,12 @@ DOC = {
     "refund": [(15000, 20, 10000)],                 # user-journeys skenario 6 (stop on day 10)
     "prorata": [(15000, 35000, 20, 13400), (35000, 15000, 20, -13300)],
     "suggest": [(38900, 50000), (47000, 50000), (346700, 500000), (285000, 500000), (100000, 100000)],
+    # §5.2 Chat AI attachments: tokens per file, examples (model, kind, seconds) → Rupiah, models that read files
+    "attach": {"image": 1600, "audio": 32, "video": 300},
+    "attach_examples": [("gemini-flash", "image", 0, 8), ("gemini-flash", "video", 60, 90)],
+    "reads": {"claude-haiku": "image", "claude-sonnet": "image", "claude-opus": "image", "gpt-mini": "image,audio", "gpt": "image,audio",
+              "gpt-pro": "image,audio", "gemini-flash": "image,audio,video", "gemini-pro": "image,audio,video", "qwen-max": "image",
+              "deepseek-chat": "", "deepseek-reasoner": "", "qwen-plus": ""},
 }
 
 NUMBERS_JS = """
@@ -109,6 +115,9 @@ NUMBERS_JS = """
   for (const [id, v] of Object.entries(doc.templates)) if (D.templateCost(id) !== v) out.push(`template ${id} ${D.templateCost(id)} != ${v}`);
   const x = D.exampleTotals();
   if (x.total[0] !== doc.example.min || x.total[1] !== doc.example.max) out.push(`exampleTotals ${x.total}`);
+  if (D.ATTACH.image.tokens !== doc.attach.image || D.ATTACH.audio.perSec !== doc.attach.audio || D.ATTACH.video.perSec !== doc.attach.video) out.push(`attach tokens ${JSON.stringify(D.ATTACH)}`);
+  for (const [id, kind, sec, v] of doc.attach_examples) { const m = D.MODELS.find((x) => x.id === id); const got = Math.round(D.attachTokens({ kind, sec }) * m.in / 1e6); if (got !== v) out.push(`attach ${id} ${kind} ${sec}s ${got} != ${v}`); }
+  for (const m of D.MODELS) if (m.reads.join(',') !== doc.reads[m.id]) out.push(`reads ${m.id} ${m.reads} != ${doc.reads[m.id]}`);
   for (const [id, hasCode, load, want] of doc.nala) { const got = D.serialize(D.nalaItems(id, { hasCode, load })); if (got !== want) out.push(`nala ${id}/${hasCode}/${load} ${got} != ${want}`); }
   return out;
 }

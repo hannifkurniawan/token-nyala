@@ -313,20 +313,25 @@
 
   /* ---------- AI: 12 models + estimate units ---------- */
   const TIER_BADGE = { hemat: 'badge--teal', seimbang: 'badge--sky', premium: 'badge--yellow' };
+  const KIND_ICON = { image: 'image', audio: 'mic', video: 'video' };
+  /** What a model reads besides text: icons + text for screen readers ("teks saja" when none) */
+  const reads = (m) => (m.reads.length ? `<span class="reads">${m.reads.map((k) => icon(KIND_ICON[k])).join('')}<span class="sr-only">${esc([t('chatp.text'), ...m.reads.map((k) => t(`chatp.kind.${k}`))].join(', '))}</span></span>` : `<span class="reads reads--none">${esc(t('chatp.textOnly'))}</span>`);
   function renderAi() {
     const root = $('[data-ai-detail]');
     if (!root) return;
     const badge = (m) => `<span class="badge ${TIER_BADGE[m.tier]}">${esc(t(`tier.${m.tier}`))}</span>`;
     const models = `<div class="ptable-wrap" data-allow-bleed><table class="ptable ptable--models">
-      <thead><tr><th scope="col">${esc(t('aip.model'))}</th><th scope="col" class="ptable__level">${esc(t('aip.level'))}</th><th scope="col">${esc(t('aip.per10k', { rp: rp(10000) }))}</th></tr></thead>
+      <thead><tr><th scope="col">${esc(t('aip.model'))}</th><th scope="col" class="ptable__level">${esc(t('aip.level'))}</th><th scope="col" class="ptable__reads">${esc(t('aip.reads'))}</th><th scope="col">${esc(t('aip.per10k', { rp: rp(10000) }))}</th></tr></thead>
       <tbody>${D.MODELS.map((m) => `<tr>
-        <td><span class="model-cell"><span class="model-cell__logo" aria-hidden="true"><img src="assets/img/models/${D.PROVIDER_ICON[m.provider]}.svg" alt="" width="18" height="18" loading="lazy"></span><span><b>${esc(m.name)}</b><span class="model-cell__badge">${badge(m)}</span></span></span></td>
+        <td><span class="model-cell"><span class="model-cell__logo" aria-hidden="true"><img src="assets/img/models/${D.PROVIDER_ICON[m.provider]}.svg" alt="" width="18" height="18" loading="lazy"></span><span><b>${esc(m.name)}</b><span class="model-cell__badge">${badge(m)} ${reads(m)}</span></span></span></td>
         <td class="ptable__level">${badge(m)}</td>
+        <td class="ptable__reads">${reads(m)}</td>
         <td>≈ ${m.per10k}</td></tr>`).join('')}</tbody></table></div>`;
     const rates = table([t('aip.model'), t('rate.input'), t('rate.output')], D.MODELS.map((m) => [esc(m.name), num(m.in), num(m.out)]));
     root.innerHTML = `
       <div class="aip__models">${models}
         <details class="ptech ptech--light"><summary>${icon('chevron-right')}<span>${esc(t('aip.rates'))}</span></summary><div class="ptech__body">${rates}</div></details>
+        <p class="aip__note">${esc(t('aip.readsNote', { img: num(D.ATTACH.image.tokens), aud: num(D.ATTACH.audio.perSec), vid: num(D.ATTACH.video.perSec) }))}</p>
         <p class="aip__note">${esc(t('ai.note'))}</p></div>
       <div class="aip__side">
         <h3 class="aip__units-title">${esc(t('aip.unitsTitle'))}</h3>

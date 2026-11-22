@@ -264,3 +264,10 @@ html[data-calc-bar][data-calc-open] .chat-launcher { display: none; }
 }
 /* <option> does not inherit the weight; only 500–800 are loaded */
 .calc-select option { font-weight: 500; }
+
+/* AI table: what each model reads besides text (icons + screen-reader text); phones show it under the name */
+.reads { display: inline-flex; align-items: center; gap: 6px; vertical-align: middle; color: var(--yellow); }
+.reads .icon { width: 18px; height: 18px; }
+.reads--none { font-family: var(--mono); font-size: .75rem; font-weight: 500; color: rgba(255,255,255,.78); }
+@media (max-width: 639px) { .ptable__reads { display: none; } }
+.model-cell__badge .reads { display: flex; margin-top: 4px; }

@@ -142,6 +142,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 22 Nov 2026 | Chat keluar dari menu AI; menu AI jadi "API AI"; `#/ai?tab=coba` dialihkan ke `#/chat` | Jawaban user no. 3 |
 | 22 Nov 2026 | Landing & Harga ikut: Server hemat di daftar layanan, indeks harga, kalkulator; "Coba AI" → "Chat AI" | Jawaban user no. 4 (ya) |
 | 22 Nov 2026 | Percakapan Chat AI hanya di memori tab (bisa diekspor); token Telegram tidak disimpan | Prompt/token bisa berisi data pribadi atau rahasia |
+| 22 Nov 2026 | Chat AI: lampiran gambar/suara/video untuk dibaca model (bukan membuat); kemampuan per model mengikuti model asli; token 1.600/gambar, 32/detik suara, 300/detik video × tarif model; batas 10 MB×5 / 25 MB 10 menit / 50 MB 2 menit; landing + Harga menyebutkan | Jawaban user 1–5 (lampiran saja, ya, setuju, setuju, ya) |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -209,6 +210,10 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
+### Sesi 6 (lanjutan) — 22 Nov 2026 (Chat AI: lampiran)
+- `data.js`: `MODEL_READS` → `MODELS[].reads`, `ATTACH`, `attachTokens()`. `chat.js`: tombol 📎 + seret + tempel, validasi (jenis, ukuran, jumlah, durasi dari metadata), peringatan model + tombol ganti ke model termurah yang bisa, perkiraan biaya, draf tidak hilang saat render ulang. Harga: kolom “Bisa membaca”; console API AI → kartu model; landing: satu baris di bagian Model AI. 4 ikon Lucide baru.
+- QA: lampiran di uji chat (gambar di DeepSeek → peringatan → Gemini Flash, .txt ditolak, biaya = token × tarif); audit: token, contoh Rp8/Rp90, matriks kemampuan model.
+
 ### Sesi 6 (lanjutan) — 22 Nov 2026 (console: Chat AI, Aplikasi, Server hemat)
 - Analisa kompetitor: Sumopod (docs.sumopod.com dirender Chromium headless — sidebar 90 halaman: Chat, Apps dengan tab Access/Monitor/Logs/Files/Custom Domain/Upgrade/Configuration, VPS NAT Rp20–120 rb dengan port lewat support), Hostinger AI apps (Channels WhatsApp/Telegram, AI provider), Helipod (VPS + app siap pakai).
 - Dibangun: `chat.js` (#/chat), `apps.js` (#/aplikasi, #/aplikasi/:id), `nat` di `data.js` + `services.js` (jenis server, SSH, kelola port), sidebar berkelompok, 7 ikon Lucide baru (sprite dibangun ulang dari lucide-static 0.460.0), landing/harga otomatis memuat `nat` lewat `GROUPS`.

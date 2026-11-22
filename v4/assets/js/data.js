@@ -133,6 +133,17 @@ TN.data = (() => {
     }
   }
 
+  /* Chat AI attachments (§5.2, approved 22 Nov 2026): which models read which files besides text. Following the real
+     models' abilities: Claude + Qwen Max read images, GPT also audio, Gemini also video; DeepSeek and Qwen Plus text only. */
+  const MODEL_READS = { Anthropic: ['image'], OpenAI: ['image', 'audio'], Google: ['image', 'audio', 'video'], 'qwen-max': ['image'] };
+  /** An attachment becomes input tokens, charged at the chosen model's own input rate (no separate price list). */
+  const ATTACH = {
+    image: { tokens: 1600, maxMB: 10, maxCount: 5 },
+    audio: { perSec: 32, maxMB: 25, maxSec: 600 },
+    video: { perSec: 300, maxMB: 50, maxSec: 120 },
+  };
+  const attachTokens = ({ kind, sec = 0 }) => (kind === 'image' ? ATTACH.image.tokens : Math.ceil(sec) * ATTACH[kind].perSec);
+
   /* AI model catalogue (v3 mock, docs/technical-spec.md). Rates: Rupiah per 1M tokens (1 credit = Rp1). */
   const MODELS = [
     { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'DeepSeek', uses: ['coding', 'chat'], in: 4500, out: 18000, ctx: 128000 },
@@ -150,7 +161,7 @@ TN.data = (() => {
   ].map((m) => {
     const session = unitCost(40000, 4000, m); // one small session on this model
     const tier = session < 1000 ? 'hemat' : session <= 3000 ? 'seimbang' : 'premium';
-    return { ...m, session, tier, per10k: Math.floor(10000 / session) };
+    return { ...m, session, tier, per10k: Math.floor(10000 / session), reads: MODEL_READS[m.provider === 'Alibaba' && m.id === 'qwen-max' ? 'qwen-max' : m.provider] || [] };
   });
   const PREVIEW_MODELS = ['claude-sonnet', 'gpt', 'gemini-pro', 'deepseek-chat', 'qwen-plus', 'claude-opus'];
   const PROVIDER_ICON = { Anthropic: 'claude', OpenAI: 'openai', Google: 'gemini', DeepSeek: 'deepseek', Alibaba: 'qwen' };
@@ -362,7 +373,7 @@ TN.data = (() => {
   return {
     TOPUPS, TOPUP_MIN, REMINDER_BELOW, UNITS, SIZES, SIZE_ORDER, GROUPS, ICONS, SERVER, SERVER_NAT, NAT_PORTS, DATABASE, STORAGE, DOMAINS,
     EMAIL, PAYMENTS, TEMPLATES, TEMPLATE_ICONS, FROM, RECIPES, AI_ONLY, EXAMPLE, HERO, MODELS, PREVIEW_MODELS,
-    PROVIDER_ICON, API, RULES, GUIDES,
+    PROVIDER_ICON, API, RULES, GUIDES, ATTACH, attachTokens,
     suggestTopup, usageCost, sessionCost, sessionsPer, itemCost, recipe, recipeTotals, coverMonths, roundK,
     refund, prorata, balanceUntil, heroScenario, exampleTotals, templateCost, templateMin, nalaItems, askCode, serialize,
     OPTIONS, NEW_ITEM, AI_MAX, itemKey, parseS, itemsFromUrl, usesAi, templateMinSize, applyMinimums,

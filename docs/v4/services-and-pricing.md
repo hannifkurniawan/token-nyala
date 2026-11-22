@@ -130,6 +130,25 @@ Kelompok (dipakai di landing, harga, dan menu console):
 ### 5.2 `chat` — Chat AI
 Menu sendiri di console (`#/chat`, sejak 22 Nov 2026; sebelumnya tab “Coba AI” di menu AI): daftar percakapan, chat baru, pilih model (Hemat/Seimbang/Premium), biaya per balasan tampil, ekspor riwayat (.txt). Dipotong dari saldo yang sama per balasan (tarif model, dibulatkan ke rupiah, minimal Rp1). Percakapan **hanya di memori tab** — tidak disimpan di localStorage karena isinya bisa berupa data pribadi. Contoh prompt disediakan.
 
+**Lampiran (disetujui user 22 Nov 2026):** gambar, suara, dan video untuk *dibaca* model (bukan membuat gambar/suara/video). Tombol 📎, seret file, atau tempel gambar; kartu lampiran dengan tombol hapus; perkiraan biaya tampil sebelum kirim. File hanya dibaca di browser — tidak diunggah, tidak disimpan.
+
+| Jenis | Dihitung sebagai token masuk | Batas |
+|---|---|---|
+| Gambar | ≈ 1.600 token per gambar | ≤ 10 MB, maks 5 per pesan |
+| Suara | 32 token per detik | ≤ 25 MB, ≤ 10 menit |
+| Video | 300 token per detik | ≤ 50 MB, ≤ 2 menit |
+
+Biaya = token × tarif masuk model yang dipilih (tanpa daftar harga baru). Contoh: 1 gambar di Gemini Flash ≈ **Rp8**; video 1 menit di Gemini Flash ≈ **Rp90**.
+
+| Model | Bisa membaca selain teks |
+|---|---|
+| Claude Haiku / Sonnet / Opus, Qwen Max | gambar |
+| GPT Mini / GPT / GPT Pro | gambar, suara |
+| Gemini Flash / Pro | gambar, suara, video |
+| DeepSeek Chat / Reasoner, Qwen Plus | — (teks saja) |
+
+Model yang tidak bisa membaca lampiran menampilkan “{model} tidak bisa membaca {jenis}” + tombol ganti ke model termurah yang bisa (mis. Gemini Flash, Hemat). Landing (bagian Model AI) dan Harga (kolom “Bisa membaca” di tabel 12 model) menyebutkan kemampuan ini.
+
 ### 5.3 `hosting` — Online-kan proyekmu
 - Sumber: **Upload folder/ZIP** (hasil Lovable, Bolt, v0) atau **Sambungkan GitHub** (mock).
 - Ukuran: tabel bagian 4.
