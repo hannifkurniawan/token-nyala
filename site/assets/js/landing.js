@@ -819,9 +819,18 @@
   I.init();
   window.TN.landing = { selectRecipe, openCatalog, renderStall, openConsult: (from) => csModal?.open(from), get recipe() { return state.recipe; } };
 
+  /** Opened as index.html#ai (menu on harga, a shared link): the loader locked scrolling, so the browser's own jump to
+      the section is lost — go there once the loader has left. */
+  function goToHash() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = id && document.getElementById(id);
+    if (!target) return;
+    if (lenis) { lenis.start(); lenis.scrollTo(target, { immediate: true, offset: -10 }); } else target.scrollIntoView();
+  }
   function start() {
     const motion = initMotion();
     runLoader().then(() => {
+      goToHash();
       if (motion && window.__heroTl) window.__heroTl.play();
       else staticOn();
     });

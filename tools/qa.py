@@ -332,6 +332,26 @@ def chat_wait(page):
     page.wait_for_timeout(50)
 
 
+def landing_hash_flow(page, out, name, base):
+    """index.html#ai / #faq (shared links, the menu on harga): after the loader the page sits on that section."""
+    problems = []
+    sec = "() => { const el = document.elementFromPoint(innerWidth / 2, 220); return el?.closest('section')?.id || '?'; }"
+    for h in ("ai", "faq"):
+        page.goto(base + f"index.html#{h}", wait_until="networkidle")
+        page.wait_for_function("() => !document.documentElement.classList.contains('is-loading')", timeout=8000)
+        page.wait_for_timeout(1500)
+        if page.evaluate(sec) != h:
+            problems.append(f"HASH index.html#{h} landed on {page.evaluate(sec)}")
+    if page.viewport_size["width"] >= 1024:
+        page.goto(base + "harga.html", wait_until="networkidle")
+        page.locator('.nav-desktop a[href="index.html#ai"]').click(); page.wait_for_load_state("networkidle")
+        page.wait_for_function("() => !document.documentElement.classList.contains('is-loading')", timeout=8000)
+        page.wait_for_timeout(1500)
+        if page.evaluate(sec) != "ai":
+            problems.append(f"HASH harga menu Model AI landed on {page.evaluate(sec)}")
+    return problems
+
+
 def landing_chat_flow(page, out, name, base_url):
     """Recipe flow: portofolio → code not ready → Ramai gives hosting:ramai + 20 sessions; offline team collects a contact."""
     problems = []
@@ -1213,6 +1233,8 @@ def main():
                     status += home_next_flow(page, out, name, base)
                 if args.interactive and page_name == "harga.html" and name == "1440":
                     status += nala_topics_flow(page, out, name, base, "harga.html", False)
+                if args.interactive and page_name == "index.html" and name in ("375", "1440"):
+                    status += landing_hash_flow(page, out, name, base)
                 if args.interactive and page_name == "app-proyek" and name in ("375", "1440"):
                     status += project_flow(page, out, name, base)
                     status += clock_flow(page, out, name, base)

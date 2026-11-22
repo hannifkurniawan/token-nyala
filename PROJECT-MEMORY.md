@@ -209,10 +209,15 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Deteksi kunci mati `i18n_check` tidak andal** (pola template bersarang cocok ke semua kunci). Cek kunci mati dengan skrip terpisah yang hanya memakai pola berawalan literal.
 - **`<option>` tidak mewarisi font-weight** — di halaman tanpa Tailwind, beri `select option { font-weight: 500 }` atau audit font menemukan Manrope 400.
 - **Elemen lengket di bawah header yang bisa sembunyi** harus ikut bergeser (`.site-header[data-hidden] ~ main .pnav { transform }`), kalau tidak muncul celah setinggi header.
+- **Loader mengunci scroll → lompatan `#bagian` dari browser hilang.** Tautan `index.html#ai` (menu di Harga, link yang dibagikan) dulu mendarat di atas; `landing.js` kini menggulir ke `location.hash` setelah loader terangkat (`goToHash`). Diuji di QA (`landing_hash_flow`).
 - **GitHub Pages: pisahkan build dan deploy.** Satu job (upload lalu deploy-pages langsung) pernah gagal “No artifacts named github-pages” karena artefak belum terdaftar 0,4 detik setelah diunggah; menjalankan ulang job itu menambah artefak kedua bernama sama (“Multiple artifacts”). Pola resmi dua job (`build` → `deploy`) + jalankan run baru (`workflow_dispatch`) bila perlu deploy ulang.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
+### Sesi 6 (lanjutan) — 22 Nov 2026 (PR #5 tayang)
+- PR #5 (menu urutan halaman, template → paket aplikasi, workflow dua job) di-merge; deploy otomatis sukses di percobaan pertama (build → deploy). Menu landing di situs tayang mendarat di section yang benar; gladi demo 24/24 lolos di situs.
+- Ditemukan saat cek: dari Harga, menu “Model AI” membuka landing di atas (loader menghilangkan lompatan `#ai`). Diperbaiki (`goToHash`) + uji QA; menunggu PR ke `main`.
+
 ### Sesi 6 (lanjutan) — 22 Nov 2026 (situs tayang)
 - PR #4 di-merge user; deploy pertama gagal (artefak belum terdaftar saat deploy, lalu artefak ganda saat job diulang); run baru via `workflow_dispatch` sukses. Situs tayang: https://hannifkurniawan.github.io/token-nyala/ — gladi demo 24/24 lolos langsung ke situs, `src/`/`package.json` tidak tayang (404).
 - Workflow Pages dipisah jadi dua job (`build` → `deploy`).
