@@ -166,7 +166,7 @@ Footer: Syarat & Ketentuan (mock), Kebijakan Privasi (mock), Hubungi kami.
 3. **Kanal bantuan: live chat mock** (asisten otomatis + serah ke tim manusia), bukan WhatsApp.
 4. Screenshot OCTA dan TokenKu sudah diterima dan dianalisis di atas.
 
-Spesifikasi hasil keputusan ini ada di `docs/technical-spec.md` (section *Fitur v3*), `docs/microcopy-and-states.md`, `docs/information-architecture.md`, dan `docs/wireframe-notes.md`.
+Spesifikasi hasil keputusan ini ada di `docs/archive/technical-spec.md` (section *Fitur v3*), `docs/archive/microcopy-and-states.md`, `docs/archive/information-architecture.md`, dan `docs/archive/wireframe-notes.md`.
 
 ## Sumber
 - https://www.telkomsel.com/enterprise/product-list-business-application-and-solution/octa-enterprise

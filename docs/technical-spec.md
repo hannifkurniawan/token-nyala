@@ -1,647 +1,154 @@
-# Technical Specification — TokenNyala HTML Prototype
+# Technical Spec & Aturan Membangun v4
 
-## Document Purpose
+Dokumen ini menggantikan `docs/archive/v3-ground-rules.md` + `docs/archive/technical-spec.md` **untuk v4**. Aturan v3 yang tidak disebut di sini tetap berlaku (dikutip dengan nomor aturannya).
 
-Dokumen ini menjadi sumber spesifikasi teknis untuk implementasi landing page TokenNyala dalam HTML, CSS, dan JavaScript. Dokumen ini melengkapi `implementation-plan.md`, `visual-direction.md`, dan `information-architecture.md`.
-
-## Stack
-
-- HTML5 semantic
-- Tailwind CSS v4 — browser build via CDN (`@tailwindcss/browser`, versi di-pin), pendekatan **mobile first**
-- Vanilla JavaScript
-- Google Fonts dengan fallback sistem
-- Inline SVG atau CSS illustration
-- Tanpa framework build tool
-- Tanpa backend atau payment provider nyata pada prototype
+## 1. Struktur Folder
 
 ```text
-v3/
-├── index.html   # markup + utility class Tailwind + @theme token
-├── styles.css   # hanya ilustrasi, animasi, dan hal yang tidak bisa dengan utility (target < 100 baris)
-├── script.js    # data, i18n, interaksi
-└── assets/
+site/
+├── index.html          # landing
+├── harga.html          # harga + kalkulator
+├── app.html            # console mock (hash router)
+├── package.json        # hanya @tailwindcss/cli (versi di-pin), script build/watch
+├── src/
+│   └── tailwind.css    # @import "tailwindcss" · @theme (SATU-SATUNYA tempat token) · @layer components · @source
+├── assets/
+│   ├── css/app.css     # hasil compile — DI-COMMIT agar file:// jalan tanpa build
+│   ├── js/
+│   │   ├── data.js     # layanan, ukuran, harga, paket, model, satuan + fungsi hitung murni
+│   │   ├── i18n.js     # kamus ID/EN + apply/format
+│   │   ├── store.js    # state demo console (localStorage) + preset ?demo=
+│   │   ├── ui.js       # header/menu, bahasa, setupModal, salin, toast, format Rp, ikon
+│   │   ├── nala.js     # live chat (v3 + alur paket)
+│   │   ├── landing.js · pricing.js · console.js
+│   │   └── motion.js   # GSAP/Lenis untuk harga (landing: di landing.js)
+│   ├── vendor/         # gsap 3.12.5, ScrollTrigger, lenis 1.1.13 (dari showcase), lisensi
+│   ├── icons/          # sprite Lucide + SOURCE.md
+│   └── img/            # mark, logo model (dari archive/v3/assets/models + SOURCE.md)
+└── README.md
 ```
 
-v1 (root) dan v2 (`v2-tailwind-cdn/`) adalah arsip dan tidak dikembangkan lagi. Aturan implementasi v3 ada di `docs/v3-ground-rules.md`.
+`node_modules/` di-gitignore. v1, v2, v3, dan `archive/showcase/` adalah arsip — tidak diedit.
 
-## Browser Support
+## 2. Build CSS (keputusan 20 Nov 2026)
 
-- Chrome versi terbaru
-- Edge versi terbaru
-- Firefox versi terbaru
-- Safari versi terbaru
-- Mobile Safari dan Chrome Android
+- **Tailwind CLI v4**, versi di-pin persis sama dengan v3 (`@tailwindcss/cli@4.3.3`; jika paket CLI versi itu tidak ada, pakai versi 4.3.x tertua yang ada dan catat).
+- Alasan: v4 punya 3 halaman; dengan browser build, `@theme` harus disalin ke setiap halaman. CLI = satu sumber token, CSS terpangkas, dan menutup open item v3 “Tailwind CLI untuk produksi”.
+- `npm run build` → `assets/css/app.css` (minified). `npm run watch` saat mengembangkan.
+- **Wajib build sebelum commit**; `tools/audit.py` membangun ulang ke file sementara dan gagal jika berbeda dari `app.css` yang di-commit.
+- Browser build `@tailwindcss/browser` tidak dipakai di v4.
 
-## Responsive Breakpoints (Mobile First)
-
-Gunakan breakpoint default Tailwind. Class tanpa prefix = mobile. Prefix hanya **menambah** perilaku untuk layar yang lebih lebar. Tidak boleh ada `@media (max-width: …)`.
-
-| Prefix | Mulai dari | Perilaku utama |
-|---|---:|---|
-| (tanpa prefix) | 320px | Navigasi ringkas, hero vertikal, kartu paket stacked, checkout sebagai bottom sheet |
-| `sm:` | 640px | Gutter 24px, metode pembayaran 2 kolom, CTA hero sejajar |
-| `md:` | 768px | Kartu paket 2 kolom atau scroll horizontal, checkout sebagai dialog di tengah |
-| `lg:` | 1024px | Navigasi desktop penuh, hero 2 kolom, 3 kartu paket |
-| `xl:` | 1280px | Konten dibatasi `max-w-[1184px]` |
-
-Viewport uji wajib: **320, 375, 768, 1024, 1440** (portrait) dan **667×375** (mobile landscape).
-
-## Tailwind v4 CDN Setup
-
-Prototype memakai browser build Tailwind v4. Versi **harus di-pin** (jangan `@4` atau `latest`). Play CDN v3 (`cdn.tailwindcss.com`) tidak dipakai lagi.
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
-<style type="text/tailwindcss">
-  @theme {
-    --color-xl-blue: #002DBB;
-    --color-xl-dark: #00166A;
-    --color-xl-yellow: #FFC93C;
-    --color-xl-teal: #00D2A0;
-    --color-xl-sky: #5CD0F9;
-    --color-ink: #17181A;
-    --color-paper: #F7F8FC;
-    --color-muted: #626B82;
-    --color-line: #D9DEEA;
-
-    --font-sans: "Manrope", system-ui, sans-serif;
-    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-
-    --radius-card: 20px;
-    --radius-control: 12px;
-  }
-</style>
-```
-
-Token di atas otomatis menjadi utility: `bg-xl-blue`, `text-muted`, `border-line`, `rounded-card`, `font-mono`, dan seterusnya.
-
-Catatan: browser build hanya untuk prototype. Untuk produksi, gunakan Tailwind CLI agar CSS di-compile dan dipangkas.
-
-## Design Tokens
-
-**Satu sumber kebenaran:** semua token hanya didefinisikan di blok `@theme` di atas. Jangan menduplikasi token di `:root` pada `styles.css`. Jika CSS custom perlu warna, pakai variabel yang dihasilkan Tailwind (`var(--color-xl-blue)`).
-
-| Token | Nilai | Pemakaian |
-|---|---|---|
-| `xl-blue` | `#002DBB` | CTA utama, link aktif, brand |
-| `xl-dark` | `#00166A` | Heading gelap, footer |
-| `xl-yellow` | `#FFC93C` | Badge, highlight, on-state line (maks 10–15% area) |
-| `xl-teal` | `#00D2A0` | Success, selected, saldo siap |
-| `xl-sky` | `#5CD0F9` | Focus ring, info, estimasi |
-| `teal-ink` | `#007A5E` | Teks/ikon teal di atas latar terang (XL Teal terlalu terang untuk teks, kontras < 3:1) |
-| `ink` | `#17181A` | Teks utama |
-| `paper` | `#F7F8FC` | Background halaman |
-| `muted` | `#626B82` | Teks sekunder (revisi dari `#69728A`: hanya 4,47:1 di header sticky; `#626B82` ≥ 4,84:1 di paper, header, dan putih) |
-| `line` | `#D9DEEA` | Border |
-| `radius-card` | 20px | Kartu |
-| `radius-control` | 12px | Tombol, input |
-
-## Semantic HTML
-
-Gunakan elemen semantik berikut:
-
-- `<header>` untuk navigasi utama
-- `<nav aria-label="Navigasi utama">`
-- `<main>` untuk seluruh konten utama
-- `<section aria-labelledby="...">` untuk setiap section
-- `<h1>` tunggal pada hero
-- `<h2>` untuk judul section
-- `<h3>` untuk judul kartu
-- `<button type="button">` untuk aksi JavaScript
-- `<dialog>` atau div dengan `role="dialog"` untuk checkout
-- `<footer>` untuk penutup dan tautan
-
-## Page Structure
-
-Urutan lengkap dan overlay global ada di `information-architecture.md`. Ringkasan:
-
-1. **Header** — wordmark; tautan Cara kerja, Paket, Model AI, FAQ; language switch ID/EN; CTA Isi saldo; mobile menu button dengan `aria-expanded`.
-2. **Hero** — eyebrow, H1 benefit-led, supporting copy, CTA utama + sekunder, trust row, CSS/SVG project preview, credit meter.
-3. **How It Works** — 3 langkah (1 kolom base, 3 kolom `lg:`).
-4. **Package Picker** — intent tabs Belajar/Prototype/Kerja; kartu Rp50.000 Mulai, Rp100.000 Bangun, Rp250.000 Scale; estimasi range; baris aturan saldo; link ke Model AI.
-5. **Model AI** — 6 kartu model + tombol katalog lengkap (lihat *Fitur v3 → Katalog Model*).
-6. **Pakai di Tool Favoritmu** — 3 langkah + contoh konfigurasi (lihat *Fitur v3 → API Key & Panduan Pasang*).
-7. **Why / Benefits** — 4 kartu: pilihan yang dipahami, satu saldo, bayar lokal, pantau & kendalikan (+ mock mini dashboard).
-8. **Example Usage** — mock prompt/project, estimasi sesi kecil, disclaimer.
-9. **Untuk Tim & Bisnis** — benefit tim + CTA konsultasi (lihat *Fitur v3 → Form Konsultasi Tim*).
-10. **FAQ** — `<details>`/`<summary>`. Pertanyaan minimal:
-    - Kapan saldo aktif?
-    - Model AI apa saja yang bisa dipakai?
-    - Apakah saldo bisa kedaluwarsa?
-    - Apakah harga sudah termasuk PPN?
-    - Apakah estimasi jumlah sesi pasti?
-    - Metode pembayaran apa saja?
-    - Bisakah refund atau batal?
-    - Ke mana data prompt saya dikirim?
-    - Bagaimana kalau API key saya bocor?
-    - Apakah saldo terpotong kalau permintaan gagal? *(ditambahkan; sudah ada di microcopy)*
-    - Bisakah membeli untuk tim dan meminta invoice perusahaan?
-11. **Final CTA** — ulangi core promise, tombol isi saldo, trust copy.
-12. **Footer** — wordmark, bantuan, Syarat & Ketentuan (mock), Kebijakan Privasi (mock), copyright.
-
-## Component Specifications
-
-### Buttons
-
-- Tinggi minimum 44px
-- Border radius 12px
-- Primary: latar XL Blue `#002DBB`, teks putih (kontras ±9:1)
-- Secondary: transparan atau border, teks Ink
-- Hover: background sedikit lebih gelap dan sedikit shadow
-- Active: transform 1px ke bawah
-- Focus: `outline: 3px solid #5CD0F9`, `outline-offset: 3px`
-
-### Package Cards
-
-```text
-Nama paket
-Nominal besar
-Bonus credit kecil
-Estimasi penggunaan
-Fitur singkat
-CTA
-```
-
-- Card default: border abu terang
-- **Garis biru (border XL Blue 2px + tombol primary) selalu menandai kartu yang dipilih.** Sebelum ada pilihan, garis biru ada di kartu rekomendasi.
-- Recommended: badge “Paling pas” (latar XL Yellow, teks XL Dark) — tetap di kartu rekomendasi walau kartu lain dipilih
-- Selected: border XL Blue + ring biru tipis + badge “✓ Dipilih” (latar teal muda) + label tombol “Paket RpX dipilih” (state tidak boleh hanya warna)
-- *(Revisi 18 Nov 2026: sebelumnya rekomendasi = biru dan terpilih = teal; user mengharapkan kartu yang diklik bergaris biru.)*
-- Hover: transform translateY(-4px)
-- Pada mobile, card stacked dan CTA tetap terlihat
-
-### Intent Tabs
-
-- Gunakan tiga button dalam `role="tablist"`
-- Tombol memiliki `role="tab"`, `aria-selected`, dan `aria-controls`
-- Content panel memiliki `role="tabpanel"`
-- Mendukung keyboard Arrow Left dan Arrow Right
-- State aktif memiliki latar Ink dan teks putih
-- Default tab: Belajar (persona utama Ayu)
-- Di atas kartu ada **baris rekomendasi** (`aria-live="polite"`): nama paket, harga, alasan singkat, dan tombol pilih. Urutan kartu tetap berdasarkan harga di semua ukuran layar
-- Layout kartu: 1 kolom (base), kartu baris 2 kolom isi (`md:`), 3 kartu (`lg:`)
-
-### Language Switch
-
-- Pilihan ID/EN sebagai button group
-- Gunakan `aria-pressed`
-- Semua copy dinamis perlu disimpan dalam object JavaScript
-- Default: Indonesia
-- Penyimpanan preference: `localStorage`
-- Nilai mata uang dan format tetap IDR
-
-## Interactive Data Model
-
-```js
-const packages = {
-  learn: {
-    id: 'learn',
-    amount: 50000,
-    bonus: 5000,
-    name: 'Mulai',
-    estimate: '20–30 sesi kecil'
-  },
-  prototype: {
-    id: 'prototype',
-    amount: 100000,
-    bonus: 15000,
-    name: 'Bangun',
-    estimate: '40–60 sesi kecil'
-  },
-  work: {
-    id: 'work',
-    amount: 250000,
-    bonus: 50000,
-    name: 'Scale',
-    estimate: '100+ sesi kecil'
-  }
-}
-
-const intents = {
-  learn: 'Belajar',
-  prototype: 'Prototype',
-  work: 'Kerja'
-}
-```
-
-Semua estimasi harus diberi disclaimer: `Estimasi bergantung pada model, panjang prompt, dan tipe output.`
-
-### Aturan Saldo (G2)
-
-```js
-const CREDIT_RULES = {
-  rupiahPerCredit: 1,        // 1 kredit = Rp1
-  taxIncluded: true,         // harga paket sudah termasuk PPN
-  expires: false,            // saldo dan bonus tidak kedaluwarsa
-  cashRefundable: false,     // tidak bisa diuangkan
-  transferable: false,       // tidak bisa dipindahtangankan
-  chargeFailedRequests: false // request gagal tanpa output tidak memotong saldo
-}
-```
-
-Ditampilkan sebagai satu baris di bawah kartu paket, di FAQ, dan di ringkasan checkout. Status: keputusan prototype, perlu validasi legal/finance sebelum produksi.
-
-### Definisi “Sesi Kecil”
-
-Semua estimasi “sesi kecil” di halaman dihitung dari satu definisi:
-
-```js
-const SMALL_SESSION = { inputTokens: 40000, outputTokens: 4000 }
-// ≈ satu permintaan perbaikan komponen di tool coding, termasuk konteks file
-```
-
-Biaya satu sesi = `(input/1e6 × inputPer1M) + (output/1e6 × outputPer1M)` kredit.
-
-Estimasi paket memakai tarif acuan level **Seimbang** (Claude Sonnet mock: 31.500 / 157.500 kredit per 1 jt token) → ±Rp1.890 per sesi kecil:
-
-| Paket | Kredit (nominal + bonus) | Hitungan | Ditampilkan |
-|---|---:|---:|---|
-| Mulai | 55.000 | ±29 sesi | 20–30 sesi kecil |
-| Bangun | 115.000 | ±60 sesi | 40–60 sesi kecil |
-| Scale | 300.000 | ±158 sesi | 100+ sesi kecil |
-
-Batas level biaya: **Hemat** < Rp1.000 per sesi kecil, **Seimbang** Rp1.000–3.000, **Premium** > Rp3.000.
-
-### Katalog Model Mock (G1, G5)
-
-Tarif dalam kredit per 1 juta token (1 kredit = Rp1). Semua angka ilustratif; sebagian mengacu pada tarif publik OCTA (lihat `research/reference-gap-analysis.md`). Nama memakai nama keluarga model, bukan versi spesifik, agar tidak cepat usang.
-
-| id | Nama | Penyedia | Kegunaan | Level | Input/1jt | Output/1jt | Konteks | ≈ sesi / Rp10.000 |
-|---|---|---|---|---|---:|---:|---|---:|
-| `deepseek-chat` | DeepSeek Chat | DeepSeek | coding, chat | Hemat | 4.500 | 18.000 | 128 rb | 39 |
-| `gemini-flash` | Gemini Flash | Google | chat, analisis | Hemat | 5.000 | 20.000 | 1 jt | 35 |
-| `qwen-plus` | Qwen Plus | Alibaba | chat | Hemat | 6.000 | 24.000 | 128 rb | 29 |
-| `gpt-mini` | GPT Mini | OpenAI | chat | Hemat | 6.500 | 26.000 | 400 rb | 27 |
-| `deepseek-reasoner` | DeepSeek Reasoner | DeepSeek | analisis, coding | Hemat | 9.000 | 36.000 | 128 rb | 19 |
-| `claude-haiku` | Claude Haiku | Anthropic | chat, coding | Hemat | 15.000 | 75.000 | 200 rb | 11 |
-| `qwen-max` | Qwen Max | Alibaba | coding, chat | Seimbang | 20.000 | 80.000 | 256 rb | 8 |
-| `gpt` | GPT | OpenAI | coding, chat | Seimbang | 25.000 | 150.000 | 400 rb | 6 |
-| `claude-sonnet` | Claude Sonnet | Anthropic | coding, analisis | Seimbang | 31.500 | 157.500 | 1 jt | 5 |
-| `gemini-pro` | Gemini Pro | Google | coding, analisis | Seimbang | 31.500 | 189.000 | 1 jt | 4 |
-| `claude-opus` | Claude Opus | Anthropic | coding | Premium | 78.750 | 393.750 | 1 jt | 2 |
-| `gpt-pro` | GPT Pro | OpenAI | analisis | Premium | 150.000 | 600.000 | 400 rb | 1 |
-
-`≈ sesi / Rp10.000` dihitung di JavaScript (`Math.floor(10000 / biayaSesi)`), bukan ditulis manual.
-
-Preview di landing (6 kartu, urutan): Claude Sonnet, GPT, Gemini Pro, DeepSeek Chat, Qwen Plus, Claude Opus.
-
-## JavaScript Behavior
-
-### Mobile Navigation
-
-- Menu button toggle `.is-open`
-- Update `aria-expanded`
-- Tutup menu saat tautan diklik
-- Tutup saat Escape ditekan
-- Tambah `overflow-hidden` pada body saat menu terbuka bila perlu
-
-### Package Selection
-
-- Klik intent mengubah package recommendation
-- Klik di mana saja pada package card memilih paket itu (tanpa membuka checkout); tombol “Pilih RpX” di kartu memilih + membuka checkout
-- Membuka checkout jika CTA “Isi paket ini” diklik
-- Tidak perlu hard reload atau navigasi halaman
-
-### Language Switch
-
-- Fungsi `setLanguage(lang)` mengubah text nodes yang memiliki `data-i18n`
-- Update `lang` pada `<html>`
-- Update package estimates dan checkout copy
-- Simpan pilihan ke `localStorage`
-
-### Checkout Modal
-
-- Gunakan `<dialog>` bila memungkinkan
-- Fallback: overlay div dengan `role="dialog"`
-- Opening: set selected package dan total. Jika dibuka dari CTA umum (header/hero), paket = paket terpilih atau rekomendasi tab aktif
-- Pilihan paket (3 radio) ada di atas ringkasan; di bawah 640px harga ditulis singkat (`Rp100rb` / `Rp100K`), ringkasan biaya tetap format lengkap
-- Alur 3 langkah: **form** → **instruksi bayar** sesuai metode (QR contoh / nomor VA lokal / tombol DANA·GoPay·OVO) → **sukses** (atau **gagal** lewat tombol “Simulasikan pembayaran gagal”)
-- Display fields:
-  - Email atau nomor HP (satu field)
-  - Payment method
-  - Package price
-  - Bonus credit
-  - Fee Rp0
-  - Total
-- Payment options mock: QRIS, E-Wallet, Virtual Account
-- Field kontak menggunakan `type="text"`, `inputmode="email"`, `autocomplete="email"`, dan `required` (lihat Form Validation)
-- Tombol submit **tidak di-disable**: validasi saat submit, pesan error inline, fokus ke field pertama yang salah (tombol nonaktif tanpa penjelasan menyulitkan pengguna)
-- Label submit menyebut total: `Lanjut bayar Rp100.000`
-- Langkah bayar → “Saya sudah bayar” → ≤600ms “Memeriksa pembayaran…” → success state
-- Tidak membuat transaksi nyata
-- Success state harus mencantumkan teks `Prototype — tidak ada transaksi nyata`
-
-### Focus and Modal
-
-- Simpan elemen yang membuka dialog
-- Fokus ke close button atau heading saat dibuka
-- Kembalikan fokus saat ditutup
-- Trap Tab dalam modal
-- Tutup dengan Escape
-- Tutup saat backdrop diklik, dengan pengecualian arah klik
-- Tambah `aria-live="polite"` pada status pembayaran
-
-## Form Validation
-
-Checkout memakai **satu field kontak: email atau nomor HP**. Bukti pembelian dikirim ke kontak tersebut.
-
-- Wajib diisi.
-- Deteksi otomatis:
-  - Mengandung `@` → divalidasi sebagai email (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`).
-  - Selain itu → dibersihkan dari spasi, `-`, dan `.`, lalu divalidasi sebagai nomor HP Indonesia: `^(\+62|62|0)8[1-9][0-9]{7,10}$`.
-- Nomor HP dinormalisasi ke format `+628…` saat ditampilkan di ringkasan dan success state.
-- Pesan error inline ditampilkan setelah `blur` atau saat submit, bukan saat setiap ketikan.
-- Field dihubungkan ke pesan error dengan `aria-describedby` dan `aria-invalid="true"`.
-- Helper text di bawah label: “Bukti pembelian dikirim ke sini.”
-- Tidak menyimpan atau mengirim data pengguna ke server.
-
-## Mock Payment Rules
-
-- QRIS: tampilkan placeholder QR SVG dengan status menunggu
-- E-Wallet: tampilkan pilihan DANA/GoPay/OVO secara mock
-- Virtual Account: tampilkan nomor virtual account generated secara lokal
-- Confirm button membuat success state setelah validasi
-- Hindari simulasi delay lebih dari 600ms
-
-## Fitur v3 (P1 + P2)
-
-Kode `G1–G8` merujuk ke `research/reference-gap-analysis.md`. Copy lengkap ada di `microcopy-and-states.md`.
-
-### Kartu Model (G1, G5)
-
-```text
-[C] Claude Sonnet                 [Seimbang]
-Anthropic · Coding · Analisis
-≈ 5 sesi kecil / Rp10.000
-▸ Detail tarif
-    Input   31.500 kredit / 1 jt token
-    Output 157.500 kredit / 1 jt token
-    Konteks 1 jt token
-```
-
-- Ikon = **logo keluarga model** di lingkaran putih bergaris: Claude, OpenAI (GPT), Gemini, DeepSeek, Qwen — file lokal `v3/assets/models/*.svg` dari `@lobehub/icons-static-svg@1.101.0` (MIT), sumber dan catatan merek di `v3/assets/models/SOURCE.md`. Satu ikon per keluarga; `<img alt="">` karena nama model dan penyedia sudah tertulis di sebelahnya. *(Revisi 18 Nov 2026 atas permintaan user; sebelumnya monogram 2 huruf.)*
-- Urutan: [ikon · nama · badge level] → baris penuh “penyedia · kegunaan” → estimasi angka besar `≈ 5` + keterangan kecil `sesi kecil / Rp10.000` → Detail tarif.
-- Detail tarif: keterangan “Tarif per 1 jt token” di atas, nilai cukup `31.500 kredit` (satuan panjang di tiap baris patah di kartu sempit).
-- Badge level selalu berisi teks: Hemat (latar teal muda), Seimbang (sky muda), Premium (yellow muda). Warna bukan satu-satunya pembeda.
-- “Detail tarif” memakai `<details>`; tertutup secara default (pemula tidak melihat angka teknis kecuali membuka).
-- Angka diformat `Intl.NumberFormat('id-ID')`; EN memakai “1M tokens”.
-- Kartu tidak punya tombol beli sendiri — satu saldo berlaku untuk semua model.
-
-### Katalog Model (dialog)
-
-- `<dialog>` dibuka dengan `showModal()`.
-- Mobile: full screen (`w-full h-dvh max-w-none m-0`), header + search sticky di atas.
-- `md:`: dialog tengah `max-w-4xl max-h-[85dvh]`, isi scroll internal.
-- Header: judul, subjudul “Satu saldo untuk semua model…”, tombol tutup.
-- Search: `<input type="search">` dengan label (boleh visually hidden), mencari di nama dan penyedia, tanpa perlu Enter.
-- Filter sebagai grup chip `button[aria-pressed]`:
-  - Kegunaan: Coding · Chat & menulis · Analisis dokumen
-  - Level biaya: Hemat · Seimbang · Premium
-  - Penyedia: Anthropic · OpenAI · Google · DeepSeek · Alibaba
-  - Di mobile, baris chip boleh scroll horizontal **di dalam** kontainernya (`overflow-x-auto`), tidak boleh membuat halaman overflow.
-  - Di bawah `md:`, panel filter disembunyikan di balik tombol `Filter (n)` (`aria-expanded`) di samping search, agar daftar hasil tetap punya ruang. Mulai `md:` filter selalu terlihat: Kegunaan + Level biaya sebaris, Penyedia di baris sendiri.
-  - Setelah “Tampilkan lebih banyak”, fokus pindah ke kartu pertama yang baru muncul.
-  - Data model dan estimasi dirender dari satu array di `script.js`; `per10k` dan level biaya **dihitung** dari `SMALL_SESSION`, QA membandingkannya dengan tabel di atas.
-- Logika filter: OR di dalam satu grup, AND antar grup.
-- Hasil: grid 1 kolom base, 2 kolom `md:`, 3 kolom `lg:`. Tampilkan 6, lalu tombol “Tampilkan lebih banyak” (+6). Tidak ada pagination bernomor.
-- Jumlah hasil diumumkan di elemen `aria-live="polite"`: “Menampilkan 6 dari 12 model”.
-- Empty state + tombol “Hapus filter”.
-- Footer dialog: label “Contoh — daftar model dan tarif dapat berubah” + definisi sesi kecil.
-
-### API Key & Panduan Pasang (G3)
-
-Section “Pakai di tool favoritmu”:
-
-```text
-1  Salin API key        dari halaman saldo setelah top up
-2  Tempel di tool       isi Base URL dan API key di pengaturan tool
-3  Pilih model & mulai  semua model memakai saldo yang sama
-
-┌ Contoh konfigurasi ───────────────────────┐
-│ Base URL  https://api.tokennyala.example/v1  [Salin] │
-│ API key   tn-demo-••••••••3f9a               [Salin] │
-└───────────────────────────────────────────┘
-Kompatibel dengan tool yang mendukung OpenAI API, contoh: Cursor, Cline, Continue.
-```
-
-- Domain memakai `.example` (RFC 2606) agar jelas bukan endpoint nyata.
-- Tombol Salin memakai `navigator.clipboard.writeText`; umumkan “Tersalin” lewat `aria-live`; fallback: pilih teks.
-- Nama tool ditulis sebagai teks biasa, tanpa logo, diberi label “contoh”.
-- Di bawah 640px nilai (URL/key) ditumpuk di atas tombol Salin; URL diberi titik patah `<wbr>` setelah `https://` dan sebelum `.example` agar tidak terpotong di tengah kata.
-- Di bawah kartu ada CTA “Belum punya API key? Isi saldo dulu…” → membuka checkout.
-- “Lihat panduan pasang” di sukses checkout: tutup dialog dulu, lalu scroll ke `#pakai` dan fokus ke judulnya (menutup modal mengembalikan fokus ke elemen sebelumnya, yang bisa membatalkan lompatan anchor biasa).
-
-Checkout success state (menggantikan “Kembali ke proyek”):
-- Judul “Saldo nyala!”, ringkasan paket dan kontak tujuan bukti.
-- Kartu API key mock (`tn-demo-` + 4 karakter acak, sisanya disamarkan) dengan tombol **Salin API key**.
-- Tombol sekunder **Lihat panduan pasang** → tutup dialog, scroll ke section 6.
-- Peringatan kecil: “Simpan API key seperti kata sandi. Jangan dibagikan.”
-- Label “Prototype — tidak ada transaksi nyata”.
-
-### Pantau & Kendalikan (G6)
-
-Mock mini dashboard di dalam kartu benefit ke-4 (statis, bukan data nyata):
-
-```text
-Saldo tersisa          Rp82.400
-Pemakaian 7 hari       ▂▃▅▂▆▃▄   (7 bar CSS)
-[x] Ingatkan saat saldo < Rp20.000
-API key  Laptop kerja · Aktif     [Nonaktifkan]
-```
-
-- Toggle pengingat dan tombol Nonaktifkan **berfungsi lokal** (mengubah label/status) agar terasa hidup; tidak menyimpan apa pun.
-- Bar grafik memiliki teks alternatif: “Pemakaian 7 hari terakhir, tertinggi hari Jumat”.
-- Label “Contoh tampilan”.
-- Data mock konsisten: paket Bangun 115.000 kredit, pemakaian 7 hari `[2.600, 3.900, 5.400, 3.300, 7.200, 4.700, 5.500]` = 32.600 → sisa **Rp82.400**.
-- Grafik (sesuai skill dataviz): satu seri → tanpa legenda, judul menamai seri; batang tipis (maks 28px) ujung membulat 4px di garis dasar, jarak 2px; label langsung hanya di nilai tertinggi (Jumat), nilai lain tampil saat hover; daftar `sr-only` “Senin: Rp2.600 …” sebagai pengganti tabel untuk screen reader.
-- Switch pengingat: `button[role=switch][aria-checked]`, area sentuh 44px.
-- Baris API key: nama + badge status di baris pertama, key tersamar di baris kedua, tombol Nonaktifkan/Aktifkan; perubahan diumumkan lewat `aria-live`.
-
-### Form Konsultasi Tim (G7)
-
-Lebih ringan dari OCTA Enterprise (5 field vs 7 + captcha):
-
-| Field | Tipe | Wajib |
-|---|---|---|
-| Nama | text, `autocomplete="name"` | Ya |
-| Email atau nomor HP | aturan sama dengan checkout | Ya |
-| Nama tim atau perusahaan | text, `autocomplete="organization"` | Ya |
-| Ukuran tim | radio chip: 1–5 · 6–20 · 21–50 · 50+ | Ya |
-| Kebutuhan | textarea, maks 500 karakter, counter `0/500` dengan `aria-live` saat ≥ 450 | Tidak |
-| Butuh invoice perusahaan / faktur pajak | checkbox | Tidak |
-| Setuju Syarat & Ketentuan dan Kebijakan Privasi | checkbox | Ya |
-
-- Urutan tampil: Nama · Nama tim (berdampingan di `md:`) → Email/HP (lebar penuh) → Ukuran tim → Kebutuhan → checkbox.
-- Tombol Kirim aktif, validasi saat submit (jangan disable tanpa penjelasan); error inline per field, dicek **sesuai urutan tampil** sehingga fokus pindah ke field salah paling atas.
-- Pesan kontak kosong khusus konsultasi: “Masukkan email atau nomor HP agar kami bisa menghubungimu.” (bukan pesan “bukti pembelian” milik checkout).
-- Counter `0/500` visual (`aria-hidden`); region `aria-live` terpisah hanya mengumumkan saat ≥ 450 karakter.
-- Setelah sukses lalu ditutup, form di-reset.
-- Success state: “Terima kasih! Tim kami menghubungi kamu dalam 1 hari kerja.” + label simulasi.
-- Tidak ada captcha di prototype.
-
-### Live Chat Mock (G4)
-
-Asisten otomatis bernama **Nala** + serah terima ke tim manusia. Semua jawaban adalah skrip lokal — **tidak ada AI atau server**.
-
-**Launcher**
-- Pill kanan bawah: ikon chat + “Butuh bantuan?” (`button`, `aria-expanded`, `aria-controls`).
-- Posisi `fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4`, `z-40`.
-- Disembunyikan saat dialog modal terbuka (checkout, katalog, konsultasi).
-
-**Panel**
-- Mobile: full screen (`inset-0`, `h-dvh`). `md:`: panel 380×560 di kanan bawah.
-- `role="dialog"`, `aria-modal="false"` (non-modal di desktop), `aria-labelledby` judul panel.
-- Header: avatar Nala, nama, status “Asisten otomatis”, tombol mulai ulang, tombol tutup.
-- Daftar pesan: `role="log"`, `aria-live="polite"`.
-- Chip pertanyaan cepat di atas input.
-- Input teks + tombol kirim (`aria-label="Kirim pesan"`). Teks bebas dijawab dengan pencocokan kata kunci sederhana; jika tidak cocok → jawaban fallback + chip.
-- Disclaimer tetap terlihat di bawah input: “Nala adalah asisten otomatis (simulasi). Jawaban bisa kurang tepat.”
-- Escape menutup panel, fokus kembali ke launcher. Saat dibuka, fokus ke input.
-- Indikator “sedang mengetik” maksimal 600ms (selaras aturan delay mock).
-
-**Alur skrip**
-
-| Chip / kata kunci | Respons |
-|---|---|
-| Bantu pilih paket | 2 pertanyaan berurutan dengan chip jawaban: tujuan (Belajar/Prototype/Kerja) → frekuensi (Sesekali/Tiap minggu/Tiap hari). Hasil: rekomendasi paket + tombol **Pilih paket ini** (tutup chat → buka checkout dengan paket tersebut). |
-| Cara pakai saldo di tool | Ringkasan 3 langkah + tombol **Lihat panduan pasang** (scroll ke section 6). |
-| Model apa saja? | Ringkasan level biaya + tombol **Buka katalog model**. |
-| Metode pembayaran | QRIS, e-wallet, virtual account (simulasi). |
-| Bicara dengan tim | Serah ke manusia (lihat di bawah). |
-
-Matriks rekomendasi “Bantu pilih paket”:
-
-| Tujuan \ Frekuensi | Sesekali | Tiap minggu | Tiap hari |
-|---|---|---|---|
-| Belajar | Mulai | Mulai | Bangun |
-| Prototype | Mulai | Bangun | Scale |
-| Kerja | Bangun | Scale | Scale |
-
-**Serah ke tim manusia**
-- Pesan sistem: “Menghubungkan ke tim…” → 600ms → pesan dari agen mock “Sari · Tim TokenNyala” dengan avatar inisial dan badge “Tim”.
-- Jam layanan mock: Senin–Jumat 09.00–18.00 WIB. Di luar jam (berdasarkan jam perangkat, zona WIB): tampilkan state **offline** — “Tim sedang offline. Tinggalkan email atau nomor HP, kami balas di jam kerja.” + field kontak (validasi sama dengan checkout) → konfirmasi.
-- Label “Simulasi — tidak ada agen nyata” di header saat mode tim.
-- Percakapan hanya di memori; hilang saat halaman dimuat ulang. Tidak disimpan ke `localStorage`.
-
-**Implementasi v3 (18 Nov 2026)**
-- Satu `<dialog id="chat">`: di bawah `md:` dibuka dengan `showModal()` (layar penuh, fokus terkunci, Escape bawaan); mulai `md:` dengan `show()` (panel 380×560 non-modal, halaman tetap bisa dipakai). Escape menutup panel non-modal dari mana pun selama tidak ada modal/menu lain yang terbuka.
-- Pill: logo + titik hijau “online”; teks “Butuh bantuan?” tampil mulai `sm:` (di bawahnya hanya `sr-only`). Disembunyikan otomatis lewat CSS `body:has(dialog:modal)` dan saat chat terbuka (`aria-expanded`).
-- Titik masuk lain: tombol “Tanya Nala” di kolom kiri FAQ, link “Butuh bantuan?” di checkout (menutup checkout, pilihan paket tetap).
-- Pesan disimpan sebagai `{from, key, params}` sehingga seluruh riwayat ikut diterjemahkan saat ganti bahasa.
-- Kata kunci teks bebas (ID+EN): tim/team/manusia/agen → tim; paket/pilih/berapa → pilih paket; api/key/tool/pasang/cursor → panduan; model/claude/gpt/gemini/deepseek/qwen → model; bayar/qris/e-wallet/va → pembayaran.
-- Mode tim online: header “Sari · Tim TokenNyala” + pita “Simulasi — tidak ada agen nyata · jam layanan”; pesan berikutnya dibalas otomatis “Pesanmu sudah kami terima…”. Mode offline: header tetap Nala, pita hanya jam layanan, input meminta email/HP (validasi sama dengan checkout, pesan kosong memakai versi “agar kami bisa menghubungimu”).
-- Chip: satu baris yang bisa digeser horizontal di mobile, dibungkus mulai `md:`.
-- QA override jam layanan: `?chat=online` / `?chat=offline`.
-- Semua dialog hanya mengembalikan fokus ke pembuka bila fokus sedang “bebas” (`body` atau di dalam dialog yang ditutup) — agar menutup checkout untuk membuka chat tidak merebut fokus dari input chat.
-
-## Animations
-
-- Hero fade-in: 450ms
-- Card hover: 180ms
-- Modal: 220ms
-- Success check: 350ms
-- Tidak ada animasi loop di luar ilustrasi status yang ringan
-- Gunakan `prefers-reduced-motion: reduce` untuk menghapus atau mempersingkat gerak
-
+### Token (`src/tailwind.css`)
 ```css
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+@theme {
+  --color-xl-blue: #002DBB;  --color-xl-dark: #00166A;  --color-xl-yellow: #FFC93C;
+  --color-xl-teal: #00D2A0;  --color-teal-ink: #007A5E; --color-xl-sky: #5CD0F9;
+  --color-paper: #F7F8FC;    --color-ink: #17181A;      --color-muted: #626B82;
+  --color-line: #D9DEEA;     --color-lead-ink: #2A3557; --color-off: #C7CDDC;
+  --color-stopped: #B4BCCF;
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --radius-card: 20px; --radius-control: 12px;
+  --ease-out-soft: cubic-bezier(.22,1,.36,1);
 }
 ```
+Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:wght@500` (aturan 20 Nov).
 
-## Accessibility Requirements
+## 3. JavaScript
 
-- Kontras teks minimum WCAG AA
-- Minimum touch target 44px
-- Skip-to-content link
-- Semua icon-only button memiliki `aria-label`
-- Tidak bergantung pada warna untuk state
-- Selected state memiliki teks atau icon tambahan
-- Heading berurutan
-- Fokus terlihat pada semua kontrol
-- Language control dapat dioperasikan keyboard
-- Semua status dinamis diumumkan dengan `aria-live`
-- Modal tidak meninggalkan background dapat difokuskan
+- **Script klasik (`<script defer>`), bukan ES module** — module diblokir CORS di `file://`. Semua modul memakai namespace `window.TN` (`TN.data`, `TN.i18n`, `TN.store`, `TN.ui`).
+- `data.js` berisi **data + fungsi murni** (`recipeTotals`, `sessionCost`, `coverMonths`, `prorata`, `balanceUntil`) — dipakai landing, harga, console, Nala, dan QA (lewat `page.evaluate`). Tidak ada angka harga di HTML atau file JS lain.
+- State UI lewat atribut (`aria-selected`, `aria-checked`, `data-state`) — aturan v3 #9.
+- Format uang: `Intl.NumberFormat` sesuai bahasa; ringkas `Rp34 rb` / `Rp34K`.
 
-## SEO and Meta
+## 4. State Demo Console (`store.js`)
 
-```html
-<meta name="description" content="Top up saldo AI untuk belajar, membuat prototype, dan membangun proyek vibecoding.">
-<meta property="og:title" content="TokenNyala — Mulai vibecoding tanpa bingung top up">
-<meta property="og:description" content="Pilih kebutuhan dan top up saldo AI dengan alur yang sederhana.">
-<meta property="og:type" content="website">
-<meta property="og:image" content="assets/og-token-nyala.png">
-<meta name="theme-color" content="#F7F8FC">
-```
+| Kunci localStorage | Isi |
+|---|---|
+| `tn-lang` | `id` / `en` (dipakai bersama landing/harga/console, sama dengan v3) |
+| `tn-v4-demo` | `{ version, user:{name}, balance, projects[], services[], history[], reminder, clock }` |
 
-Judul halaman:
+- **Data kontak (email/HP) tidak pernah disimpan** — aturan v3. Hanya nama tampilan mock.
+- Semua akses localStorage dibungkus try/catch; tanpa storage, console tetap jalan dalam memori (reload = reset).
+- Preset: `?demo=ayu|raka|dimas` mengisi state persona **persis seperti tabel `services-and-pricing.md` §8** (jam 21 Nov 2026); `&state=jeda` (ayu); `?demo=reset` mengosongkan.
+- **Jam simulasi** (`clock`): menu Akun → “Simulasi: majukan 30 hari” menjalankan perpanjangan / jeda / berhenti otomatis sesuai §2 aturan tagihan — untuk demo saldo habis.
+- Semua perubahan saldo lewat satu fungsi `store.charge({amount, service, project, note})` yang menulis riwayat.
 
-```text
-TokenNyala — AI Credit untuk Vibecoding
-```
+## 5. Router Console
 
-## Performance
+- Hash router (`#/beranda`, `#/buat?paket=…`, `#/proyek/:id`, …) — jalan di `file://`.
+- Saat pindah rute: render, set `document.title`, **fokus ke `h1` rute** (`tabindex="-1"`), umumkan judul lewat region `aria-live` polite, scroll ke atas.
+- Belum “masuk” → `#/masuk?next=…`.
+- Tab bar `aria-current="page"`; sidebar desktop sama.
 
-- Hindari image besar; gunakan SVG dan CSS
-- Batasi animasi dan shadow
-- Tailwind CDN hanya untuk prototype, bukan build produksi
-- Lazy-load gambar non-hero jika ada
-- Font: 2 keluarga, 4 face (Manrope 500/700/800, IBM Plex Mono 500) — lihat `visual-direction.md`; dicek `tools/audit_v3.py`
-- Gunakan satu loading state yang ringkas
-- Ukuran target awal: HTML + CSS + JS < 300KB sebelum asset illustration
+## 6. Aturan Membangun (pengganti v3 ground rules untuk v4)
 
-## Security and Privacy
+1. **Mobile first sungguhan** — v3 #1 (tanpa `max-*:`/`@media (max-width)`).
+2. **Tinggi ditentukan konten; grid selalu kolom eksplisit** — v3 #2.
+3. **Token hanya di `src/tailwind.css` `@theme`** — tidak ada hex di HTML/JS.
+4. **Utility dulu** (console). **Pengecualian landing (21 Nov 2026) dan harga (22 Nov 2026):** `index.html` dan `harga.html` memakai CSS tulisan tangan `assets/css/site.css` + `landing.css` / `harga.css` (port showcase v2); landing memakai copy statis `data-l`, harga tetap memakai kamus — lihat `visual-direction.md` §5. `@layer components` hanya untuk: `.shell`, `.btn` + varian, `.sheet` + varian, `.display`, `.kicker`, `.switch`, `.card`. CSS custom lain (ilustrasi, keyframe) di `@layer components`/`utilities` file yang sama, target < 250 baris total.
+5. **Tipografi fluid** dengan `clamp()`; body ≥16px — v3 #5.
+6. **Overlay = `<dialog>`** + `setupModal()` (v3 #6), termasuk aturan `sr-only` butuh ancestor `relative`. Mobile: bottom sheet; `md:`: dialog tengah.
+7. **QA per section/layar**, bukan di akhir — v3 #7, untuk **setiap halaman dan setiap rute console**, termasuk EN di 320px.
+8. **Konten dulu, dekorasi belakangan** — v3 #8.
+9. **Satu sumber angka:** semua harga/estimasi dari `data.js`; QA membandingkan dengan `services-and-pricing.md`.
+10. **Commit kecil + push setiap langkah** ke branch `v4-cloud` (satu branch untuk seluruh v4); PR ke `main` per fase atau sesuai permintaan user, merge atas persetujuan user.
+11. **Jangan bawa CSS showcase v2**; bawa bahasa visualnya (`visual-direction.md`). Logika JS archive/v3/showcase boleh dipakai ulang setelah dibaca.
 
-- Jangan meminta password atau kartu kredit dalam prototype
-- Jangan menyimpan email atau nomor HP pada localStorage (yang boleh disimpan hanya preferensi bahasa)
-- Jangan menampilkan nomor pembayaran nyata
-- Tampilkan label mock pada checkout
-- Hindari mengirim form ke endpoint yang tidak dikonfigurasi
-- Payment method is for simulation only
+## 7. Aksesibilitas (tambahan v4)
+- Chip paket = `radiogroup` (pilihan tunggal yang mengubah kartu) dengan panah kiri/kanan; segmented ukuran = `radiogroup`; switch layanan = `button[role=switch][aria-checked]`; stepper = tombol −/+ dengan `aria-label` + nilai `aria-live`.
+- Wizard: judul langkah fokus saat pindah langkah; “Langkah n dari 4” terbaca; progres menyalakan di `aria-live="polite"`; tombol Nyalakan tidak di-disable tanpa alasan (validasi saat klik, aturan v3).
+- Ringkasan lengket mobile: tombol “Rincian” `aria-expanded`.
+- Grafik pemakaian mengikuti skill dataviz (v3).
+- axe 0 pelanggaran di **setiap halaman, setiap rute console, dan setiap dialog terbuka**.
 
-## Definition of Done
+## 8. Tools QA v4
+| Tool | Isi |
+|---|---|
+| `tools/qa.py --interactive --out <dir>` | 6 viewport untuk `index.html`, `harga.html`, dan rute console utama (state kosong + `?demo=ayu`), cek v3 (overflow, escape shell, teks meluap, touch target, console error, above-the-fold) + alur: paket → wizard → isi saldo → nyala → beranda; kalkulator; berhenti/ganti ukuran; jam simulasi → dijeda |
+| `tools/i18n_check.py` | Diperluas dengan `--root site` (semua halaman + kamus + template JS) |
+| `tools/audit.py` | axe-core 4.14.0 per halaman/rute/dialog, face font (4), `file://`, reduced motion, storage diblokir, **CSS compile up to date**, **konsistensi angka** (`services-and-pricing.md` §9), label simulasi |
+| `tools/demo.py` | Gladi skrip demo (21 langkah, screenshot bernomor) |
 
-Status v3 per 18 Nov 2026 — **semua butir terpenuhi**. Kolom “Bukti” menunjuk alat yang memverifikasinya; jalankan ulang setelah perubahan apa pun.
+Skrip v3 tidak diubah perilakunya untuk v3.
 
-| # | Butir | Status | Bukti |
-|---|---|---|---|
-| 1 | Landing page dapat dibuka langsung dari browser (`file://`) | ✅ | `audit_v3.py` — tanpa console error, Tailwind & JS aktif |
-| 2 | Tidak ada overflow horizontal di 320, 375, 768, 1024, 1440, 667×375 | ✅ | `qa_v3.py` — overflow, konten keluar gutter, teks meluap |
-| 3 | CTA utama berfungsi | ✅ | `qa_v3.py` — hero CTA membuka checkout |
-| 4 | Intent picker berfungsi (termasuk keyboard) | ✅ | `qa_v3.py` — panah/Home/End, rekomendasi berubah |
-| 5 | Package selection dan checkout berfungsi | ✅ | `qa_v3.py` — klik kartu, tombol kartu, alur checkout penuh |
-| 6 | Language switch berfungsi dan tersimpan | ✅ | `qa_v3.py` + `i18n_check.py` — 333 kunci, 0 belum diterjemahkan |
-| 7 | Success state dapat dibuka | ✅ | `qa_v3.py` — sukses + API key + panduan pasang |
-| 8 | Modal dapat ditutup dan keyboard dapat digunakan | ✅ | `qa_v3.py` — Escape, backdrop, fokus kembali ke pembuka |
-| 9 | Visual sesuai direction TokenNyala | ✅ | Review screenshot tiap section (ID & EN, 320–1440) |
-| 10 | Estimasi penggunaan memiliki disclaimer | ✅ | Paket, model, contoh penggunaan, FAQ |
-| 11 | Tidak ada klaim payment atau activation nyata | ✅ | Label simulasi di checkout, sukses, konsultasi, chat, footer |
-| 12 | Tidak ada console error | ✅ | `qa_v3.py` di 6 viewport + `audit_v3.py` |
-| 13 | Katalog: search, filter, tampilkan lebih banyak, empty state | ✅ | `qa_v3.py` — termasuk angka vs tabel spec |
-| 14 | Live chat: pilih paket → checkout; tim online & offline | ✅ | `qa_v3.py` — `?chat=online|offline` |
-| 15 | Form konsultasi: validasi dan success state | ✅ | `qa_v3.py` |
-| 16 | Tombol salin API key dan base URL | ✅ | `qa_v3.py` |
-| 17 | Pill bantuan tidak menutupi CTA hero / tombol checkout | ✅ | `qa_v3.py` (posisi) + CSS `body:has(dialog:modal)` |
-| 18 | Aksesibilitas WCAG 2.1 AA (kontras, ARIA, landmark, list, label) | ✅ | `audit_v3.py` — axe-core 4.14.0, 0 pelanggaran di halaman ID/EN mobile/desktop, menu, checkout tiap langkah, katalog, konsultasi, chat |
-| 19 | `prefers-reduced-motion` dihormati | ✅ | `audit_v3.py` — tidak ada animasi/transisi > 0.01ms, scroll `auto` |
-| 20 | Email/HP tidak disimpan di browser | ✅ | `audit_v3.py` — setelah checkout + konsultasi: `localStorage = { tn-lang }`, session & cookie kosong |
-| 21 | HTML + CSS + JS < 300 KB | ✅ | `audit_v3.py` — ±198 KB |
+## 9. Definition of Done v4
+1. Tiga halaman jalan lewat `file://` dan server lokal, tanpa error console.
+2. Lolos 6 viewport untuk setiap halaman dan rute console (QA otomatis + screenshot dilihat).
+3. Alur demo utama (skrip di `user-journeys.md`) jalan tanpa hambatan di 375px.
+4. Semua angka sama dengan `services-and-pricing.md` (cek otomatis).
+5. ID/EN lengkap: 0 kunci hilang, 0 kunci mati, 0 teks belum diterjemahkan.
+6. axe 0 pelanggaran (halaman, rute, dialog).
+7. Reduced motion: semua konten tampil, tanpa animasi.
+8. Storage diblokir: semua halaman jalan; console dalam memori.
+9. Hanya face font yang dimuat yang dirender: 4 di console, 6 di landing dan harga (+ Manrope 600, Plex Mono 600).
+10. `app.css` hasil build terbaru.
+11. Data kontak tidak tersimpan di storage.
+12. Label simulasi terlihat di footer, checkout, wizard, dan console.
 
-## Open Items
+### Status DoD (Fase 7, 20 Nov 2026) — semua terpenuhi
+| # | Bukti |
+|---|---|
+| 1 | `audit.py` membuka `index.html`, `harga.html`, `app.html?demo=ayu` lewat `file://` tanpa error; QA lewat server lokal |
+| 2 | `qa.py --interactive`: 12 halaman/rute × 6 viewport + 4 uji motion = 76 cek, screenshot ditinjau |
+| 3 | `demo.py`: 21 langkah skrip demo di 375×812 lolos |
+| 4 | `audit.py` [numbers]: unit AI, paket, contoh, template, Nala, preset (saldo, cukup sampai), riwayat = saldo, harga tiap tabel |
+| 5 | `i18n_check.py --root site`: semua kunci [ID, EN], 0 hilang, 0 mati, 0 belum diterjemahkan (31 halaman/rute) |
+| 6 | axe 0 pelanggaran di semua halaman, rute console, dan dialog (katalog, konsultasi, Nala, tambah layanan, isi saldo, Lainnya, menu akun, konfirmasi, ganti ukuran) |
+| 7 | reduced motion: tidak ada animasi/transisi > 0,01 ms, GSAP/Lenis tidak berjalan, konten tampil |
+| 8 | localStorage diblokir: landing/harga berganti bahasa, console masuk & berjalan di memori |
+| 9 | Hanya Manrope 500/700/800 + IBM Plex Mono 500 yang dirender (termasuk `<option>`) |
+| 10 | `app.css` dibangun ulang dan dibandingkan byte per byte |
+| 11 | Storage hanya `tn-lang` + `tn-v4-demo`; email/HP masuk, konsultasi, kontak Nala tidak pernah tersimpan |
+| 12 | Label simulasi terlihat di footer landing/harga, console (beranda, wizard), dan sheet isi saldo |
 
-- Aset logo resmi belum tersedia
-- Nominal final perlu validasi terhadap harga actual credit
-- Estimasi jumlah sesi perlu validasi berdasarkan model dan tipe tugas
-- Nama payment provider final belum tersedia
-- Aturan saldo (tidak kedaluwarsa, termasuk PPN, tidak bisa diuangkan) perlu validasi legal/finance
-- Tarif model mock perlu diganti tarif nyata dan disinkronkan dengan definisi sesi kecil
-- Jam layanan dan SLA balasan tim nyata belum ditentukan
-- `og:image` (`assets/og-token-nyala.png`) belum dibuat — meta `og:image` sengaja belum dipasang
-- Halaman Syarat & Ketentuan / Kebijakan Privasi masih tautan contoh
-- Tailwind browser build hanya untuk prototype; produksi memakai Tailwind CLI
-- Logo model: tinjauan legal pemakaian merek sebelum produksi
-- Domain dan deployment target belum ditentukan
+## 10. Urutan Build
+| Fase | Langkah |
+|---|---|
+| 1 | Setup `site/` + CLI build + token + font + ikon · shell landing (header, menu, bahasa, footer) · `tools/qa.py` dasar · hero · cerita macet · **Mau bikin apa?** (data.js + paket) · cara kerja · semua layanan · satu saldo |
+| 2 | Template · AI (port v3) · contoh · aman untuk pemula · belajar · tim (port v3) · FAQ · CTA akhir · motion · Nala (alur paket) |
+| 3 | Harga: kalkulator + detail layanan + AI + saldo/tagihan + FAQ harga |
+| 4 | Console: kerangka (header, tab bar, sidebar, router) · store + preset · masuk · beranda (kosong/berisi/banner) · saldo + isi saldo (checkout v3) + riwayat |
+| 5 | Wizard 4 langkah · detail proyek (ringkasan, layanan: ganti ukuran/berhenti, AI key, log, pengaturan) · jam simulasi & dijeda |
+| 6 | AI (mulai cepat, coba AI, model, pemakaian, key) · layanan lain (server, data, file, domain, email, pembayaran) · belajar · bantuan |
+| 7 | `audit.py` lengkap · i18n v4 · QA penuh · README v4 · skrip demo |

@@ -2,7 +2,7 @@
 """ID/EN completeness audit for v3 (step 12).
 
 Usage: python3 tools/i18n_check.py            # v3 (unchanged)
-       python3 tools/i18n_check.py --root v4  # v4: every page in V4_PAGES + the TN.i18n dictionary
+       python3 tools/i18n_check.py --root site  # v4: every page in V4_PAGES + the TN.i18n dictionary
 
 1. Every data-i18n / data-i18n-aria / data-i18n-placeholder key exists in copy.id AND copy.en,
    and both dictionaries have the same keys.
@@ -23,7 +23,7 @@ import threading
 
 from playwright.sync_api import sync_playwright
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent / "v3"
+ROOT = pathlib.Path(__file__).resolve().parent.parent / "archive" / "v3"
 
 # Same in both languages on purpose: brand/product/model names, payment brands, units, universal terms.
 ALLOW = {
@@ -92,7 +92,7 @@ def serve(root=None):
     return httpd
 
 
-V4_ROOT = ROOT.parent / "v4"
+V4_ROOT = ROOT.parent.parent / "site"  # the latest version
 V4_PAGES = ["index.html", "harga.html", "app.html?demo=reset#/masuk", "app.html?demo=ayu#/beranda",
             "app.html?demo=ayu&state=jeda#/beranda", "app.html?demo=raka#/saldo", "app.html?demo=ayu#/buat",
             "app.html?demo=ayu#/buat?resep=web-klien", "app.html?demo=raka#/proyek/klien-kopi?tab=layanan",
@@ -213,8 +213,8 @@ def _interleave(tpl):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", choices=["v3", "v4"], default="v3")
-    if ap.parse_args().root == "v4":
+    ap.add_argument("--root", choices=["site", "v4", "v3"], default="site")  # v4 = old name of site
+    if ap.parse_args().root in ("site", "v4"):
         return main_v4()
     httpd = serve()
     url = f"http://127.0.0.1:{httpd.server_address[1]}/index.html"

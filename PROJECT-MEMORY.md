@@ -5,29 +5,29 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ## Status Saat Ini (per 21 Nov 2026)
 
 - **Branch:** v3 sudah di-merge ke `main` lewat PR #1 (merge commit `3b631e3`, 18 Nov 2026). Branch `v3-mobile-first` masih ada di remote (tidak dihapus). Pekerjaan baru: buat branch baru dari `main`, push setiap langkah, merge lewat PR atas persetujuan user.
-- **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
-- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `v4/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 0–7 selesai (20 Nov 2026)** — v4 lengkap: landing, harga, console. DoD 12/12 terpenuhi (bukti di `docs/v4/technical-spec.md` §9). Gladi demo: `python3 -P tools/demo_v4.py`. **21 Nov:** landing v4 **dibangun ulang dengan cara showcase v2** (HTML + `site.css`/`landing.css` tulisan tangan + `landing.js`; loader, kursor, 6 face, copy `data-l`, 12 section). **22 Nov:** Harga juga dibangun ulang dengan cara showcase (tahap 7: `site.css` + `harga.css`, tab paket, 6 lembar, 6 face, tanpa loader). Console (tetap Tailwind) mendapat menu **Chat AI**, **Aplikasi**, dan **Server hemat (VPS NAT)** setelah analisa kompetitor (Sumopod, Hostinger, Helipod); sidebar dikelompokkan seperti landing/harga. **Menunggu:** persetujuan user untuk PR `v4-cloud` → `main`; review Pak Ferry; validasi finance/legal aturan tagihan & harga contoh. User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa_v4.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root v4`, `python3 -P tools/audit_v4.py`; build CSS `npm run build` di `v4/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
+- **Fase:** **v3 selesai** — semua 13 langkah build, DoD 21/21 terpenuhi (lihat tabel di `docs/archive/technical-spec.md`). Lolos `qa_v3.py` (6 viewport), `i18n_check.py`, dan `audit_v3.py` (axe 0 pelanggaran).
+- **Fase v4 (branch `v4-cloud`):** Fase 0 (dokumen), **Fase 1** (setup + landing bagian 1) dan **Fase 2** (landing lengkap: template, AI + katalog, contoh, aman, belajar, tim + konsultasi, FAQ 13, CTA akhir, motion GSAP/Lenis, chat Nala dengan alur resep) selesai — `site/index.html` utuh. **Fase 3** (`harga.html`) dan **Fase 4** (console `app.html`: kerangka, router, store + preset, masuk, beranda, saldo + isi saldo) selesai. **Fase 0–7 selesai (20 Nov 2026)** — v4 lengkap: landing, harga, console. DoD 12/12 terpenuhi (bukti di `docs/technical-spec.md` §9). Gladi demo: `python3 -P tools/demo.py`. **21 Nov:** landing v4 **dibangun ulang dengan cara showcase v2** (HTML + `site.css`/`landing.css` tulisan tangan + `landing.js`; loader, kursor, 6 face, copy `data-l`, 12 section). **22 Nov:** Harga juga dibangun ulang dengan cara showcase (tahap 7: `site.css` + `harga.css`, tab paket, 6 lembar, 6 face, tanpa loader). Console (tetap Tailwind) mendapat menu **Chat AI**, **Aplikasi**, dan **Server hemat (VPS NAT)** setelah analisa kompetitor (Sumopod, Hostinger, Helipod); sidebar dikelompokkan seperti landing/harga. **Menunggu:** persetujuan user untuk PR `v4-cloud` → `main`; review Pak Ferry; validasi finance/legal aturan tagihan & harga contoh. User minta lanjut sampai Fase 7 tanpa berhenti (20 Nov). QA v4: `python3 -P tools/qa.py --interactive --out <dir>`, `python3 -P tools/i18n_check.py --root site`, `python3 -P tools/audit.py`; build CSS `npm run build` di `site/`. Open item v3 lama: (harga/tarif nyata, validasi legal aturan saldo & logo, og:image, halaman legal, Tailwind CLI untuk produksi).
 - **Audit bahasa:** `python3 tools/i18n_check.py` setelah menambah/mengubah copy.
-- **QA:** jalankan `python3 tools/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
-- **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
-- **`showcase/`** (commit user `0bcc69e`, 20 Nov): folder hasil akhir “v1” dan “v2” versi user (berisi turunan v3 + GSAP/Lenis). Bukan buatan Claude; jangan diedit tanpa diminta.
-- **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
+- **QA:** jalankan `python3 tools/archive/qa_v3.py --interactive --out <dir>` setelah setiap section (Playwright + Chromium sudah terpasang di mesin ini). Cek juga screenshot-nya secara visual.
+- **Tipografi (20 Nov):** 2 keluarga, 4 face (Manrope 500/700/800 + IBM Plex Mono 500) — di-merge ke `main` lewat PR #3 (branch `type-scale-trim`). Aturan lengkap: `docs/archive/visual-direction.md` → Typography. Jangan menambah keluarga/weight baru tanpa persetujuan user (user ingin font sedikit).
+- **`archive/showcase/`** (commit user `0bcc69e`, 20 Nov): folder hasil akhir “v1” dan “v2” versi user (berisi turunan v3 + GSAP/Lenis). Bukan buatan Claude; jangan diedit tanpa diminta.
+- **v1** (`index.html`, `styles.css`, `script.js` di root) dan **v2** (`archive/v2-tailwind-cdn/`) = arsip. Jangan dikembangkan; boleh dibaca untuk logika JS.
 
 ## Peta Dokumen
 
 | File | Isi |
 |---|---|
-| `docs/v3-ground-rules.md` | **Aturan cara membangun v3** (mobile first, Tailwind, QA per section). Menang jika konflik soal implementasi. |
-| `docs/technical-spec.md` | Stack, token `@theme`, breakpoint, komponen, validasi form, Definition of Done |
-| `docs/wireframe-notes.md` | Wireframe mobile (utama) lalu desktop |
-| `docs/microcopy-and-states.md` | Semua copy ID/EN dan state UI |
-| `docs/information-architecture.md` | Urutan section halaman |
-| `docs/visual-direction.md`, `docs/brand-elements.md` | Warna, tipografi, logo |
-| `docs/personas.md`, `docs/user-journey.md` | Ayu (pemula), Raka (freelancer), Dimas (tim kecil) |
+| `docs/archive/v3-ground-rules.md` | **Aturan cara membangun v3** (mobile first, Tailwind, QA per section). Menang jika konflik soal implementasi. |
+| `docs/archive/technical-spec.md` | Stack, token `@theme`, breakpoint, komponen, validasi form, Definition of Done |
+| `docs/archive/wireframe-notes.md` | Wireframe mobile (utama) lalu desktop |
+| `docs/archive/microcopy-and-states.md` | Semua copy ID/EN dan state UI |
+| `docs/archive/information-architecture.md` | Urutan section halaman |
+| `docs/archive/visual-direction.md`, `docs/archive/brand-elements.md` | Warna, tipografi, logo |
+| `docs/archive/personas.md`, `docs/archive/user-journey.md` | Ayu (pemula), Raka (freelancer), Dimas (tim kecil) |
 | `research/reference-gap-analysis.md` | Analisis OCTA, TokenKu, OpenRouter → gap G1–G12 + rekomendasi |
 | `research/reference-audit.md` | Audit referensi awal |
-| `docs/v4/README.md` | **Dokumen v4 (aktif)**: brief, services-and-pricing (sumber angka), IA, user-journeys + skrip demo, wireframes, microcopy, visual-direction, technical-spec (aturan membangun + DoD) |
-| `docs/v4-cloud-plan.md` | **Rencana v4 platform AI cloud** (draf): layanan berbahasa awam, resep per persona, peta halaman landing/harga/console, tahapan |
+| `docs/README.md` | **Dokumen v4 (aktif)**: brief, services-and-pricing (sumber angka), IA, user-journeys + skrip demo, wireframes, microcopy, visual-direction, technical-spec (aturan membangun + DoD) |
+| `docs/archive/v4-cloud-plan.md` | **Rencana v4 platform AI cloud** (draf): layanan berbahasa awam, resep per persona, peta halaman landing/harga/console, tahapan |
 | `research/ai-cloud-reference.md` | Teardown Sumopod & Helipod (AI cloud), peluang, pertanyaan untuk Pak Ferry |
 
 ## Keputusan yang Sudah Diambil
@@ -84,7 +84,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | **Satu saldo Rupiah** untuk semua layanan | Jawaban no. 5; pembeda dari Sumopod (2 saldo, AI dalam USD) |
 | 20 Nov 2026 | Nama TokenNyala tetap; **hanya tagline yang berubah** | Jawaban no. 6 |
 | 20 Nov 2026 | Pembeda: **paling mudah dipahami pemula**, “unique design taste”, tidak terlalu teknis | Jawaban no. 7 |
-| 20 Nov 2026 | Review berikutnya: **demo langsung, mobile first**; acuan visual = `showcase/v1` & `showcase/v2` | Jawaban no. 8 |
+| 20 Nov 2026 | Review berikutnya: **demo langsung, mobile first**; acuan visual = `archive/showcase/v1` & `archive/showcase/v2` | Jawaban no. 8 |
 | 20 Nov 2026 | Acuan visual v4 = **showcase v2**, dibangun ulang dengan Tailwind v4 | Pilihan user; paling sesuai “unique design taste” |
 | 20 Nov 2026 | Tagline: **“Idemu nyala, dari prompt sampai online.”** | Pilihan user |
 | 20 Nov 2026 | v4 tetap **ID + EN** | Pilihan user; infrastruktur i18n sudah ada |
@@ -97,7 +97,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 20 Nov 2026 | Satuan estimasi baru: pesan chatbot Rp12, tugas otomasi Rp28 (model Hemat); sesi kecil Rp1.890 tetap | Resep chatbot & otomasi butuh satuan awam |
 | 20 Nov 2026 | Ikon Lucide (ISC) disalin lokal | Satu set ikon garis, tanpa CDN |
 | 20 Nov 2026 | Ikon Lucide v0.460.0 disuntikkan lewat `icons.js` (bukan `<use href="sprite.svg#…">`); atribut stroke di CSS `.icon` | `<use>` ke file eksternal diblokir di `file://`; atribut di `<svg>` sprite tidak diwarisi instance `<use>` |
-| 20 Nov 2026 | Kamus i18n v4 berformat `'kunci': [ID, EN]` di `i18n.js` | EN yang hilang langsung terlihat; `i18n_check.py --root v4` membaca kamus dari halaman |
+| 20 Nov 2026 | Kamus i18n v4 berformat `'kunci': [ID, EN]` di `i18n.js` | EN yang hilang langsung terlihat; `i18n_check.py --root site` membaca kamus dari halaman |
 | 20 Nov 2026 | Cara kerja di `lg:` = grid 3 kolom (wireframe A4 menyebut geser horizontal) | Konten dulu; geser horizontal bisa ditambah di fase motion jika perlu |
 | 20 Nov 2026 | Kartu resep satu kolom di `lg:`; angka “≈ RpX rb” memakai `cqi` + `nowrap` | Di kolom kanan desktop kartu terlalu sempit untuk dua kolom (angka patah “Rp34 / rb”) |
 | 20 Nov 2026 | Nala: chip “Bantu pilih paket” (v3) diganti “Bantu pilih resep”; AI-saja lewat pilihan “AI coding saja” | Produk berubah dari paket token ke resep; satu alur, tidak dua |
@@ -143,6 +143,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 | 22 Nov 2026 | Landing & Harga ikut: Server hemat di daftar layanan, indeks harga, kalkulator; "Coba AI" → "Chat AI" | Jawaban user no. 4 (ya) |
 | 22 Nov 2026 | Percakapan Chat AI hanya di memori tab (bisa diekspor); token Telegram tidak disimpan | Prompt/token bisa berisi data pribadi atau rahasia |
 | 22 Nov 2026 | Chat AI: lampiran gambar/suara/video untuk dibaca model (bukan membuat); kemampuan per model mengikuti model asli; token 1.600/gambar, 32/detik suara, 300/detik video × tarif model; batas 10 MB×5 / 25 MB 10 menit / 50 MB 2 menit; landing + Harga menyebutkan | Jawaban user 1–5 (lampiran saja, ya, setuju, setuju, ya) |
+| 22 Nov 2026 | Repo ditata untuk GitHub Pages: `site/` (versi terbaru, dulu `v4/`) tayang otomatis dari `main`; `docs/` = dokumen terbaru (lama → `docs/archive/`); `tools/qa.py · audit.py · demo.py · build_icons.py · i18n_check.py` (tool v3 → `tools/archive/`); versi lama → `archive/`; logo → `brand/`. Repo dijadikan public oleh user; arsip tidak ikut tayang | User: “di main foldering rapi … bisa gunakan di github pages … fokus ke versi yang terakhir”; jawaban 1–4 |
 
 ## Pertanyaan Terbuka untuk PO
 
@@ -182,7 +183,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Situs yang dirender JavaScript bisa dibaca dengan Playwright** yang sudah terpasang untuk QA (`python3 -P`, bukan `-I`, karena Playwright ada di user site-packages). WebFetch hanya melihat shell HTML. Jangan menembus captcha/login.
 - **`pgrep -f <pola>` di loop penunggu mencocokkan perintahnya sendiri** → loop tidak pernah selesai, dan `pkill -f` dengan pola yang sama membunuh shell sendiri. Tunggu berdasarkan PID atau file hasil.
 - **Minta review independen untuk dokumen sebelum coding.** Agent yang tidak membaca kesimpulan kita menemukan 13 kontradiksi di dokumen v4 yang sudah “dicek” sendiri — terutama contoh angka di wireframe yang tidak dihitung dari rumus, dan aturan yang hanya ada sebagai contoh tabel (top-up disarankan). Setiap angka contoh harus bisa dihasilkan rumus + state yang tertulis.
-- **Hitung ulang contoh di dokumen dengan kode yang sebenarnya.** Fase 1 menemukan “cukup sampai ±20 Des” (preset Ayu) yang tidak sesuai rumus dokumen sendiri (hasilnya 19 Des) — lolos dua kali review manual. `audit_v4.py` sekarang mengecek angka dokumen terhadap `data.js` (dan diuji negatif: harga diubah → audit gagal).
+- **Hitung ulang contoh di dokumen dengan kode yang sebenarnya.** Fase 1 menemukan “cukup sampai ±20 Des” (preset Ayu) yang tidak sesuai rumus dokumen sendiri (hasilnya 19 Des) — lolos dua kali review manual. `audit.py` sekarang mengecek angka dokumen terhadap `data.js` (dan diuji negatif: harga diubah → audit gagal).
 - **Animasi transisi bisa membuat axe salah ukur kontras.** Menu mobile mengganti warna header dengan transisi 300ms; axe yang langsung jalan melihat warna di tengah transisi. Tunggu transisi selesai sebelum audit.
 - **Jangan validasi di `blur` jika pesan error bisa hilang/muncul.** Pesan error yang hilang saat field ditinggalkan menggeser layout di antara mousedown dan mouseup, sehingga klik ke field berikutnya (radio ukuran tim) meleset — ditemukan QA konsultasi. Validasi saat submit, hapus error saat mengetik.
 - **Animasi masuk membuat axe dan screenshot menipu.** Elemen yang sedang fade-in terbaca kontrasnya rendah, dan screenshot full-page menampilkan section kosong. QA layout/axe memakai reduced motion; motion diuji terpisah (scroll seluruh halaman lalu pastikan tidak ada konten tersembunyi).
@@ -210,6 +211,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
+### Sesi 6 (lanjutan) — 22 Nov 2026 (penataan repo + GitHub Pages)
+- `git mv` (riwayat utuh): `v4/` → `site/`, `docs/v4/` → `docs/`, dokumen lama → `docs/archive/`, v1 root + `v2-tailwind-cdn/` + `v3/` + `showcase/` → `archive/`, `assets/` + `design/` → `brand/`, tool v4 dinamai ulang tanpa `_v4`. Semua rujukan jalur di dokumen/tool/komentar diperbarui (arsip tidak disentuh; v1 mendapat salinan logo `archive/v1/assets/`).
+- Baru: `README.md` root (peta repo + link Pages), `.github/workflows/pages.yml` (publish `site/` tanpa `src/`/`package*.json`), `node_modules/` di `.gitignore`.
+- Cek: tidak ada email/kredensial di file yang dilacak (repo kini public). Simulasi artefak Pages: 5 halaman tanpa request gagal. QA penuh, i18n, audit, demo 21/21 lolos.
+
 ### Sesi 6 (lanjutan) — 22 Nov 2026 (Nala + beranda mengenal menu baru)
 - Nala: topik `apps`, `server`, `chatai` dari teks bebas ID/EN + chip “Server murah?”; tautan ke menu console (atau `app.html#/…` / `harga.html#detail-nat` dari landing & harga).
 - Beranda: kartu “Sambungkan {app} ke Telegram” (Agent/Dify belum tersambung), “Coba Chat AI dulu” (punya saldo, belum pernah pakai AI); QR WhatsApp kini menuju Aplikasi › Sambungan.
@@ -238,12 +244,12 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ### Sesi 5 (lanjutan) — 21 Nov 2026 (landing dibangun ulang cara showcase)
 - User: putaran pertama "jadi lebih aneh". Analisa kode + pengukuran: penyebab utama = tidak ada gerbang loader (halaman statis lalu berkedip saat GSAP menyembunyikan elemen), ritme 15 section, satuan/ukuran berbeda, weight 600 hilang.
 - Dibangun ulang: `index.html` baru (markup showcase, copy `data-l`), `assets/css/site.css` + `landing.css` (port `styles.css` showcase), `landing.js` baru (susunan `script.js` showcase), Nala diberi kelas semantik `chat__*`. Kunci kamus statis landing dihapus (108). CSS landing lama di `tailwind.css` dibuang (header Harga tetap).
-- Tool: `i18n_check` memeriksa pasangan `data-l`; `qa_v4` menerima header `fixed`, menunggu loader di uji motion, menggulir dulu sebelum tombol chat di HP; `audit_v4` FACES_LANDING (6).
+- Tool: `i18n_check` memeriksa pasangan `data-l`; `qa` (dulu `qa_v4`) menerima header `fixed`, menunggu loader di uji motion, menggulir dulu sebelum tombol chat di HP; `audit` (dulu `audit_v4`) FACES_LANDING (6).
 - Hasil: QA penuh, i18n, audit (axe 0), demo 21/21 lolos. Rekaman frame awal: loader → hero, tanpa kedipan.
 
 ### Sesi 5 — 21 Nov 2026 (landing → gaya showcase v2)
-- Permintaan user: konten landing v4 disetujui, komponen & animasi disamakan dengan `showcase/v2`.
-- Ditulis ulang: `v4/index.html` (main + footer), `landing.js` (render semua section baru; katalog & konsultasi tetap), `motion.js` (port timeline showcase), komponen baru di `src/tailwind.css`, header bersama (index + harga) + `ui.js` (sembunyi saat scroll, on-dark, menu melingkar, `burst()`), `assets/img/spark.svg` (dari showcase).
+- Permintaan user: konten landing v4 disetujui, komponen & animasi disamakan dengan `archive/showcase/v2`.
+- Ditulis ulang: `site/index.html` (main + footer), `landing.js` (render semua section baru; katalog & konsultasi tetap), `motion.js` (port timeline showcase), komponen baru di `src/tailwind.css`, header bersama (index + harga) + `ui.js` (sembunyi saat scroll, on-dark, menu melingkar, `burst()`), `assets/img/spark.svg` (dari showcase).
 - i18n: +36 kunci, 9 kunci lama dihapus (hero.title, final.title, board.*, story.*Note, recipe.aiOnlyRow, learn.ctaAria). `i18n_check` V4_ALLOW + “localhost:5173 ·”, “Token”, “Nyala”. QA motion memeriksa `[data-stall-switch]`.
 - Hasil: QA interaktif lolos, i18n lolos, audit (axe 0) lolos, demo 21/21.
 
@@ -251,15 +257,15 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 ### Sesi 1 — 18 Nov 2026
 - Mendiagnosis kenapa v1/v2 terus ditambal (lihat *Pelajaran*).
 - Memperbaiki kontradiksi di 9 dokumen: warna CTA, breakpoint, gutter, localStorage, field kontak (email/HP), setup Tailwind v4, aturan responsif mobile first.
-- Menambahkan wireframe mobile (hero, package picker, checkout bottom sheet) di `docs/wireframe-notes.md`.
-- Membuat `docs/v3-ground-rules.md`, `research/reference-gap-analysis.md`, file ini, dan `CLAUDE.md`.
+- Menambahkan wireframe mobile (hero, package picker, checkout bottom sheet) di `docs/archive/wireframe-notes.md`.
+- Membuat `docs/archive/v3-ground-rules.md`, `research/reference-gap-analysis.md`, file ini, dan `CLAUDE.md`.
 - Riset referensi: OCTA (via halaman Enterprise + artikel), TokenKu landing, OpenRouter katalog model.
 - PO memutuskan: P1+P2, saldo tidak kedaluwarsa, live chat mock, dan mengirim 4 screenshot (OCTA landing + katalog, OCTA Enterprise form + chat Ted, TokenKu landing, TokenKu Model Square).
 - Memperbarui `research/reference-gap-analysis.md` (temuan screenshot, koreksi klaim tarif OCTA, tabel ambil/hindari, keputusan PO).
 - Menspesifikasikan G1–G8: `information-architecture.md` (12 section + 4 overlay), `technical-spec.md` (aturan saldo, definisi sesi kecil, katalog 12 model mock, spesifikasi kartu model, katalog, API key, dashboard, form tim, live chat), `microcopy-and-states.md` (copy ID/EN semua fitur baru + 6 FAQ baru), `wireframe-notes.md` (wireframe mobile fitur baru), urutan build di `v3-ground-rules.md`.
 - Commit dokumen (`e715849`) di branch baru `v3-mobile-first`.
-- Langkah 2: membuat shell `v3/` + `tools/qa_v3.py` (QA Playwright 6 viewport). QA awal menemukan touch target < 44px (logo, nav, ID/EN) → diperbaiki → semua viewport lolos.
-- Section Hero: copy ID/EN, board ilustrasi dengan status saldo (`renderHeroBalance`), animasi masuk 450ms dengan reduced-motion. QA menemukan konten menembus gutter di 320px (grid tanpa `grid-cols-1`, tersembunyi oleh `overflow-x-clip`) → diperbaiki, dan `tools/qa_v3.py` ditambah cek “escape .shell” + cek above-the-fold.
+- Langkah 2: membuat shell `archive/v3/` + `tools/archive/qa_v3.py` (QA Playwright 6 viewport). QA awal menemukan touch target < 44px (logo, nav, ID/EN) → diperbaiki → semua viewport lolos.
+- Section Hero: copy ID/EN, board ilustrasi dengan status saldo (`renderHeroBalance`), animasi masuk 450ms dengan reduced-motion. QA menemukan konten menembus gutter di 320px (grid tanpa `grid-cols-1`, tersembunyi oleh `overflow-x-clip`) → diperbaiki, dan `tools/archive/qa_v3.py` ditambah cek “escape .shell” + cek above-the-fold.
 - Section Cara kerja: 3 langkah dengan chip dan garis penghubung; teks ID juga ditulis di HTML (fallback tanpa JS). QA visual menemukan 3 kolom terlalu sempit di 768px → layout baris di `md:`.
 - Section Package picker (`25b8975`): tablist dengan panah/Home/End, baris rekomendasi, 3 kartu dengan state Paling pas/Dipilih, `selectPackage` menyalakan board hero, pengumuman `aria-live`. QA visual menemukan harga meluap di 768px dan ruang kosong di kartu mobile → layout baris `md:`, baris badge kolaps; QA ditambah cek teks meluap + uji interaksi paket.
 - Section Checkout: `<dialog>` bottom sheet/tengah, pilihan paket, rincian biaya, email/HP dengan normalisasi `+628…`, QRIS (QR SVG contoh), VA (nomor lokal), e-wallet, sukses dengan API key `tn-demo-…` + salin, state gagal; fokus kembali ke pembuka (fallback ke tombol menu). QA ditambah uji alur checkout penuh; ditemukan & diperbaiki: dialog ikut ter-scroll (sr-only tanpa ancestor relative) dan harga meluap di 320px EN.
@@ -274,32 +280,32 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - Section FAQ + Final CTA: 11 pertanyaan `<details>` (ID/EN), jawaban refund diperbarui karena saldo tidak kedaluwarsa; banner “Nyala sekarang.” dengan CTA isi saldo + lihat paket. QA ditambah uji buka FAQ dengan klik dan Enter.
 - Langkah 11 Live chat Nala: pill + panel, skrip & kata kunci ID/EN, alur pilih paket (matriks spec) → checkout, tim online (Sari) / offline (kumpulkan kontak), riwayat ikut terjemah, titik masuk FAQ & checkout. QA: alur chat penuh (pill tidak menutupi CTA hero, hasil rekomendasi, ke checkout dan kembali, ganti bahasa, Escape, online/offline). Ditemukan & diperbaiki: fokus direbut event close checkout, tombol hasil terpotong (urutan scroll), chip menumpuk di 320px, header offline salah.
 - Langkah 12 audit ID/EN: `tools/i18n_check.py` (kunci di kedua kamus, kunci HTML ada di kamus, kunci mati, dan perbandingan 576 teks/aria/placeholder/alt ID vs EN termasuk dialog tertutup & template). Hasil: bersih; detektor kunci mati diverifikasi dengan kunci palsu.
-- Langkah 13 QA penuh: checkout & katalog dipindah ke `setupModal()` (QA penuh sebagai jaring pengaman); `tools/audit_v3.py` (axe-core 4.14.0 + DoD file://, reduced motion, storage, ukuran). Ditemukan & diperbaiki: `role=log` pada `<ol>` + `<li>` tidak valid → `div`; `<header>` di dialog terbaca banner kedua → `div`; kontras `muted` 4,47:1 di header → `#626B82`. DoD 21/21 dicatat di technical-spec.
+- Langkah 13 QA penuh: checkout & katalog dipindah ke `setupModal()` (QA penuh sebagai jaring pengaman); `tools/archive/audit_v3.py` (axe-core 4.14.0 + DoD file://, reduced motion, storage, ukuran). Ditemukan & diperbaiki: `role=log` pada `<ol>` + `<li>` tidak valid → `div`; `<header>` di dialog terbaca banner kedua → `div`; kontras `muted` 4,47:1 di header → `#626B82`. DoD 21/21 dicatat di technical-spec.
 - Merge: PR #1 `v3-mobile-first` → `main` dibuat & di-merge dengan akun workspace `.github-cli` (hannifkurniawan, pemilik repo) — `GH_CONFIG_DIR=.github-cli gh …`. Akun gh global di mesin ini berbeda (Fajar-DS-XQ).
 
 ### Sesi 2 — 20 Nov 2026
 - Audit font: sebelumnya 2 keluarga, 6 face dimuat (Manrope 500/600/700/800, Plex Mono 500/600), 20 ukuran; teks tanpa kelas weight meminta 400 yang tidak dimuat.
-- Pull `main` (commit user `0bcc69e`: folder `showcase/`).
+- Pull `main` (commit user `0bcc69e`: folder `archive/showcase/`).
 - Branch `type-scale-trim`: `font-semibold` → `font-bold` (Manrope) / dihapus (mono), `body` → `font-medium`, URL Google Fonts jadi 4 face; `audit_v3.py` ditambah cek face (halaman + chat, ID/EN, mobile/desktop); dokumentasi tipografi di `visual-direction.md`, `brand-elements.md`, `technical-spec.md`. Ketiga tools lolos.
 - PR #3 `type-scale-trim` → `main` di-merge atas persetujuan user.
 - User bertanya cara mempresentasikan web sebagai designer UI/UX → disarankan format studi kasus (masalah → persona → riset → keputusan desain → demo mobile → kualitas → pelajaran). Tawaran membuat deck belum dijawab.
 - Belum: merapikan 20 ukuran huruf menjadi skala token (opsional, belum diminta).
 
 ### Sesi 3 — 20 Nov 2026
-- User mendemokan `showcase/v1` dan `showcase/v2` ke Pak Ferry. Feedback utama: terlalu fokus e-commerce jualan token AI; ekspektasi beliau = **platform AI Cloud Services** seperti sumopod.com / helipod. Gap dengan brief interview Rabu (web jualan token AI untuk vibecoder, tidak teknis, design taste unik).
+- User mendemokan `archive/showcase/v1` dan `archive/showcase/v2` ke Pak Ferry. Feedback utama: terlalu fokus e-commerce jualan token AI; ekspektasi beliau = **platform AI Cloud Services** seperti sumopod.com / helipod. Gap dengan brief interview Rabu (web jualan token AI untuk vibecoder, tidak teknis, design taste unik).
 - Riset referensi lengkap → **`research/ai-cloud-reference.md`**. Ringkas: helipod.com dialihkan ke helipod.co.uk; yang relevan **helipod.io** (PaaS untuk engineer: Aplikasi, AI Gateway 76 model, VPS + app siap pakai, Postgres, Mail, Domain, Heli Crew via MCP; **satu dompet Rupiah**, QRIS/VA). **Sumopod** dibaca lewat Chromium headless + ±45 halaman docs: 15 menu dashboard (AI, Apps sekali klik n8n/OpenClaw/Hermes, VPS, Database, SMTP, Object Storage, Domain…), landing tipis tanpa harga, akuisisi pemula lewat video YouTube, **dua saldo (Rupiah + AI Balance dalam USD)**. Login Sumopod (atas permintaan user, email user) berhenti di Cloudflare Turnstile yang harus dicentang manusia → tidak dilanjutkan, kode tidak terkirim. Dashboard dipelajari dari **docs.sumopod.com (86 halaman, 212 screenshot)** — saran user; ini sumber terbaik untuk Sumopod. Temuan: beranda dashboard = Learn (video), 18 menu, panel ringkasan biaya lengket di form, AI Balance USD terpisah (kurs 17.955), template agent n8n/Hermes/QwenPaw mulai Rp10rb/bln.
 - Peluang: keduanya berbahasa developer; belum ada yang menjawab “saya mau bikin X, butuh apa & berapa per bulan?” → pendekatan intent-first + estimasi awam dari v3 bisa diperluas ke multi-produk.
-- Analisa: v3/showcase sudah menutup pilar “AI API/gateway” (saldo, katalog model, API key, dashboard, tim, chat). Yang belum: pilar compute (deploy app, one-click app/agent, VPS, database), dompet multi-produk, halaman harga per produk, mock console.
+- Analisa: archive/v3/showcase sudah menutup pilar “AI API/gateway” (saldo, katalog model, API key, dashboard, tim, chat). Yang belum: pilar compute (deploy app, one-click app/agent, VPS, database), dompet multi-produk, halaman harga per produk, mock console.
 - Belum ada perubahan kode. Menunggu keputusan arah (pertanyaan terbuka no. 4).
 - User menjawab 8 konfirmasi (dicatat di Keputusan). Showcase v1 = Tailwind (editorial bersih); showcase v2 = CSS custom 1.146 baris (lembar warna penuh, saklar, angka besar, label mono bernomor).
-- `docs/v4-cloud-plan.md` disetujui arahnya: visual showcase v2, tagline “Idemu nyala, dari prompt sampai online.”, ID+EN, belum ada tanggal demo. 
-- **Fase 0 (branch `v4-cloud`):** `docs/v4/` 9 dokumen. Angka resep dihitung dengan skrip (portofolio Rp33.900/bln, chatbot-wa Rp47.000, web-klien Rp101.700, otomasi-tim Rp285.000; contoh event Rp40.790–54.020 muat di saldo 55.000). Review kontradiksi oleh agent independen menemukan 13 masalah wajib (contoh saldo console salah hitung, aturan top-up disarankan tidak ada, ai-coding tanpa tujuan, siklus berhenti/dijeda, preset demo tidak terdefinisi, FAQ/EN kurang, pelanggaran glosarium) → semua diperbaiki. `CLAUDE.md` diarahkan ke v4.
+- `docs/archive/v4-cloud-plan.md` disetujui arahnya: visual showcase v2, tagline “Idemu nyala, dari prompt sampai online.”, ID+EN, belum ada tanggal demo. 
+- **Fase 0 (branch `v4-cloud`):** `docs/` 9 dokumen. Angka resep dihitung dengan skrip (portofolio Rp33.900/bln, chatbot-wa Rp47.000, web-klien Rp101.700, otomasi-tim Rp285.000; contoh event Rp40.790–54.020 muat di saldo 55.000). Review kontradiksi oleh agent independen menemukan 13 masalah wajib (contoh saldo console salah hitung, aturan top-up disarankan tidak ada, ai-coding tanpa tujuan, siklus berhenti/dijeda, preset demo tidak terdefinisi, FAQ/EN kurang, pelanggaran glosarium) → semua diperbaiki. `CLAUDE.md` diarahkan ke v4.
 
 
 ### Sesi 4 — 20 Nov 2026 (Fase 1 v4)
-- `v4/` dibuat: `package.json` (`@tailwindcss/cli` 4.3.3 di-pin), `src/tailwind.css` (token + komponen, 1 sumber), `assets/css/app.css` di-commit, `data.js` (semua angka + fungsi murni), `i18n.js` (180 kunci [ID, EN]), `icons.js` (28 ikon Lucide), `ui.js`, `landing.js`, `index.html`, `README.md`.
+- `site/` dibuat: `package.json` (`@tailwindcss/cli` 4.3.3 di-pin), `src/tailwind.css` (token + komponen, 1 sumber), `assets/css/app.css` di-commit, `data.js` (semua angka + fungsi murni), `i18n.js` (180 kunci [ID, EN]), `icons.js` (28 ikon Lucide), `ui.js`, `landing.js`, `index.html`, `README.md`.
 - Landing bagian 1: header sticky (menu biru layar penuh di mobile, ID/EN), hero (saklar inline menyala, board prompt → membangun → online, saldo 55.000 → sisa 12.320), cerita macet (localhost vs eventku.my.id), **Mau bikin apa?** (radiogroup 5 resep dengan panah, kartu dihitung dari `data.js`, link “Mulai bangun” ikut resep terpilih, ai-coding → `app.html#/ai?isi=1`), cara kerja, semua layanan (4 kelompok, 10 kartu), satu saldo (kartu dompet contoh), footer.
-- Tools: `tools/qa_v4.py` (6 viewport + menu, resep, bahasa EN), `tools/i18n_check.py --root v4` (v3 tidak berubah), `tools/audit_v4.py` (axe, font, file://, reduced motion, storage diblokir, CSS terbaru, konsistensi angka), `tools/build_icons_v4.py`. Semua lolos.
+- Tools: `tools/qa.py` (6 viewport + menu, resep, bahasa EN), `tools/i18n_check.py --root site` (v3 tidak berubah), `tools/audit.py` (axe, font, file://, reduced motion, storage diblokir, CSS terbaru, konsistensi angka), `tools/build_icons.py`. Semua lolos.
 - Ditemukan & diperbaiki saat QA/screenshot: grid tanpa kolom eksplisit (aturan #2), ikon terisi hitam, kartu layanan mobile terlalu panjang (±3.500px → tata letak ikon kiri), harga resep patah di desktop, chip top-up EN 2 baris, logo hilang di header biru.
 - Dokumen: preset Ayu “cukup sampai” dikoreksi **±19 Des** (+ perhitungan ketiga preset ditulis di §8); microcopy tambahan Fase 1; wireframe A6 tanpa tanggal.
 - Link ke `harga.html` dan `app.html` belum punya tujuan (Fase 3–4).
@@ -331,7 +337,7 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 
 ### Sesi 4 (lanjutan) — Fase 7 v4 (penutup)
 - Pemindaian glosarium ID: bersih (sisa “kredit”/“token” hanya di konteks yang diizinkan).
-- `audit_v4.py` + DoD 12 (label simulasi terlihat di landing, harga, console beranda & wizard, sheet isi saldo).
-- `tools/demo_v4.py`: gladi 21 langkah skrip demo di 375×812 (landing → resep → layanan → saldo → kalkulator → masuk → wizard → isi saldo QRIS → nyala → beranda → API key → riwayat → Dimas → pemakaian AI → EN → Nala → cadangan dijeda) — semua lolos.
-- Dokumen final: skrip demo di `docs/v4/user-journeys.md`, status DoD di `technical-spec.md` §9, `v4/README.md` lengkap, `CLAUDE.md` menyebut gladi demo.
+- `audit.py` + DoD 12 (label simulasi terlihat di landing, harga, console beranda & wizard, sheet isi saldo).
+- `tools/demo.py`: gladi 21 langkah skrip demo di 375×812 (landing → resep → layanan → saldo → kalkulator → masuk → wizard → isi saldo QRIS → nyala → beranda → API key → riwayat → Dimas → pemakaian AI → EN → Nala → cadangan dijeda) — semua lolos.
+- Dokumen final: skrip demo di `docs/user-journeys.md`, status DoD di `technical-spec.md` §9, `site/README.md` lengkap, `CLAUDE.md` menyebut gladi demo.
 - Hasil akhir: QA 76 cek, i18n (31 halaman/rute) dan audit lolos. Belum ada PR ke `main` (menunggu persetujuan user).

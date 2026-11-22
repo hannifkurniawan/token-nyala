@@ -7,3 +7,6 @@
 
 # Python bytecode (tools)
 __pycache__/
+
+# Tailwind CLI (site/: npm install)
+node_modules/

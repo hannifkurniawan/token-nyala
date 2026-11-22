@@ -1,7 +1,7 @@
 # Riset Referensi AI Cloud — Sumopod & Helipod
 
 Tanggal: 20 November 2026
-Pemicu: feedback Pak Ferry setelah demo `showcase/v1` dan `showcase/v2` — output dinilai terlalu fokus pada e-commerce jualan token AI; ekspektasi beliau adalah **platform AI Cloud Services** seperti sumopod.com dan “helipod”.
+Pemicu: feedback Pak Ferry setelah demo `archive/showcase/v1` dan `archive/showcase/v2` — output dinilai terlalu fokus pada e-commerce jualan token AI; ekspektasi beliau adalah **platform AI Cloud Services** seperti sumopod.com dan “helipod”.
 
 ## Sumber dan Batasan
 
@@ -111,7 +111,7 @@ Keduanya masih berbicara bahasa developer. Belum ada yang menjawab pertanyaan pe
 | Tier mana yang cukup? | “0.5C0.5G / 1C1G” | vCPU, RAM, CU-jam | Ukuran berbahasa awam (“Coba-coba / Dipakai tim kecil / Ramai”) + detail teknis di `<details>` (pola v3) |
 | Kalau bingung? | Email support, video YouTube | WhatsApp, Heli Crew (MCP) | Asisten Nala + jalur manusia (sudah ada di v3) |
 
-### Aset v3/showcase yang bisa dipakai ulang
+### Aset archive/v3/showcase yang bisa dipakai ulang
 Saldo Rupiah & aturan saldo, tab tujuan + rekomendasi, estimasi bahasa awam, checkout QRIS/VA/e-wallet, katalog model + filter, panduan API key/Base URL, mock dashboard pemakaian, jalur tim/B2B, live chat Nala, ID/EN, alat QA.
 
 ### Yang belum ada

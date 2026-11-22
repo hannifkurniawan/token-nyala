@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TokenNyala Logo Preview</title>
+  <style>
+    :root {
+      --ink: #17181A;
+      --xl-dark: #00166A;
+      --xl-blue: #002DBB;
+      --paper: #F7F8FC;
+      --xl-yellow: #FFC93C;
+      --xl-teal: #00D2A0;
+      --xl-sky: #5CD0F9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,201,60,.30), transparent 22%),
+        linear-gradient(135deg, var(--paper), #FFFFFF);
+      font-family: Inter, Manrope, Arial, sans-serif;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(32px, 5vw, 64px);
+      letter-spacing: -.05em;
+    }
+
+    .lead {
+      max-width: 620px;
+      margin: 0 0 32px;
+      color: #69728A;
+      line-height: 1.7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #D9DEEA;
+      border-radius: 24px;
+      background: #fff;
+    }
+
+    .card.dark {
+      background: var(--xl-dark);
+    }
+
+    .card.blue {
+      background: var(--xl-blue);
+    }
+
+    .card.yellow {
+      background: var(--xl-yellow);
+    }
+
+    .card img {
+      max-width: min(78%, 320px);
+      height: auto;
+    }
+
+    .mark {
+      width: 120px !important;
+      filter: drop-shadow(0 16px 20px rgba(23,24,26,.12));
+    }
+
+    .label {
+      position: absolute;
+      margin: 0 0 145px 0;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #74777D;
+    }
+
+    .card { position: relative; }
+
+    @media (max-width: 700px) {
+      main { width: min(100% - 32px, 1120px); }
+      .grid { grid-template-columns: 1fr; }
+      .card { min-height: 180px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>TokenNyala Logo</h1>
+    <p class="lead">Mark “on core” dengan saklar, percikan, dan bentuk yang tetap jelas pada ukuran kecil.</p>
+
+    <div class="grid">
+      <section class="card">
+        <p class="label">Primary</p>
+        <img src="tokennyala-logo.svg" alt="TokenNyala primary logo">
+      </section>
+
+      <section class="card dark">
+        <p class="label" style="color:#00D2A0">White wordmark</p>
+        <img src="tokennyala-logo-white.svg" alt="TokenNyala logo for dark background">
+      </section>
+
+      <section class="card">
+        <p class="label">Icon</p>
+        <img class="mark" src="tokennyala-mark.svg" alt="TokenNyala icon">
+      </section>
+
+      <section class="card blue">
+        <p class="label" style="color:#FFFFFF">XL Blue</p>
+        <img class="mark" src="tokennyala-mark.svg" alt="TokenNyala XL blue mark">
+      </section>
+
+      <section class="card yellow">
+        <p class="label">XL Yellow</p>
+        <img class="mark" src="tokennyala-mark.svg" alt="TokenNyala mark on XL yellow">
+      </section>
+    </div>
+  </main>
+</body>
+</html>
