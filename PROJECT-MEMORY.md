@@ -210,6 +210,11 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
+### Sesi 6 (lanjutan) — 22 Nov 2026 (Nala + beranda mengenal menu baru)
+- Nala: topik `apps`, `server`, `chatai` dari teks bebas ID/EN + chip “Server murah?”; tautan ke menu console (atau `app.html#/…` / `harga.html#detail-nat` dari landing & harga).
+- Beranda: kartu “Sambungkan {app} ke Telegram” (Agent/Dify belum tersambung), “Coba Chat AI dulu” (punya saldo, belum pernah pakai AI); QR WhatsApp kini menuju Aplikasi › Sambungan.
+- QA: `nala_topics_flow` (console + harga), `home_next_flow`. Uji lampiran video sungguhan tidak dilakukan (keputusan user).
+
 ### Sesi 6 (lanjutan) — 22 Nov 2026 (Chat AI: lampiran)
 - `data.js`: `MODEL_READS` → `MODELS[].reads`, `ATTACH`, `attachTokens()`. `chat.js`: tombol 📎 + seret + tempel, validasi (jenis, ukuran, jumlah, durasi dari metadata), peringatan model + tombol ganti ke model termurah yang bisa, perkiraan biaya, draf tidak hilang saat render ulang. Harga: kolom “Bisa membaca”; console API AI → kartu model; landing: satu baris di bagian Model AI. 4 ikon Lucide baru.
 - QA: lampiran di uji chat (gambar di DeepSeek → peringatan → Gemini Flash, .txt ditolak, biaya = token × tarif); audit: token, contoh Rp8/Rp90, matriks kemampuan model.

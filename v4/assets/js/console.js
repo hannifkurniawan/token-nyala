@@ -277,9 +277,12 @@
     if (s.balance <= 0 && !s.projects.length) return { key: 'topup', href: '#/saldo?isi=1', ic: 'wallet' };
     if (!s.projects.length) return { key: 'recipe', href: '#/buat', ic: 'plus' };
     const sv = s.services.filter((x) => x.status !== 'berhenti');
-    if (sv.some((x) => x.tpl === 'wa-bot')) return { key: 'qr', href: `#/proyek/${sv.find((x) => x.tpl === 'wa-bot').project}`, ic: 'qr-code' };
+    if (sv.some((x) => x.tpl === 'wa-bot')) return { key: 'qr', href: `#/aplikasi/${sv.find((x) => x.tpl === 'wa-bot').id}?tab=sambungan`, ic: 'qr-code' };
+    const tg = sv.find((x) => ['agent', 'dify'].includes(x.tpl) && !x.tg); // chat apps not connected to Telegram yet
+    if (tg) return { key: 'connect', href: `#/aplikasi/${tg.id}?tab=sambungan`, ic: 'plug', vars: { app: t(`tpl.${tg.tpl}.name`) } };
     const noDomain = s.projects.find((p) => !p.domain && sv.some((x) => x.project === p.id && x.svc === 'hosting'));
     if (noDomain) return { key: 'domain', href: '#/layanan/domain', ic: 'at-sign', vars: { rp: rp(D.FROM.domain.price) } };
+    if (s.balance > 0 && !s.history.some((h) => h.type === 'usage')) return { key: 'chat', href: '#/chat', ic: 'message-circle' }; // never used AI yet
     return { key: 'key', href: '#/ai', ic: 'sparkles' };
   }
   function projectCard(p) {
@@ -324,7 +327,7 @@
           <h2 id="next-title">${kicker(t('home.next'))}</h2>
           <a href="${n.href}" class="card mt-3 flex items-center gap-4 p-4 hover:border-xl-blue sm:p-5">
             <span class="grid size-11 shrink-0 place-items-center rounded-control bg-xl-yellow">${icon(n.ic)}</span>
-            <span class="min-w-0 flex-1"><span class="block font-extrabold">${esc(t(`next.${n.key}.title`))}</span><span class="block text-[.92rem] text-lead-ink">${esc(t(`next.${n.key}.body`, n.vars))}</span></span>
+            <span class="min-w-0 flex-1"><span class="block font-extrabold">${esc(t(`next.${n.key}.title`, n.vars))}</span><span class="block text-[.92rem] text-lead-ink">${esc(t(`next.${n.key}.body`, n.vars))}</span></span>
             ${icon('arrow-right', 'icon shrink-0 text-xl-blue')}</a></section>
         <section class="mt-8" aria-labelledby="proj-title">
           <h2 id="proj-title">${kicker(t('home.projects', { n: projects.length }))}</h2>

@@ -78,7 +78,7 @@ Navigasi di halaman (mobile): bar chip horizontal lengket (Kalkulator · AI · J
 | Rute | Layar | Isi utama |
 |---|---|---|
 | `#/masuk` | Masuk | Satu field email/HP (v3) → kode 6 digit mock → nama tampilan |
-| `#/beranda` | Beranda | Saldo besar + “cukup sampai ±tanggal”, biaya tetap bulan ini, proyek aktif (status nyala/dijeda), **langkah berikutnya** (kartu kontekstual), panduan singkat. Akun baru: empty state “Mau bikin apa?” |
+| `#/beranda` | Beranda | Saldo besar + “cukup sampai ±tanggal”, biaya tetap bulan ini, proyek aktif (status nyala/dijeda), **langkah berikutnya** (kartu kontekstual: lanjutkan yang dijeda → isi saldo → paket pertama → QR WhatsApp → Telegram untuk Agent/Dify → alamat web → Coba Chat AI → API key), panduan singkat. Akun baru: empty state “Mau bikin apa?” |
 | `#/buat` | Wizard (4 langkah) | 1 Tujuan (paket / mulai kosong) → 2 Atur (ukuran awam per layanan, nama proyek, alamat web) → 3 **Ringkasan biaya** (tetap/pakai/tahunan, saldo setelahnya; kurang saldo → isi saldo inline) → 4 **Menyalakan** (progres bertahap) → selesai: link live + langkah berikutnya |
 | `#/proyek` | Daftar proyek | Kartu per proyek: nama, layanan (ikon), status, biaya/bulan |
 | `#/proyek/:id` | Detail proyek | Tab: Ringkasan (link, status, pemakaian) · Layanan (per layanan: ganti ukuran, hentikan / matikan perpanjangan domain, nyalakan lagi) · AI (key proyek + limit) · Log · Pengaturan (alamat web, **Hentikan proyek**) |

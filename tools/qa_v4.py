@@ -1047,6 +1047,47 @@ def nat_flow(page, out, name, base):
     return problems
 
 
+NALA_LAST = """() => { const last = [...document.querySelectorAll('#chat [data-chat-log] > *')].pop();
+  return [...last.querySelectorAll('a')].map(a => a.getAttribute('href')); }"""
+
+
+def nala_topics_flow(page, out, name, base, url, inside):
+    """Nala knows Apps, Server (incl. budget NAT), Chat AI + attachments: free text (ID/EN) and the 'Server murah?' chip."""
+    problems = []
+    page.goto(base + url, wait_until="networkidle")
+    page.wait_for_timeout(300)
+    page.evaluate("() => TN.nala.open()"); page.wait_for_timeout(250)
+    go = (lambda r: r) if inside else (lambda r: "app.html" + r)
+    want = {"server murah buat bot telegram": ["#/layanan/nat"] if inside else ["harga.html#detail-nat"],
+            "bisa upload gambar?": [go("#/chat")], "mau pasang n8n": [go("#/aplikasi")], "I need a VPS with SSH": ["#/layanan/nat"] if inside else ["harga.html#detail-nat"]}
+    for q, links in want.items():
+        page.fill("#chat-input", q); page.keyboard.press("Enter"); chat_wait(page)
+        got = page.evaluate(NALA_LAST)
+        if got != links:
+            problems.append(f"NALA {q!r} -> {got} (want {links})")
+    page.locator("#chat [data-chat-chips] button", has_text="Server murah?").click(); chat_wait(page)
+    if page.evaluate(NALA_LAST) != want["I need a VPS with SSH"]:
+        problems.append("NALA 'Server murah?' chip")
+    page.evaluate("() => TN.nala.close()")
+    return problems
+
+
+def home_next_flow(page, out, name, base):
+    """Home next step: an agent not on Telegram yet → connect card; then (balance, no AI used) → Chat AI card."""
+    problems = []
+    page.goto(base + "app.html?demo=reset#/masuk", wait_until="networkidle")
+    page.evaluate("() => { TN.store.signIn('Tes'); TN.store.topup({ amount: 50000, bonus: 5000, method: 'qris' }); TN.store.addProject({ name: 'agent-tes', items: [{ svc: 'apps', tpl: 'agent', size: 'rutin' }] }); TN.store.save(); location.hash = '#/beranda'; }")
+    page.wait_for_timeout(300)
+    if page.locator("#view a[href$='?tab=sambungan']").count() != 1:
+        problems.append("HOME next: no Telegram connect card for the agent")
+    page.evaluate("() => { TN.store.state.services.find(x => x.tpl === 'agent').tg = true; TN.store.save(); location.hash = '#/proyek'; }"); page.wait_for_timeout(150)
+    page.evaluate("() => { location.hash = '#/beranda'; }"); page.wait_for_timeout(300)
+    if page.locator("#view a[href='#/chat']").count() != 1:
+        problems.append("HOME next: no Chat AI card for a user who never used AI")
+    page.screenshot(path=str(out / f"app-{name}-home-next-chat.png"), full_page=True)
+    return problems
+
+
 def learn_flow(page, out, name, base):
     problems = []
     page.goto(base + "app.html?demo=ayu#/belajar", wait_until="networkidle")
@@ -1168,6 +1209,10 @@ def main():
                     status += nat_flow(page, out, name, base)
                 if args.interactive and page_name == "app-bantuan" and name in ("375", "1440"):
                     status += learn_flow(page, out, name, base)
+                    status += nala_topics_flow(page, out, name, base, "app.html?demo=raka#/beranda", True)
+                    status += home_next_flow(page, out, name, base)
+                if args.interactive and page_name == "harga.html" and name == "1440":
+                    status += nala_topics_flow(page, out, name, base, "harga.html", False)
                 if args.interactive and page_name == "app-proyek" and name in ("375", "1440"):
                     status += project_flow(page, out, name, base)
                     status += clock_flow(page, out, name, base)

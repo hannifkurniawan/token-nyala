@@ -21,7 +21,7 @@
 
   const RECIPE_IDS = D.RECIPES.map((r) => r.id);
   const CHIP_SETS = {
-    main: ['chip.recipe', 'chip.howto', 'chip.models', 'chip.pay', 'chip.team'],
+    main: ['chip.recipe', 'chip.howto', 'chip.models', 'chip.server', 'chip.pay', 'chip.team'],
     recipe: RECIPE_IDS.map((id) => `recipe.short.${id}`),
     code: ['nala.codeYes', 'nala.codeNo'],
     load: ['nala.load.coba', 'nala.load.rutin', 'nala.load.ramai'],
@@ -30,6 +30,9 @@
   };
   const KEYWORDS = [ // free text → intent (ID + EN)
     ['team', /\b(tim|team|manusia|human|agen|agent|cs|admin|orang)\b/i],
+    ['apps', /\b(aplikasi|apps?|n8n|dify|wordpress|openclaw|hermes)\b/i],
+    ['server', /\b(server|vps|nat|ssh|linux|port)\b/i],
+    ['chatai', /(chat ?ai|ai ?chat|playground|lampir|upload|unggah|attach|gambar|foto|image|suara|audio|voice|video)/i],
     ['recipe', /\b(paket|bundle|resep|recipe|bikin|build|buat|landing|portofolio|portfolio|chatbot|otomasi|automation|website|web|harga|price|berapa|how much)\b/i],
     ['howto', /\b(api|key|tool|pasang|setup|cursor|cline|lovable|cara pakai)\b/i],
     ['models', /\b(model|claude|gpt|gemini|deepseek|qwen)\b/i],
@@ -207,7 +210,7 @@
       }
     }
 
-    const intent = { 'chip.recipe': 'recipe', 'chip.restart': 'recipe', 'chip.howto': 'howto', 'chip.models': 'models', 'chip.pay': 'pay', 'chip.team': 'team' }[chipKey]
+    const intent = { 'chip.recipe': 'recipe', 'chip.restart': 'recipe', 'chip.howto': 'howto', 'chip.models': 'models', 'chip.server': 'server', 'chip.pay': 'pay', 'chip.team': 'team' }[chipKey]
       ?? KEYWORDS.find(([, re]) => has(re))?.[0];
     chat.flow = null;
     if (intent === 'recipe') return startRecipe();
@@ -227,6 +230,18 @@
       return reply({ from: 'nala', key: 'ans.models', actions: [models] });
     }
     if (intent === 'pay') return reply({ from: 'nala', key: 'ans.pay' });
+    // console menus: same route inside the console, app.html#… from the landing / harga
+    const inConsole = Boolean(document.getElementById('view'));
+    const go = (route) => (inConsole ? route : `app.html${route}`);
+    if (intent === 'server') {
+      return reply({ from: 'nala', key: 'ans.server', params: { nat: () => rp(D.FROM.nat.price), server: () => rp(D.FROM.server.price), n: D.NAT_PORTS },
+        actions: inConsole ? [{ key: 'ans.serverBtn', href: '#/layanan/nat' }] : [{ key: 'ans.serverPrices', href: 'harga.html#detail-nat' }] });
+    }
+    if (intent === 'apps') {
+      return reply({ from: 'nala', key: 'ans.apps', params: { list: () => Object.keys(D.TEMPLATES).map((id) => t(`tpl.${id}.name`)).join(', '), rp: () => rp(D.FROM.apps.price) },
+        actions: [{ key: 'ans.appsBtn', href: go('#/aplikasi') }] });
+    }
+    if (intent === 'chatai') return reply({ from: 'nala', key: 'ans.chatai', actions: [{ key: 'ans.chataiBtn', href: go('#/chat') }] });
     reply({ from: 'nala', key: 'ans.fallback' });
   }
 

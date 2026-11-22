@@ -540,7 +540,7 @@ Kartu “Satu saldo” **tidak** menampilkan tanggal “cukup sampai” (aturan 
 | nala.resultAi | Untuk AI di tool coding: isi {Rp} → {range} sesi kecil. Ambil API key-mu di console. | For AI in your coding tools: top up {Rp} → {range} small sessions. Get your API key in the console. |
 | agent.greeting | Halo, aku Sari dari tim TokenNyala. Ada yang bisa kubantu? (v3: “…soal top up?”) | Hi, I'm Sari from the TokenNyala team. How can I help? |
 
-Chip utama Nala: Bantu pilih paket · Cara pakai saldo di tool · Model apa saja? · Metode pembayaran · Bicara dengan tim. Alur v3 “Bantu pilih paket” **digantikan** “Bantu pilih paket”; kebutuhan AI-saja dijawab lewat pilihan “AI coding saja” (tabel nominal → sesi kecil v3).
+Chip utama Nala: Bantu pilih paket · Cara pakai saldo di tool · Model apa saja? · **Server murah?** · Metode pembayaran · Bicara dengan tim. Sejak 22 Nov 2026 Nala juga mengenali teks bebas tentang **Aplikasi** (aplikasi, n8n, dify, wordpress…), **Server** (server, vps, nat, ssh…) dan **Chat AI** (chat ai, upload, gambar, suara, video…) — jawaban `ans.apps`, `ans.server`, `ans.chatai` dengan tombol ke menu console (di landing/harga: `app.html#/…`; Server dari landing/harga → `harga.html#detail-nat`). Alur v3 “Bantu pilih paket” **digantikan** “Bantu pilih paket”; kebutuhan AI-saja dijawab lewat pilihan “AI coding saja” (tabel nominal → sesi kecil v3).
 
 ### Harga — tambahan Fase 3 (20 Nov 2026)
 Semua kunci ada di `v4/assets/js/i18n.js` (awalan `price.`, `pnav.`, `calc.`, `from.`, `det.`, `aip.`, `bal.`, `rule.`, `pfaq.`). Yang penting untuk review copy:
@@ -569,7 +569,7 @@ Kunci di `v4/assets/js/i18n.js` (awalan `con.`, `acct.`, `auth.`, `home.`, `next
 | auth.demoTitle | Atau langsung coba akun contoh (Ayu · Raka · Dimas → `?demo=`) | Or jump into a sample account |
 | home.untilPaused | Ada layanan yang dijeda. Isi saldo untuk menyalakannya lagi. (tanggal “cukup sampai” tidak ditampilkan saat ada yang dijeda) | A service is paused. Top up to switch it back on. |
 | banner.paused | …Isi minimal {Rp} — langsung menyala lagi. (ditambah ajakan) | …Top up at least {Rp} and it switches back on. |
-| next.* | 5 langkah berikutnya (isi saldo · paket pertama · QR WhatsApp · alamat web · API key) | — |
+| next.* | 7 langkah berikutnya (isi saldo · paket pertama · QR WhatsApp (→ Aplikasi › Sambungan) · **Telegram untuk Agent/Dify** · alamat web · **Coba Chat AI** (punya saldo, belum pernah pakai AI) · API key) | — |
 | co.afterResume | Saldo setelahnya {Rp} — sudah termasuk {proyek} menyala lagi untuk 30 hari. | Balance afterwards {Rp} — after {project} switches back on for 30 days. |
 | co.resumed | {proyek} menyala lagi — 30 hari baru sudah dipotong. | {project} is back on — a new 30 days has been charged. |
 | con.soonBody | Bagian ini dibangun di tahap berikutnya prototype. (rute Fase 5–6, sementara) | This part is built in the next stage of the prototype. |
