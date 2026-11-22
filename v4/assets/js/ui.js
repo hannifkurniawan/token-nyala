@@ -215,6 +215,8 @@ TN.ui = (() => {
         return { icon: D.ICONS.payments, name: t('svc.payments.name'), detail: t('svc.from.percent', { rp: rp(D.PAYMENTS.monthly), pct: num(D.PAYMENTS.feePct) }) };
       case 'server':
         return { icon: D.ICONS.server, name: t('svc.server.name'), detail: t('item.sized', { size: t(`size.${it.size}`), rp: rp(c.amount) }) };
+      case 'nat':
+        return { icon: D.ICONS.nat, name: t('svc.nat.name'), detail: t('item.sized', { size: t(`size.${it.size}`), rp: rp(c.amount) }) };
       case 'storage':
         return { icon: D.ICONS.storage, name: t('svc.storage.name'), detail: t('item.sized', { size: D.STORAGE[it.size].capacity, rp: rp(c.amount) }) };
       default: return { icon: 'check', name: it.svc, detail: '' };

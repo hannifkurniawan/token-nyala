@@ -452,11 +452,23 @@ Aturan Q2/Q3: `services-and-pricing.md` §6 “Aturan Nala”.
 | prj.addService | Tambah layanan ke proyek ini | Add a service to this project |
 Contoh baris log (mock): “Proyek dinyalakan” / “Project switched on” · “Alamat ayu.my.id aktif” / “ayu.my.id is live” · “Dimulai ulang otomatis” / “Restarted automatically”.
 
+### Console — menu (22 Nov 2026)
+| Kunci | ID | EN |
+|---|---|---|
+| nav.chat | Chat AI | AI chat |
+| nav.api | API AI | AI API |
+| nav.apps | Aplikasi | Apps |
+| nav.group.storeConnect | Simpan & hubungkan | Store & connect |
+| svc.nat.name | Server hemat | Budget server |
+| svcp.kind.server / svcp.kind.nat | IP sendiri / Hemat · IP bersama | Own IP / Budget · shared IP |
+| chatp.privacy | Percakapan hanya tersimpan selama tab ini terbuka. Ekspor untuk menyimpannya. | Conversations are kept only while this tab is open. Export to keep them. |
+| apps.aiLinked | AI tersambung ke saldo lewat API key proyek {project} — tidak perlu API key lain. | AI is connected to your balance through the {project} project API key — no other API key needed. |
+| svcp.port.note | Port luar dipilih otomatis. Layanan di servermu harus sedang berjalan dan diizinkan firewall. | The public port is picked for you. The service on your server must be running and allowed by its firewall. |
+
 ### Console — AI
 | Kunci | ID | EN |
 |---|---|---|
 | ai.tab.start | Mulai cepat | Quick start |
-| ai.tab.try | Coba AI | Try AI |
 | ai.tab.models | Model | Models |
 | ai.tab.usage | Pemakaian | Usage |
 | ai.tab.keys | API key | API keys |

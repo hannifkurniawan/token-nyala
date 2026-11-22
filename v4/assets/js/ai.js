@@ -1,4 +1,5 @@
-/* TokenNyala v4 — console: AI page #/ai (wireframe C7). Tabs: quick start · try AI · models · usage · API keys.
+/* TokenNyala v4 — console: API AI page #/ai (wireframe C7). Tabs: quick start · models · usage · API keys.
+   The chat ("Coba AI" tab until 22 Nov 2026) is its own menu now: #/chat (chat.js); #/ai?tab=coba redirects there.
    Usage chart follows the dataviz skill: one series (no legend box), columns ≤ 24px with a 4px rounded cap and a square
    base, 1px recessive grid, one selective value label (the highest day), hover + keyboard-focus tooltip, table view. */
 (() => {
@@ -11,24 +12,25 @@
   const { icon, esc } = TN.ui;
   const { h1, kicker, toast, dateStr } = C;
   const view = C.view;
-  const TABS = ['mulai', 'coba', 'model', 'pemakaian', 'key'];
-  const TAB_KEY = { mulai: 'ai.tab.start', coba: 'ai.tab.try', model: 'ai.tab.models', pemakaian: 'ai.tab.usage', key: 'ai.tab.keys' };
+  const TABS = ['mulai', 'model', 'pemakaian', 'key'];
+  const TAB_KEY = { mulai: 'ai.tab.start', model: 'ai.tab.models', pemakaian: 'ai.tab.usage', key: 'ai.tab.keys' };
   const TIER_STYLE = { hemat: 'bg-xl-teal text-xl-dark', seimbang: 'bg-xl-sky text-xl-dark', premium: 'bg-xl-yellow text-xl-dark' };
   const LIMITS = [25000, 50000, 100000, 0];
   const limitName = (v) => (v ? rp(v) : t('limit.none'));
   const tabOf = (r) => (TABS.includes(r.q.get('tab')) ? r.q.get('tab') : 'mulai');
-  const ui = { keyFor: null, model: 'deepseek-chat', chat: [], busy: false };
+  const ui = { keyFor: null };
 
   C.ROUTES.ai = {
-    title: () => t('pnav.ai'),
+    title: () => t('nav.api'),
     html: (r) => {
+      if (r.q.get('tab') === 'coba') { setTimeout(() => location.replace('#/chat'), 0); return ''; } // old link → Chat AI
       const tab = tabOf(r);
       const tabs = `<div class="no-scrollbar mt-6 overflow-x-auto border-b border-line"><div role="tablist" aria-label="${esc(t('ai.tabsAria'))}" class="flex w-max gap-1" data-tabs>${TABS.map((x) => `<button type="button" role="tab" id="tab-${x}" aria-selected="${x === tab}" aria-controls="panel-${x}" tabindex="${x === tab ? 0 : -1}" data-tab="${x}"
         class="min-h-11 min-w-11 shrink-0 border-b-[3px] border-transparent px-3 font-bold whitespace-nowrap text-muted aria-selected:border-xl-yellow aria-selected:text-xl-dark">${esc(t(TAB_KEY[x]))}</button>`).join('')}</div></div>`;
-      const panel = { mulai: panelStart, coba: panelTry, model: panelModels, pemakaian: panelUsage, key: panelKeys }[tab]();
-      return `<div data-ai-root>${h1(t('pnav.ai'), t('ai.pageLead'))}${tabs}<div id="panel-${tab}" role="tabpanel" aria-labelledby="tab-${tab}" tabindex="0" class="mt-6 focus:outline-none">${panel}</div></div>`;
+      const panel = { mulai: panelStart, model: panelModels, pemakaian: panelUsage, key: panelKeys }[tab]();
+      return `<div data-ai-root>${h1(t('nav.api'), t('ai.pageLead'))}${tabs}<div id="panel-${tab}" role="tabpanel" aria-labelledby="tab-${tab}" tabindex="0" class="mt-6 focus:outline-none">${panel}</div></div>`;
     },
-    mount: (r) => mount(r),
+    mount: (r) => { if (view.querySelector('[data-ai-root]')) mount(r); },
   };
 
   /* ---------- Quick start ---------- */
@@ -59,49 +61,6 @@
       <section aria-labelledby="qs-steps"><h2 id="qs-steps">${kicker(t('guide.kicker'))}</h2><ol class="mt-3 grid grid-cols-1 gap-5">${steps}</ol>
         <p class="mt-6 text-[.92rem] text-lead-ink">${esc(t('config.compat'))}</p>
         <ul class="mt-2 flex flex-wrap gap-2 font-bold" aria-label="${esc(t('config.toolsAria'))}">${['Cursor', 'Lovable', 'Cline', 'Continue'].map((x) => `<li class="rounded-full border border-line bg-white px-3 py-1">${x}</li>`).join('')}</ul></section></div>`;
-  }
-
-  /* ---------- Try AI (scripted chat, charged per reply) ---------- */
-  const estimate = (text) => ({ tin: 400 + Math.ceil(text.length / 4), tout: 350 });
-  function panelTry() {
-    const m = D.MODELS.find((x) => x.id === ui.model);
-    const msgs = ui.chat.map((c) => (c.from === 'user'
-      ? `<div class="flex justify-end"><p class="max-w-[85%] rounded-2xl rounded-br-md bg-xl-blue px-3.5 py-2.5 text-white">${esc(c.text)}</p></div>`
-      : `<div class="max-w-[85%] rounded-2xl rounded-bl-md border border-line bg-white px-3.5 py-2.5"><p>${esc(c.thinking ? t('ai.try.thinking', { model: c.model }) : t('ai.try.reply', { model: c.model }))}</p>${c.cost ? `<p class="mt-1.5 font-mono text-[.75rem] text-muted">${esc(t('ai.try.cost', { model: c.model, tin: num(c.tin), tout: num(c.tout), rp: rp(c.cost) }))}</p>` : ''}</div>`)).join('');
-    return `<div class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
-      <section class="card flex min-h-[24rem] flex-col p-4 sm:p-5" aria-labelledby="try-title"><h2 id="try-title" class="sr-only">${esc(t('ai.tab.try'))}</h2>
-        <div class="min-h-0 flex-1 space-y-3" role="log" aria-live="polite" aria-label="${esc(t('ai.try.logAria'))}">${msgs || `<p class="text-lead-ink">${esc(t('ai.try.empty'))}</p>`}</div>
-        <form class="mt-4 flex items-end gap-2 border-t border-line pt-4" data-try-form novalidate>
-          <div class="min-w-0 flex-1"><label for="try-input" class="sr-only">${esc(t('ai.try.input'))}</label>
-            <textarea id="try-input" rows="2" class="field py-2.5" placeholder="${esc(t('ai.try.ph'))}"></textarea></div>
-          <button type="submit" class="btn shrink-0 px-4" ${ui.busy ? 'disabled' : ''}>${icon('send', 'icon size-5')}<span class="sr-only sm:not-sr-only">${esc(t('ai.try.send'))}</span></button></form></section>
-      <aside class="card p-4 sm:p-5"><label for="try-model" class="block font-bold">${esc(t('ai.try.model'))}</label>
-        <select id="try-model" class="field mt-1.5" data-try-model>${D.MODELS.map((x) => `<option value="${x.id}" ${x.id === ui.model ? 'selected' : ''}>${esc(x.name)} · ${esc(t(`tier.${x.tier}`))}</option>`).join('')}</select>
-        <p class="mt-2 text-[.85rem] text-muted">${esc(t('ai.try.cost', { model: m.name, tin: num(estimate('x'.repeat(200)).tin), tout: num(350), rp: rp(S.chatCost(m, estimate('x'.repeat(200)).tin, 350)) }))}</p>
-        <p class="mt-4 font-bold">${esc(t('ai.try.examples'))}</p>
-        <ul class="mt-2 grid grid-cols-1 gap-2">${[1, 2, 3].map((n) => `<li><button type="button" class="min-h-11 w-full rounded-control border border-line bg-paper px-3 py-2 text-left text-[.92rem] font-bold hover:border-xl-blue" data-example="${n}">${esc(t(`ai.try.ex${n}`))}</button></li>`).join('')}</ul></aside></div>`;
-  }
-  function send(text) {
-    const value = text.trim();
-    if (!value || ui.busy) return;
-    const m = D.MODELS.find((x) => x.id === ui.model);
-    const { tin, tout } = estimate(value);
-    ui.chat.push({ from: 'user', text: value });
-    if (S.chatCost(m, tin, tout) > S.state.balance) {
-      C.render({ focus: false });
-      toast(t('ai.try.short'));
-      return C.openTopup({ amount: D.TOPUP_MIN });
-    }
-    const reply = { from: 'ai', model: m.name, thinking: true };
-    ui.chat.push(reply);
-    ui.busy = true;
-    C.render({ focus: false });
-    setTimeout(() => {
-      const res = S.chargeChat({ model: m, tin, tout });
-      Object.assign(reply, { thinking: false, cost: res.cost, tin, tout });
-      ui.busy = false;
-      if (location.hash.startsWith('#/ai')) { C.render({ focus: false }); view.querySelector('#try-input')?.focus(); }
-    }, 600);
   }
 
   /* ---------- Models ---------- */
@@ -207,11 +166,7 @@
       });
     }
     root.querySelector('[data-keyfor]')?.addEventListener('change', (e) => { ui.keyFor = e.target.value; C.render({ focus: false }); view.querySelector('#ai-keyfor')?.focus(); });
-    root.querySelector('[data-try-model]')?.addEventListener('change', (e) => { ui.model = e.target.value; C.render({ focus: false }); view.querySelector('#try-model')?.focus(); });
-    root.querySelector('[data-try-form]')?.addEventListener('submit', (e) => { e.preventDefault(); send(view.querySelector('#try-input').value); });
     root.addEventListener('click', (e) => {
-      const ex = e.target.closest('[data-example]');
-      if (ex) return send(t(`ai.try.ex${ex.dataset.example}`));
       const li = e.target.closest('[data-key-project]');
       if (li && e.target.closest('[data-key-active]')) {
         const p = S.state.projects.find((x) => x.id === li.dataset.keyProject);

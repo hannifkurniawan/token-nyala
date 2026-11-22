@@ -66,7 +66,7 @@ def main():
         at("#paket"); shot("mau-bikin-apa", "Rp34 rb" in text("[data-recipe-card]"))
         page.locator('[data-recipe="otomasi-tim"]').click(); shot("paket-otomasi-tim", "Rp285 rb" in text("[data-recipe-card]"))
         # 1:00 All services + one balance
-        at("#layanan"); shot("semua-layanan", page.locator("[data-services] li").count() == 10)
+        at("#layanan"); shot("semua-layanan", page.locator("[data-services] li").count() == 11)
         at("#saldo"); shot("satu-saldo", "Rp12.320" in text("[data-wallet]"))
         # 2:00 Pricing calculator
         page.goto(base + "harga.html?paket=portofolio#kalkulator", wait_until="networkidle")
@@ -107,7 +107,7 @@ def main():
         shot("dimas-pemakaian-ai", page.locator("[data-bar]").count() == 7)
         # 6:30 Quality: EN + Nala
         page.locator("[data-open-more]").click(); page.locator('#more [data-lang="en"]').click(); page.keyboard.press("Escape"); page.wait_for_timeout(150)
-        shot("english", text("#view h1") == "AI")
+        shot("english", text("#view h1") == "AI API")  # the AI page is "API AI" / "AI API" since 22 Nov 2026
         page.locator("#chat-launcher").click(); page.wait_for_timeout(300)
         shot("nala", page.evaluate("() => document.getElementById('chat').open"))
         page.keyboard.press("Escape")

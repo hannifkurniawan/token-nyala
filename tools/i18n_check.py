@@ -97,7 +97,9 @@ V4_PAGES = ["index.html", "harga.html", "app.html?demo=reset#/masuk", "app.html?
             "app.html?demo=ayu&state=jeda#/beranda", "app.html?demo=raka#/saldo", "app.html?demo=ayu#/buat",
             "app.html?demo=ayu#/buat?resep=web-klien", "app.html?demo=raka#/proyek/klien-kopi?tab=layanan",
             "app.html?demo=raka#/proyek/klien-kopi?tab=ai", "app.html?demo=raka#/proyek/klien-kopi?tab=log",
-            "app.html?demo=raka#/proyek/klien-kopi?tab=pengaturan", "app.html?demo=raka#/ai", "app.html?demo=raka#/ai?tab=coba",
+            "app.html?demo=raka#/proyek/klien-kopi?tab=pengaturan", "app.html?demo=raka#/ai", "app.html?demo=raka#/chat", "app.html?demo=dimas#/aplikasi",
+            "app.html?demo=dimas#/aplikasi/s2", "app.html?demo=dimas#/aplikasi/s2?tab=pemakaian", "app.html?demo=dimas#/aplikasi/s2?tab=log",
+            "app.html?demo=dimas#/aplikasi/s2?tab=ukuran", "app.html?demo=raka#/layanan/nat?tambah=1", "app.html?demo=raka#/layanan/nat",
             "app.html?demo=raka#/ai?tab=model", "app.html?demo=raka#/ai?tab=pemakaian", "app.html?demo=raka#/ai?tab=key",
             "app.html?demo=raka#/layanan/server?tambah=1", "app.html?demo=ayu#/layanan/storage", "app.html?demo=ayu#/layanan/domain?tambah=1",
             "app.html?demo=ayu#/belajar", "app.html?demo=ayu#/belajar?panduan=g-portofolio", "app.html?demo=ayu#/bantuan"]
@@ -113,6 +115,7 @@ V4_ALLOW = {
     "model.", "online",  # loanwords that end a heading in both languages
     "Data", "Email", "Log", "QRIS", "Ubuntu 24.04", "GPT Pro · Premium", "Claude Opus · Premium", "E-wallet", "Virtual account", "DANA", "GoPay", "OVO", "DANA, GoPay, OVO",  # console
     "ayu.my.id", "localhost:5173 ·", "Token", "Nyala", "←", "→", "✕", "STATUS:", "© 2026 TokenNyala ·",  # landing: stall status, footer wordmark
+    "Username", "Password", "25 GB",  # console: credential labels (same in both), budget-server disk
     "AI", "vCPU", "RAM", "1 GB", "5 GB", "20 GB", "10 GB", "100 GB", "1 TB", "2 TB", "4 TB", "512 MB", "2 GB", "4 GB", "8 GB",
     "40 GB", "80 GB", "160 GB", "0,5", ".my.id", ".biz.id", ".web.id", ".id", ".com", ".co.id", "Template", "Bonus", "Model",
 }

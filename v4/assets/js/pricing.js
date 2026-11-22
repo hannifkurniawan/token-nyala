@@ -88,6 +88,7 @@
       return lines;
     }
     if (it.svc === 'server') { const x = D.SERVER[it.size]; return [`${x.cpu} vCPU · ${x.ram} RAM · ${x.disk} · ${t('det.traffic')} ${x.traffic}`]; }
+    if (it.svc === 'nat') { const x = D.SERVER_NAT[it.size]; return [`${t(`det.nat.${it.size}`)} · ${x.cpu} vCPU · ${x.ram} RAM · ${x.disk} · ${t('det.natPorts', { n: D.NAT_PORTS })}`]; }
     if (it.svc === 'database') return [`${D.DATABASE[it.size].capacity} · ${t(`det.database.${it.size}`)}`];
     if (it.svc === 'storage') return [t(`det.storage.${it.size}`)];
     if (it.svc === 'email') { const e = D.EMAIL[it.size]; return [t(`email.quota.${e.per}`, { n: num(e.quota) })]; }
@@ -213,7 +214,7 @@
   /* ---------- Add a service (dialog) ---------- */
   const addDlg = document.getElementById('add-svc');
   const addModal = addDlg && TN.ui.setupModal(addDlg, { focus: '#add-title' });
-  const ADDABLE = ['ai:sesi', 'ai:pesan', 'ai:tugas', 'hosting', ...Object.keys(D.TEMPLATES).map((x) => `apps:${x}`), 'server', 'database', 'storage', 'domain', 'email', 'payments'];
+  const ADDABLE = ['ai:sesi', 'ai:pesan', 'ai:tugas', 'hosting', ...Object.keys(D.TEMPLATES).map((x) => `apps:${x}`), 'server', 'nat', 'database', 'storage', 'domain', 'email', 'payments'];
   function renderAdd() {
     if (!addDlg) return;
     addDlg.querySelector('[data-add-list]').innerHTML = `<ul class="add-list__items">${ADDABLE.map((key) => {
@@ -264,6 +265,8 @@
         + note(t('det.appsNote')),
       server: () => table([t('det.size'), t('det.for'), t('det.price')], Object.keys(D.SERVER).map((s) => [esc(t(`size.${s}`)), esc(t(`det.server.${s}`)), per30(D.SERVER[s].price)]))
         + tech(table([t('det.size'), t('det.cpu'), t('det.ram'), t('det.disk'), t('det.traffic')], Object.entries(D.SERVER).map(([s, x]) => [esc(t(`size.${s}`)), x.cpu, x.ram, x.disk, x.traffic])) + `<p>${esc(t('det.serverNote'))}</p>`),
+      nat: () => table([t('det.size'), t('det.for'), t('det.price')], Object.keys(D.SERVER_NAT).map((s) => [esc(t(`size.${s}`)), esc(t(`det.nat.${s}`)), per30(D.SERVER_NAT[s].price)]))
+        + tech(table([t('det.size'), t('det.cpu'), t('det.ram'), t('det.disk'), t('det.ports')], Object.entries(D.SERVER_NAT).map(([s, x]) => [esc(t(`size.${s}`)), x.cpu, x.ram, x.disk, D.NAT_PORTS])) + `<p>${esc(t('det.natNote', { n: D.NAT_PORTS }))}</p>`),
       database: () => table([t('det.size'), t('det.for'), t('det.price')], Object.entries(D.DATABASE).map(([s, x]) => [`${esc(t(`size.${s}`))}${sub(x.capacity)}`, esc(t(`det.database.${s}`)), per30(x.price)]))
         + note(t('det.databaseNote')),
       storage: () => table([t('det.capacity'), t('det.for'), t('det.price')], Object.entries(D.STORAGE).map(([s, x]) => [x.capacity, esc(t(`det.storage.${s}`)), per30(x.price)]))

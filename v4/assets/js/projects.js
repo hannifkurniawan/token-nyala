@@ -355,7 +355,7 @@
 
   const TABS = ['ringkasan', 'layanan', 'ai', 'log', 'pengaturan'];
   const TAB_KEY = { ringkasan: 'tab.summary', layanan: 'tab.services', ai: 'tab.ai', log: 'tab.log', pengaturan: 'tab.settings' };
-  const SIZED = ['hosting', 'apps', 'server', 'database', 'storage', 'email'];
+  const SIZED = ['hosting', 'apps', 'server', 'nat', 'database', 'storage', 'email'];
   const tabOf = (r) => (TABS.includes(r.q.get('tab')) ? r.q.get('tab') : 'ringkasan');
 
   function detailHtml(r) {
@@ -556,4 +556,5 @@
   rzDlg.addEventListener('keydown', (e) => { const target = TN.ui.radioKeys(e); if (target) { rz.size = target.dataset.size; renderResize(); rzDlg.querySelector(`[data-size="${rz.size}"]`)?.focus(); } });
 
   I.onChange(() => { if (rzDlg.open) renderResize(); });
+  window.TN.projects = { qrSvg, logText }; // apps page (#/aplikasi): same WhatsApp code + log lines
 })();

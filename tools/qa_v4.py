@@ -56,6 +56,10 @@ PAGES = {
     "app-proyek": {"url": "app.html?demo=dimas#/proyek/otomasi-tim?tab=layanan", "fold": ["#view h1"]},
     "app-ai": {"url": "app.html?demo=raka#/ai?tab=pemakaian", "fold": ["#view h1"]},
     "app-layanan": {"url": "app.html?demo=raka#/layanan/server?tambah=1", "fold": ["#view h1"]},
+    "app-chat": {"url": "app.html?demo=raka#/chat", "fold": ["#view h1"]},
+    "app-aplikasi": {"url": "app.html?demo=dimas#/aplikasi", "fold": ["#view h1"]},
+    "app-aplikasi-detail": {"url": "app.html?demo=dimas#/aplikasi/s2", "fold": ["#view h1"]},
+    "app-nat": {"url": "app.html?demo=raka#/layanan/nat?tambah=1", "fold": ["#view h1"]},
     "app-belajar": {"url": "app.html?demo=ayu#/belajar?panduan=g-portofolio", "fold": ["#view h1"]},
     "app-bantuan": {"url": "app.html?demo=ayu#/bantuan", "fold": ["#view h1"]},
 }
@@ -723,7 +727,7 @@ def console_account_flow(page, out, name, base):
         o = page.evaluate("() => ({ open: document.getElementById('more').open, focus: document.activeElement?.id, links: document.querySelectorAll('#more [data-more-nav] a').length })")
         page.screenshot(path=str(out / f"app-{name}-more.png"))
         r = page.evaluate(CHECK_JS)
-        if o != {"open": True, "focus": "more-title", "links": 9} or r["small"]:
+        if o != {"open": True, "focus": "more-title", "links": 11} or r["small"]:  # Chat AI, API AI, Apps, Server, 5 store/connect, Learn, Help
             problems.append(f"MORE {o} small={r['small']}")
         page.keyboard.press("Escape")
         page.wait_for_timeout(100)
@@ -885,16 +889,30 @@ def ai_flow(page, out, name, base):
     problems = []
     page.goto(base + "app.html?demo=raka#/ai", wait_until="networkidle")
     page.locator("#tab-mulai").focus(); page.keyboard.press("ArrowRight"); page.wait_for_timeout(150)
-    if page.evaluate("() => [location.hash, document.activeElement?.id]") != ["#/ai?tab=coba", "tab-coba"]:
+    if page.evaluate("() => [location.hash, document.activeElement?.id]") != ["#/ai?tab=model", "tab-model"]:
         problems.append("AI tabs keyboard")
+    page.evaluate("() => { location.hash = '#/ai?tab=coba'; }"); page.wait_for_timeout(300)  # old link → Chat AI
+    if page.evaluate("() => location.hash") != "#/chat":
+        problems.append(f"AI old ?tab=coba did not move to #/chat: {page.evaluate('() => location.hash')}")
     b0 = page.evaluate("() => TN.store.state.balance")
     page.locator("[data-example]").first.click(); page.wait_for_timeout(900)
     cost = page.evaluate("() => TN.store.chatCost(TN.data.MODELS.find(m => m.id === 'deepseek-chat'), 400 + Math.ceil(TN.i18n.t('ai.try.ex1').length / 4), 350)")
     b1 = page.evaluate("() => TN.store.state.balance")
-    log = page.locator("#panel-coba [role=log]").text_content()
+    log = page.locator("#view [role=log]").text_content()
     if b0 - b1 != cost or "DeepSeek Chat" not in log or page.evaluate("() => document.activeElement?.id") != "try-input":
-        problems.append(f"AI try cost={cost} delta={b0 - b1}")
-    page.screenshot(path=str(out / f"app-{name}-ai-try.png"), full_page=True)
+        problems.append(f"CHAT cost={cost} delta={b0 - b1}")
+    page.locator("[data-chat-new]").click(); page.wait_for_timeout(150)
+    page.fill("#try-input", "Halo"); page.keyboard.press("Enter"); page.wait_for_timeout(900)
+    chats = page.evaluate("() => [...document.querySelectorAll('[data-chat-open]')].map(b => b.getAttribute('aria-current'))")
+    if chats != ["true", None]:
+        problems.append(f"CHAT new conversation list {chats}")
+    if "Ekspor" not in page.locator("[data-chat-export]").text_content() and "Export" not in page.locator("[data-chat-export]").text_content():
+        problems.append("CHAT export button")
+    stored = page.evaluate("() => JSON.stringify(localStorage)")
+    if "Halo" in stored:
+        problems.append("CHAT prompts written to localStorage")
+    page.screenshot(path=str(out / f"app-{name}-chat.png"), full_page=True)
+    page.goto(base + "app.html?demo=raka#/ai", wait_until="networkidle")
     page.evaluate("() => { location.hash = '#/ai?tab=pemakaian'; }"); page.wait_for_timeout(150)
     bars = page.locator("[data-bar]")
     if bars.count() != 7:
@@ -939,6 +957,78 @@ def services_flow(page, out, name, base):
     page.locator("[data-sf-go]").click(); page.wait_for_timeout(150)
     if page.evaluate("() => document.activeElement?.id") != "sf-domain" or page.locator("#sf-domain-error").count() == 0:
         problems.append("DOMAIN taken address accepted")
+    return problems
+
+
+def apps_flow(page, out, name, base):
+    """Apps menu: list → manage (tabs, keyboard), password show/hide, Telegram token validation (never stored)."""
+    problems = []
+    page.goto(base + "app.html?demo=dimas#/aplikasi", wait_until="networkidle")
+    if page.locator("#view a[href='#/aplikasi/s2']").count() != 1 or page.locator("#apps-catalog a[href^='#/buat?template=']").count() != 5:
+        problems.append("APPS list/catalogue")
+    page.locator("[data-apps-to-catalog]").click(); page.wait_for_timeout(500)
+    if page.evaluate("() => document.activeElement?.id") != "apps-catalog":
+        problems.append("APPS install button does not move to the catalogue")
+    page.locator("#view a[href='#/aplikasi/s2']").click(); page.wait_for_timeout(200)
+    tabs = page.evaluate("() => [...document.querySelectorAll('[role=tab]')].map(t => t.dataset.tab)")
+    if tabs != ["akses", "pemakaian", "log", "ukuran"]:
+        problems.append(f"APPS n8n tabs {tabs}")
+    page.locator("[data-reveal]").click(); page.wait_for_timeout(100)
+    if "•" in page.locator("[data-pass]").text_content() or page.locator("[data-reveal]").get_attribute("aria-pressed") != "true":
+        problems.append("APPS password reveal")
+    page.locator("#tab-akses").focus(); page.keyboard.press("End"); page.wait_for_timeout(150)
+    if page.evaluate("() => [location.hash, document.activeElement?.id]") != ["#/aplikasi/s2?tab=ukuran", "tab-ukuran"]:
+        problems.append("APPS tabs keyboard")
+    page.screenshot(path=str(out / f"app-{name}-apps-size.png"), full_page=True)
+    # a chat app has a Connections tab: Telegram token is validated and never stored
+    page.evaluate("() => { TN.store.addProject({ name: 'agent-dimas', items: [{ svc: 'apps', tpl: 'agent', size: 'rutin' }] }); TN.store.save(); }")
+    sv = page.evaluate("() => TN.store.state.services.find(x => x.tpl === 'agent').id")
+    page.evaluate(f"() => {{ location.hash = '#/aplikasi/{sv}?tab=sambungan'; }}"); page.wait_for_timeout(200)
+    page.fill("#tg-token", "salah"); page.locator("[data-tg-form] [type=submit]").click(); page.wait_for_timeout(150)
+    if page.evaluate("() => [document.activeElement?.id, document.getElementById('tg-token')?.getAttribute('aria-invalid')]") != ["tg-token", "true"]:
+        problems.append("APPS Telegram invalid token")
+    page.fill("#tg-token", "123456789:AAEabcdefghijklmnopqrstuvwx"); page.locator("[data-tg-form] [type=submit]").click(); page.wait_for_timeout(150)
+    if page.locator("[data-tg-off]").count() != 1 or "AAEabc" in page.evaluate("() => JSON.stringify(localStorage)"):
+        problems.append("APPS Telegram connect (or token stored)")
+    page.screenshot(path=str(out / f"app-{name}-apps-connect.png"), full_page=True)
+    return problems
+
+
+def nat_flow(page, out, name, base):
+    """Budget server (VPS NAT): kinds switch, add → SSH command + ports, self-service add/remove, validation."""
+    problems = []
+    page.goto(base + "app.html?demo=raka#/layanan/nat?tambah=1", wait_until="networkidle")
+    if page.locator("nav a[href='#/layanan/nat'][aria-current=page]").count() != 1:
+        problems.append("NAT kind switch current")
+    b0 = page.evaluate("() => TN.store.state.balance")
+    page.locator('[role=radio][data-size="sedang"]').click()
+    page.locator("[data-sf-go]").click(); page.wait_for_timeout(200)
+    r = page.evaluate("() => { const sv = TN.store.state.services.find(s => s.svc === 'nat'); return { bal: TN.store.state.balance, size: sv?.size, ports: sv?.ports?.length, ssh: document.querySelector('#view code.font-mono')?.textContent }; }")
+    if b0 - r["bal"] != 45000 or r["size"] != "sedang" or r["ports"] != 1:
+        problems.append(f"NAT add {r} delta={b0 - r['bal']}")
+    cmd = page.locator("[data-copy^='ssh ubuntu@nat-jkt.tokennyala.example -p ']").count()
+    if cmd != 1:
+        problems.append("NAT SSH command")
+    page.fill("#np-inner", "99999"); page.locator("[data-port-form] [type=submit]").click(); page.wait_for_timeout(150)
+    if page.evaluate("() => document.getElementById('np-inner')?.getAttribute('aria-invalid')") != "true":
+        problems.append("NAT invalid port accepted")
+    for port in ("5678", "80", "443", "8080"):
+        page.fill("#np-inner", port); page.locator("[data-port-form] [type=submit]").click(); page.wait_for_timeout(150)
+    full = page.evaluate("() => ({ n: TN.store.state.services.find(s => s.svc === 'nat').ports.length, form: !!document.querySelector('[data-port-form]') })")
+    if full != {"n": 5, "form": False}:
+        problems.append(f"NAT ports limit {full}")
+    page.locator("[data-port-remove]").first.click(); page.wait_for_timeout(150)
+    if page.evaluate("() => TN.store.state.services.find(s => s.svc === 'nat').ports.length") != 4 or page.locator("[data-port-form]").count() != 1:
+        problems.append("NAT port remove")
+    page.screenshot(path=str(out / f"app-{name}-nat-ports.png"), full_page=True)
+    page.locator("[data-sf-close]").click(); page.wait_for_timeout(150)
+    link = page.locator("#view a[href^='#/layanan/nat?kelola=']")
+    if link.count() != 1:
+        problems.append("NAT not listed")
+    else:
+        link.click(); page.wait_for_timeout(200)
+        if page.locator("[data-port-form]").count() != 1 or "Password" in page.locator("#view").text_content():
+            problems.append("NAT manage view (password must not show again)")
     return problems
 
 
@@ -1057,6 +1147,10 @@ def main():
                     status += ai_flow(page, out, name, base)
                 if args.interactive and page_name == "app-layanan" and name in ("320", "375", "1440"):
                     status += services_flow(page, out, name, base)
+                if args.interactive and page_name == "app-aplikasi" and name in ("375", "1440"):
+                    status += apps_flow(page, out, name, base)
+                if args.interactive and page_name == "app-nat" and name in ("320", "375", "1440"):
+                    status += nat_flow(page, out, name, base)
                 if args.interactive and page_name == "app-bantuan" and name in ("375", "1440"):
                     status += learn_flow(page, out, name, base)
                 if args.interactive and page_name == "app-proyek" and name in ("375", "1440"):

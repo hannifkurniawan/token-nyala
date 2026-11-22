@@ -71,8 +71,8 @@ Navigasi di halaman (mobile): bar chip horizontal lengket (Kalkulator · AI · J
 | Area | Mobile | Desktop (≥1024) |
 |---|---|---|
 | Header | Logo kecil · **pil saldo** (Rp + titik status) · avatar | Sama + tombol Isi saldo |
-| Navigasi | **Bottom tab bar 5 item**: Beranda · Proyek · **Buat (+)** · Saldo · Lainnya | Sidebar: Beranda, Proyek, Buat baru, AI, Saldo, Layanan (Server, Data, File, Domain, Email, Pembayaran), Belajar, Bantuan |
-| Menu Akun | Sheet **Lainnya**: AI, Layanan lain, Belajar, Bantuan, lalu Akun: Bahasa, Mulai ulang demo, Simulasi: majukan 30 hari, Keluar | **Menu avatar** (header): Bahasa, Mulai ulang demo, Simulasi: majukan 30 hari, Keluar · badge “Mode demo” |
+| Navigasi | **Bottom tab bar 5 item**: Beranda · Proyek · **Buat (+)** · Saldo · Lainnya | Sidebar (22 Nov 2026, grup sama dengan landing/harga): Beranda, Proyek, Buat baru, Saldo · **Bangun dengan AI**: Chat AI, API AI · **Jalankan**: Aplikasi, Server (IP sendiri / hemat) · **Simpan & hubungkan**: Data, File, Alamat web, Email, Pembayaran · Belajar, Bantuan |
+| Menu Akun | Sheet **Lainnya**: grup yang sama dengan sidebar (Chat AI … Pembayaran), Belajar, Bantuan, lalu Akun: Bahasa, Mulai ulang demo, Simulasi: majukan 30 hari, Keluar | **Menu avatar** (header): Bahasa, Mulai ulang demo, Simulasi: majukan 30 hari, Keluar · badge “Mode demo” |
 
 ### Rute
 | Rute | Layar | Isi utama |
@@ -82,9 +82,12 @@ Navigasi di halaman (mobile): bar chip horizontal lengket (Kalkulator · AI · J
 | `#/buat` | Wizard (4 langkah) | 1 Tujuan (paket / mulai kosong) → 2 Atur (ukuran awam per layanan, nama proyek, alamat web) → 3 **Ringkasan biaya** (tetap/pakai/tahunan, saldo setelahnya; kurang saldo → isi saldo inline) → 4 **Menyalakan** (progres bertahap) → selesai: link live + langkah berikutnya |
 | `#/proyek` | Daftar proyek | Kartu per proyek: nama, layanan (ikon), status, biaya/bulan |
 | `#/proyek/:id` | Detail proyek | Tab: Ringkasan (link, status, pemakaian) · Layanan (per layanan: ganti ukuran, hentikan / matikan perpanjangan domain, nyalakan lagi) · AI (key proyek + limit) · Log · Pengaturan (alamat web, **Hentikan proyek**) |
-| `#/ai` | AI | Tab: Mulai cepat (Base URL + key) · Coba AI (chat) · Model · Pemakaian · API key |
+| `#/chat` | Chat AI | Daftar percakapan · chat baru · pilih model · biaya per balasan · ekspor riwayat (percakapan hanya di memori tab) |
+| `#/ai` | API AI | Tab: Mulai cepat (Base URL + key) · Model · Pemakaian · API key. `#/ai?tab=coba` (lama) → `#/chat` |
+| `#/aplikasi` | Aplikasi | Aplikasi yang berjalan di semua proyek (tetap bagian proyeknya) + katalog 5 template → Pasang = wizard `#/buat?template=` |
+| `#/aplikasi/:id` | Kelola aplikasi | Tab: Akses (alamat admin, username, password tampil/sembunyi, detail teknis) · Sambungan (WhatsApp QR, Telegram token — chatbot/agent saja) · Pemakaian (beban awam) · Log · Ukuran & perpanjang |
 | `#/saldo` | Saldo | Saldo + Isi saldo (checkout v3 sebagai sheet) · perkiraan · **Riwayat** (filter per layanan/proyek) · pengingat saldo · invoice (mock) |
-| `#/layanan/:id` | Layanan lain | Pola sama: daftar → **Tambah** → form awam + ringkasan lengket → nyala. `server`, `database`, `storage`, `domain`, `email`, `payments` |
+| `#/layanan/:id` | Layanan lain | Pola sama: daftar → **Tambah** → form awam + ringkasan lengket → nyala. `server`, `nat`, `database`, `storage`, `domain`, `email`, `payments`. Server & `nat` berbagi pilihan jenis di atas halaman; `nat` setelah nyala: perintah SSH + kelola port (`?kelola=:id`) |
 | `#/belajar` | Belajar | Panduan per tujuan (langkah + tips), terhubung ke wizard |
 | `#/bantuan` | Bantuan | FAQ singkat + buka Nala |
 

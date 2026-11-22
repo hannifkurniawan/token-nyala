@@ -14,7 +14,7 @@ semua angka: [`docs/v4/services-and-pricing.md`](../docs/v4/services-and-pricing
 |---|---|
 | `index.html` | Landing 15 section bergaya showcase v2: hero, cerita macet (scroll), **Mau bikin apa?** (5 paket), cara kerja (kartu geser), semua layanan, satu saldo, template, model AI + katalog, pakai di tool, contoh, aman untuk pemula, belajar, tim + konsultasi, FAQ, CTA saklar raksasa · chat Nala · motion GSAP/Lenis |
 | `harga.html` | Bergaya showcase v2 (tanpa loader): kepala · nav chip lengket · **kalkulator** (tab paket seperti landing, state di `?paket=&s=`, ringkasan lengket) · semua layanan (baris indeks, tabel dibuka per layanan) · AI (12 model + 3 satuan) · saldo & tagihan · FAQ harga |
-| `app.html` | Console mock: masuk, beranda, **wizard Buat** (4 langkah), proyek (ganti ukuran, hentikan, log…), AI (coba AI, pemakaian, API key), saldo + isi saldo, layanan lain, belajar, bantuan, jam simulasi |
+| `app.html` | Console mock: masuk, beranda, **wizard Buat** (4 langkah), proyek (ganti ukuran, hentikan, log…), **Chat AI**, API AI (mulai cepat, model, pemakaian, API key), **Aplikasi** (daftar + katalog + kelola: akses admin, sambungan WhatsApp/Telegram, pemakaian, log, ukuran), Server (IP sendiri / **hemat NAT** dengan SSH + port), saldo + isi saldo, layanan lain, belajar, bantuan, jam simulasi |
 
 ### Akun contoh (console)
 | Link | Isi |
@@ -53,7 +53,7 @@ python3 -P tools/demo_v4.py --out /tmp/demo-v4             # gladi skrip demo 21
 | `assets/js/landing.js` · `pricing.js` | Landing ala `showcase/v2/script.js`: render data, interaksi, loader → motion GSAP/Lenis · Harga: kalkulator, indeks layanan, AI, saldo, FAQ |
 | `assets/js/store.js` | State console `tn-v4-demo` (tanpa data kontak), preset, `charge()`/`topup()` → riwayat, tagihan (perpanjang/jeda/berhenti, prorata, refund), `advance()` |
 | `assets/js/console.js` | Router hash (fokus `h1`, judul, pengumuman, guard masuk), kerangka, masuk, beranda, saldo, isi saldo |
-| `assets/js/projects.js` · `ai.js` · `services.js` · `learn.js` | Wizard + proyek · AI · layanan lain · belajar + bantuan |
+| `assets/js/projects.js` · `ai.js` · `chat.js` · `apps.js` · `services.js` · `learn.js` | Wizard + proyek · API AI · Chat AI · Aplikasi · layanan lain (termasuk server hemat + port) · belajar + bantuan |
 | `assets/js/nala.js` | Chat Nala (lokal, tanpa server): bantu pilih paket, cara pakai, model, bayar, tim online/offline |
 | `assets/js/motion.js` | Motion Harga: GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 dengan pola landing (judul naik per kata, baris/kartu muncul); kepala halaman masuk lewat CSS (`html.motion-pre`), tanpa loader; mati saat reduced motion |
 

@@ -22,6 +22,8 @@ ICONS = [
     "workflow", "blocks", "newspaper", "book-open", "clock", "building-2", "search", "sliders-horizontal",
     "rotate-ccw", "send", "copy", "message-square", "shield-check", "chevron-right", "users", "file-text", "landmark",
     "gauge", "circle-pause",
+    # console: NAT server, SSH, app usage, chat export, password show/hide, app connections (22 Nov 2026)
+    "network", "terminal", "activity", "download", "eye", "eye-off", "plug",
 ]
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "v4" / "assets"

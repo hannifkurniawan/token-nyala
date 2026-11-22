@@ -331,7 +331,7 @@ TN.store = (() => {
     return { ...out, date: state.clock };
   }
 
-  /** "Coba AI": charge one reply at the chosen model's rate (rounded to whole Rupiah, at least Rp1). */
+  /** Chat AI (#/chat): charge one reply at the chosen model's rate (rounded to whole Rupiah, at least Rp1). */
   const chatCost = (model, tin, tout) => Math.max(1, Math.round((tin * model.in + tout * model.out) / 1e6));
   function chargeChat({ model, tin, tout }) {
     const cost = chatCost(model, tin, tout);

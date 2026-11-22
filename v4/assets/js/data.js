@@ -47,12 +47,12 @@ TN.data = (() => {
   /* §5 Catalogue */
   const GROUPS = [
     { id: 'build', services: ['ai', 'chat'] },
-    { id: 'run', services: ['hosting', 'apps', 'server'] },
+    { id: 'run', services: ['hosting', 'apps', 'server', 'nat'] },
     { id: 'store', services: ['database', 'storage'] },
     { id: 'connect', services: ['domain', 'email', 'payments'] },
   ];
   const ICONS = {
-    ai: 'sparkles', chat: 'message-circle', hosting: 'globe', apps: 'bot', server: 'server',
+    ai: 'sparkles', chat: 'message-circle', hosting: 'globe', apps: 'bot', server: 'server', nat: 'network',
     database: 'database', storage: 'folder', domain: 'at-sign', email: 'mail', payments: 'qr-code',
   };
   const SERVER = {
@@ -60,6 +60,14 @@ TN.data = (() => {
     sedang: { price: 120000, cpu: 2, ram: '4 GB', disk: '80 GB', traffic: '2 TB' },
     besar: { price: 230000, cpu: 4, ram: '8 GB', disk: '160 GB', traffic: '4 TB' },
   };
+  /** Budget server on a shared IP (VPS NAT, §5.5b): reached through a shared host + assigned ports, no own public IP.
+      Traffic has no monthly quota. NAT_PORTS = ports per server, the SSH port included; users add the rest themselves. */
+  const SERVER_NAT = {
+    kecil: { price: 20000, cpu: 1, ram: '1 GB', disk: '10 GB' },
+    sedang: { price: 45000, cpu: 2, ram: '2 GB', disk: '20 GB' },
+    besar: { price: 120000, cpu: 4, ram: '8 GB', disk: '25 GB' },
+  };
+  const NAT_PORTS = 5;
   const DATABASE = {
     kecil: { price: 10000, capacity: '1 GB' },
     sedang: { price: 45000, capacity: '5 GB' },
@@ -100,6 +108,7 @@ TN.data = (() => {
     hosting: { kind: 'per30', price: SIZES.coba.price },
     apps: { kind: 'per30', price: SIZES.coba.price },
     server: { kind: 'per30', price: SERVER.kecil.price },
+    nat: { kind: 'per30', price: SERVER_NAT.kecil.price },
     database: { kind: 'per30', price: DATABASE.kecil.price },
     storage: { kind: 'per30', price: STORAGE['10gb'].price },
     domain: { kind: 'firstYear', price: Math.min(...Object.values(DOMAINS).map((d) => d.first)) },
@@ -113,6 +122,7 @@ TN.data = (() => {
       case 'hosting': return { kind: 'fixed', amount: SIZES[item.size].price };
       case 'apps': return { kind: 'fixed', amount: SIZES[item.size].price };
       case 'server': return { kind: 'fixed', amount: SERVER[item.size].price };
+      case 'nat': return { kind: 'fixed', amount: SERVER_NAT[item.size].price };
       case 'database': return { kind: 'fixed', amount: DATABASE[item.size].price };
       case 'storage': return { kind: 'fixed', amount: STORAGE[item.size].price };
       case 'email': return { kind: 'fixed', amount: EMAIL[item.size].price };
@@ -281,7 +291,7 @@ TN.data = (() => {
 
   /* ---------- Calculator (harga) & wizard: options, URL parsing, minimum sizes ---------- */
   const OPTIONS = {
-    hosting: SIZE_ORDER, apps: SIZE_ORDER, server: Object.keys(SERVER), database: Object.keys(DATABASE),
+    hosting: SIZE_ORDER, apps: SIZE_ORDER, server: Object.keys(SERVER), nat: Object.keys(SERVER_NAT), database: Object.keys(DATABASE),
     storage: Object.keys(STORAGE), email: ['gratis', '2500', '10000'], domain: Object.keys(DOMAINS), // explicit: JS sorts number-like keys first
   };
   const S_UNITS = { ai: 'sesi', pesan: 'pesan', tugas: 'tugas' }; // `s` key → AI unit
@@ -290,7 +300,7 @@ TN.data = (() => {
   const itemKey = (it) => (it.svc === 'apps' ? `apps:${it.tpl}` : it.svc === 'ai' ? `ai:${it.unit}` : it.svc);
   /** Defaults when a service is added from "Tambah layanan". */
   const NEW_ITEM = {
-    hosting: { svc: 'hosting', size: 'coba' }, server: { svc: 'server', size: 'kecil' }, database: { svc: 'database', size: 'kecil' },
+    hosting: { svc: 'hosting', size: 'coba' }, server: { svc: 'server', size: 'kecil' }, nat: { svc: 'nat', size: 'kecil' }, database: { svc: 'database', size: 'kecil' },
     storage: { svc: 'storage', size: '10gb' }, domain: { svc: 'domain', ext: 'my.id' }, email: { svc: 'email', size: 'gratis' },
     payments: { svc: 'payments' },
     'ai:sesi': { svc: 'ai', unit: 'sesi', qty: 10 }, 'ai:pesan': { svc: 'ai', unit: 'pesan', qty: 1000 }, 'ai:tugas': { svc: 'ai', unit: 'tugas', qty: 1000 },
@@ -304,7 +314,7 @@ TN.data = (() => {
       const [k, v] = token.split(':').map((x) => (x || '').trim());
       if (!k) continue;
       let it = null, key = k;
-      if (['hosting', 'server', 'database', 'storage', 'email'].includes(k)) { if (OPTIONS[k].includes(v)) it = { svc: k, size: v }; }
+      if (['hosting', 'server', 'nat', 'database', 'storage', 'email'].includes(k)) { if (OPTIONS[k].includes(v)) it = { svc: k, size: v }; }
       else if (k === 'domain') { if (DOMAINS[v]) it = { svc: 'domain', ext: v }; }
       else if (k in S_UNITS) { key = `ai:${S_UNITS[k]}`; if (/^\d+$/.test(v) && +v <= AI_MAX) it = { svc: 'ai', unit: S_UNITS[k], qty: +v }; }
       else if (k in TEMPLATES) { key = `apps:${k}`; if (SIZE_ORDER.includes(v)) it = { svc: 'apps', tpl: k, size: v }; }
@@ -350,7 +360,7 @@ TN.data = (() => {
   }
 
   return {
-    TOPUPS, TOPUP_MIN, REMINDER_BELOW, UNITS, SIZES, SIZE_ORDER, GROUPS, ICONS, SERVER, DATABASE, STORAGE, DOMAINS,
+    TOPUPS, TOPUP_MIN, REMINDER_BELOW, UNITS, SIZES, SIZE_ORDER, GROUPS, ICONS, SERVER, SERVER_NAT, NAT_PORTS, DATABASE, STORAGE, DOMAINS,
     EMAIL, PAYMENTS, TEMPLATES, TEMPLATE_ICONS, FROM, RECIPES, AI_ONLY, EXAMPLE, HERO, MODELS, PREVIEW_MODELS,
     PROVIDER_ICON, API, RULES, GUIDES,
     suggestTopup, usageCost, sessionCost, sessionsPer, itemCost, recipe, recipeTotals, coverMonths, roundK,

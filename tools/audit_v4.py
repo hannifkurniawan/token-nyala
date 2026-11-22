@@ -46,7 +46,9 @@ APP_ROUTES = [("masuk", "app.html?demo=reset#/masuk"), ("beranda", "app.html?dem
               ("jeda", "app.html?demo=ayu&state=jeda#/beranda"), ("saldo", "app.html?demo=raka#/saldo"),
               ("buat-1", "app.html?demo=ayu#/buat"), ("buat-2", "app.html?demo=ayu#/buat?paket=web-klien"),
               ("proyek", "app.html?demo=dimas#/proyek"), ("detail", "app.html?demo=raka#/proyek/klien-kopi"),
-              ("ai", "app.html?demo=raka#/ai"), ("layanan", "app.html?demo=raka#/layanan/server?tambah=1"),
+              ("ai", "app.html?demo=raka#/ai"), ("chat", "app.html?demo=raka#/chat"), ("aplikasi", "app.html?demo=dimas#/aplikasi"),
+              ("aplikasi-detail", "app.html?demo=dimas#/aplikasi/s2"), ("nat", "app.html?demo=raka#/layanan/nat?tambah=1"),
+              ("layanan", "app.html?demo=raka#/layanan/server?tambah=1"),
               ("layanan-kosong", "app.html?demo=ayu#/layanan/storage"), ("belajar", "app.html?demo=ayu#/belajar?panduan=g-chatbot"),
               ("bantuan", "app.html?demo=ayu#/bantuan")]
 # services-and-pricing §8: preset → (balance, "cukup sampai" shown on the home card)
@@ -152,7 +154,7 @@ HARGA_JS = """
   }
   const page = document.querySelector('main').textContent;
   const prices = [
-    ...Object.values(D.SIZES).map(x => x.price), ...Object.values(D.SERVER).map(x => x.price), ...Object.values(D.DATABASE).map(x => x.price),
+    ...Object.values(D.SIZES).map(x => x.price), ...Object.values(D.SERVER).map(x => x.price), ...Object.values(D.SERVER_NAT).map(x => x.price), ...Object.values(D.DATABASE).map(x => x.price),
     ...Object.values(D.STORAGE).map(x => x.price), ...Object.values(D.EMAIL).map(x => x.price), ...Object.values(D.DOMAINS).flatMap(x => [x.first, x.renew]),
     ...D.TOPUPS.flatMap(p => [p.amount, p.bonus, p.amount + p.bonus]), ...Object.values(D.UNITS).map(u => u.cost),
     ...Object.keys(D.TEMPLATES).map(D.templateCost), D.PAYMENTS.withdraw, D.TOPUP_MIN,

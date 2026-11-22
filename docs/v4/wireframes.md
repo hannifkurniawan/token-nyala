@@ -270,7 +270,7 @@ RIWAYAT   [Semua ▾][Semua proyek ▾]
 [ Unduh invoice (contoh) ]
 ```
 
-### C7. AI — tab Mulai cepat (Base URL + key + salin, v3), Coba AI (chat: model selector, contoh prompt, biaya per pesan terlihat), Model (kartu v3), Pemakaian (grafik 7 hari v3), API key (per proyek, limit Rp, nonaktifkan).
+### C7. API AI — tab Mulai cepat (Base URL + key + salin, v3), Model (kartu v3), Pemakaian (grafik 7 hari v3), API key (per proyek, limit Rp, nonaktifkan). **Chat AI** (sejak 22 Nov 2026) menu sendiri `#/chat`: daftar percakapan kiri (lg) / atas (HP), panel chat dengan pilih model, contoh prompt, biaya per balasan, ekspor riwayat.
 
 ### C8. Layanan lain — pola satu template
 ```text

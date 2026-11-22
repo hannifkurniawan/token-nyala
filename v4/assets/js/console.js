@@ -38,22 +38,24 @@
     toastTimer = setTimeout(() => el.removeAttribute('data-show'), 3200);
   }
 
-  /* ---------- Navigation (sidebar, tab bar, "Lainnya") ---------- */
-  const SIDE = [
-    ['beranda', 'nav.home', 'gauge'], ['proyek', 'nav.projects', 'folder'], ['buat', 'nav.createLong', 'plus'],
-    ['ai', 'pnav.ai', 'sparkles'], ['saldo', 'nav.balance', 'wallet'],
+  /* ---------- Navigation (sidebar, tab bar, "Lainnya") ----------
+     Grouped like the landing and harga (data.js GROUPS): build with AI · run · store & connect. Server covers both kinds:
+     own IP (#/layanan/server) and budget on a shared IP (#/layanan/nat). */
+  const TOP = [['beranda', 'nav.home', 'gauge'], ['proyek', 'nav.projects', 'folder'], ['buat', 'nav.createLong', 'plus'], ['saldo', 'nav.balance', 'wallet']];
+  const NAV_GROUPS = [
+    ['svc.group.build', [['chat', 'nav.chat', 'message-circle'], ['ai', 'nav.api', 'sparkles']]],
+    ['svc.group.run', [['aplikasi', 'nav.apps', 'bot'], ['layanan/server', 'nav.svc.server', 'server']]],
+    ['nav.group.storeConnect', ['database', 'storage', 'domain', 'email', 'payments'].map((id) => [`layanan/${id}`, `nav.svc.${id}`, D.ICONS[id]])],
   ];
-  const OTHER = ['server', 'database', 'storage', 'domain', 'email', 'payments'];
-  const navLink = (route, key, ic, extra = '') => `<li><a href="#/${route}" data-route="${route.split('/')[0]}" ${extra}
+  const navLink = (route, key, ic, extra = '') => `<li><a href="#/${route}" data-route="${route.split('/')[0]}" ${route.includes('/') ? `data-sub="${route.split('/')[1]}"` : ''} ${extra}
     class="flex min-h-11 items-center gap-3 rounded-control px-3 font-bold text-lead-ink hover:bg-paper aria-[current=page]:bg-xl-dark aria-[current=page]:text-white">${icon(ic, 'icon size-5')}<span>${esc(t(key))}</span></a></li>`;
+  const groupHead = (key, mt) => `<li class="${mt} px-3 pb-1 font-mono text-[.72rem] tracking-[.08em] text-muted uppercase">${esc(t(key))}</li>`;
+  const groupsHtml = (mt) => NAV_GROUPS.map(([key, links]) => groupHead(key, mt) + links.map(([r, k, i]) => navLink(r, k, i)).join('')).join('');
   function renderNav() {
     const side = document.querySelector('[data-side-nav]');
-    const others = OTHER.map((id) => navLink(`layanan/${id}`, `nav.svc.${id}`, D.ICONS[id], `data-sub="${id}"`)).join('');
-    side.innerHTML = SIDE.map(([r, k, i]) => navLink(r, k, i)).join('')
-      + `<li class="mt-4 px-3 pb-1 font-mono text-[.72rem] tracking-[.08em] text-muted uppercase">${esc(t('nav.servicesGroup'))}</li>${others}`
-      + `<li class="mt-4"></li>${navLink('belajar', 'nav.learn', 'book-open')}${navLink('bantuan', 'nav.help', 'message-square')}`;
-    document.querySelector('[data-more-nav]').innerHTML = navLink('ai', 'pnav.ai', 'sparkles')
-      + `<li class="mt-3 px-3 pb-1 font-mono text-[.72rem] tracking-[.08em] text-muted uppercase">${esc(t('nav.servicesGroup'))}</li>${others}`
+    side.innerHTML = TOP.map(([r, k, i]) => navLink(r, k, i)).join('') + groupsHtml('mt-3')
+      + `<li class="mt-2" aria-hidden="true"></li>${navLink('belajar', 'nav.learn', 'book-open')}${navLink('bantuan', 'nav.help', 'message-square')}`;
+    document.querySelector('[data-more-nav]').innerHTML = groupsHtml('mt-3').replace('mt-3 px-3', 'px-3')
       + `<li class="mt-3"></li>${navLink('belajar', 'nav.learn', 'book-open')}${navLink('bantuan', 'nav.help', 'message-square')}`;
     const tab = (route, key, ic) => `<li><a href="#/${route}" data-route="${route}" class="flex h-16 flex-col items-center justify-center gap-0.5 text-[.75rem] font-bold text-muted aria-[current=page]:text-xl-dark">${icon(ic, 'icon size-6')}<span>${esc(t(key))}</span></a></li>`;
     document.querySelector('[data-tab-nav]').innerHTML = tab('beranda', 'nav.home', 'gauge') + tab('proyek', 'nav.projects', 'folder')
@@ -65,7 +67,7 @@
   function markCurrent() {
     const r = parseHash();
     const name = r.parts[0] || 'beranda';
-    const sub = name === 'layanan' ? r.parts[1] : null;
+    const sub = name === 'layanan' ? (r.parts[1] === 'nat' ? 'server' : r.parts[1]) : null;
     document.querySelectorAll('[data-route]').forEach((a) => {
       const on = a.dataset.route === name && (!a.dataset.sub || a.dataset.sub === sub) && !(name === 'layanan' && !a.dataset.sub);
       if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');

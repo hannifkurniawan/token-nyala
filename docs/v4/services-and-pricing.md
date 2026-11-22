@@ -104,17 +104,18 @@ Dipakai oleh **Online-kan proyekmu** dan **Asisten & otomasi siap pakai** supaya
 
 Kelompok (dipakai di landing, harga, dan menu console):
 - **Bangun dengan AI:** `ai`, `chat`
-- **Jalankan:** `hosting`, `apps`, `server`
+- **Jalankan:** `hosting`, `apps`, `server`, `nat`
 - **Simpan:** `database`, `storage`
 - **Hubungkan:** `domain`, `email`, `payments`
 
 | id | Nama ID | Nama EN | Label teknis (kecil) | Mulai dari | Satuan |
 |---|---|---|---|---|---|
 | `ai` | AI untuk tool-mu | AI for your tools | AI API · kompatibel OpenAI | Sesuai pakai | ≈ 5 sesi / Rp10.000 (Seimbang) |
-| `chat` | Coba AI | Try AI | Chat playground | Sesuai pakai | dari saldo yang sama |
+| `chat` | Chat AI | AI chat | Chat playground | Sesuai pakai | dari saldo yang sama |
 | `hosting` | Online-kan proyekmu | Put your project online | Hosting aplikasi | Rp15.000 | / 30 hari |
 | `apps` | Asisten & otomasi siap pakai | Ready-made assistants & automations | Aplikasi sekali klik | Rp15.000 | / 30 hari |
 | `server` | Server sendiri | Your own server | VPS | Rp65.000 | / 30 hari |
+| `nat` | Server hemat | Budget server | VPS NAT · IP bersama | Rp20.000 | / 30 hari |
 | `database` | Tempat simpan data | Data storage | Database terkelola | Rp10.000 | / 30 hari |
 | `storage` | Tempat simpan file | File storage | Object storage · kompatibel S3 | Rp7.000 | / 30 hari |
 | `domain` | Alamat web | Web address | Domain | Rp5.000 | / tahun pertama |
@@ -126,8 +127,8 @@ Kelompok (dipakai di landing, harga, dan menu console):
 - **API key per proyek** dengan **limit belanja dalam Rupiah** (opsional) dan pilihan model yang diizinkan.
 - Tarif per model: katalog v3. Tampilan utama tetap “≈ N sesi / Rp10.000”; Kredit per 1 jt token di `<details>`.
 
-### 5.2 `chat` — Coba AI
-Chat di console untuk mencoba/membandingkan model; dipotong dari saldo yang sama per pemakaian. Contoh prompt disediakan.
+### 5.2 `chat` — Chat AI
+Menu sendiri di console (`#/chat`, sejak 22 Nov 2026; sebelumnya tab “Coba AI” di menu AI): daftar percakapan, chat baru, pilih model (Hemat/Seimbang/Premium), biaya per balasan tampil, ekspor riwayat (.txt). Dipotong dari saldo yang sama per balasan (tarif model, dibulatkan ke rupiah, minimal Rp1). Percakapan **hanya di memori tab** — tidak disimpan di localStorage karena isinya bisa berupa data pribadi. Contoh prompt disediakan.
 
 ### 5.3 `hosting` — Online-kan proyekmu
 - Sumber: **Upload folder/ZIP** (hasil Lovable, Bolt, v0) atau **Sambungkan GitHub** (mock).
@@ -161,6 +162,21 @@ Setelah nyala: link admin + username + password dibuat otomatis (ditampilkan, bi
 - Sistem: Ubuntu 24.04 (default) atau dengan panel siap pakai (Easypanel).
 - **Password dibuatkan otomatis** dan ditampilkan sekali dengan tombol salin (pemula tidak perlu merancang password 12–30 karakter).
 - Trafik habis → kecepatan diturunkan, **server tidak dimatikan** (beda dengan Sumopod/Tencent).
+
+### 5.5b `nat` — Server hemat (VPS NAT)
+Disetujui user 22 Nov 2026 (harga contoh sejajar pasar: Sumopod VPS NAT Rp20.000–120.000). Server sendiri **tanpa IP publik**: diakses lewat alamat bersama `nat-jkt.tokennyala.example` / `nat-sg…` + nomor port.
+
+| id | ID / EN | Cukup untuk | Spesifikasi | Harga / 30 hari |
+|---|---|---|---|---:|
+| `kecil` | Kecil / Small | Belajar Linux, bot Telegram/Discord kecil | 1 vCPU · 1 GB · 10 GB | Rp20.000 |
+| `sedang` | Sedang / Medium | n8n atau beberapa bot | 2 vCPU · 2 GB · 20 GB | Rp45.000 |
+| `besar` | Besar / Large | Agent AI dan otomasi berat | 4 vCPU · 8 GB · 25 GB | Rp120.000 |
+
+- **5 port per server** (`NAT_PORTS`), 1 dipakai SSH (port luar → 22). Pengguna **menambah/menghapus port sendiri** (Sumopod: lewat email support). Port luar dipilih otomatis (20000–59999); port SSH tidak bisa dihapus.
+- Trafik tanpa kuota. Lokasi Jakarta/Singapura, Ubuntu atau panel. Username `ubuntu`; password dibuatkan, tampil sekali; perintah SSH siap salin (`ssh ubuntu@<host> -p <port>`).
+- Ukuran bisa naik/turun (prorata, aturan §2) — Sumopod tidak bisa.
+- Kurang cocok untuk website dengan alamat web sendiri atau server email → arahkan ke `server` (IP sendiri). Di console satu menu “Server” dengan dua jenis: IP sendiri · Hemat (IP bersama).
+- URL `s`: `nat:kecil|sedang|besar`.
 
 ### 5.6 `database` — Tempat simpan data
 | id | ID / EN | Kapasitas | Harga / 30 hari |
