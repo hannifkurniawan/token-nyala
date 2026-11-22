@@ -12,7 +12,6 @@
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const root = document.documentElement;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   /* ---------------------------------------------------------
      State + helpers
@@ -555,13 +554,9 @@
   });
 
   /* ---------------------------------------------------------
-     Language: static copy swaps by CSS; here only aria labels, cursor label and data-driven parts
+     Language: static copy swaps by CSS (aria labels + cursor: ui.js); here only the data-driven parts
      --------------------------------------------------------- */
-  function syncAria() {
-    $$('[data-aria-id]').forEach((el) => el.setAttribute('aria-label', el.dataset[I.lang === 'en' ? 'ariaEn' : 'ariaId']));
-  }
   function render() {
-    syncAria();
     renderHero();
     renderHow();
     renderTabs();
@@ -590,38 +585,6 @@
     const sync = () => { const hide = phone.matches && heroVisible; launcher.classList.toggle('is-away', hide); launcher.inert = hide; };
     new IntersectionObserver(([entry]) => { heroVisible = entry.intersectionRatio > 0.35; sync(); }, { threshold: [0, 0.35, 1] }).observe(heroEl);
     phone.addEventListener('change', sync);
-  }
-
-  /* ---------------------------------------------------------
-     Custom cursor + magnetic buttons (fine pointers only)
-     --------------------------------------------------------- */
-  if (finePointer && !prefersReducedMotion) {
-    root.classList.add('has-cursor');
-    const cursor = $('#cursor'), label = $('#cursor-label');
-    let mx = -100, my = -100, cx = -100, cy = -100;
-    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
-    const loop = () => {
-      cx += (mx - cx) * 0.22; cy += (my - cy) * 0.22;
-      cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
-      requestAnimationFrame(loop);
-    };
-    loop();
-    document.addEventListener('pointerover', (e) => {
-      const target = e.target.closest('[data-cursor]');
-      if (target) { label.textContent = (I.lang === 'en' && target.dataset.cursorEn) || target.dataset.cursor; cursor.classList.add('is-active'); }
-      else cursor.classList.remove('is-active');
-      cursor.classList.toggle('is-hidden', !!e.target.closest('dialog, input, textarea'));
-    });
-    document.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
-    document.addEventListener('pointerenter', () => cursor.classList.remove('is-hidden'));
-    document.addEventListener('pointermove', (e) => {
-      const el = e.target.closest?.('.magnetic');
-      $$('.magnetic[data-pulled]').forEach((m) => { if (m !== el) { m.style.transform = ''; m.removeAttribute('data-pulled'); } });
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      el.style.transform = `translate(${(e.clientX - (r.left + r.width / 2)) * 0.22}px, ${(e.clientY - (r.top + r.height / 2)) * 0.32}px)`;
-      el.setAttribute('data-pulled', '');
-    }, { passive: true });
   }
 
   /* ---------------------------------------------------------

@@ -116,57 +116,12 @@
   .outline-num { color: transparent; -webkit-text-stroke: 1.5px var(--color-xl-dark); }
 }
 
-
-
-/* Header CTA hides while the blue mobile menu is open (unlayered: beats sm:inline-flex) */
-[data-header][data-menu-open] [data-start] { display: none; }
-
 /* Reduced motion: everything visible, nothing moves (DoD 7) */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
                          transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
 
-/* harga.html: lift the Nala launcher above the calculator's sticky summary bar (mobile) */
-html[data-calc-bar] #chat-launcher { bottom: calc(var(--calc-bar-h, 88px) + 12px); }
-html[data-calc-bar][data-calc-open] #chat-launcher { display: none; }
-@media (width >= 64rem) { html[data-calc-bar] #chat-launcher { bottom: calc(1rem + env(safe-area-inset-bottom)); display: inline-flex; } }
-
-/* Current page in the header nav (harga.html → Harga) */
-header nav a[aria-current="page"]::after { transform: scaleX(1); }
-
 /* app.html wizard: lift the Nala launcher above the sticky step bar */
 html[data-wz-bar] #chat-launcher { bottom: calc(var(--wz-bar-h, 128px) + env(safe-area-inset-bottom) + 12px); }
-
-/* Shared header for harga.html (the landing has its own hand-written site.css, ported from showcase v2) */
-@layer components {
-  .nav-link { position: relative; }
-  .nav-link::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 8px; height: 3px; border-radius: 3px; background: var(--color-xl-yellow);
-                     transform: scaleX(0); transform-origin: right; transition: transform .35s var(--ease-out-soft); }
-  @media (hover: hover) { .nav-link:hover::after { transform: scaleX(1); transform-origin: left; } }
-  .menu-btn { position: relative; z-index: 2; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--color-xl-dark); color: #fff; }
-  .menu-btn__bars { position: relative; display: block; width: 20px; height: 10px; }
-  .menu-btn__bars > i { position: absolute; left: 0; right: 0; height: 2px; border-radius: 2px; background: currentColor; transition: transform .35s var(--ease-out-soft), top .35s var(--ease-out-soft); }
-  .menu-btn__bars > i:first-child { top: 0; }
-  .menu-btn__bars > i:last-child { top: 8px; }
-  .menu-btn[aria-expanded="true"] { background: var(--color-xl-yellow); color: var(--color-xl-dark); }
-  .menu-btn[aria-expanded="true"] .menu-btn__bars > i:first-child { top: 4px; transform: rotate(45deg); }
-  .menu-btn[aria-expanded="true"] .menu-btn__bars > i:last-child { top: 4px; transform: rotate(-45deg); }
-  .menu-panel { position: fixed; inset: 0; z-index: 40; overflow-y: auto; padding: calc(var(--header-h) + 16px) var(--gutter) 32px; background: var(--color-xl-blue); color: #fff;
-                clip-path: circle(0% at calc(100% - var(--gutter) - 24px) calc(var(--header-h) / 2)); transition: clip-path .6s var(--ease-out-soft); }
-  .menu-panel[data-open] { clip-path: circle(150% at calc(100% - var(--gutter) - 24px) calc(var(--header-h) / 2)); }
-  .menu-panel__list a { display: flex; align-items: baseline; gap: 14px; padding: 6px 0; border-bottom: 1px solid rgb(255 255 255 / .18);
-                        font-size: clamp(2.4rem, calc(11 * var(--u)), 5rem); font-weight: 800; line-height: 1.04; letter-spacing: -.05em; }
-  .menu-panel__list a:hover { color: var(--color-xl-yellow); }
-  .menu-panel__list small { font-family: var(--font-mono); font-size: .8rem; font-weight: 500; letter-spacing: 0; color: rgb(255 255 255 / .7); }
-}
-
-/* Header state rules (unlayered so they beat utilities on the same element) */
-.site-header { transition: transform .45s var(--ease-out-soft), background-color .3s, color .3s; }
-.site-header[data-scrolled] { background: rgb(247 248 252 / .88); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.site-header[data-hidden] { transform: translateY(-100%); }
-.site-header[data-on-dark] { color: #fff; }
-.site-header[data-on-dark][data-scrolled] { background: rgb(0 22 106 / .82); }
-.site-header[data-on-dark] .menu-btn:not([aria-expanded="true"]) { background: var(--color-xl-yellow); color: var(--color-xl-dark); }
-.site-header[data-menu-open] { color: #fff; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; transform: none; }
 

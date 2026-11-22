@@ -25,9 +25,6 @@
 
 .hero__grid { display: grid; gap: 48px; margin-top: clamp(32px, calc(4 * var(--u)), 56px); align-items: start; }
 .hero__copy { display: grid; gap: 28px; align-content: start; }
-.trust-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--mono); font-size: .85rem; color: var(--muted); }
-.trust-row li { display: inline-flex; align-items: center; gap: 8px; }
-.trust-row li::before { content: ""; width: 14px; height: 4px; border-radius: 4px; background: var(--yellow); }
 .hero__scroll { position: absolute; left: var(--gutter); bottom: 24px; font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; display: none; }
 
 .hero__visual { position: relative; }
@@ -218,24 +215,6 @@
 /* =========================================================
    PACKAGES
    ========================================================= */
-.intent {
-  position: relative; display: grid; grid-template-columns: repeat(3, 1fr);
-  border: 1.5px solid rgba(255,255,255,.35); border-radius: 999px; padding: 6px; margin-bottom: 32px;
-}
-.intent__marker {
-  position: absolute; top: 6px; bottom: 6px; left: 6px; width: calc((100% - 12px) / 3);
-  border-radius: 999px; background: var(--yellow);
-  transition: transform .22s var(--ease);
-  transform: translateX(calc(var(--i, 1) * 100%));
-}
-.intent__tab {
-  position: relative; z-index: 1; min-height: 60px; border: 0; background: transparent; color: #fff; border-radius: 999px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px;
-  transition: color .22s;
-}
-.intent__tab[aria-selected="true"] { color: var(--dark); }
-.intent__label { font-size: clamp(1.05rem, calc(2.6 * var(--u)), 2.2rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
-.intent__hint { font-size: .72rem; opacity: .7; }
 
 
 /* ---------- Package sheet (one package at a time) ---------- */
@@ -456,22 +435,6 @@
 /* =========================================================
    FAQ
    ========================================================= */
-.faq__grid { display: grid; gap: 40px; }
-.faq__head .display { position: sticky; top: 120px; }
-.faq-item { border-top: 1px solid var(--border); }
-.faq-item:last-child { border-bottom: 1px solid var(--border); }
-.faq-item summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 44px 1fr 44px; gap: 12px; align-items: center; padding: 22px 0; font-size: clamp(1.1rem, calc(1.8 * var(--u)), 1.5rem); font-weight: 700; letter-spacing: -.02em; min-height: 44px; }
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item__n { font-family: var(--mono); font-size: .8rem; color: var(--muted); font-weight: 500; }
-.faq-item__plus { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--dark); position: relative; justify-self: end; transition: background .25s, transform .35s var(--ease); }
-.faq-item__plus::before, .faq-item__plus::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 2px; margin: -1px 0 0 -7px; background: currentColor; }
-.faq-item__plus::after { transform: rotate(90deg); transition: transform .35s var(--ease); }
-.faq-item[open] .faq-item__plus { background: var(--yellow); border-color: var(--yellow); transform: rotate(180deg); }
-.faq-item[open] .faq-item__plus::after { transform: rotate(0deg); }
-.faq-item summary:hover { color: var(--blue); }
-.faq-item__a { padding: 0 56px 24px 56px; font-size: 1.05rem; color: #2A3557; max-width: 44em; }
-@media (max-width: 639px) { .faq-item summary { grid-template-columns: 32px 1fr 40px; } .faq-item__a { padding: 0 0 22px 44px; } }
-@media (min-width: 1024px) { .faq__grid { grid-template-columns: 1fr 1.6fr; gap: calc(6 * var(--u)); } }
 
 /* =========================================================
    FINAL CTA
@@ -503,19 +466,6 @@
 /* Hero board: project label follows the chosen recipe */
 .board__project b { font-weight: 500; color: var(--dark); }
 
-/* Intent control: 5 goals. md+: one row (marker slides sideways); phones: a column (marker slides down) */
-.intent { grid-template-columns: 1fr; border-radius: 28px; }
-.intent__marker { width: auto; right: 6px; height: calc((100% - 12px) / 5); bottom: auto; transform: translateY(calc(var(--i, 0) * 100%)); }
-.intent__tab { flex-direction: row; justify-content: space-between; min-height: 52px; padding: 8px 18px; }
-.intent__label { font-size: 1.15rem; }
-.intent__hint { font-size: .78rem; }
-@media (min-width: 768px) {
-  .intent { grid-template-columns: repeat(5, 1fr); border-radius: 999px; }
-  .intent__marker { right: auto; bottom: 6px; height: auto; width: calc((100% - 12px) / 5); transform: translateX(calc(var(--i, 0) * 100%)); }
-  .intent__tab { flex-direction: column; justify-content: center; min-height: 72px; padding: 8px; }
-  .intent__label { font-size: clamp(1.05rem, calc(1.9 * var(--u)), 1.75rem); text-align: center; }
-  .intent__hint { font-size: .72rem; }
-}
 .pkg-sheet__price em { font-style: normal; font-size: .16em; letter-spacing: 0; margin-left: .25em; color: rgba(255,255,255,.75); }
 .pkg-sheet__note { font-size: .95rem; color: rgba(255,255,255,.8); }
 .pkg-specs dd small { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: rgba(255,255,255,.16); font-family: var(--mono); font-size: .68rem; font-weight: 500; text-transform: uppercase; vertical-align: 2px; }
@@ -526,8 +476,6 @@
 /* Services: four compact groups (index rows, no giant names) + templates strip */
 .svc-groups { display: grid; gap: 40px 64px; }
 @media (min-width: 1024px) { .svc-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.svc-group__head { display: flex; gap: 10px; align-items: baseline; padding-bottom: 12px; border-bottom: 2px solid var(--dark); font-family: var(--mono); font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; }
-.svc-group__head span { color: var(--muted); }
 .svc-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 4px 14px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--border); }
 .svc-row__icon { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--border); display: grid; place-items: center; color: var(--blue); }
 .svc-row h4 { font-size: 1.2rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; }
@@ -572,8 +520,6 @@
 .meter__fill--range { transform: none; }
 
 /* FAQ head: guides (Belajar) under "Ask Nala" */
-.faq__head { display: grid; align-content: start; gap: 20px; }
-@media (min-width: 1024px) { .faq__head { position: sticky; top: calc(var(--header-h) + 24px); align-self: start; } .faq__head .display { position: static; } }
 .guides { margin-top: 20px; border-top: 2px solid var(--dark); }
 .guides__title { padding: 14px 0 6px; font-family: var(--mono); font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
 .guides a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); text-decoration: none; }
@@ -602,12 +548,8 @@
 .sticker { right: 0; }
 .mrow__name { font-size: clamp(1.5rem, calc(4 * var(--u)), 4rem); }
 /* faded text as colour, not opacity (QA motion check + contrast) */
-.section-head__aside { opacity: 1; color: color-mix(in srgb, currentColor 85%, transparent); }
-.intent__hint { opacity: 1; color: color-mix(in srgb, currentColor 80%, transparent); }
 @media (min-width: 768px) { .steps__btn:disabled { opacity: 1; border-color: var(--border); color: #B4BCCF; } }
-.svc-group__head { font-weight: 500; }
 .board__ready { color: #007A5E; }
-.intent__tab[aria-checked="true"] { color: var(--dark); }
 .tool-steps b { font-weight: 600; }
 /* Template cards: equal height, cost + button pinned to the bottom so every button lines up */
 .tpl-card { display: flex; flex-direction: column; }

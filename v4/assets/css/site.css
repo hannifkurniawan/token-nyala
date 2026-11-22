@@ -622,3 +622,67 @@ html.overflow-hidden { overflow: hidden; }
 .kicker--light .kicker__num { color: rgba(255,255,255,.75); }
 .menu-panel nav { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; min-height: 100%; }
 .sheet--yellow .kicker, .sheet--yellow .kicker__num { color: var(--dark); }
+
+/* =========================================================
+   Shared sections (landing + harga): moved from landing.css
+   ========================================================= */
+.trust-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--mono); font-size: .85rem; color: var(--muted); }
+.trust-row li { display: inline-flex; align-items: center; gap: 8px; }
+.trust-row li::before { content: ""; width: 14px; height: 4px; border-radius: 4px; background: var(--yellow); }
+.intent {
+  position: relative; display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1.5px solid rgba(255,255,255,.35); border-radius: 999px; padding: 6px; margin-bottom: 32px;
+}
+.intent__marker {
+  position: absolute; top: 6px; bottom: 6px; left: 6px; width: calc((100% - 12px) / 3);
+  border-radius: 999px; background: var(--yellow);
+  transition: transform .22s var(--ease);
+  transform: translateX(calc(var(--i, 1) * 100%));
+}
+.intent__tab {
+  position: relative; z-index: 1; min-height: 60px; border: 0; background: transparent; color: #fff; border-radius: 999px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px;
+  transition: color .22s;
+}
+.intent__tab[aria-selected="true"] { color: var(--dark); }
+.intent__label { font-size: clamp(1.05rem, calc(2.6 * var(--u)), 2.2rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.intent__hint { font-size: .72rem; opacity: .7; }
+/* Intent control: 5 goals. md+: one row (marker slides sideways); phones: a column (marker slides down) */
+.intent { grid-template-columns: 1fr; border-radius: 28px; }
+.intent__marker { width: auto; right: 6px; height: calc((100% - 12px) / 5); bottom: auto; transform: translateY(calc(var(--i, 0) * 100%)); }
+.intent__tab { flex-direction: row; justify-content: space-between; min-height: 52px; padding: 8px 18px; }
+.intent__label { font-size: 1.15rem; }
+.intent__hint { font-size: .78rem; }
+@media (min-width: 768px) {
+  .intent { grid-template-columns: repeat(5, 1fr); border-radius: 999px; }
+  .intent__marker { right: auto; bottom: 6px; height: auto; width: calc((100% - 12px) / 5); transform: translateX(calc(var(--i, 0) * 100%)); }
+  .intent__tab { flex-direction: column; justify-content: center; min-height: 72px; padding: 8px; }
+  .intent__label { font-size: clamp(1.05rem, calc(1.9 * var(--u)), 1.75rem); text-align: center; }
+  .intent__hint { font-size: .72rem; }
+}
+.svc-group__head { display: flex; gap: 10px; align-items: baseline; padding-bottom: 12px; border-bottom: 2px solid var(--dark); font-family: var(--mono); font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; }
+.svc-group__head span { color: var(--muted); }
+.faq__grid { display: grid; gap: 40px; }
+.faq__head .display { position: sticky; top: 120px; }
+.faq-item { border-top: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: 1px solid var(--border); }
+.faq-item summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 44px 1fr 44px; gap: 12px; align-items: center; padding: 22px 0; font-size: clamp(1.1rem, calc(1.8 * var(--u)), 1.5rem); font-weight: 700; letter-spacing: -.02em; min-height: 44px; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item__n { font-family: var(--mono); font-size: .8rem; color: var(--muted); font-weight: 500; }
+.faq-item__plus { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--dark); position: relative; justify-self: end; transition: background .25s, transform .35s var(--ease); }
+.faq-item__plus::before, .faq-item__plus::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 2px; margin: -1px 0 0 -7px; background: currentColor; }
+.faq-item__plus::after { transform: rotate(90deg); transition: transform .35s var(--ease); }
+.faq-item[open] .faq-item__plus { background: var(--yellow); border-color: var(--yellow); transform: rotate(180deg); }
+.faq-item[open] .faq-item__plus::after { transform: rotate(0deg); }
+.faq-item summary:hover { color: var(--blue); }
+.faq-item__a { padding: 0 56px 24px 56px; font-size: 1.05rem; color: #2A3557; max-width: 44em; }
+@media (max-width: 639px) { .faq-item summary { grid-template-columns: 32px 1fr 40px; } .faq-item__a { padding: 0 0 22px 44px; } }
+@media (min-width: 1024px) { .faq__grid { grid-template-columns: 1fr 1.6fr; gap: calc(6 * var(--u)); } }
+.faq__head { display: grid; align-content: start; gap: 20px; }
+@media (min-width: 1024px) { .faq__head { position: sticky; top: calc(var(--header-h) + 24px); align-self: start; } .faq__head .display { position: static; } }
+.section-head__aside { opacity: 1; color: color-mix(in srgb, currentColor 85%, transparent); }
+.intent__hint { opacity: 1; color: color-mix(in srgb, currentColor 80%, transparent); }
+.svc-group__head { font-weight: 500; }
+.intent__tab[aria-checked="true"] { color: var(--dark); }
+/* current page in the header nav */
+.nav-desktop a[aria-current="page"]::after { transform: scaleX(1); }

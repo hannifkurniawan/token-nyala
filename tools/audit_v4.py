@@ -10,8 +10,8 @@ Definition of Done extras:
   - DoD 1  every page opens from file:// without console errors (CSS applied, scripts ran)
   - DoD 7  prefers-reduced-motion: no animation/transition longer than 0.01ms, scroll-behavior auto, GSAP/Lenis off
   - DoD 8  storage blocked (localStorage throws): page still renders and switches language
-  - DoD 9  only loaded font faces render: 4 on harga/console (Manrope 500/700/800, Plex Mono 500);
-           the landing (showcase v2 build) also loads Manrope 600 + Plex Mono 600
+  - DoD 9  only loaded font faces render: 4 on the console (Manrope 500/700/800, Plex Mono 500);
+           landing + harga (showcase v2 build) also load Manrope 600 + Plex Mono 600
   - DoD 10 assets/css/app.css equals a fresh `tailwindcss --minify` build of src/tailwind.css
   - DoD 12 the simulation label is visible on landing, harga, console (home + wizard) and in the top-up sheet
   - DoD 11 storage holds only tn-lang after using the page (incl. consultation form + Nala offline contact);
@@ -39,7 +39,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent / "v4"
 AXE = "https://cdn.jsdelivr.net/npm/axe-core@4.14.0/axe.min.js"
 TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"]
 FACES = ["Manrope 500", "Manrope 700", "Manrope 800", "IBM Plex Mono 500"]
-FACES_LANDING = FACES + ["Manrope 600", "IBM Plex Mono 600"]  # index.html loads 6 faces (approved 21 Nov 2026)
+FACES_LANDING = FACES + ["Manrope 600", "IBM Plex Mono 600"]  # index.html + harga.html load 6 faces (approved 21/22 Nov 2026)
 PAGES = ["index.html", "harga.html"]  # fase 4+: app.html routes
 RENDERED_CHECK = {"index.html": "[data-recipe-card] h3", "harga.html": "[data-calc-rows] li"}
 APP_ROUTES = [("masuk", "app.html?demo=reset#/masuk"), ("beranda", "app.html?demo=ayu#/beranda"),
@@ -141,9 +141,8 @@ RENDERED_JS = """
 HARGA_JS = """
 () => {
   const D = TN.data, I = TN.i18n, out = [];
-  const sel = document.getElementById('calc-recipe');
   for (const r of D.RECIPES.filter(x => !x.aiOnly)) {
-    sel.value = r.id; sel.dispatchEvent(new Event('change'));
+    document.querySelector(`[data-calc-recipes] [data-recipe="${r.id}"]`).click();
     const tot = D.recipeTotals(r.items);
     const sum = document.getElementById('calc-summary').textContent;
     const want = [I.rpK(tot.perMonth), I.rp(tot.fixed), I.rp(tot.usage), I.rp(tot.perMonth), I.rp(tot.suggest.amount)].concat(tot.yearly ? [I.rp(tot.firstMonth), I.rp(tot.yearly)] : []);
@@ -201,7 +200,7 @@ def fonts(page, label):
             if (!ok.has(k)) bad.add(`${k} :: ${el.tagName.toLowerCase()}.${[...el.classList].slice(0, 4).join('.')} "${el.textContent.trim().slice(0, 30)}"`);
         }
         return [...bad].slice(0, 6);
-    }""", FACES_LANDING if "index" in label else FACES)
+    }""", FACES if "app.html" in label else FACES_LANDING)
     return [f"[font] {label}: {b}" for b in bad]
 
 
@@ -332,7 +331,7 @@ def main():
                 page.locator("#consult input[name=consent]").check(); page.locator("#consult [type=submit]").click()
                 page.keyboard.press("Escape")
             if page_name == "harga.html":  # the calculator keeps its state in the URL, never in storage
-                page.select_option("#calc-recipe", "web-klien")
+                page.locator('[data-calc-recipes] [data-recipe="web-klien"]').click()
                 page.locator('[data-key="hosting"] [data-size="ramai"]').click()
             page.goto(base + page_name + "?chat=offline", wait_until="networkidle")
             page.evaluate("() => TN.nala.open()")
@@ -490,7 +489,7 @@ def main():
     httpd.shutdown()
 
     print("\n".join(problems) if problems else
-          "ok — axe 0 violations, font faces (4; landing 6), file://, reduced motion, storage blocked, CSS up to date, numbers match services-and-pricing.md")
+          "ok — axe 0 violations, font faces (console 4; landing + harga 6), file://, reduced motion, storage blocked, CSS up to date, numbers match services-and-pricing.md")
     sys.exit(1 if problems else 0)
 
 

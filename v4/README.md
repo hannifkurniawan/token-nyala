@@ -13,7 +13,7 @@ semua angka: [`docs/v4/services-and-pricing.md`](../docs/v4/services-and-pricing
 | Halaman | Isi |
 |---|---|
 | `index.html` | Landing 15 section bergaya showcase v2: hero, cerita macet (scroll), **Mau bikin apa?** (5 paket), cara kerja (kartu geser), semua layanan, satu saldo, template, model AI + katalog, pakai di tool, contoh, aman untuk pemula, belajar, tim + konsultasi, FAQ, CTA saklar raksasa · chat Nala · motion GSAP/Lenis |
-| `harga.html` | Kalkulator paket (state di `?paket=&s=`), mulai dari, AI (12 model + 3 satuan), detail tiap layanan, saldo & tagihan, FAQ harga |
+| `harga.html` | Bergaya showcase v2 (tanpa loader): kepala · nav chip lengket · **kalkulator** (tab paket seperti landing, state di `?paket=&s=`, ringkasan lengket) · semua layanan (baris indeks, tabel dibuka per layanan) · AI (12 model + 3 satuan) · saldo & tagihan · FAQ harga |
 | `app.html` | Console mock: masuk, beranda, **wizard Buat** (4 langkah), proyek (ganti ukuran, hentikan, log…), AI (coba AI, pemakaian, API key), saldo + isi saldo, layanan lain, belajar, bantuan, jam simulasi |
 
 ### Akun contoh (console)
@@ -44,18 +44,18 @@ python3 -P tools/demo_v4.py --out /tmp/demo-v4             # gladi skrip demo 21
 ## Struktur
 | File | Isi |
 |---|---|
-| `src/tailwind.css` | Token (`@theme`) + komponen harga & console (Tailwind) |
-| `assets/css/site.css` · `landing.css` | Landing, CSS tulisan tangan port `showcase/v2/styles.css` (dasar bersama · section) — tanpa build |
+| `src/tailwind.css` | Token (`@theme`) + komponen console (Tailwind) |
+| `assets/css/site.css` · `landing.css` · `harga.css` | Landing + Harga, CSS tulisan tangan port `showcase/v2/styles.css` (dasar bersama: header, menu, footer, dialog, chat, tab paket, FAQ · section landing · section harga) — tanpa build |
 | `assets/js/data.js` | **Semua angka** + fungsi hitung murni: paket, `recipeTotals`, `suggestTopup`, `coverMonths`, `refund`, `prorata`, `balanceUntil`, URL `s` (`parseS`/`itemsFromUrl`/`serialize`), ukuran minimum template, model AI |
 | `assets/js/i18n.js` | Kamus `'kunci': [ID, EN]` + `t()`, `rp()`, `rpK()`, `date()` |
 | `assets/js/icons.js` | Sprite Lucide (hasil `tools/build_icons_v4.py`, jangan diedit) |
-| `assets/js/ui.js` | Header + menu, bahasa, `setupModal()`, `parseContact()`, salin, `itemView()`, `fromLine()`, pemilih ukuran bersama |
-| `assets/js/landing.js` · `pricing.js` | Landing ala `showcase/v2/script.js`: render data, interaksi, loader → motion GSAP/Lenis, kursor · Harga (kalkulator, tabel) |
+| `assets/js/ui.js` | Header + menu, bahasa, label aria `data-aria-id/en`, kursor custom + tombol magnetis, `setupModal()`, `parseContact()`, salin, `itemView()`, `fromLine()`, pemilih ukuran bersama |
+| `assets/js/landing.js` · `pricing.js` | Landing ala `showcase/v2/script.js`: render data, interaksi, loader → motion GSAP/Lenis · Harga: kalkulator, indeks layanan, AI, saldo, FAQ |
 | `assets/js/store.js` | State console `tn-v4-demo` (tanpa data kontak), preset, `charge()`/`topup()` → riwayat, tagihan (perpanjang/jeda/berhenti, prorata, refund), `advance()` |
 | `assets/js/console.js` | Router hash (fokus `h1`, judul, pengumuman, guard masuk), kerangka, masuk, beranda, saldo, isi saldo |
 | `assets/js/projects.js` · `ai.js` · `services.js` · `learn.js` | Wizard + proyek · AI · layanan lain · belajar + bantuan |
 | `assets/js/nala.js` | Chat Nala (lokal, tanpa server): bantu pilih paket, cara pakai, model, bayar, tim online/offline |
-| `assets/js/motion.js` | GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 untuk harga (landing punya motion sendiri di `landing.js`); mati saat reduced motion |
+| `assets/js/motion.js` | Motion Harga: GSAP 3.12.5 + ScrollTrigger + Lenis 1.1.13 dengan pola landing (judul naik per kata, baris/kartu muncul); kepala halaman masuk lewat CSS (`html.motion-pre`), tanpa loader; mati saat reduced motion |
 
 Script klasik `defer` dengan namespace `window.TN`. Urutan muat: data → i18n → icons → ui → (halaman) → nala → vendor → motion.
 

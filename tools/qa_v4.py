@@ -473,7 +473,7 @@ def harga_calc_flow(page, out, name, base):
     s2 = st()   # rutin 35.000 + 15 sessions 28.350 = 63.350
     if s2["total"] != rk(63350) or "hosting:rutin" not in s2["cta"] or "ai:15" not in s2["cta"] or "Rp63" not in s2["live"]:
         problems.append(f"CALC size/stepper {s2}")
-    page.select_option("#calc-recipe", "chatbot-wa")
+    page.locator('[data-calc-recipes] [data-recipe="chatbot-wa"]').click()
     dis = page.evaluate("() => [...document.querySelectorAll('[data-key=\"apps:wa-bot\"] [role=radio]')].map(b => b.dataset.size + ':' + (b.getAttribute('aria-disabled') || ''))")
     row("apps:wa-bot").locator('[role=radio][data-size="coba"]').click(force=True)  # disabled: must not change anything
     s3 = st()

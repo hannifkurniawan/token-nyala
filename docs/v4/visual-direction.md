@@ -40,7 +40,7 @@ Kontras wajib AA. Teks di lembar kuning memakai `xl-dark`; di lembar biru/gelap 
 | Berhenti | `stopped` (`#B4BCCF`) | `muted` | |
 
 ## 3. Tipografi
-2 keluarga. **Harga & console: 4 face** (aturan 20 Nov 2026): Manrope 500/700/800 + IBM Plex Mono 500. **Landing: 6 face** (disetujui user 21 Nov 2026, mengikuti showcase v2): + Manrope 600 dan IBM Plex Mono 600.
+2 keluarga. **Console: 4 face** (aturan 20 Nov 2026): Manrope 500/700/800 + IBM Plex Mono 500. **Landing (21 Nov) dan Harga (22 Nov 2026): 6 face**, disetujui user, mengikuti showcase v2: + Manrope 600 dan IBM Plex Mono 600.
 
 | Peran | Spesifikasi |
 |---|---|
@@ -86,7 +86,13 @@ Keputusan user: konten v4 tetap; komponen, animasi, dan **cara kerjanya** mengik
 - **Boot:** script inline di `<head>` memasang `is-loading` sebelum halaman tergambar → loader 000→100% menutup layar → `initMotion()` menyiapkan semua posisi awal → loader terangkat → timeline hero diputar. Tanpa ini halaman tampil statis lalu "berkedip" saat GSAP menyembunyikan elemen (masalah putaran 20–21 Nov).
 - **12 section:** hero · pita cerita (scroll) · cara kerja (bukan lembar) · Mau bikin apa? (biru) · layanan + template (putih) · model AI (kertas) · pakai di tool (gelap) · aman + satu saldo (kertas, stack 4 kartu; kartu 4 = dashboard saldo) · contoh (putih) · tim (kuning) · FAQ + panduan belajar (kertas) · CTA saklar raksasa (biru) · footer gelap tanpa lengkung.
 - **Penyimpangan dari showcase (aturan v4):** target sentuh 44px (tombol bahasa, nav, footer, chip), kontras AA (teks pudar memakai warna, bukan `opacity`), pilihan tujuan 5 (kolom di HP, baris di md+), elemen miring diberi margin agar tidak keluar kolom.
-- Harga & console tetap Tailwind; Harga akan dipindah ke `site.css` + `harga.css` (tahap berikutnya).
+- Console tetap Tailwind.
+
+### Harga dibangun dengan cara yang sama (22 Nov 2026)
+- `harga.html` + `site.css` (bersama landing) + `harga.css`; logika `pricing.js` tidak berubah, hanya markup. Kamus tetap dipakai untuk copy Harga; header, menu, footer, chat = markup landing (`data-l`).
+- **Tanpa loader:** kepala halaman masuk lewat animasi CSS yang aktif sebelum halaman tergambar (`html.motion-pre`); semua animasi GSAP (`motion.js`) ada di bawah lipatan.
+- **6 lembar:** kepala · nav chip lengket (ikut naik saat header bersembunyi) · (01) kalkulator biru: pilih paket dengan tab yang sama dengan landing (4 paket + "Dari nol"), baris layanan putih, ringkasan = struk lengket di kanan (lg) / bar bawah (HP) · (02) semua layanan putih: baris indeks per grup, tabel harga dibuka per layanan (`#detail-<id>` membuka barisnya) — menggantikan "Mulai dari" + 3 lembar detail · (03) AI gelap · (04) saldo kuning: struk isi saldo + 10 aturan bernomor · (05) FAQ harga.
+- Komponen yang dipakai keduanya (tab paket `.intent`, judul grup, FAQ, baris kepercayaan) dipindah dari `landing.css` ke `site.css`. Kursor custom + label aria dua bahasa pindah ke `ui.js`.
 
 ## 6. Ikon
 - Set ikon garis tunggal, 24px, stroke 1.75: **Lucide** (lisensi ISC), disalin lokal sebagai sprite SVG + `SOURCE.md` (seperti logo model v3). Tidak memuat CDN ikon.

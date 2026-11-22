@@ -80,6 +80,43 @@ TN.ui = (() => {
     }
   }
 
+  /* ---------- Bilingual aria labels on static markup: data-aria-id / data-aria-en ---------- */
+  function syncAria() {
+    document.querySelectorAll('[data-aria-id]').forEach((el) => el.setAttribute('aria-label', el.dataset[TN.i18n.lang === 'en' ? 'ariaEn' : 'ariaId']));
+  }
+  TN.i18n.onChange(syncAria);
+
+  /* ---------- Custom cursor + magnetic buttons (showcase v2; pages with #cursor, fine pointers only) ---------- */
+  const cursor = document.getElementById('cursor');
+  if (cursor && window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reducedMotion.matches) {
+    document.documentElement.classList.add('has-cursor');
+    const label = document.getElementById('cursor-label');
+    let mx = -100, my = -100, cx = -100, cy = -100;
+    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    const loop = () => {
+      cx += (mx - cx) * 0.22; cy += (my - cy) * 0.22;
+      cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+      requestAnimationFrame(loop);
+    };
+    loop();
+    document.addEventListener('pointerover', (e) => {
+      const target = e.target.closest('[data-cursor]');
+      if (target) { label.textContent = (TN.i18n.lang === 'en' && target.dataset.cursorEn) || target.dataset.cursor; cursor.classList.add('is-active'); }
+      else cursor.classList.remove('is-active');
+      cursor.classList.toggle('is-hidden', !!e.target.closest('dialog, input, textarea, select'));
+    });
+    document.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
+    document.addEventListener('pointerenter', () => cursor.classList.remove('is-hidden'));
+    document.addEventListener('pointermove', (e) => {
+      const el = e.target.closest?.('.magnetic');
+      document.querySelectorAll('.magnetic[data-pulled]').forEach((m) => { if (m !== el) { m.style.transform = ''; m.removeAttribute('data-pulled'); } });
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - (r.left + r.width / 2)) * 0.22}px, ${(e.clientY - (r.top + r.height / 2)) * 0.32}px)`;
+      el.setAttribute('data-pulled', '');
+    }, { passive: true });
+  }
+
   /* ---------- Language ---------- */
   // Delegated: language buttons can be rendered later (console account menu)
   document.addEventListener('click', (e) => { const b = e.target.closest('[data-lang]'); if (b) TN.i18n.setLang(b.dataset.lang); });
