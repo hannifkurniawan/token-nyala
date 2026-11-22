@@ -311,12 +311,12 @@ def landing_consult_flow(page, out, name):
     if errs != {"shown": 5, "focus": "cs-name"}:
         problems.append(f"CONSULT empty submit {errs}")
     page.screenshot(path=str(out / f"index-{name}-consult-errors.png"))
-    page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio Dimas"); page.fill("#cs-contact", "0812 3456 7890")
+    page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio Dimas"); page.fill("#cs-contact", "0817 3456 7890")
     page.locator("#consult label:has(input[name=teamSize])").first.click()
     page.locator("#consult input[name=consent]").check()
     page.locator("#consult [type=submit]").click()
     ok = page.evaluate("() => ({ success: !document.querySelector('#consult [data-cs-panel=success]').hidden, focus: document.activeElement?.id, body: document.querySelector('[data-cs-success-body]').textContent })")
-    if not (ok["success"] and ok["focus"] == "cs-success-title" and "+6281234567890" in ok["body"]):
+    if not (ok["success"] and ok["focus"] == "cs-success-title" and "+6281734567890" in ok["body"]):
         problems.append(f"CONSULT success {ok}")
     page.screenshot(path=str(out / f"index-{name}-consult-success.png"))
     page.locator("#consult [data-cs-panel=success] [data-cs-close]").click()
@@ -583,7 +583,7 @@ def console_auth_flow(page, out, name, base):
     submit()
     if page.evaluate("() => document.activeElement?.id") != "auth-contact" or page.locator("[data-auth-err=contact]").is_hidden():
         problems.append("AUTH empty contact: no error/focus")
-    page.fill("#auth-contact", "0812 3456 7890"); submit()
+    page.fill("#auth-contact", "0817 3456 7890"); submit()
     page.screenshot(path=str(out / f"app-{name}-code.png"))
     page.fill("#auth-code", "12"); submit()
     if page.locator("[data-auth-err=code]").is_hidden():
@@ -597,7 +597,7 @@ def console_auth_flow(page, out, name, base):
     s1 = st()
     if s1["hash"] != "#/saldo" or s1["h1"] not in ("Saldo", "Balance") or s1["focus"] != "h1":
         problems.append(f"AUTH did not land on the next route {s1['hash']} h1={s1['h1']} focus={s1['focus']}")
-    if "6281234567890" in s1["store"] or "0812" in s1["store"] or '"Sinta"' not in s1["store"]:
+    if "6281734567890" in s1["store"] or "0817" in s1["store"] or '"Sinta"' not in s1["store"]:
         problems.append(f"AUTH storage {s1['store'][:160]}")
     page.evaluate("() => { location.hash = '#/beranda'; }")
     page.wait_for_timeout(150)

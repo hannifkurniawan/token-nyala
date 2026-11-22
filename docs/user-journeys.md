@@ -1,4 +1,4 @@
-# User Journeys v4 — Skenario Persona & Skrip Demo
+# User Journeys v4 — Skenario Persona
 
 Persona dasar: `docs/archive/personas.md`. Angka: `services-and-pricing.md`.
 
@@ -47,25 +47,5 @@ Proyek Ayu jatuh tempo, saldo Rp8.000 < Rp15.000:
 
 ---
 
-## Skrip Demo untuk Pak Ferry (±7 menit, HP / mode mobile 375px) — final Fase 7
-
-Persiapan: buka `site/index.html` (atau server lokal) dalam mode HP. Gladi otomatis: `python3 -P tools/demo.py --out <folder>` — 21 langkah di bawah dijalankan dan difoto; harus semua `ok`.
-
-| Menit | Buka / ketuk | Yang terlihat | Poin yang ditekankan |
-|---|---|---|---|
-| 0:00 | `index.html` → hero | “Idemu nyala, dari prompt sampai online.” · board prompt → membangun → **online di eventku.my.id** | Bukan toko token: **platform AI cloud**, mulai dari tujuan |
-| 0:40 | Scroll ke **Mau bikin apa?** → chip *Otomasi tim* | Landing page ≈ Rp34 rb/bln → Otomasi tim ≈ Rp285 rb/bln, isi layanan + top-up disarankan | Pemula tahu “butuh apa & berapa” sebelum mendaftar |
-| 1:10 | **Semua layanan** → **Satu saldo** | 10 layanan berbahasa awam (label teknis kecil) · saldo 55.000 dipotong per layanan, sisa 12.320 | Semua layanan Sumopod/Helipod ada; **satu saldo Rupiah** (Sumopod: 2 saldo + USD) |
-| 2:00 | `harga.html?paket=portofolio#kalkulator` → ukuran *Rutin* | Total langsung ≈ Rp54 rb/bln, ringkasan menempel di bawah | Harga transparan, detail teknis tetap ada |
-| 3:00 | `app.html?demo=reset#/buat?paket=portofolio` → masuk (email, kode 6 digit apa pun, nama *Ayu*) | Wizard langkah 2: `portofolio-ayu`, Coba-coba, `ayu.my.id` tersedia | Satu field, tanpa kartu kredit |
-| 3:40 | **Lanjut** → Ringkasan → **Isi saldo Rp50.000** → QRIS → *Saya sudah bayar* | Dipotong sekarang **Rp20.000** · saldo 55.000 → **35.000** | Biaya terlihat sebelum bayar; isi saldo tanpa keluar dari alur |
-| 4:20 | **Nyalakan sekarang** | Progres: ruang → alamat → HTTPS → AI → saklar **Nyala!** `ayu.my.id` | Dari landing ke online < 3 menit |
-| 5:00 | Beranda → proyek → tab **AI** → **Saldo** | “Cukup sampai ±tanggal”, API key proyek + limit, riwayat per layanan | Kontrol dan rasa aman untuk pemula |
-| 6:00 | `app.html?demo=dimas` → AI → Pemakaian | Rp647.800 ±22 Jan · n8n + data + email + server · grafik 7 hari | Siap untuk tim kecil (Dimas) |
-| 6:30 | Lainnya → **EN** · tombol **Butuh bantuan?** | Seluruh console berbahasa Inggris · Nala “Bantu pilih paket” | Kualitas: ID/EN, bantuan |
-
-**Cadangan (bila ditanya “kalau saldo habis?”):** `app.html?demo=ayu&state=jeda` → banner kuning “dijeda… data aman sampai 27 Des, isi minimal Rp20.000” → isi Rp50.000 → proyek **menyala lagi**, saldo 48.000. Atau menu Akun → **Simulasi: majukan 30 hari** (dua kali dari preset `ayu`: diperpanjang → dijeda).
-
-**Cadangan lain:** proyek → tab Layanan → *Ganti ukuran* (selisih prorata kembali ke saldo) · *Hentikan* (sisa hari kembali) · Layanan lain → Server → Tambah (password sekali tampil).
-
-Mulai ulang demo kapan saja: menu Akun → **Mulai ulang demo**, atau `app.html?demo=reset`.
+## Skrip demo
+Skrip demo (±9 menit, 13 langkah + pertanyaan yang mungkin muncul + cara mengulang) ada di **[`demo.md`](demo.md)** — satu sumber untuk siapa pun yang mendemokan. Gladi otomatis: `python3 -P tools/demo.py --out <folder>` (24 langkah difoto; `--url` untuk situs yang tayang).

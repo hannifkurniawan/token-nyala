@@ -1,6 +1,6 @@
 # Dokumen v4 — TokenNyala sebagai Platform AI Cloud
 
-v4 mengubah TokenNyala dari *top-up saldo AI* menjadi **platform AI Cloud Services** untuk vibecoder pemula: AI untuk membangun, cloud untuk menjalankan, satu saldo Rupiah. Latar belakang: `../v4-cloud-plan.md` dan `../../research/ai-cloud-reference.md`.
+v4 mengubah TokenNyala dari *top-up saldo AI* menjadi **platform AI Cloud Services** untuk vibecoder pemula: AI untuk membangun, cloud untuk menjalankan, satu saldo Rupiah. Latar belakang: `archive/v4-cloud-plan.md` dan `../research/ai-cloud-reference.md`.
 
 ## Urutan baca
 
@@ -9,7 +9,8 @@ v4 mengubah TokenNyala dari *top-up saldo AI* menjadi **platform AI Cloud Servic
 | 1 | `brief.md` | Masalah, user, janji, pembeda, cakupan, metrik | Arah produk |
 | 2 | `services-and-pricing.md` | **Sumber tunggal data**: layanan, ukuran, harga mock, satuan estimasi, paket, aturan saldo & tagihan | Semua angka |
 | 3 | `information-architecture.md` | Peta halaman landing, harga, console; navigasi; overlay | Struktur |
-| 4 | `user-journeys.md` | Skenario per persona + skrip demo | Alur |
+| 4 | `user-journeys.md` | Skenario per persona | Alur |
+| 4b | `demo.md` | **Pegangan demo** (±9 menit): alur, pesan utama, pertanyaan yang mungkin muncul, link situs | Demo |
 | 5 | `wireframes.md` | Wireframe mobile (utama) lalu desktop | Layout |
 | 6 | `microcopy.md` | Copy ID/EN dan state UI | Teks |
 | 7 | `visual-direction.md` | Bahasa visual showcase v2 diterjemahkan ke token | Tampilan |
@@ -34,4 +35,4 @@ v4 mengubah TokenNyala dari *top-up saldo AI* menjadi **platform AI Cloud Servic
 - Mobile first, viewport uji 320/375/768/1024/1440 + 667×375, WCAG 2.1 AA.
 
 ## Status build (20 Nov 2026)
-Fase 0–7 selesai di branch `v4-cloud`; kode di `site/`, cara membuka & akun contoh di `site/README.md`, skrip demo final di `user-journeys.md`, bukti DoD di `technical-spec.md` §9.
+Fase 0–7 selesai di branch `v4-cloud`; kode di `site/`, cara membuka & akun contoh di `site/README.md`, pegangan demo di `demo.md`, bukti DoD di `technical-spec.md` §9.

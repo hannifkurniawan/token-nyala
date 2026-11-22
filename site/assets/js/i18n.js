@@ -276,7 +276,7 @@ TN.i18n = (() => {
     'cs.name': ['Nama', 'Name'],
     'cs.org': ['Nama tim atau perusahaan', 'Team or company name'],
     'cs.contact': ['Email atau nomor HP', 'Email or phone number'],
-    'cs.contactPh': ['nama@email.com atau 0812xxxxxxxx', 'name@email.com or 0812xxxxxxxx'],
+    'cs.contactPh': ['nama@email.com atau 0817xxxxxxxx', 'name@email.com or 0817xxxxxxxx'],
     'cs.size': ['Ukuran tim', 'Team size'],
     'cs.need': ['Ceritakan kebutuhanmu (opsional)', 'Tell us what you need (optional)'],
     'cs.countLive': ['{n} dari 500 karakter', '{n} of 500 characters'],

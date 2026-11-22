@@ -1,7 +1,7 @@
 # Rencana v4 — TokenNyala sebagai Platform AI Cloud
 
 Tanggal: 20 November 2026 · Status: **disetujui arahnya (20 Nov 2026)** — keputusan bagian 7 sudah diambil
-Dasar: feedback Pak Ferry (20 Nov), keputusan konfirmasi 1–8 (lihat `PROJECT-MEMORY.md` → Keputusan), riset `research/ai-cloud-reference.md`.
+Dasar: feedback stakeholder (20 Nov), keputusan konfirmasi 1–8 (lihat `PROJECT-MEMORY.md` → Keputusan), riset `research/ai-cloud-reference.md`.
 
 ## 1. Ringkasan Arah
 
@@ -101,7 +101,7 @@ Semua layanan di satu halaman (pola Helipod), tetapi: mulai dari resep, angka pe
 | 4. Console inti | Masuk, Beranda, Saldo/top-up | |
 | 5. Wizard deploy | Buat baru → ringkasan → nyala → detail proyek | Alur utama demo |
 | 6. Console lengkap | AI, layanan lain, Belajar, Bantuan | |
-| 7. QA & demo | QA 6 viewport per halaman, i18n, axe, skrip demo untuk Pak Ferry | Siap demo |
+| 7. QA & demo | QA 6 viewport per halaman, i18n, axe, skrip demo untuk stakeholder | Siap demo |
 
 Semua fase di satu branch `v4-cloud` (dibuat 20 Nov), QA per section, commit + push per langkah, PR ke `main` per fase atas persetujuan user. Detail fase terbaru: `docs/technical-spec.md` §10.
 

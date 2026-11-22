@@ -108,7 +108,7 @@ Font: Google Fonts, **4 face** — `Manrope:wght@500;700;800` + `IBM+Plex+Mono:w
 | `tools/qa.py --interactive --out <dir>` | 6 viewport untuk `index.html`, `harga.html`, dan rute console utama (state kosong + `?demo=ayu`), cek v3 (overflow, escape shell, teks meluap, touch target, console error, above-the-fold) + alur: paket → wizard → isi saldo → nyala → beranda; kalkulator; berhenti/ganti ukuran; jam simulasi → dijeda |
 | `tools/i18n_check.py` | Diperluas dengan `--root site` (semua halaman + kamus + template JS) |
 | `tools/audit.py` | axe-core 4.14.0 per halaman/rute/dialog, face font (4), `file://`, reduced motion, storage diblokir, **CSS compile up to date**, **konsistensi angka** (`services-and-pricing.md` §9), label simulasi |
-| `tools/demo.py` | Gladi skrip demo (21 langkah, screenshot bernomor) |
+| `tools/demo.py` | Gladi skrip demo `docs/demo.md` (24 langkah, screenshot bernomor; `--url` untuk situs yang tayang) |
 
 Skrip v3 tidak diubah perilakunya untuk v3.
 
@@ -131,7 +131,7 @@ Skrip v3 tidak diubah perilakunya untuk v3.
 |---|---|
 | 1 | `audit.py` membuka `index.html`, `harga.html`, `app.html?demo=ayu` lewat `file://` tanpa error; QA lewat server lokal |
 | 2 | `qa.py --interactive`: 12 halaman/rute × 6 viewport + 4 uji motion = 76 cek, screenshot ditinjau |
-| 3 | `demo.py`: 21 langkah skrip demo di 375×812 lolos |
+| 3 | `demo.py`: 24 langkah skrip demo di 375×812 lolos |
 | 4 | `audit.py` [numbers]: unit AI, paket, contoh, template, Nala, preset (saldo, cukup sampai), riwayat = saldo, harga tiap tabel |
 | 5 | `i18n_check.py --root site`: semua kunci [ID, EN], 0 hilang, 0 mati, 0 belum diterjemahkan (31 halaman/rute) |
 | 6 | axe 0 pelanggaran di semua halaman, rute console, dan dialog (katalog, konsultasi, Nala, tambah layanan, isi saldo, Lainnya, menu akun, konfirmasi, ganti ukuran) |

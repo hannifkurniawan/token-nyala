@@ -1,7 +1,7 @@
 # Riset Referensi AI Cloud — Sumopod & Helipod
 
 Tanggal: 20 November 2026
-Pemicu: feedback Pak Ferry setelah demo `archive/showcase/v1` dan `archive/showcase/v2` — output dinilai terlalu fokus pada e-commerce jualan token AI; ekspektasi beliau adalah **platform AI Cloud Services** seperti sumopod.com dan “helipod”.
+Pemicu: feedback stakeholder setelah demo `archive/showcase/v1` dan `archive/showcase/v2` — output dinilai terlalu fokus pada e-commerce jualan token AI; ekspektasi beliau adalah **platform AI Cloud Services** seperti sumopod.com dan “helipod”.
 
 ## Sumber dan Batasan
 
@@ -9,7 +9,7 @@ Pemicu: feedback Pak Ferry setelah demo `archive/showcase/v1` dan `archive/showc
 |---|---|---|
 | **sumopod.com** (PT Koding Kreasi Indonesia) | Landing (dirender dengan Chromium headless), halaman register/login (hanya dilihat), Terms/Privacy/Refund, **seluruh docs `docs.sumopod.com`: 86 halaman + 212 screenshot dashboard** (atas saran user) | Tidak login: verifikasi Cloudflare Turnstile harus dicentang manusia. Dashboard dipelajari dari screenshot docs (per 4 Nov 2026). |
 | **helipod.com** | — | Dialihkan ke `helipod.co.uk` (bukan AI cloud). |
-| **helipod.io** (yang dimaksud, perlu dikonfirmasi ke Pak Ferry) | Landing, halaman harga, 13 halaman fitur, 14 halaman VPS/landing SEO, blog | Dashboard di balik login (“Masuk Kokpit”). |
+| **helipod.io** (yang dimaksud, perlu dikonfirmasi ke stakeholder) | Landing, halaman harga, 13 halaman fitur, 14 halaman VPS/landing SEO, blog | Dashboard di balik login (“Masuk Kokpit”). |
 
 Teks dan screenshot mentah disimpan di luar repo (scratchpad sesi), tidak di-commit.
 
@@ -117,7 +117,7 @@ Saldo Rupiah & aturan saldo, tab tujuan + rekomendasi, estimasi bahasa awam, che
 ### Yang belum ada
 Katalog multi-produk (app sekali klik, VPS, database, domain, email), dompet multi-produk dengan riwayat potongan per produk, halaman harga semua layanan, alur deploy app sekali klik, mock console/“kokpit”, integrasi AI coding tool (MCP) sebagai fitur.
 
-## 5. Pertanyaan untuk Pak Ferry
+## 5. Pertanyaan untuk stakeholder
 
 1. Referensi “helipod” = **helipod.io**? (helipod.com dialihkan ke situs Inggris.)
 2. Layanan wajib di prototype: AI API, app/agent sekali klik (n8n, Dify, OpenClaw…), VPS, database, domain, email, GPU?

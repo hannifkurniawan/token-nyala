@@ -6,7 +6,7 @@ Tayang di **https://hannifkurniawan.github.io/token-nyala/** (GitHub Pages, otom
 untuk vibecoder pemula (ID/EN, mobile first). Semua harga, layanan, dan transaksi adalah **contoh/simulasi**.
 
 Dokumen: [`docs/README.md`](../docs/README.md) · aturan membangun: [`docs/technical-spec.md`](../docs/technical-spec.md) ·
-semua angka: [`docs/services-and-pricing.md`](../docs/services-and-pricing.md) · skrip demo: [`docs/user-journeys.md`](../docs/user-journeys.md).
+semua angka: [`docs/services-and-pricing.md`](../docs/services-and-pricing.md) · pegangan demo: [`docs/demo.md`](../docs/demo.md).
 
 ## Membuka
 - Langsung: buka `index.html` di browser — `file://` didukung (CSS hasil build ikut di-commit, script klasik tanpa module).
@@ -40,7 +40,7 @@ Dari root repo (semua harus lolos; `-P` karena Playwright ada di user site-packa
 python3 -P tools/qa.py --interactive --out /tmp/qa   # 12 halaman/rute × 6 viewport + alur + motion; lihat screenshot
 python3 -P tools/i18n_check.py                               # kunci [ID, EN] lengkap, tanpa kunci mati / teks belum diterjemahkan
 python3 -P tools/audit.py                               # axe, font, file://, reduced motion, storage, CSS terbaru, angka, label simulasi
-python3 -P tools/demo.py --out /tmp/demo             # gladi skrip demo 21 langkah (screenshot bernomor)
+python3 -P tools/demo.py --out /tmp/demo             # gladi skrip demo 24 langkah (screenshot bernomor; --url <situs> untuk versi tayang)
 ```
 
 ## Struktur

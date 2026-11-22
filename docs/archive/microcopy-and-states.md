@@ -163,9 +163,9 @@ Tambahkan label `Contoh tampilan` pada bukti atau klaim operasional jika belum t
 - `Total bayar`
 
 ### Contact Placeholder
-`nama@email.com atau 0812xxxxxxxx`
+`nama@email.com atau 0817xxxxxxxx`
 
-**English:** label `Email or phone number`, helper `We'll send your receipt here.`, placeholder `name@email.com or 0812xxxxxxxx`
+**English:** label `Email or phone number`, helper `We'll send your receipt here.`, placeholder `name@email.com or 0817xxxxxxxx`
 
 ### Payment Options
 - `QRIS`

@@ -337,7 +337,7 @@ def main():
             if page_name == "index.html":
                 page.locator('[data-recipe-chips] [data-recipe="web-klien"]').click()
                 page.evaluate("() => TN.landing.openConsult()"); page.wait_for_timeout(300)
-                page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio"); page.fill("#cs-contact", "0812-3456-7890")
+                page.fill("#cs-name", "Dimas"); page.fill("#cs-org", "Studio"); page.fill("#cs-contact", "0817-3456-7890")
                 page.locator("#consult label:has(input[name=teamSize])").first.click()
                 page.locator("#consult input[name=consent]").check(); page.locator("#consult [type=submit]").click()
                 page.keyboard.press("Escape")
@@ -485,7 +485,7 @@ def main():
         ctx = b.new_context(viewport={"width": 1440, "height": 900})
         page = ctx.new_page()
         page.goto(base + "app.html?demo=reset#/masuk", wait_until="networkidle")
-        page.fill("#auth-contact", "0812-3456-7890"); page.locator("[data-auth-form] [type=submit]").click()
+        page.fill("#auth-contact", "0817-3456-7890"); page.locator("[data-auth-form] [type=submit]").click()
         page.fill("#auth-code", "123456"); page.locator("[data-auth-form] [type=submit]").click()
         page.fill("#auth-name", "Ayu"); page.locator("[data-auth-form] [type=submit]").click()
         page.wait_for_timeout(150)
@@ -493,7 +493,7 @@ def main():
         page.locator('#topup label:has(input[value="va"])').click(); page.locator("[data-co-submit]").click()
         page.locator("[data-co-paid-main]").click(); page.wait_for_timeout(800)
         stored = page.evaluate("() => ({ keys: Object.keys(localStorage).sort(), demo: localStorage.getItem('tn-v4-demo') || '', session: sessionStorage.length, cookie: document.cookie })")
-        if stored["keys"] != ["tn-v4-demo"] or stored["session"] or stored["cookie"] or any(x in stored["demo"] for x in ("0812", "6281234567890", "@")):
+        if stored["keys"] != ["tn-v4-demo"] or stored["session"] or stored["cookie"] or any(x in stored["demo"] for x in ("0817", "6281734567890", "@")):
             problems.append(f"[dod] app storage holds more than demo state / holds contact data: {stored['keys']} {stored['demo'][:120]}")
         ctx.close()
         b.close()

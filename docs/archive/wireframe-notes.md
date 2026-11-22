@@ -68,7 +68,7 @@ Estimasi bergantung pada model, panjang prompt…   disclaimer kecil
 │ Total               Rp100.000   │
 │                                 │
 │ Email atau nomor HP             │
-│ [ nama@email.com / 0812…     ]  │
+│ [ nama@email.com / 0817…     ]  │
 │ Bukti pembelian dikirim ke sini │
 │                                 │
 │ Bayar dengan                    │
@@ -223,7 +223,7 @@ Biaya                  Gratis
 Total                  Rp100.000
 
 Email atau nomor HP
-[ nama@email.com atau 0812xxxxxxxx ]
+[ nama@email.com atau 0817xxxxxxxx ]
 Bukti pembelian dikirim ke sini.
 
 Bayar dengan

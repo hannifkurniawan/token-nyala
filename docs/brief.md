@@ -7,7 +7,7 @@ TokenNyala adalah **platform AI Cloud Services** berbahasa Indonesia/Inggris unt
 EN: *Your idea, switched on — from prompt to online.*
 
 ## Kenapa berubah dari v3
-v3 menjawab “berapa saldo AI yang harus dibeli?”. Feedback Pak Ferry (20 Nov 2026): yang diharapkan adalah platform seperti helipod.io dan sumopod.com. Vibecoder memang tidak berhenti di token: setelah AI menulis kode, mereka butuh tempat untuk **meng-online-kan, menyimpan data, memasang domain, dan menjalankan agent 24 jam**.
+v3 menjawab “berapa saldo AI yang harus dibeli?”. Feedback stakeholder (20 Nov 2026): yang diharapkan adalah platform seperti helipod.io dan sumopod.com. Vibecoder memang tidak berhenti di token: setelah AI menulis kode, mereka butuh tempat untuk **meng-online-kan, menyimpan data, memasang domain, dan menjalankan agent 24 jam**.
 
 ## Tujuan bisnis
 Membuat pemula bisa **memilih, membayar, dan menyalakan** layanan cloud + AI tanpa memahami vCPU, region, root password, kurs dolar, atau tagihan per token.
@@ -67,5 +67,5 @@ Data, pembayaran, deploy, dan URL adalah **simulasi** yang diberi label jelas.
 ## Batasan
 - Prototype statis (HTML + Tailwind + JS), jalan lewat `file://` dan server lokal, tanpa backend.
 - Harga & data ilustratif, diberi label “contoh”.
-- Mobile first; demo langsung ke Pak Ferry.
+- Mobile first; demo langsung ke stakeholder.
 - Aksesibel (WCAG 2.1 AA), keyboard-friendly, ID/EN lengkap.
