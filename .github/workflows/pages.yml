@@ -1,5 +1,9 @@
 # Publish the latest version (site/) to GitHub Pages on every push to main that touches it.
 # Only the pages and their assets are published — build sources (src/, package*.json), docs, tools and archive/ are not.
+# Two jobs (GitHub's starter pattern): "build" uploads the artifact, "deploy" publishes it. A separate deploy job starts
+# after the upload is fully registered — a single job once failed with "No artifacts named github-pages were found".
+# To redeploy, start a new run (Actions → Run workflow); re-running only the failed deploy job is fine, re-running
+# the build job adds a second artifact with the same name.
 name: Deploy site to GitHub Pages
 
 on:
@@ -18,11 +22,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: Collect the published files
@@ -34,5 +35,13 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4

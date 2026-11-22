@@ -208,9 +208,15 @@ Catatan kerja lintas sesi. **Baca file ini di awal setiap sesi baru**, lalu perb
 - **Deteksi kunci mati `i18n_check` tidak andal** (pola template bersarang cocok ke semua kunci). Cek kunci mati dengan skrip terpisah yang hanya memakai pola berawalan literal.
 - **`<option>` tidak mewarisi font-weight** — di halaman tanpa Tailwind, beri `select option { font-weight: 500 }` atau audit font menemukan Manrope 400.
 - **Elemen lengket di bawah header yang bisa sembunyi** harus ikut bergeser (`.site-header[data-hidden] ~ main .pnav { transform }`), kalau tidak muncul celah setinggi header.
+- **GitHub Pages: pisahkan build dan deploy.** Satu job (upload lalu deploy-pages langsung) pernah gagal “No artifacts named github-pages” karena artefak belum terdaftar 0,4 detik setelah diunggah; menjalankan ulang job itu menambah artefak kedua bernama sama (“Multiple artifacts”). Pola resmi dua job (`build` → `deploy`) + jalankan run baru (`workflow_dispatch`) bila perlu deploy ulang.
 - **Verifikasi klaim sumber kedua.** Artikel menyebut tarif OCTA tersembunyi sampai login; screenshot membuktikan tarif tampil publik. Sumber primer (screenshot/halaman asli) mengalahkan artikel.
 
 ## Log Sesi
+### Sesi 6 (lanjutan) — 22 Nov 2026 (situs tayang)
+- PR #4 di-merge user; deploy pertama gagal (artefak belum terdaftar saat deploy, lalu artefak ganda saat job diulang); run baru via `workflow_dispatch` sukses. Situs tayang: https://hannifkurniawan.github.io/token-nyala/ — gladi demo 24/24 lolos langsung ke situs, `src/`/`package.json` tidak tayang (404).
+- Workflow Pages dipisah jadi dua job (`build` → `deploy`).
+- Identitas git: commit dari mesin ini sebelumnya memakai identitas global `ari` (akun ari-xq). User memilih **tidak** menulis ulang riwayat; repo ini kini memakai identitas lokal `Hannif Kurniawan <hannifkurniawan@users.noreply.github.com>`.
+
 ### Sesi 6 (lanjutan) — 22 Nov 2026 (pegangan demo)
 - `docs/demo.md` baru = satu sumber skrip demo (±9 menit, 13 langkah, pesan utama, persiapan, pertanyaan yang mungkin muncul, link GitHub Pages); `user-journeys.md` menunjuk ke sana. Tanpa nama orang (keputusan user: bisa dipakai siapa saja) — "Pak Ferry" diganti "stakeholder" di semua dokumen non-arsip.
 - `tools/demo.py`: 24 langkah (Chat AI + lampiran → Gemini Flash Rp17, Aplikasi akses admin, Server hemat + port, Nala "Server murah?"); `--url` untuk gladi ke situs yang tayang.
