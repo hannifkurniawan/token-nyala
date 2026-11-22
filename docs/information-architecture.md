@@ -17,12 +17,12 @@ Prinsip: **tujuan dulu, layanan kemudian, detail teknis terakhir (bisa dibuka)**
 | Elemen | Mobile (<1024) | Desktop (≥1024) |
 |---|---|---|
 | Logo | Kiri | Kiri |
-| Menu | Tombol menu → panel: Layanan, Harga, Template, Belajar, FAQ, bahasa ID/EN, Masuk, **Mulai bangun** | Layanan · Harga · Template · Belajar · FAQ |
+| Menu | Tombol menu → panel (urutan halaman, 22 Nov 2026): 01 Cara kerja · 02 Paket · 03 Layanan · 04 Model AI · 05 FAQ · 06 Harga, bahasa ID/EN, Masuk, **Mulai bangun** | Cara kerja · Paket · Layanan · Model AI · FAQ · Harga (sama di header halaman Harga, menuju `index.html#…`) |
 | Bahasa | Di panel menu | Segmented ID/EN |
 | Masuk | Di panel menu | Link “Masuk” |
 | CTA | **Mulai bangun** (mulai `sm:`) | **Mulai bangun** |
 
-Footer: Jelajahi (Layanan, Harga, Template, Belajar), Untuk tim, Bantuan & legal (Syarat & Ketentuan, Kebijakan Privasi — mock), label prototype.
+Footer (urutan halaman): Jelajahi (Paket, Layanan, Paket aplikasi, Model AI, Harga) · Bantuan (Panduan pasang, Untuk tim, FAQ, Belajar) · Syarat & Ketentuan, Kebijakan Privasi (mock), label prototype. Paket aplikasi dan Belajar tidak di menu atas karena berada di dalam section Layanan dan FAQ.
 
 ---
 
@@ -36,7 +36,7 @@ Footer: Jelajahi (Layanan, Harga, Template, Belajar), Untuk tim, Bantuan & legal
 | 4 | Cara kerja | `cara-kerja` | 3 langkah: Pilih tujuan → Isi saldo Rupiah → Nyala & online | — |
 | 5 | Semua layanan | `layanan` | 4 kelompok (Bangun dengan AI · Jalankan · Simpan · Hubungkan), 10 kartu: nama awam + label teknis kecil + “mulai dari” | Lihat semua harga |
 | 6 | Satu saldo Rupiah | `saldo` | Pembeda: satu saldo untuk semua, tanpa USD/kartu kredit, biaya tetap vs pakai, “cukup sampai tanggal”, aturan saldo (chip) + animasi saldo terpotong per layanan | Isi saldo |
-| 7 | Template siap pakai | `template` | 5 template apps (Chatbot WhatsApp, n8n, Agent 24 jam, Dify, WordPress) + ukuran minimum | Pakai template → `app.html#/buat?template=…` (`wa-bot`, `n8n`, `agent`, `dify`, `wordpress`) |
+| 7 | Paket aplikasi (dulu “template”) | `template` | 5 paket aplikasi (Chatbot WhatsApp, n8n, Agent 24 jam, Dify, WordPress) + ukuran minimum | Pakai template → `app.html#/buat?template=…` (`wa-bot`, `n8n`, `agent`, `dify`, `wordpress`) |
 | 8 | AI untuk tool-mu | `ai` | Kartu model (v3), “≈ N sesi / Rp10.000”, panduan pasang 3 langkah (Base URL + key), katalog dialog | Lihat semua model |
 | 9 | Contoh proyek | `contoh` | Landing page event: tahap bangun → online → alamat web, total Rp40.790–54.020, top-up Rp50.000 cukup | Nyalakan contoh ini |
 | 10 | Aman untuk pemula | `aman` | Kartu bertumpuk (stack v2): Berhenti kapan saja · Ganti ukuran · Dijeda bukan dihapus · Pengingat saldo | — |

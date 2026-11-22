@@ -14,7 +14,7 @@ semua angka: [`docs/services-and-pricing.md`](../docs/services-and-pricing.md) �
 
 | Halaman | Isi |
 |---|---|
-| `index.html` | Landing 12 section dibangun dengan cara showcase v2 (loader, kursor, copy `data-l`): hero, cerita macet (scroll), cara kerja (kartu geser), **Mau bikin apa?** (5 paket), semua layanan + template, model AI + katalog, pakai di tool, aman + satu saldo, contoh, tim + konsultasi, FAQ + belajar, CTA saklar raksasa · chat Nala |
+| `index.html` | Landing 12 section dibangun dengan cara showcase v2 (loader, kursor, copy `data-l`): hero, cerita macet (scroll), cara kerja (kartu geser), **Mau bikin apa?** (5 paket), semua layanan + paket aplikasi, model AI + katalog, pakai di tool, aman + satu saldo, contoh, tim + konsultasi, FAQ + belajar, CTA saklar raksasa · chat Nala |
 | `harga.html` | Bergaya showcase v2 (tanpa loader): kepala · nav chip lengket · **kalkulator** (tab paket seperti landing, state di `?paket=&s=`, ringkasan lengket) · semua layanan (baris indeks, tabel dibuka per layanan) · AI (12 model + 3 satuan) · saldo & tagihan · FAQ harga |
 | `app.html` | Console mock: masuk, beranda, **wizard Buat** (4 langkah), proyek (ganti ukuran, hentikan, log…), **Chat AI**, API AI (mulai cepat, model, pemakaian, API key), **Aplikasi** (daftar + katalog + kelola: akses admin, sambungan WhatsApp/Telegram, pemakaian, log, ukuran), Server (IP sendiri / **hemat NAT** dengan SSH + port), saldo + isi saldo, layanan lain, belajar, bantuan, jam simulasi |
 

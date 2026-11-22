@@ -686,3 +686,6 @@ html.overflow-hidden { overflow: hidden; }
 .intent__tab[aria-checked="true"] { color: var(--dark); }
 /* current page in the header nav */
 .nav-desktop a[aria-current="page"]::after { transform: scaleX(1); }
+/* Header nav (6 items): never wrap a label; tighter spacing on small laptops */
+.nav-desktop a { white-space: nowrap; }
+@media (min-width: 1024px) and (max-width: 1279px) { .nav-desktop { gap: 18px; } .header-actions { gap: 6px; } }

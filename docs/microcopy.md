@@ -22,7 +22,8 @@ Angka di sini adalah contoh; nilai sebenarnya dirender dari `data.js` (`services
 | saldo | balance | kredit (kecuali “1 kredit = Rp1”), wallet, deposit |
 | isi saldo | top up | deposit, recharge |
 | proyek | project | app, workspace, pod |
-| paket (kumpulan layanan untuk satu tujuan, isinya bisa diubah) | bundle | resep, recipe (dipakai sampai 21 Nov 2026), template (itu untuk aplikasi siap pakai) |
+| paket (kumpulan layanan untuk satu tujuan, isinya bisa diubah) — pilihan “Mau bikin apa?” | bundle | resep, recipe (dipakai sampai 21 Nov 2026) |
+| paket aplikasi (aplikasi siap pakai: Chatbot WhatsApp, n8n, Agent AI, Dify, WordPress) | app bundle | template (dipakai sampai 22 Nov 2026; tetap dipakai di kode: `tpl`, `?template=`) |
 | nyalakan / nyala | switch on / on | deploy, provision, launch (boleh di Detail teknis) |
 | dijeda | paused | suspended, terminated |
 | berhenti | stop | delete, cancel subscription |

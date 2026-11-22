@@ -14,7 +14,7 @@ layanan yang dibutuhkan dan biayanya per bulan, lalu menyalakan proyeknya di con
 
 | Halaman | Isi |
 |---|---|
-| **Landing** — [`index.html`](site/index.html) | Hero, cerita “macet di localhost”, cara kerja, **Mau bikin apa?** (5 paket dengan total per bulan), 11 layanan + 5 template aplikasi, 12 model AI + katalog, pakai saldo di tool coding, aman untuk pemula + satu saldo, contoh proyek, untuk tim, FAQ + panduan |
+| **Landing** — [`index.html`](site/index.html) | Hero, cerita “macet di localhost”, cara kerja, **Mau bikin apa?** (5 paket dengan total per bulan), 11 layanan + 5 paket aplikasi, 12 model AI + katalog, pakai saldo di tool coding, aman untuk pemula + satu saldo, contoh proyek, untuk tim, FAQ + panduan |
 | **Harga** — [`harga.html`](site/harga.html) | Kalkulator paket (ubah layanan & ukuran, total langsung; tautan bisa dibagikan `?paket=&s=`), harga tiap layanan, tabel 12 model AI (termasuk file yang bisa dibaca), aturan saldo & tagihan, FAQ harga |
 | **Console** — [`app.html`](site/app.html) | Masuk · beranda (saldo “cukup sampai”, langkah berikutnya) · **wizard Buat** · proyek (ganti ukuran, hentikan, log) · **Chat AI** (lampiran gambar/suara/video) · **API AI** (API key, model, pemakaian) · **Aplikasi** (akses admin, sambungan WhatsApp/Telegram) · **Server** (IP sendiri / hemat dengan SSH + port) · data, file, alamat web, email, pembayaran · saldo + isi saldo · belajar & bantuan |
 
